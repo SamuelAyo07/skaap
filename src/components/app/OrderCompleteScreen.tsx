@@ -1,5 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { motion } from "framer-motion";
 
 interface OrderCompleteScreenProps {
   onDone: () => void;
@@ -20,50 +21,88 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-5 pb-24 pt-14">
-      {/* Checkmark */}
-      <div className="animate-checkmark mb-6">
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+        className="mb-6"
+      >
         <CheckCircle size={80} className="text-success" strokeWidth={1.5} />
-      </div>
+      </motion.div>
 
-      <h1 className="text-2xl font-bold text-foreground mb-1 fade-in">Order Complete!</h1>
-      <p className="text-muted-foreground text-sm italic mb-6 fade-in" style={{ animationDelay: "0.2s" }}>
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="text-2xl font-bold text-foreground mb-1"
+      >
+        Order Complete!
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="text-muted-foreground text-sm italic mb-6"
+      >
         Today you saved {savedMinutes} min in line
-      </p>
+      </motion.p>
 
-      <div className="text-center mb-6 fade-in" style={{ animationDelay: "0.3s" }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-center mb-6"
+      >
         <p className="font-semibold text-foreground">Order {orderId}</p>
         <p className="text-xs text-muted-foreground">{dateStr}</p>
-      </div>
+      </motion.div>
 
-      {/* QR Code placeholder */}
-      <div className="w-48 h-48 bg-card border-2 border-border rounded-2xl flex items-center justify-center mb-4 fade-in shadow-card" style={{ animationDelay: "0.4s" }}>
-        <div className="grid grid-cols-5 gap-1">
-          {Array.from({ length: 25 }).map((_, i) => (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, type: "spring" }}
+        className="w-48 h-48 bg-card border-2 border-border rounded-2xl flex items-center justify-center mb-4 shadow-card"
+      >
+        <div className="grid grid-cols-7 gap-0.5">
+          {Array.from({ length: 49 }).map((_, i) => (
             <div
               key={i}
-              className={`w-6 h-6 rounded-sm ${
-                Math.random() > 0.4 ? "bg-foreground" : "bg-transparent"
+              className={`w-4 h-4 rounded-[2px] ${
+                Math.random() > 0.35 ? "bg-foreground" : "bg-transparent"
               }`}
             />
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      <p className="font-bold text-sm text-foreground mb-6 fade-in" style={{ animationDelay: "0.5s" }}>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="font-bold text-sm text-foreground mb-6"
+      >
         Show this QR at the exit
-      </p>
+      </motion.p>
 
-      <p className="text-primary font-bold text-lg mb-8 fade-in" style={{ animationDelay: "0.6s" }}>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1 }}
+        className="text-primary font-bold text-lg mb-8"
+      >
         Today you saved ${savedMoney}
-      </p>
+      </motion.p>
 
-      <button
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        whileTap={{ scale: 0.97 }}
         onClick={handleDone}
-        className="w-full max-w-[280px] bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-base active:scale-[0.98] transition-transform fade-in"
-        style={{ animationDelay: "0.7s" }}
+        className="w-full max-w-[280px] bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-base"
       >
         Done
-      </button>
+      </motion.button>
     </div>
   );
 };

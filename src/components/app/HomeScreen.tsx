@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import storeRCS from "@/assets/store-rcs.jpg";
@@ -17,33 +18,55 @@ const stores = [
 const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   return (
     <div className="px-5 pt-14 pb-24">
-      {/* Logo */}
-      <div className="flex items-center gap-2 mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-2 mb-6"
+      >
         <img src={skaapIcon} alt="SKAAP" className="w-10 h-10 rounded-xl" />
-      </div>
+      </motion.div>
 
-      {/* Greeting */}
-      <h1 className="text-2xl font-bold text-foreground">Hi there,</h1>
-      <p className="text-muted-foreground text-sm mb-5">Where are you buying today?</p>
+      <motion.h1
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-2xl font-bold text-foreground"
+      >
+        Hi there,
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+        className="text-muted-foreground text-sm mb-5"
+      >
+        Where are you buying today?
+      </motion.p>
 
-      {/* Search */}
-      <div className="relative mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="relative mb-6"
+      >
         <input
           type="text"
           placeholder="Search stores..."
           className="w-full bg-muted rounded-xl py-3 pl-4 pr-11 text-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-primary" size={18} />
-      </div>
+      </motion.div>
 
-      {/* Store list */}
       <div className="space-y-4">
         {stores.map((store, i) => (
-          <button
+          <motion.button
             key={store.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 + i * 0.1 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onSelectStore}
-            className="w-full rounded-2xl overflow-hidden shadow-card bg-card transition-transform active:scale-[0.98] fade-in"
-            style={{ animationDelay: `${i * 0.1}s` }}
+            className="w-full rounded-2xl overflow-hidden shadow-card bg-card"
           >
             <div className="relative h-36">
               <img src={store.image} alt={store.name} className="w-full h-full object-cover" />
@@ -53,7 +76,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
                 <p className="text-primary-foreground/70 text-xs">{store.address}</p>
               </div>
             </div>
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
