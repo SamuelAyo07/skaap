@@ -388,7 +388,9 @@ const Index = () => {
               </div>
             </FadeInSection>
             <FadeInSection delay={0.15} className="lg:col-span-3">
-              <StoreMap />
+              <Suspense fallback={<div className="h-[400px] bg-muted rounded-3xl animate-pulse" />}>
+                <StoreMap />
+              </Suspense>
             </FadeInSection>
           </div>
         </div>
