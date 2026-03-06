@@ -1,18 +1,18 @@
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import storeRCS from "@/assets/store-rcs.jpg";
-import storeFreshco from "@/assets/store-freshco.jpg";
 import storeWalmart from "@/assets/store-walmart.jpg";
+import storeFreshco from "@/assets/store-freshco.jpg";
+import storeRCS from "@/assets/store-rcs.jpg";
 
 interface HomeScreenProps {
   onSelectStore: () => void;
 }
 
 const stores = [
-  { id: "1", name: "Real Canadian Superstore", address: "3806 Albert St – Regina", image: storeRCS },
-  { id: "2", name: "FreshCo", address: "489 Broad St – Regina", image: storeFreshco },
-  { id: "3", name: "Walmart Supercentre", address: "2150 Prince of Wales Dr", image: storeWalmart },
+  { id: "1", name: "Publix", address: "1551 3rd Ave, New York, NY 10128", image: storeWalmart },
+  { id: "2", name: "Kroger", address: "11 W 42nd St, New York, NY 10036", image: storeFreshco },
+  { id: "3", name: "Whole Foods Market", address: "4 Union Square S, New York, NY 10003", image: storeRCS },
 ];
 
 const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
