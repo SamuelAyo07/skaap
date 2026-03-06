@@ -1,16 +1,17 @@
-import { useRef, useState } from "react";
+import { useRef, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import {
   Download, Store, ScanLine, CreditCard, QrCode, ChevronRight,
   Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
-  Smartphone, ArrowRight, Star, Users, ChevronDown, Play, Pause
+  Smartphone, ArrowRight, Star, Users, ChevronDown, Play
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import heroPhone from "@/assets/hero-phone-mockup.png";
 import AnimatedCounter from "@/components/website/AnimatedCounter";
 import ComparisonTable from "@/components/website/ComparisonTable";
-import StoreMap from "@/components/website/StoreMap";
+
+const StoreMap = lazy(() => import("@/components/website/StoreMap"));
 
 // ─── Animated Section Wrapper ────────────────────────────────
 const FadeInSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
@@ -387,7 +388,9 @@ const Index = () => {
               </div>
             </FadeInSection>
             <FadeInSection delay={0.15} className="lg:col-span-3">
-              <StoreMap />
+              <Suspense fallback={<div className="h-[400px] bg-muted rounded-3xl animate-pulse" />}>
+                <StoreMap />
+              </Suspense>
             </FadeInSection>
           </div>
         </div>
