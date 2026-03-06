@@ -108,19 +108,17 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
       </div>
 
       {items.length > 0 && (
-        <motion.div
-          initial={{ y: 50 }}
-          animate={{ y: 0 }}
-          className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[390px] px-5 pb-3 pt-2 bg-background/95 backdrop-blur-sm border-t border-border"
-        >
+        <div className="absolute bottom-16 left-0 right-0 px-5 pb-4 pt-3 bg-background/95 backdrop-blur-sm border-t border-border">
           <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             whileTap={{ scale: 0.97 }}
             onClick={onPayNow}
             className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-base"
           >
             Pay Now · ${(total + tax).toFixed(2)}
           </motion.button>
-        </motion.div>
+        </div>
       )}
     </div>
   );
