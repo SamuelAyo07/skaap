@@ -166,8 +166,8 @@ const Index = () => {
               </span>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-secondary-foreground leading-[1.05] mb-6">
                 Scan it.<br />
-                Bag it.<br />
-                <span className="text-gradient">Skip the line.</span>
+                Skip the line.<br />
+                <span className="text-gradient">Escape the wait.</span>
               </h1>
               <p className="text-secondary-foreground/60 text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0">
                 SKAAP turns your phone into a checkout. Shop at your pace, pay instantly, and walk out — no lines, ever.
