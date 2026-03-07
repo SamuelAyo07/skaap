@@ -4,13 +4,28 @@ import productCrackers from "@/assets/product-crackers.png";
 import productOJ from "@/assets/product-oj.png";
 import productBread from "@/assets/product-bread.png";
 
+export interface NutritionInfo {
+  calories?: number;
+  fat?: number;
+  saturatedFat?: number;
+  carbs?: number;
+  sugars?: number;
+  protein?: number;
+  salt?: number;
+  fiber?: number;
+}
+
 export interface Product {
   id: string;
   name: string;
+  brand?: string;
   weight: string;
   price: number;
   image: string;
   barcode: string;
+  nutriScore?: string;
+  ingredients?: string;
+  nutrition?: NutritionInfo;
 }
 
 export const products: Product[] = [
