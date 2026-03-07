@@ -69,35 +69,6 @@ const DemoPhone = () => {
   );
 };
 
-// ─── Testimonial Carousel ────────────────────────────
-const testimonials = [
-  { name: "Sarah M.", location: "Brooklyn, NY", text: "I walked in, scanned my groceries, and walked out in 8 minutes. Never going back to checkout lines.", rating: 5 },
-  { name: "James K.", location: "Atlanta, GA", text: "The scanning is so fast — feels like Snapchat for shopping. My kids love it too.", rating: 5 },
-  { name: "Maria L.", location: "Miami, FL", text: "I save 20+ minutes every grocery trip. That's hours back every month.", rating: 5 },
-];
-
-const TestimonialCarousel = () => {
-  const [active, setActive] = useState(0);
-  return (
-    <div className="relative">
-      <motion.div key={active} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <div className="flex gap-0.5 mb-3">
-          {Array.from({ length: testimonials[active].rating }).map((_, i) => (
-            <Star key={i} size={14} className="text-primary fill-primary" />
-          ))}
-        </div>
-        <p className="text-foreground text-base mb-4 leading-relaxed">"{testimonials[active].text}"</p>
-        <p className="font-semibold text-foreground text-sm">{testimonials[active].name}</p>
-        <p className="text-xs text-muted-foreground">{testimonials[active].location}</p>
-      </motion.div>
-      <div className="flex gap-2 mt-4 justify-center">
-        {testimonials.map((_, i) => (
-          <button key={i} onClick={() => setActive(i)} className={`w-2 h-2 rounded-full transition-all ${i === active ? "bg-primary w-6" : "bg-muted-foreground/30"}`} />
-        ))}
-      </div>
-    </div>
-  );
-};
 
 // ─── MAIN PAGE ──────────────────────────────────────────────
 const Index = () => {
