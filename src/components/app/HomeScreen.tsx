@@ -10,9 +10,9 @@ interface HomeScreenProps {
 }
 
 const stores = [
-  { id: "1", name: "Publix", address: "1551 3rd Ave, New York, NY 10128", image: storeWalmart },
-  { id: "2", name: "Kroger", address: "11 W 42nd St, New York, NY 10036", image: storeFreshco },
-  { id: "3", name: "Whole Foods Market", address: "4 Union Square S, New York, NY 10003", image: storeRCS },
+  { id: "1", name: "Trader Joe's", address: "899 Boylston St, Boston, MA 02115", image: storeWalmart },
+  { id: "2", name: "Whole Foods Market", address: "340 River St, Cambridge, MA 02139", image: storeFreshco },
+  { id: "3", name: "Star Market", address: "33 Kilmarnock St, Boston, MA 02215", image: storeRCS },
 ];
 
 const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
