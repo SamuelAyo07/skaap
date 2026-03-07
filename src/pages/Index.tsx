@@ -205,7 +205,7 @@ const Index = () => {
         <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-6 left-1/2 -translate-x-1/2 text-secondary-foreground/30">
           <ChevronDown size={24} />
         </motion.div>
-      </motion.section>
+      </section>
 
       {/* ─── ANIMATED STATS BAR ──────────────────────── */}
       <section className="bg-primary py-12">
