@@ -219,7 +219,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             </button>
             <div className="absolute bottom-3 left-3 right-3 z-20">
               <div className="bg-card/90 backdrop-blur-sm rounded-xl px-3 py-2 flex items-center gap-2 border border-border">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <p className="text-xs text-foreground font-medium">Camera active — scanning for barcodes</p>
               </div>
             </div>
