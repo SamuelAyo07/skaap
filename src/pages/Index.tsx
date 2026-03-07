@@ -1,6 +1,6 @@
 import { useRef, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   Download, Store, ScanLine, CreditCard, QrCode, ChevronRight,
   Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
@@ -108,9 +108,7 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-  const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -50]);
+  // Removed useScroll/useTransform to fix compatibility
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,7 +153,7 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ────────────────────────────────────── */}
-      <motion.section style={{ opacity: heroOpacity, y: heroY }} className="relative pt-28 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+      <section className="relative pt-28 pb-20 md:pt-40 md:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-secondary" />
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} className="absolute -top-20 -right-20 w-96 h-96 rounded-full border border-primary/10" />
         <motion.div animate={{ rotate: -360 }} transition={{ duration: 80, repeat: Infinity, ease: "linear" }} className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full border border-primary/5" />
@@ -185,14 +183,12 @@ const Index = () => {
               >
                 <Download size={18} /> Get the App
               </motion.button>
-              <motion.a
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+              <a
                 href="#stores"
-                className="border-2 border-secondary-foreground/20 text-secondary-foreground px-7 py-3.5 rounded-2xl font-bold text-base flex items-center gap-2 hover:border-secondary-foreground/40 transition-colors"
+                className="border-2 border-secondary-foreground/20 text-secondary-foreground px-7 py-3.5 rounded-2xl font-bold text-base flex items-center gap-2 hover:border-secondary-foreground/40 transition-colors hover:scale-[1.03] active:scale-[0.97] transition-transform"
               >
                 <Store size={18} /> I Own a Store
-              </motion.a>
+              </a>
             </motion.div>
           </div>
 
@@ -209,7 +205,7 @@ const Index = () => {
         <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-6 left-1/2 -translate-x-1/2 text-secondary-foreground/30">
           <ChevronDown size={24} />
         </motion.div>
-      </motion.section>
+      </section>
 
       {/* ─── ANIMATED STATS BAR ──────────────────────── */}
       <section className="bg-primary py-12">
@@ -445,9 +441,9 @@ const Index = () => {
 
           <FadeInSection delay={0.3}>
             <div className="text-center space-y-3">
-              <motion.a whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-primary/25">
+              <a href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-primary/25 hover:scale-[1.03] active:scale-[0.97] transition-transform">
                 Onboard Your Store <ArrowRight size={18} />
-              </motion.a>
+              </a>
               <br />
               <motion.button
                 whileHover={{ scale: 1.03 }}
