@@ -2,9 +2,9 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import {
-  Download, Store, ScanLine, CreditCard, QrCode, ChevronRight,
+  Download, Store, ScanLine, CreditCard, QrCode,
   Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
-  Smartphone, ArrowRight, Star, Users, ChevronDown, Play
+  Smartphone, ArrowRight, Star, ChevronDown
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import heroPhone from "@/assets/hero-phone-mockup.png";
