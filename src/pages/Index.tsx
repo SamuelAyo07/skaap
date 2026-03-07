@@ -1,4 +1,4 @@
-import { useRef, useState, lazy, Suspense } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import {
@@ -10,8 +10,6 @@ import skaapIcon from "@/assets/skaap-icon.png";
 import heroPhone from "@/assets/hero-phone-mockup.png";
 import AnimatedCounter from "@/components/website/AnimatedCounter";
 import ComparisonTable from "@/components/website/ComparisonTable";
-
-const StoreMap = lazy(() => import("@/components/website/StoreMap"));
 
 // ─── Animated Section Wrapper ────────────────────────────────
 const FadeInSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
@@ -134,7 +132,7 @@ const Index = () => {
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#shoppers" className="hover:text-foreground transition-colors">For Shoppers</a>
             <a href="#stores" className="hover:text-foreground transition-colors">For Stores</a>
-            <a href="#find-store" className="hover:text-foreground transition-colors">Find a Store</a>
+            
             <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-2">
@@ -228,65 +226,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── VIDEO DEMO ──────────────────────────────── */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-6">
-          <FadeInSection>
-            <div className="text-center mb-10">
-              <span className="text-primary text-sm font-semibold uppercase tracking-wider">See it in action</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-2">
-                60 seconds to checkout freedom
-              </h2>
-              <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-                Watch how SKAAP transforms your entire grocery trip
-              </p>
-            </div>
-          </FadeInSection>
-
-          <FadeInSection delay={0.15}>
-            <div className="relative rounded-3xl overflow-hidden shadow-elevated bg-secondary aspect-video flex items-center justify-center group cursor-pointer">
-              {/* Video placeholder with animated elements */}
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary to-primary/20" />
-
-              {/* Animated mockup inside */}
-              <div className="relative z-10 flex flex-col items-center">
-                <motion.div
-                  initial={{ scale: 0.9 }}
-                  whileHover={{ scale: 1 }}
-                  className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center backdrop-blur-sm border border-primary/30"
-                >
-                  <Play size={32} className="text-primary-foreground ml-1" />
-                </motion.div>
-                <p className="text-secondary-foreground/50 text-sm mt-4">Watch the demo</p>
-
-                {/* Floating UI elements */}
-                <motion.div
-                  animate={{ y: [-5, 5, -5] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="absolute -left-16 top-4 bg-background/90 rounded-xl px-3 py-2 shadow-card"
-                >
-                  <div className="flex items-center gap-2">
-                    <ScanLine size={14} className="text-primary" />
-                    <span className="text-xs font-medium text-foreground">Item scanned!</span>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [5, -5, 5] }}
-                  transition={{ duration: 3.5, repeat: Infinity }}
-                  className="absolute -right-20 bottom-8 bg-background/90 rounded-xl px-3 py-2 shadow-card"
-                >
-                  <div className="flex items-center gap-2">
-                    <QrCode size={14} className="text-success" />
-                    <span className="text-xs font-medium text-foreground">You're done!</span>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          </FadeInSection>
-        </div>
-      </section>
-
       {/* ─── FOR SHOPPERS ────────────────────────────── */}
       <section id="shoppers" className="py-20 bg-background">
         <div className="max-w-6xl mx-auto px-6">
@@ -342,53 +281,6 @@ const Index = () => {
               <ComparisonTable />
             </div>
           </FadeInSection>
-        </div>
-      </section>
-
-      {/* ─── TESTIMONIALS ────────────────────────────── */}
-      <section className="py-16 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
-          <FadeInSection>
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">Shoppers love it</h2>
-              <p className="text-muted-foreground mt-2">Real feedback from real people</p>
-            </div>
-          </FadeInSection>
-          <FadeInSection delay={0.1}>
-            <div className="max-w-lg mx-auto">
-              <TestimonialCarousel />
-            </div>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* ─── FIND A STORE (LEAFLET MAP) ──────────────── */}
-      <section id="find-store" className="py-20 bg-muted/30">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
-            <FadeInSection className="lg:col-span-2">
-              <div>
-                <span className="text-primary text-sm font-semibold uppercase tracking-wider">Find a Store</span>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">SKAAP near you</h2>
-                <p className="text-muted-foreground mb-6">
-                  We're live at select Publix, Kroger, Whole Foods, and Trader Joe's locations across the East Coast. More stores added weekly.
-                </p>
-                <div className="space-y-2">
-                  {["New York", "Miami", "Boston", "Washington DC", "Atlanta", "Philadelphia"].map((city) => (
-                    <div key={city} className="flex items-center gap-2 text-sm">
-                      <MapPin size={14} className="text-primary" />
-                      <span className="text-foreground">{city}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </FadeInSection>
-            <FadeInSection delay={0.15} className="lg:col-span-3">
-              <Suspense fallback={<div className="h-[400px] bg-muted rounded-3xl animate-pulse" />}>
-                <StoreMap />
-              </Suspense>
-            </FadeInSection>
-          </div>
         </div>
       </section>
 
