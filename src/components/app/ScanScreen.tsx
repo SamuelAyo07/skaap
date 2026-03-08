@@ -31,28 +31,6 @@ declare global {
 const ZXING_SCRIPT_ID = "zxing-umd-script";
 const ZXING_SCRIPT_SRC = "https://unpkg.com/@zxing/library@latest/umd/index.min.js";
 
-const ALLERGEN_KEYWORDS = [
-  "milk",
-  "egg",
-  "eggs",
-  "peanut",
-  "peanuts",
-  "tree nut",
-  "almond",
-  "cashew",
-  "walnut",
-  "soy",
-  "wheat",
-  "gluten",
-  "sesame",
-  "fish",
-  "shellfish",
-  "shrimp",
-  "crab",
-  "lobster",
-  "mustard",
-];
-
 const loadZxingLibrary = async (): Promise<any> => {
   if (window.ZXing) return window.ZXing;
 
