@@ -18,6 +18,7 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { lookupBarcode } from "@/lib/openfoodfacts";
 import { Input } from "@/components/ui/input";
+import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
@@ -146,6 +147,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
   const [detectedFormat, setDetectedFormat] = useState<string | null>(null);
+  const [infoProduct, setInfoProduct] = useState<Product | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<any>(null);
@@ -545,7 +547,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{lastScanned.name}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.weight}</p>
-                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${lastScanned.price.toFixed(2)}ea</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[15px] font-bold text-scanner-accent">${lastScanned.price.toFixed(2)}ea</p>
+                      <ProductInfoButton onClick={() => setInfoProduct(lastScanned)} />
+                    </div>
                   </div>
                   <motion.button whileTap={{ scale: 0.9 }} onClick={handleAddToCart} className="w-9 h-9 rounded-full bg-scanner-accent text-primary-foreground flex items-center justify-center flex-shrink-0">
                     <span className="text-lg font-bold leading-none">+</span>
@@ -569,7 +574,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{item.product.name}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${item.product.price.toFixed(2)}ea</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[15px] font-bold text-scanner-accent">${item.product.price.toFixed(2)}ea</p>
+                      <ProductInfoButton onClick={() => setInfoProduct(item.product)} />
+                    </div>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-7 h-7 rounded-full bg-foreground/[0.06] flex items-center justify-center">
@@ -614,6 +622,12 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
           </motion.button>
         </div>
       )}
+
+      <ProductInfoSheet
+        product={infoProduct}
+        open={!!infoProduct}
+        onClose={() => setInfoProduct(null)}
+      />
     </div>
   );
 };
