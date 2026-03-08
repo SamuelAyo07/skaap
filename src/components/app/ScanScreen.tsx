@@ -136,6 +136,28 @@ const normalizeAllergenText = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
+const ZXING_FORMAT_MAP: Record<number, string> = {
+  0: "AZTEC", 1: "CODABAR", 2: "CODE-39", 3: "CODE-93", 4: "CODE-128",
+  5: "DATA_MATRIX", 6: "EAN-8", 7: "EAN-13", 8: "ITF", 9: "MAXICODE",
+  10: "PDF-417", 11: "QR", 12: "RSS-14", 13: "RSS-EXP", 14: "UPC-A",
+  15: "UPC-E", 16: "UPC/EAN",
+};
+
+const formatZXingName = (fmt: any): string => {
+  if (typeof fmt === "number") return ZXING_FORMAT_MAP[fmt] || `FORMAT-${fmt}`;
+  if (typeof fmt === "string") return fmt.replace(/_/g, "-");
+  return String(fmt);
+};
+
+const inferFormat = (barcode: string): string => {
+  const digits = barcode.replace(/[^0-9]/g, "");
+  if (digits.length === 13) return "EAN-13";
+  if (digits.length === 8) return "EAN-8";
+  if (digits.length === 12) return "UPC-A";
+  if (digits.length === 6 || digits.length === 7) return "UPC-E";
+  return "CODE-128";
+};
+
 const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const { addItem, removeItem, items, itemCount, total } = useCart();
 
