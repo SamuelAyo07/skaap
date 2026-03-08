@@ -107,8 +107,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [manualBarcode, handleProductFound, addItem]);
 
   const startCamera = useCallback(async () => {
-    if (scannerRef.current || isStartingRef.current) return;
+    if (scannerRef.current || isStartingRef.current || isLookingUp) return;
     isStartingRef.current = true;
+    setLookupError(null);
+    setCameraError(null);
+
     try {
       const scanner = new Html5Qrcode("scanner-container", {
         formatsToSupport: [
@@ -123,21 +126,58 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         verbose: false,
       });
       scannerRef.current = scanner;
-      await scanner.start(
-        { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 280, height: 160 }, aspectRatio: 1.333 },
-        handleBarcodeScan,
-        () => {}
-      );
+
+      const config = {
+        fps: 12,
+        qrbox: (viewfinderWidth: number, viewfinderHeight: number) => ({
+          width: Math.max(Math.min(Math.floor(viewfinderWidth * 0.9), 340), 220),
+          height: Math.max(Math.min(Math.floor(viewfinderHeight * 0.45), 200), 120),
+        }),
+        aspectRatio: 1.777,
+      };
+
+      const cameras = await Html5Qrcode.getCameras();
+      const backCameraId = cameras.find((camera) => /back|rear|environment/i.test(camera.label))?.id;
+      const defaultCameraId = cameras[0]?.id;
+
+      const scanAttempts: Array<() => Promise<void>> = [];
+      if (backCameraId) {
+        scanAttempts.push(() => scanner.start(backCameraId, config, handleBarcodeScan, () => {}));
+      }
+      scanAttempts.push(() => scanner.start({ facingMode: { ideal: "environment" } }, config, handleBarcodeScan, () => {}));
+      if (defaultCameraId && defaultCameraId !== backCameraId) {
+        scanAttempts.push(() => scanner.start(defaultCameraId, config, handleBarcodeScan, () => {}));
+      }
+
+      let started = false;
+      let lastError: unknown = null;
+      for (const attempt of scanAttempts) {
+        try {
+          await attempt();
+          started = true;
+          break;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      if (!started) {
+        throw lastError || new Error("Unable to access camera");
+      }
+
       setCameraActive(true);
-      setCameraError(false);
+      setCameraError(null);
     } catch {
-      setCameraError(true);
+      setCameraError("Camera unavailable. Allow camera access or use manual entry below.");
       setCameraActive(false);
+      try {
+        await scannerRef.current?.clear();
+      } catch {}
       scannerRef.current = null;
+    } finally {
+      isStartingRef.current = false;
     }
-    isStartingRef.current = false;
-  }, [handleBarcodeScan]);
+  }, [handleBarcodeScan, isLookingUp]);
 
   const stopCamera = useCallback(async () => {
     if (scannerRef.current) {
