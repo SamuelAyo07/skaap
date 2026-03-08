@@ -148,6 +148,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  const [detectedFormat, setDetectedFormat] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<any>(null);
