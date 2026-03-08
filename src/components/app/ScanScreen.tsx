@@ -212,11 +212,12 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, []);
 
   const handleDetectedBarcode = useCallback(
-    async (rawText: string) => {
+    async (rawText: string, formatName?: string) => {
       const barcode = rawText.trim();
       if (!barcode || processedBarcodesRef.current.has(barcode)) return;
 
       processedBarcodesRef.current.add(barcode);
+      setDetectedFormat(formatName || inferFormat(barcode));
       await stopCamera();
       playScanBeep();
       await lookupAndShowProduct(barcode);
