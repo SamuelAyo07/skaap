@@ -29,6 +29,14 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  // Show sticky CTA after scrolling past hero
+  useEffect(() => {
+    const handleScroll = () => setShowSticky(window.scrollY > 500);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
