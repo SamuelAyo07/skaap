@@ -323,10 +323,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         }
 
         if (!error) return;
-        const ignorable = ["NotFoundException", "ChecksumException", "FormatException"];
-        if (!ignorable.includes(error?.name)) {
-          setCameraError("Scanner error. Try again or use manual entry.");
-        }
+        // Silently ignore all scan errors — user has manual entry as fallback
       };
 
       if (typeof reader.decodeFromStream === "function") {
