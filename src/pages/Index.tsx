@@ -172,16 +172,146 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" className="bg-foreground py-20">
+      <section id="retailers" className="bg-foreground py-14">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-6">
+            <div className="text-center mb-5">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">For Retailers</span>
-              <h2 className="text-4xl md:text-5xl font-black text-background mt-3 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black text-background mt-2 tracking-tight">
                 Built for the stores<br className="hidden md:block" /> that built your neighborhood
               </h2>
             </div>
           </FadeIn>
+
+          <FadeIn delay={0.1}>
+            <div className="bg-background/5 border border-background/10 rounded-2xl p-6 mb-8 max-w-3xl mx-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center flex-shrink-0">
+                  <Heart size={18} className="text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-background tracking-tight mb-1">Your store matters. We're here to prove it.</h3>
+                  <p className="text-background/45 leading-relaxed text-sm">
+                    The big chains have entire teams building for the future. SKAAP levels the playing field — so your store leads.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+            {[
+              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones." },
+              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan-to-pay." },
+              { icon: Users, title: "Happier customers", desc: "Faster trips, more repeat visits." },
+            ].map((card, i) => (
+              <FadeIn key={i} delay={0.1 + i * 0.06}>
+                <motion.div whileHover={{ y: -3 }} className="bg-background/5 border border-background/10 rounded-2xl p-5">
+                  <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center mb-3">
+                    <card.icon size={18} className="text-accent-foreground" />
+                  </div>
+                  <h3 className="font-bold text-background mb-1 tracking-tight text-sm">{card.title}</h3>
+                  <p className="text-xs text-background/40 leading-relaxed">{card.desc}</p>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn delay={0.2}>
+            <div className="text-center space-y-2">
+              <a href="#contact" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-7 py-3.5 rounded-full font-bold text-sm shadow-hero hover:opacity-90 transition-opacity">
+                Get Started — Free for 90 Days <ArrowRight size={14} />
+              </a>
+              <br />
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
+                See Retailer Dashboard →
+              </motion.button>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── FAQ ─── */}
+      <section className="py-12 bg-background">
+        <div className="max-w-2xl mx-auto px-6">
+          <FadeIn><h2 className="text-2xl font-black text-foreground text-center mb-6 tracking-tight">Questions</h2></FadeIn>
+          <div className="space-y-1.5">
+            {faqs.map((faq, i) => (
+              <FadeIn key={i} delay={i * 0.03}>
+                <motion.div className="border border-border rounded-xl overflow-hidden">
+                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-3.5 text-left">
+                    <span className="font-semibold text-foreground text-sm">{faq.q}</span>
+                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} className="text-muted-foreground" /></motion.div>
+                  </button>
+                  {faqOpen === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={{ duration: 0.2 }}>
+                      <div className="px-3.5 pb-3.5"><p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p></div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CONTACT ─── */}
+      <section id="contact" className="bg-muted/30 py-12">
+        <div className="max-w-xl mx-auto px-6 text-center">
+          <FadeIn>
+            <h2 className="text-2xl font-black text-foreground mb-2 tracking-tight">Let's talk</h2>
+            <p className="text-muted-foreground text-sm mb-6">Shopper or store owner — drop your email.</p>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            {submitted ? (
+              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="bg-success/10 text-success rounded-2xl p-5 font-semibold">✅ Thanks! We'll reach out soon.</motion.div>
+            ) : (
+              <form onSubmit={handleEmailSubmit} className="flex gap-2">
+                <div className="relative flex-1">
+                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full bg-card border border-border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow" />
+                </div>
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-foreground text-background px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity">
+                  {submitting ? "Sending…" : "Get in Touch"}
+                </motion.button>
+              </form>
+            )}
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ─── */}
+      <footer className="bg-foreground py-8">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-2.5">
+              <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" />
+              <div>
+                <span className="font-bold text-background tracking-tight text-sm">SKAAP</span>
+                <p className="text-[10px] text-background/30">Your phone is the checkout.</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-background/50 font-medium">
+              <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
+              <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
+              <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
+              <a href="#contact" className="hover:text-background transition-colors">Contact</a>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
+            </div>
+          </div>
+          <div className="border-t border-background/10 mt-6 pt-6 text-center">
+            <p className="text-[10px] text-background/20">© 2026 SKAAP Technologies Inc.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Index;
 
           <FadeIn delay={0.1}>
             <div className="bg-background/5 border border-background/10 rounded-3xl p-8 mb-10 max-w-3xl mx-auto">
