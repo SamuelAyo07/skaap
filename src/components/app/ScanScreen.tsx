@@ -45,6 +45,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
+  const autoRestartRef = useRef(false);
 
   const handleProductFound = useCallback((product: Product) => {
     setLastScanned(product);
