@@ -12,6 +12,9 @@ interface OpenFoodFactsResponse {
     nutriscore_grade?: string;
     ingredients_text?: string;
     ingredients_text_en?: string;
+    allergens?: string;
+    allergens_from_ingredients?: string;
+    allergens_tags?: string[];
     nutriments?: {
       "energy-kcal_100g"?: number;
       fat_100g?: number;
@@ -34,46 +37,22 @@ function generateFallbackPrice(): number {
   return Math.round((Math.random() * 8 + 1.99) * 100) / 100;
 }
 
-// Fallback demo products for barcodes not found in Open Food Facts
-const fallbackProducts: Record<string, Omit<Product, "id">> = {
-  // Common US grocery barcodes
-  "049000042566": { name: "Coca-Cola Classic", brand: "Coca-Cola", weight: "355 ml", price: 1.99, image: "/placeholder.svg", barcode: "049000042566", nutriScore: "e", nutrition: { calories: 140, fat: 0, sugars: 39, protein: 0, salt: 0.04 } },
-  "028400047685": { name: "Doritos Nacho Cheese", brand: "Doritos", weight: "262 g", price: 4.49, image: "/placeholder.svg", barcode: "028400047685", nutriScore: "d", nutrition: { calories: 140, fat: 8, sugars: 1, protein: 2, salt: 0.21 } },
-  "038000138416": { name: "Frosted Flakes Cereal", brand: "Kellogg's", weight: "382 g", price: 4.99, image: "/placeholder.svg", barcode: "038000138416", nutriScore: "c", nutrition: { calories: 130, fat: 0, sugars: 12, protein: 1, salt: 0.2 } },
-  "041196010107": { name: "Organic Whole Milk", brand: "Organic Valley", weight: "1 gal", price: 6.49, image: "/placeholder.svg", barcode: "041196010107", nutriScore: "b", nutrition: { calories: 150, fat: 8, sugars: 12, protein: 8, salt: 0.12 } },
-  "021130126026": { name: "Greek Yogurt Plain", brand: "Chobani", weight: "150 g", price: 1.79, image: "/placeholder.svg", barcode: "021130126026", nutriScore: "a", nutrition: { calories: 90, fat: 0, sugars: 4, protein: 16, salt: 0.07 } },
-};
+function parseAllergens(product: NonNullable<OpenFoodFactsResponse["product"]>): string[] | undefined {
+  const fromTags = (product.allergens_tags || []).map((tag) =>
+    tag
+      .replace(/^\w+:/, "")
+      .replace(/_/g, " ")
+      .replace(/-/g, " ")
+      .trim()
+  );
 
-// Generate a plausible demo product for any unknown barcode
-function generateDemoProduct(barcode: string): Product {
-  const demoNames = [
-    { name: "Organic Granola Bar", brand: "Nature Valley", weight: "42 g", nutriScore: "b" },
-    { name: "Sparkling Water Lime", brand: "LaCroix", weight: "355 ml", nutriScore: "a" },
-    { name: "Cheddar Cheese Slices", brand: "Tillamook", weight: "227 g", nutriScore: "c" },
-    { name: "Almond Butter", brand: "Justin's", weight: "454 g", nutriScore: "b" },
-    { name: "Sourdough Bread", brand: "Dave's Killer Bread", weight: "765 g", nutriScore: "b" },
-    { name: "Chicken Broth", brand: "Pacific Foods", weight: "946 ml", nutriScore: "a" },
-    { name: "Dark Chocolate Bar", brand: "Endangered Species", weight: "85 g", nutriScore: "d" },
-    { name: "Mixed Berry Jam", brand: "Bonne Maman", weight: "370 g", nutriScore: "c" },
-  ];
-  const pick = demoNames[Math.abs(hashCode(barcode)) % demoNames.length];
-  return {
-    id: barcode,
-    name: pick.name,
-    brand: pick.brand,
-    weight: pick.weight,
-    price: generateFallbackPrice(),
-    image: "/placeholder.svg",
-    barcode,
-    nutriScore: pick.nutriScore,
-    nutrition: { calories: 120 + (hashCode(barcode) % 180), fat: 2 + (hashCode(barcode) % 15), sugars: 3 + (hashCode(barcode) % 20), protein: 2 + (hashCode(barcode) % 12), salt: 0.1 },
-  };
-}
+  const fromText = `${product.allergens_from_ingredients || ""},${product.allergens || ""}`
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
 
-function hashCode(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-  return Math.abs(h);
+  const allergens = [...new Set([...fromTags, ...fromText])].filter(Boolean);
+  return allergens.length ? allergens : undefined;
 }
 
 async function fetchPrice(barcode: string): Promise<number> {
@@ -99,51 +78,46 @@ export async function lookupBarcode(barcode: string): Promise<Product | null> {
       fetchPrice(barcode),
     ]);
 
-    if (productRes.ok) {
-      const data: OpenFoodFactsResponse = await productRes.json();
-      if (data.status === 1 && data.product) {
-        const p = data.product;
-        const n = p.nutriments;
-        const nutrition: NutritionInfo | undefined = n
-          ? {
-              calories: n["energy-kcal_100g"],
-              fat: n.fat_100g,
-              saturatedFat: n["saturated-fat_100g"],
-              carbs: n.carbohydrates_100g,
-              sugars: n.sugars_100g,
-              protein: n.proteins_100g,
-              salt: n.salt_100g,
-              fiber: n.fiber_100g,
-            }
-          : undefined;
-
-        return {
-          id: barcode,
-          name: p.product_name || "Unknown Product",
-          brand: p.brands || undefined,
-          weight: p.quantity || "",
-          price,
-          image: p.image_front_url || p.image_url || "/placeholder.svg",
-          barcode,
-          nutriScore: p.nutriscore_grade || undefined,
-          ingredients: p.ingredients_text_en || p.ingredients_text || undefined,
-          nutrition,
-        };
-      }
+    if (!productRes.ok) {
+      return null;
     }
 
-    // Fallback: check hardcoded demo products
-    if (fallbackProducts[barcode]) {
-      return { id: barcode, ...fallbackProducts[barcode] };
+    const data: OpenFoodFactsResponse = await productRes.json();
+    if (data.status !== 1 || !data.product) {
+      return null;
     }
 
-    // Generate a plausible demo product for any barcode
-    return generateDemoProduct(barcode);
+    const p = data.product;
+    const n = p.nutriments;
+
+    const nutrition: NutritionInfo | undefined = n
+      ? {
+          calories: n["energy-kcal_100g"],
+          fat: n.fat_100g,
+          saturatedFat: n["saturated-fat_100g"],
+          carbs: n.carbohydrates_100g,
+          sugars: n.sugars_100g,
+          protein: n.proteins_100g,
+          salt: n.salt_100g,
+          fiber: n.fiber_100g,
+        }
+      : undefined;
+
+    return {
+      id: barcode,
+      name: p.product_name || "Unknown Product",
+      brand: p.brands || undefined,
+      weight: p.quantity || "",
+      price,
+      image: p.image_front_url || p.image_url || "/placeholder.svg",
+      barcode,
+      nutriScore: p.nutriscore_grade || undefined,
+      ingredients: p.ingredients_text_en || p.ingredients_text || undefined,
+      allergens: parseAllergens(p),
+      nutrition,
+    };
   } catch {
-    // Even on network failure, return a demo product
-    if (fallbackProducts[barcode]) {
-      return { id: barcode, ...fallbackProducts[barcode] };
-    }
-    return generateDemoProduct(barcode);
+    return null;
   }
 }
+

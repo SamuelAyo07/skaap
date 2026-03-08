@@ -25,6 +25,7 @@ export interface Product {
   barcode: string;
   nutriScore?: string;
   ingredients?: string;
+  allergens?: string[];
   nutrition?: NutritionInfo;
 }
 
