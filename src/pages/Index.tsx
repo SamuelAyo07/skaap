@@ -140,7 +140,7 @@ const Index = () => {
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
                   <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 bg-muted/30 border border-border/40">
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                    <img src={item.img} alt={`SKAAP app ${item.title} step screenshot`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
                   <h3 className="font-bold text-base text-foreground tracking-tight">{item.title}</h3>
                   <p className="text-muted-foreground text-xs mt-0.5">{item.desc}</p>
