@@ -395,16 +395,16 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         />
 
         {!cameraActive && (
-          <div className="absolute inset-0 bg-background/75 backdrop-blur-[2px] flex flex-col items-center justify-center gap-4 px-6 z-10">
+          <div className="absolute inset-0 bg-scanner-ink/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 px-6 z-10">
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={startCamera}
-              className="bg-scanner-accent text-primary-foreground rounded-full px-7 py-3.5 flex items-center gap-2.5 font-semibold text-sm shadow-elevated"
+              className="bg-scanner-accent text-primary-foreground rounded-full px-6 py-3 flex items-center gap-2 font-semibold text-[13px] shadow-elevated"
             >
-              <Camera size={18} /> Scan with Camera
+              <Camera size={16} /> Scan with Camera
             </motion.button>
             {cameraError && (
-              <p className="text-xs text-destructive text-center max-w-[260px]">{cameraError}</p>
+              <p className="text-[11px] text-destructive text-center max-w-[240px]">{cameraError}</p>
             )}
           </div>
         )}
