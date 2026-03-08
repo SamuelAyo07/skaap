@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Navigation, ChevronRight, Loader2 } from "lucide-react";
+import { MapPin, Navigation, ChevronRight, Loader2, Sparkles } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import storeTraderJoes from "@/assets/store-traderjoes-boston.jpg";
 import storeWholeFoods from "@/assets/store-wholefoods-cambridge.jpg";
@@ -17,7 +17,7 @@ const demoStores = [
 ];
 
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  const R = 3959; // miles
+  const R = 3959;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
   const a =
@@ -41,7 +41,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
       return;
     }
 
-    const timeout = setTimeout(() => setPhase("ready"), 4000); // fallback after 4s
+    const timeout = setTimeout(() => setPhase("ready"), 4000);
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -69,7 +69,6 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Locating screen
   if (phase === "locating") {
     return (
       <div className="flex flex-col items-center justify-center h-screen px-8 bg-background">
@@ -78,21 +77,25 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center"
         >
-          <div className="relative mb-8">
+          <div className="relative mb-10">
             <motion.div
-              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.1, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 rounded-full bg-primary/20 -m-4"
+              animate={{ scale: [1, 1.6, 1], opacity: [0.15, 0.05, 0.15] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
+              className="absolute inset-0 rounded-full bg-foreground/10 -m-6"
             />
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Navigation size={28} className="text-primary" />
+            <motion.div
+              animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.08, 0.2] }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }}
+              className="absolute inset-0 rounded-full bg-foreground/10 -m-3"
+            />
+            <div className="w-16 h-16 rounded-full bg-foreground flex items-center justify-center">
+              <Navigation size={24} className="text-background" />
             </div>
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Finding your store…</h2>
-          <p className="text-sm text-muted-foreground text-center">
-            Using your location to find the nearest SKAAP store
+          <h2 className="text-2xl font-bold text-foreground tracking-tight mb-2">Finding your store</h2>
+          <p className="text-sm text-muted-foreground text-center max-w-[240px]">
+            Using your location to find the nearest store
           </p>
-          <Loader2 size={20} className="text-primary animate-spin mt-6" />
         </motion.div>
       </div>
     );
@@ -102,82 +105,87 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
     <div className="px-5 pt-14 pb-24 bg-background min-h-screen">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: -8 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8"
+        className="mb-8"
       >
-        <img src={skaapIcon} alt="SKAAP" className="w-10 h-10 rounded-xl" />
-        <div>
-          <h1 className="text-lg font-bold text-foreground leading-tight">Good to see you</h1>
-          <p className="text-xs text-muted-foreground">
-            {nearestName ? `${nearestName} is closest` : "Pick a store to start"}
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground mb-1">
+          {nearestName ? `${nearestName} is closest` : "Pick a store to start"}
+        </p>
+        <h1 className="text-[28px] font-bold text-foreground tracking-tight leading-tight">
+          Good morning
+        </h1>
       </motion.div>
 
       {/* Nearest store — hero card */}
       <motion.button
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        whileTap={{ scale: 0.98 }}
+        transition={{ delay: 0.08, type: "spring", stiffness: 200, damping: 24 }}
+        whileTap={{ scale: 0.97 }}
         onClick={onSelectStore}
-        className="w-full rounded-[20px] overflow-hidden shadow-elevated bg-card mb-3 text-left"
+        className="w-full rounded-3xl overflow-hidden shadow-hero bg-card mb-4 text-left group"
       >
-        <div className="relative h-44">
+        <div className="relative h-48">
           <img
             src={sortedStores[0].image}
             alt={sortedStores[0].name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-            <div>
-              {nearestName && (
-                <span className="text-[10px] font-semibold text-primary bg-primary/20 backdrop-blur-sm rounded-full px-2.5 py-0.5 mb-1.5 inline-block uppercase tracking-wider">
-                  Nearest
-                </span>
-              )}
-              <h3 className="text-white font-bold text-lg leading-tight">{sortedStores[0].name}</h3>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <MapPin size={11} className="text-white/70" />
-                <p className="text-white/70 text-xs">{sortedStores[0].address}</p>
-              </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
+          
+          {/* Nearest pill */}
+          {nearestName && (
+            <div className="absolute top-4 left-4">
+              <span className="text-[11px] font-semibold text-background bg-accent rounded-full px-3 py-1 uppercase tracking-wider flex items-center gap-1">
+                <Sparkles size={10} /> Nearest
+              </span>
             </div>
-            <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-              {distances[sortedStores[0].id] != null && (
-                <span className="text-white text-xs font-medium">
-                  {distances[sortedStores[0].id].toFixed(1)} mi
-                </span>
-              )}
-              <ChevronRight size={14} className="text-white" />
+          )}
+          
+          <div className="absolute bottom-0 left-0 right-0 p-5">
+            <h3 className="text-background font-bold text-xl tracking-tight">{sortedStores[0].name}</h3>
+            <div className="flex items-center justify-between mt-1.5">
+              <div className="flex items-center gap-1.5">
+                <MapPin size={12} className="text-background/60" />
+                <p className="text-background/60 text-xs">{sortedStores[0].address}</p>
+              </div>
+              <div className="flex items-center gap-1.5 bg-background/15 backdrop-blur-md rounded-full px-3 py-1">
+                {distances[sortedStores[0].id] != null && (
+                  <span className="text-background text-xs font-medium">
+                    {distances[sortedStores[0].id].toFixed(1)} mi
+                  </span>
+                )}
+                <ChevronRight size={12} className="text-background/70" />
+              </div>
             </div>
           </div>
         </div>
       </motion.button>
 
-      {/* Other stores */}
+      {/* Section label */}
       {sortedStores.length > 1 && (
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-5 mb-3 px-1"
+          className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mt-6 mb-3 px-1"
         >
-          Other stores
+          Nearby
         </motion.p>
       )}
 
+      {/* Other stores */}
       <div className="space-y-2">
         {sortedStores.slice(1).map((store, i) => (
           <motion.button
             key={store.id}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 + i * 0.08 }}
-            whileTap={{ scale: 0.98 }}
+            transition={{ delay: 0.24 + i * 0.06, type: "spring", stiffness: 200, damping: 24 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onSelectStore}
-            className="w-full flex items-center gap-3.5 bg-card rounded-2xl p-3 shadow-card text-left"
+            className="w-full flex items-center gap-4 bg-muted/50 rounded-2xl p-3.5 text-left group"
           >
             <img
               src={store.image}
@@ -185,19 +193,19 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
               className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-foreground truncate">{store.name}</h3>
+              <h3 className="text-sm font-semibold text-foreground truncate tracking-tight">{store.name}</h3>
               <div className="flex items-center gap-1 mt-0.5">
                 <MapPin size={10} className="text-muted-foreground flex-shrink-0" />
                 <p className="text-xs text-muted-foreground truncate">{store.address}</p>
               </div>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {distances[store.id] != null && (
                 <span className="text-xs text-muted-foreground font-medium">
                   {distances[store.id].toFixed(1)} mi
                 </span>
               )}
-              <ChevronRight size={16} className="text-muted-foreground/50" />
+              <ChevronRight size={14} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
             </div>
           </motion.button>
         ))}
