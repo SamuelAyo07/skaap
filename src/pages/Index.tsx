@@ -97,16 +97,27 @@ const Index = () => {
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-5">
               Scan it.<br />Pay instantly.<br /><span className="text-gradient">Walk out.</span>
             </h1>
-            <p className="text-background/50 text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-background/50 text-lg md:text-xl mb-4 max-w-2xl mx-auto font-light leading-relaxed">
               Your phone becomes the checkout. No lines, no registers, no waiting.
             </p>
+            {/* Social proof */}
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex -space-x-2">
+                {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
+                  <div key={i} className="w-6 h-6 rounded-full bg-background/20 border-2 border-foreground flex items-center justify-center text-[10px]">{c}</div>
+                ))}
+              </div>
+              <p className="text-background/40 text-xs font-medium">
+                <span className="text-background/70 font-bold">85+ people</span> tried SKAAP this week
+              </p>
+            </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-3">
             <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
               <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Play size={20} fill="currentColor" /> Try the Demo
             </motion.button>
-            <p className="text-background/25 text-xs">30 seconds · No account needed</p>
+            <p className="text-background/25 text-xs">30 seconds · No signup · Works on any phone</p>
             <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors">
               <Store size={15} /> I Own a Store
             </a>
