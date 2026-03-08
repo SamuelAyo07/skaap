@@ -40,7 +40,7 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
             <p className="text-xs text-muted-foreground mt-1">Scan items to add them here</p>
           </motion.div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <AnimatePresence>
               {items.map((item, i) => (
                 <motion.div
@@ -58,18 +58,18 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
                   <motion.div
                     animate={{ x: swipedId === item.product.id ? -80 : 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="relative bg-card border border-border/50 flex items-center gap-3 p-3 rounded-2xl"
+                    className="relative bg-card border border-border/50 flex items-center gap-3 p-3.5 rounded-2xl"
                     onClick={() => setSwipedId(swipedId === item.product.id ? null : item.product.id)}
                   >
-                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted/40 flex-shrink-0">
-                      <img src={item.product.image} alt={item.product.name} className="w-full h-full object-contain p-1" />
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
+                      <img src={item.product.image} alt={item.product.name} className="w-full h-full object-contain p-1.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm text-foreground leading-tight line-clamp-2">{item.product.name}</h3>
+                      <h3 className="font-bold text-[15px] text-foreground leading-snug line-clamp-2">{item.product.name}</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                      <p className="text-sm font-bold text-scanner-accent mt-0.5">
+                      <p className="text-[15px] font-bold text-scanner-accent mt-0.5">
                         ${item.product.price.toFixed(2)}ea
-                        {item.quantity > 1 && <span className="text-muted-foreground font-medium ml-1">× {item.quantity}</span>}
+                        {item.quantity > 1 && <span className="text-muted-foreground font-medium text-xs ml-1">× {item.quantity}</span>}
                       </p>
                     </div>
                   </motion.div>

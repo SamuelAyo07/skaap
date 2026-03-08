@@ -500,95 +500,84 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         )}
       </AnimatePresence>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-32">
-        <AnimatePresence>
-          {showAddedFeedback && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="flex items-center gap-2 bg-scanner-ink text-primary-foreground rounded-full px-4 py-2.5 mb-3 w-fit mx-auto"
-            >
-              <Sparkles size={14} />
-              <span className="text-xs font-semibold">Added to cart</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Compact scanned product preview */}
-        {lastScanned && !items.find(i => i.product.id === lastScanned.id) && (
-          <motion.div
-            key={`preview-${lastScanned.id}`}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 bg-card rounded-2xl p-3 border-2 border-scanner-accent/30 mb-3"
-          >
-            <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted/40 flex-shrink-0">
-              <img
-                src={lastScanned.image}
-                alt={lastScanned.name}
-                className="w-full h-full object-contain p-1"
-                onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
-              />
+      {/* Bottom sheet style scanned items */}
+      <div className="flex-1 overflow-y-auto pb-32">
+        {(items.length > 0 || lastScanned) && (
+          <div className="mx-0 mt-2 bg-background rounded-t-3xl pt-2">
+            <div className="flex justify-center py-1.5">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/20" />
             </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-2">{lastScanned.name}</h4>
-              <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.weight}</p>
-              <p className="text-sm font-bold text-scanner-accent mt-0.5">${lastScanned.price.toFixed(2)}ea</p>
-            </div>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={handleAddToCart}
-              className="w-10 h-10 rounded-full bg-scanner-accent text-primary-foreground flex items-center justify-center flex-shrink-0"
-            >
-              <span className="text-xl font-bold leading-none">+</span>
-            </motion.button>
-          </motion.div>
-        )}
+            <div className="px-4 space-y-2 pb-4">
+              <AnimatePresence>
+                {showAddedFeedback && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    className="flex items-center gap-2 bg-scanner-ink text-primary-foreground rounded-full px-4 py-2 mb-2 w-fit mx-auto"
+                  >
+                    <Sparkles size={13} />
+                    <span className="text-xs font-semibold">Added to cart</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-        {/* Cart items list - compact rows */}
-        {items.length > 0 && (
-          <div className="space-y-2">
-            {items.map((item, i) => (
-              <motion.div
-                key={item.product.id}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.03 }}
-                className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/50"
-              >
-                <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted/40 flex-shrink-0">
-                  <img
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-full h-full object-contain p-1"
-                    onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-2">{item.product.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                  <p className="text-sm font-bold text-scanner-accent mt-0.5">
-                    ${item.product.price.toFixed(2)}ea
-                    {item.quantity > 1 && <span className="text-muted-foreground font-medium ml-1">× {item.quantity}</span>}
-                  </p>
-                </div>
-                <button
-                  onClick={() => removeItem(item.product.id)}
-                  className="w-8 h-8 rounded-full bg-foreground/5 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all flex-shrink-0"
+              {/* Scanned product preview */}
+              {lastScanned && !items.find(i => i.product.id === lastScanned.id) && (
+                <motion.div
+                  key={`preview-${lastScanned.id}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 bg-card rounded-2xl p-3 border-2 border-scanner-accent/20"
                 >
-                  <Trash2 size={14} />
-                </button>
-              </motion.div>
-            ))}
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
+                    <img src={lastScanned.image} alt={lastScanned.name} className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{lastScanned.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.weight}</p>
+                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${lastScanned.price.toFixed(2)}ea</p>
+                  </div>
+                  <motion.button whileTap={{ scale: 0.9 }} onClick={handleAddToCart} className="w-9 h-9 rounded-full bg-scanner-accent text-primary-foreground flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-bold leading-none">+</span>
+                  </motion.button>
+                </motion.div>
+              )}
+
+              {/* Cart items */}
+              {items.map((item, i) => (
+                <motion.div
+                  key={item.product.id}
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/50"
+                >
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
+                    <img src={item.product.image} alt={item.product.name} className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{item.product.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
+                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">
+                      ${item.product.price.toFixed(2)}ea
+                      {item.quantity > 1 && <span className="text-muted-foreground font-medium text-xs ml-1">× {item.quantity}</span>}
+                    </p>
+                  </div>
+                  <button onClick={() => removeItem(item.product.id)} className="w-8 h-8 rounded-full bg-foreground/5 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all flex-shrink-0">
+                    <Trash2 size={13} />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
 
         {items.length === 0 && !lastScanned && (
-          <div className="flex flex-col items-center justify-center pt-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-foreground/[0.03] flex items-center justify-center mb-4">
-              <Barcode size={28} className="text-muted-foreground/40" />
+          <div className="flex flex-col items-center justify-center pt-12 text-center px-4">
+            <div className="w-14 h-14 rounded-full bg-foreground/[0.03] flex items-center justify-center mb-3">
+              <Barcode size={24} className="text-muted-foreground/40" />
             </div>
             <p className="text-sm font-semibold text-foreground">Ready to scan</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
