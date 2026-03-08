@@ -385,13 +385,13 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </div>
       </div>
 
-      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink/10 border border-scanner-ink/20 aspect-[4/3]">
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-scanner-ink/30 aspect-[16/9] shadow-elevated">
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className="w-full h-full object-cover bg-muted"
+          className="w-full h-full object-cover"
         />
 
         {!cameraActive && (
