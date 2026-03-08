@@ -39,8 +39,8 @@ const AppPage = () => {
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-foreground flex justify-center">
-        <div className="w-full max-w-[390px] min-h-screen relative bg-background shadow-elevated overflow-hidden">
+      <div className="min-h-screen flex justify-center bg-background md:bg-foreground">
+        <div className="w-full md:max-w-[390px] min-h-screen relative bg-background md:shadow-elevated overflow-hidden">
           {splashDone && screen === "home" && (
             <button
               onClick={() => navigate("/")}
