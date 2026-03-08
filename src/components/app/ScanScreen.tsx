@@ -108,12 +108,6 @@ const playScanBeep = () => {
   }
 };
 
-const normalizeAllergenText = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/[_-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 
 const ZXING_FORMAT_MAP: Record<number, string> = {
   0: "AZTEC", 1: "CODABAR", 2: "CODE-39", 3: "CODE-93", 4: "CODE-128",
