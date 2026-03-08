@@ -426,9 +426,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             >
               <Camera size={18} /> Scan with Camera
             </motion.button>
-            <p className="text-[11px] text-muted-foreground text-center">
-              Fast mode enabled · scans every 100ms for checkout-speed demos
-            </p>
             {cameraError && (
               <p className="text-xs text-destructive text-center max-w-[260px]">{cameraError}</p>
             )}
