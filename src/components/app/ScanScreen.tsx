@@ -547,7 +547,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{lastScanned.name}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.weight}</p>
-                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${lastScanned.price.toFixed(2)}ea</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[15px] font-bold text-scanner-accent">${lastScanned.price.toFixed(2)}ea</p>
+                      <ProductInfoButton onClick={() => setInfoProduct(lastScanned)} />
+                    </div>
                   </div>
                   <motion.button whileTap={{ scale: 0.9 }} onClick={handleAddToCart} className="w-9 h-9 rounded-full bg-scanner-accent text-primary-foreground flex items-center justify-center flex-shrink-0">
                     <span className="text-lg font-bold leading-none">+</span>
