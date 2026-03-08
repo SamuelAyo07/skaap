@@ -151,6 +151,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     setCameraActive(false);
   }, []);
 
+  // Auto-restart camera after a scan
+  useEffect(() => {
+    if (!isLookingUp && autoRestartRef.current && !cameraActive) {
+      autoRestartRef.current = false;
+      const timer = setTimeout(() => startCamera(), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLookingUp, cameraActive, startCamera]);
+
   useEffect(() => {
     return () => { stopCamera(); };
   }, [stopCamera]);
