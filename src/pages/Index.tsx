@@ -8,9 +8,9 @@ import {
   Heart, Users, Zap,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import stepScan from "@/assets/step-scan.png";
-import stepPay from "@/assets/step-pay.png";
-import stepReceipt from "@/assets/step-receipt.png";
+import stepScan from "@/assets/step-scan.webp";
+import stepPay from "@/assets/step-pay.webp";
+import stepReceipt from "@/assets/step-receipt.webp";
 
 
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
