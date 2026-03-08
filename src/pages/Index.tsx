@@ -257,7 +257,7 @@ const Index = () => {
             {faqs.map((faq, i) => (
               <FadeIn key={i} delay={i * 0.03}>
                 <motion.div className="border border-border rounded-xl overflow-hidden">
-                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-3.5 text-left">
+                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
                     <span className="font-semibold text-foreground text-sm">{faq.q}</span>
                     <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} className="text-muted-foreground" /></motion.div>
                   </button>
