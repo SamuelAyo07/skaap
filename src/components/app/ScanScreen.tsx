@@ -10,7 +10,8 @@ import {
   X,
   Flashlight,
   FlashlightOff,
-  
+  Plus,
+  Minus,
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
