@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, Receipt,
   Mail, Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin,
