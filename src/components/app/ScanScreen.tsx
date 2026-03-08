@@ -87,7 +87,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [handleProductFound, addItem]);
 
   const handleManualLookup = useCallback(async () => {
-    const barcode = manualBarcode.trim();
+    const barcode = manualBarcode.replace(/\s+/g, "").trim();
     if (!barcode) return;
 
     setIsLookingUp(true);
@@ -100,7 +100,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
       setManualBarcode("");
-      setShowManualInput(false);
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
     }
