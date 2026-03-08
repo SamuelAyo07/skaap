@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, QrCode,
   Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
-  Smartphone, ArrowRight, ChevronDown, Play, Sparkles
+  Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import heroPhone from "@/assets/hero-phone-mockup.png";
