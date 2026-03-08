@@ -385,7 +385,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </div>
       </div>
 
-      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-scanner-ink/30 aspect-[16/9] shadow-elevated">
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-white/[0.08] aspect-[2/1] shadow-elevated">
         <video
           ref={videoRef}
           autoPlay
@@ -393,6 +393,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
           muted
           className="w-full h-full object-cover"
         />
+
+        {/* Premium gradient overlays */}
+        <div className="absolute inset-0 pointer-events-none z-[5]">
+          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-scanner-ink/60 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-scanner-ink/60 to-transparent" />
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-scanner-ink/40 to-transparent" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-scanner-ink/40 to-transparent" />
+        </div>
 
         {!cameraActive && (
           <div className="absolute inset-0 bg-scanner-ink/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 px-6 z-10">
@@ -412,11 +420,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         {cameraActive && (
           <>
             <div className="absolute inset-0 z-10 pointer-events-none">
-              <div className="absolute inset-5 border border-scanner-accent/60 rounded-xl" />
+              <div className="absolute inset-4 border border-scanner-accent/40 rounded-lg" />
               <motion.div
-                animate={{ y: [10, 200, 10] }}
+                animate={{ y: [8, 140, 8] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-8 right-8 h-[2px] bg-scanner-accent shadow-[0_0_16px_hsl(var(--scanner-accent)/0.9)]"
+                className="absolute left-6 right-6 h-[1.5px] bg-scanner-accent/80 shadow-[0_0_12px_hsl(var(--scanner-accent)/0.7)]"
               />
             </div>
 
