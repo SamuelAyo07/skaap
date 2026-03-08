@@ -142,43 +142,35 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── SMART INFO ─── */}
-      <section className="py-20 bg-muted/30">
+      {/* ─── SMART INFO (compact banner) ─── */}
+      <section className="py-10 bg-muted/30">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-12">
-              <span className="text-accent text-xs font-bold uppercase tracking-widest">Smart Info</span>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground mt-3 tracking-tight">
-                Know what you're buying.<br className="hidden md:block" /> Instantly.
-              </h2>
-              <p className="text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
-                Tap any scanned item for real-time nutrition data — Nutri-Score, ingredients, allergens, additives, and certifications. All powered by open data, right in the checkout flow.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { emoji: "🅰️", title: "Nutri-Score", desc: "A-to-E nutritional quality rating at a glance — color-coded so you know in a second." },
-              { emoji: "🧪", title: "Additives & Allergens", desc: "See every E-number with risk levels, plus allergens highlighted in bold." },
-              { emoji: "📊", title: "Full Nutrition Facts", desc: "Calories, fats, sugars, protein, fiber — per 100g with color-coded levels." },
-              { emoji: "🏷️", title: "Labels & Certifications", desc: "Organic, Vegan, Fair Trade, Non-GMO — see what's on the label without reading it." },
-            ].map((card, i) => (
-              <FadeIn key={i} delay={i * 0.06}>
-                <motion.div whileHover={{ y: -3 }} className="bg-background border border-border/50 rounded-2xl p-6 h-full">
-                  <span className="text-2xl mb-3 block">{card.emoji}</span>
-                  <h3 className="font-bold text-foreground tracking-tight mb-1.5">{card.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
-                </motion.div>
-              </FadeIn>
-            ))}
-          </div>
-
-          <FadeIn delay={0.25}>
-            <div className="text-center mt-10">
-              <p className="text-xs text-muted-foreground">
-                Nutritional data powered by Open Food Facts · 100% optional · never slows down checkout
-              </p>
+            <div className="bg-background border border-border/50 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-5">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">🌿</span>
+                  <span className="text-accent text-[10px] font-bold uppercase tracking-widest">Smart Info</span>
+                </div>
+                <h3 className="text-xl md:text-2xl font-black text-foreground tracking-tight leading-snug">
+                  Know what you're buying — instantly.
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-xl">
+                  Tap any scanned item for Nutri-Score, allergens, additives, nutrition facts & certifications. Powered by open data, never slows checkout.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {["Nutri-Score", "Allergens", "Additives", "Nutrition Facts", "Certifications"].map((tag) => (
+                    <span key={tag} className="text-[11px] font-semibold bg-muted text-foreground px-2.5 py-1 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/app")}
+                className="bg-foreground text-background px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0"
+              >
+                <Play size={12} fill="currentColor" /> Try It
+              </motion.button>
             </div>
           </FadeIn>
         </div>
