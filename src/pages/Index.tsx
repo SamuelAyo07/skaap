@@ -110,62 +110,60 @@ const Index = () => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-20 bg-background">
+      <section id="how-it-works" className="py-14 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-14">
+            <div className="text-center mb-10">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">How it Works</span>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground mt-3 tracking-tight">Three steps. That's it.</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mt-2 tracking-tight">Three steps. That's it.</h2>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
             {[
-              { step: "01", icon: ScanLine, title: "Scan products", desc: "Point your camera at any barcode. Items add to your bag instantly." },
-              { step: "02", icon: CreditCard, title: "Pay in-app", desc: "Apple Pay, Google Pay, or card. One tap — no register needed." },
-              { step: "03", icon: Receipt, title: "Show receipt & go", desc: "Flash your QR receipt at the exit. Walk out." },
+              { img: stepScan, title: "Scan", desc: "Point & scan" },
+              { img: stepPay, title: "Pay", desc: "Tap to pay" },
+              { img: stepReceipt, title: "Go", desc: "Show & leave" },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
-                <motion.div whileHover={{ y: -4 }} className="relative bg-muted/40 rounded-3xl p-8 text-center border border-border/50">
-                  <span className="text-7xl font-black text-foreground/[0.04] absolute top-4 right-6 select-none">{item.step}</span>
-                  <div className="w-14 h-14 rounded-2xl bg-foreground flex items-center justify-center mx-auto mb-5">
-                    <item.icon size={24} className="text-background" />
-                  </div>
-                  <h3 className="font-bold text-xl text-foreground tracking-tight mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-                </motion.div>
+                <div className="flex flex-col items-center text-center">
+                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 bg-muted/30 border border-border/40">
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                  </motion.div>
+                  <h3 className="font-bold text-base text-foreground tracking-tight">{item.title}</h3>
+                  <p className="text-muted-foreground text-xs mt-0.5">{item.desc}</p>
+                </div>
               </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── SMART INFO (compact banner) ─── */}
-      <section className="py-10 bg-muted/30">
+      {/* ─── SMART INFO (compact banner with demo image) ─── */}
+      <section className="py-8 bg-muted/30">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="bg-background border border-border/50 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-5">
+            <div className="bg-background border border-border/50 rounded-2xl p-5 md:p-6 flex items-center gap-5">
+              <div className="w-16 h-28 md:w-20 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-muted/20 border border-border/30 hidden sm:block">
+                <img src={smartInfoDemo} alt="Smart Info demo" className="w-full h-full object-cover" />
+              </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🌿</span>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-base">🌿</span>
                   <span className="text-accent text-[10px] font-bold uppercase tracking-widest">Smart Info</span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-black text-foreground tracking-tight leading-snug">
+                <h3 className="text-lg md:text-xl font-black text-foreground tracking-tight leading-snug">
                   Know what you're buying — instantly.
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-xl">
-                  Tap any scanned item for Nutri-Score, allergens, additives, nutrition facts & certifications. Powered by open data, never slows checkout.
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-xl hidden md:block">
+                  Tap any scanned item for Nutri-Score, allergens, additives & nutrition facts.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {["Nutri-Score", "Allergens", "Additives", "Nutrition Facts", "Certifications"].map((tag) => (
-                    <span key={tag} className="text-[11px] font-semibold bg-muted text-foreground px-2.5 py-1 rounded-full">{tag}</span>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {["Nutri-Score", "Allergens", "Additives", "Nutrition"].map((tag) => (
+                    <span key={tag} className="text-[10px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-full">{tag}</span>
                   ))}
                 </div>
               </div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/app")}
-                className="bg-foreground text-background px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0"
-              >
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0">
                 <Play size={12} fill="currentColor" /> Try It
               </motion.button>
             </div>
