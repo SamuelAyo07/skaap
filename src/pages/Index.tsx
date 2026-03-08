@@ -8,6 +8,10 @@ import {
   Heart, Users, Zap,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
+import stepScan from "@/assets/step-scan.png";
+import stepPay from "@/assets/step-pay.png";
+import stepReceipt from "@/assets/step-receipt.png";
+import smartInfoDemo from "@/assets/smart-info-demo.png";
 
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
@@ -75,100 +79,91 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative pt-32 pb-20 md:pt-44 md:pb-28 overflow-hidden bg-foreground">
+      <section className="relative pt-28 pb-14 md:pt-36 md:pb-20 overflow-hidden bg-foreground">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(0 0% 100%) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative max-w-5xl mx-auto px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-flex items-center gap-1.5 bg-background/10 text-background/80 text-xs font-medium px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1.5 bg-background/10 text-background/80 text-xs font-medium px-3.5 py-1.5 rounded-full mb-5 backdrop-blur-sm">
               <Sparkles size={12} /> Now launching on the East Coast 🇺🇸
             </span>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-6">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-5">
               Scan it.<br />Pay instantly.<br /><span className="text-gradient">Walk out.</span>
             </h1>
-            <p className="text-background/50 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-background/50 text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed">
               Your phone becomes the checkout. No lines, no registers, no waiting.
             </p>
           </motion.div>
-
-          {/* LOUD Demo CTA */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => navigate("/app")}
-              className="bg-accent text-accent-foreground px-12 py-6 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group"
-            >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-3">
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
               <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Play size={20} fill="currentColor" /> Try the Demo
             </motion.button>
             <p className="text-background/25 text-xs">30 seconds · No account needed</p>
-            <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3.5 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors mt-1">
+            <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors">
               <Store size={15} /> I Own a Store
             </a>
           </motion.div>
         </div>
-        <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-background/20">
+        <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-6 left-1/2 -translate-x-1/2 text-background/20">
           <ChevronDown size={20} />
         </motion.div>
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-20 bg-background">
+      <section id="how-it-works" className="py-14 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-14">
+            <div className="text-center mb-10">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">How it Works</span>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground mt-3 tracking-tight">Three steps. That's it.</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mt-2 tracking-tight">Three steps. That's it.</h2>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
             {[
-              { step: "01", icon: ScanLine, title: "Scan products", desc: "Point your camera at any barcode. Items add to your bag instantly." },
-              { step: "02", icon: CreditCard, title: "Pay in-app", desc: "Apple Pay, Google Pay, or card. One tap — no register needed." },
-              { step: "03", icon: Receipt, title: "Show receipt & go", desc: "Flash your QR receipt at the exit. Walk out." },
+              { img: stepScan, title: "Scan", desc: "Point & scan" },
+              { img: stepPay, title: "Pay", desc: "Tap to pay" },
+              { img: stepReceipt, title: "Go", desc: "Show & leave" },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
-                <motion.div whileHover={{ y: -4 }} className="relative bg-muted/40 rounded-3xl p-8 text-center border border-border/50">
-                  <span className="text-7xl font-black text-foreground/[0.04] absolute top-4 right-6 select-none">{item.step}</span>
-                  <div className="w-14 h-14 rounded-2xl bg-foreground flex items-center justify-center mx-auto mb-5">
-                    <item.icon size={24} className="text-background" />
-                  </div>
-                  <h3 className="font-bold text-xl text-foreground tracking-tight mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-                </motion.div>
+                <div className="flex flex-col items-center text-center">
+                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 bg-muted/30 border border-border/40">
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                  </motion.div>
+                  <h3 className="font-bold text-base text-foreground tracking-tight">{item.title}</h3>
+                  <p className="text-muted-foreground text-xs mt-0.5">{item.desc}</p>
+                </div>
               </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── SMART INFO (compact banner) ─── */}
-      <section className="py-10 bg-muted/30">
+      {/* ─── SMART INFO (compact banner with demo image) ─── */}
+      <section className="py-8 bg-muted/30">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="bg-background border border-border/50 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-5">
+            <div className="bg-background border border-border/50 rounded-2xl p-5 md:p-6 flex items-center gap-5">
+              <div className="w-16 h-28 md:w-20 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-muted/20 border border-border/30 hidden sm:block">
+                <img src={smartInfoDemo} alt="Smart Info demo" className="w-full h-full object-cover" />
+              </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🌿</span>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-base">🌿</span>
                   <span className="text-accent text-[10px] font-bold uppercase tracking-widest">Smart Info</span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-black text-foreground tracking-tight leading-snug">
+                <h3 className="text-lg md:text-xl font-black text-foreground tracking-tight leading-snug">
                   Know what you're buying — instantly.
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-xl">
-                  Tap any scanned item for Nutri-Score, allergens, additives, nutrition facts & certifications. Powered by open data, never slows checkout.
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-xl hidden md:block">
+                  Tap any scanned item for Nutri-Score, allergens, additives & nutrition facts.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {["Nutri-Score", "Allergens", "Additives", "Nutrition Facts", "Certifications"].map((tag) => (
-                    <span key={tag} className="text-[11px] font-semibold bg-muted text-foreground px-2.5 py-1 rounded-full">{tag}</span>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {["Nutri-Score", "Allergens", "Additives", "Nutrition"].map((tag) => (
+                    <span key={tag} className="text-[10px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-full">{tag}</span>
                   ))}
                 </div>
               </div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/app")}
-                className="bg-foreground text-background px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0"
-              >
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0">
                 <Play size={12} fill="currentColor" /> Try It
               </motion.button>
             </div>
@@ -177,58 +172,58 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" className="bg-foreground py-20">
+      <section id="retailers" className="bg-foreground py-14">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-6">
+            <div className="text-center mb-5">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">For Retailers</span>
-              <h2 className="text-4xl md:text-5xl font-black text-background mt-3 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black text-background mt-2 tracking-tight">
                 Built for the stores<br className="hidden md:block" /> that built your neighborhood
               </h2>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <div className="bg-background/5 border border-background/10 rounded-3xl p-8 mb-10 max-w-3xl mx-auto">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center flex-shrink-0">
-                  <Heart size={22} className="text-accent-foreground" />
+            <div className="bg-background/5 border border-background/10 rounded-2xl p-6 mb-8 max-w-3xl mx-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center flex-shrink-0">
+                  <Heart size={18} className="text-accent-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-background tracking-tight mb-2">Your store matters. We're here to prove it.</h3>
+                  <h3 className="font-bold text-lg text-background tracking-tight mb-1">Your store matters. We're here to prove it.</h3>
                   <p className="text-background/45 leading-relaxed text-sm">
-                    The big chains have entire teams building for the future. You have grit and loyal customers. SKAAP levels the playing field — so your store doesn't just survive, it leads.
+                    The big chains have entire teams building for the future. SKAAP levels the playing field — so your store leads.
                   </p>
                 </div>
               </div>
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
             {[
-              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones. No POS terminals." },
-              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan-to-pay in two days." },
-              { icon: Users, title: "Happier customers", desc: "Faster trips, less friction, more repeat visits." },
+              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones." },
+              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan-to-pay." },
+              { icon: Users, title: "Happier customers", desc: "Faster trips, more repeat visits." },
             ].map((card, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.06}>
-                <motion.div whileHover={{ y: -3 }} className="bg-background/5 border border-background/10 rounded-2xl p-6">
-                  <div className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center mb-4">
-                    <card.icon size={20} className="text-accent-foreground" />
+                <motion.div whileHover={{ y: -3 }} className="bg-background/5 border border-background/10 rounded-2xl p-5">
+                  <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center mb-3">
+                    <card.icon size={18} className="text-accent-foreground" />
                   </div>
-                  <h3 className="font-bold text-background mb-1.5 tracking-tight">{card.title}</h3>
-                  <p className="text-sm text-background/40 leading-relaxed">{card.desc}</p>
+                  <h3 className="font-bold text-background mb-1 tracking-tight text-sm">{card.title}</h3>
+                  <p className="text-xs text-background/40 leading-relaxed">{card.desc}</p>
                 </motion.div>
               </FadeIn>
             ))}
           </div>
 
           <FadeIn delay={0.2}>
-            <div className="text-center space-y-3">
-              <a href="#contact" className="inline-flex items-center gap-2.5 bg-accent text-accent-foreground px-8 py-4 rounded-full font-bold text-base shadow-hero hover:opacity-90 transition-opacity">
-                Get Started — Free for 90 Days <ArrowRight size={16} />
+            <div className="text-center space-y-2">
+              <a href="#contact" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-7 py-3.5 rounded-full font-bold text-sm shadow-hero hover:opacity-90 transition-opacity">
+                Get Started — Free for 90 Days <ArrowRight size={14} />
               </a>
               <br />
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-6 py-3 rounded-full font-medium text-sm hover:text-background transition-colors">
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
                 See Retailer Dashboard →
               </motion.button>
             </div>
@@ -237,20 +232,20 @@ const Index = () => {
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-20 bg-background">
+      <section className="py-12 bg-background">
         <div className="max-w-2xl mx-auto px-6">
-          <FadeIn><h2 className="text-3xl font-black text-foreground text-center mb-10 tracking-tight">Questions</h2></FadeIn>
-          <div className="space-y-2">
+          <FadeIn><h2 className="text-2xl font-black text-foreground text-center mb-6 tracking-tight">Questions</h2></FadeIn>
+          <div className="space-y-1.5">
             {faqs.map((faq, i) => (
               <FadeIn key={i} delay={i * 0.03}>
-                <motion.div className="border border-border rounded-2xl overflow-hidden">
-                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-4 text-left">
+                <motion.div className="border border-border rounded-xl overflow-hidden">
+                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-3.5 text-left">
                     <span className="font-semibold text-foreground text-sm">{faq.q}</span>
-                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={16} className="text-muted-foreground" /></motion.div>
+                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} className="text-muted-foreground" /></motion.div>
                   </button>
                   {faqOpen === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={{ duration: 0.2 }}>
-                      <div className="px-4 pb-4"><p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p></div>
+                      <div className="px-3.5 pb-3.5"><p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p></div>
                     </motion.div>
                   )}
                 </motion.div>
@@ -261,22 +256,22 @@ const Index = () => {
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" className="bg-muted/30 py-16">
+      <section id="contact" className="bg-muted/30 py-12">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
-            <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">Let's talk</h2>
-            <p className="text-muted-foreground text-sm mb-8">Shopper or store owner — drop your email.</p>
+            <h2 className="text-2xl font-black text-foreground mb-2 tracking-tight">Let's talk</h2>
+            <p className="text-muted-foreground text-sm mb-6">Shopper or store owner — drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
             {submitted ? (
-              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="bg-success/10 text-success rounded-2xl p-6 font-semibold">✅ Thanks! We'll reach out soon.</motion.div>
+              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="bg-success/10 text-success rounded-2xl p-5 font-semibold">✅ Thanks! We'll reach out soon.</motion.div>
             ) : (
               <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <div className="relative flex-1">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full bg-card border border-border rounded-full py-3.5 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow" />
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full bg-card border border-border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow" />
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-foreground text-background px-6 py-3.5 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity">
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-foreground text-background px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity">
                   {submitting ? "Sending…" : "Get in Touch"}
                 </motion.button>
               </form>
@@ -286,29 +281,29 @@ const Index = () => {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="bg-foreground py-10">
+      <footer className="bg-foreground py-8">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5">
-              <img src={skaapIcon} alt="SKAAP" className="w-8 h-8 rounded-lg" />
+              <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" />
               <div>
-                <span className="font-bold text-background tracking-tight">SKAAP</span>
-                <p className="text-xs text-background/30">Your phone is the checkout.</p>
+                <span className="font-bold text-background tracking-tight text-sm">SKAAP</span>
+                <p className="text-[10px] text-background/30">Your phone is the checkout.</p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-background/50 font-medium">
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-background/50 font-medium">
               <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
               <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
             </div>
-            <div className="flex items-center gap-5">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={22} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={22} /></a>
+            <div className="flex items-center gap-4">
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
             </div>
           </div>
-          <div className="border-t border-background/10 mt-8 pt-8 text-center">
-            <p className="text-xs text-background/20">© 2026 SKAAP Technologies Inc.</p>
+          <div className="border-t border-background/10 mt-6 pt-6 text-center">
+            <p className="text-[10px] text-background/20">© 2026 SKAAP Technologies Inc.</p>
           </div>
         </div>
       </footer>
