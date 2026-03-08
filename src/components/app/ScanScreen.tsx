@@ -136,6 +136,28 @@ const normalizeAllergenText = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
+const ZXING_FORMAT_MAP: Record<number, string> = {
+  0: "AZTEC", 1: "CODABAR", 2: "CODE-39", 3: "CODE-93", 4: "CODE-128",
+  5: "DATA_MATRIX", 6: "EAN-8", 7: "EAN-13", 8: "ITF", 9: "MAXICODE",
+  10: "PDF-417", 11: "QR", 12: "RSS-14", 13: "RSS-EXP", 14: "UPC-A",
+  15: "UPC-E", 16: "UPC/EAN",
+};
+
+const formatZXingName = (fmt: any): string => {
+  if (typeof fmt === "number") return ZXING_FORMAT_MAP[fmt] || `FORMAT-${fmt}`;
+  if (typeof fmt === "string") return fmt.replace(/_/g, "-");
+  return String(fmt);
+};
+
+const inferFormat = (barcode: string): string => {
+  const digits = barcode.replace(/[^0-9]/g, "");
+  if (digits.length === 13) return "EAN-13";
+  if (digits.length === 8) return "EAN-8";
+  if (digits.length === 12) return "UPC-A";
+  if (digits.length === 6 || digits.length === 7) return "UPC-E";
+  return "CODE-128";
+};
+
 const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const { addItem, removeItem, items, itemCount, total } = useCart();
 
@@ -148,6 +170,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  const [detectedFormat, setDetectedFormat] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<any>(null);
@@ -211,11 +234,12 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, []);
 
   const handleDetectedBarcode = useCallback(
-    async (rawText: string) => {
+    async (rawText: string, formatName?: string) => {
       const barcode = rawText.trim();
       if (!barcode || processedBarcodesRef.current.has(barcode)) return;
 
       processedBarcodesRef.current.add(barcode);
+      setDetectedFormat(formatName || inferFormat(barcode));
       await stopCamera();
       playScanBeep();
       await lookupAndShowProduct(barcode);
@@ -291,7 +315,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       const onDecode = (result: any, error: any) => {
         if (result) {
           const text = typeof result.getText === "function" ? result.getText() : result.text;
-          void handleDetectedBarcode(text);
+          const fmt = typeof result.getBarcodeFormat === "function"
+            ? formatZXingName(result.getBarcodeFormat())
+            : undefined;
+          void handleDetectedBarcode(text, fmt);
           return;
         }
 
@@ -338,6 +365,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     const barcode = manualBarcode.replace(/\s+/g, "").trim();
     if (!barcode) return;
 
+    setDetectedFormat(inferFormat(barcode));
     await lookupAndShowProduct(barcode);
     setManualBarcode("");
   }, [lookupAndShowProduct, manualBarcode]);
@@ -535,7 +563,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             </div>
 
             <div className="p-4">
-              <h3 className="font-bold text-lg text-scanner-ink leading-tight">{lastScanned.name}</h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-bold text-lg text-scanner-ink leading-tight">{lastScanned.name}</h3>
+                {detectedFormat && (
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide bg-scanner-ink text-primary-foreground rounded-full px-2 py-0.5">
+                    {detectedFormat}
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-muted-foreground mt-1">{lastScanned.brand || "Unknown brand"}</p>
               <p className="text-3xl font-black text-scanner-accent mt-3">${lastScanned.price.toFixed(2)}</p>
 
