@@ -6,6 +6,7 @@ import ScanScreen from "@/components/app/ScanScreen";
 import BagScreen from "@/components/app/BagScreen";
 import PaymentScreen from "@/components/app/PaymentScreen";
 import OrderCompleteScreen from "@/components/app/OrderCompleteScreen";
+import ProfileScreen from "@/components/app/ProfileScreen";
 import { motion, AnimatePresence } from "framer-motion";
 
 const pageVariants = {
@@ -23,7 +24,7 @@ const AppPage = () => {
     if (tab === "home") setScreen("home");
     else if (tab === "scan") setScreen("scan");
     else if (tab === "bag") setScreen("bag");
-    else if (tab === "profile") setScreen("home");
+    else if (tab === "profile") setScreen("profile");
   };
 
   return (
@@ -58,6 +59,7 @@ const AppPage = () => {
               {screen === "complete" && (
                 <OrderCompleteScreen onDone={() => { setScreen("home"); setActiveTab("home"); }} />
               )}
+              {screen === "profile" && <ProfileScreen />}
             </motion.div>
           </AnimatePresence>
 
