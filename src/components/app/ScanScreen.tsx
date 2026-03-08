@@ -561,14 +561,17 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{item.product.name}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">
-                      ${item.product.price.toFixed(2)}ea
-                      {item.quantity > 1 && <span className="text-muted-foreground font-medium text-xs ml-1">× {item.quantity}</span>}
-                    </p>
+                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${item.product.price.toFixed(2)}ea</p>
                   </div>
-                  <button onClick={() => removeItem(item.product.id)} className="w-8 h-8 rounded-full bg-foreground/5 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all flex-shrink-0">
-                    <Trash2 size={13} />
-                  </button>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-7 h-7 rounded-full bg-foreground/[0.06] flex items-center justify-center">
+                      <Minus size={12} className="text-foreground" />
+                    </button>
+                    <span className="text-xs font-bold text-foreground w-5 text-center">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-7 h-7 rounded-full bg-foreground/[0.06] flex items-center justify-center">
+                      <Plus size={12} className="text-foreground" />
+                    </button>
+                  </div>
                 </motion.div>
               ))}
             </div>
