@@ -319,6 +319,13 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       readerRef.current = reader;
       setCameraActive(true);
 
+      // After 12 seconds with no detection, stop camera and nudge user to manual entry
+      cameraTimeoutRef.current = setTimeout(() => {
+        void stopCamera();
+        setCameraError("Couldn't detect a barcode — try typing it manually below.");
+        setTimeout(() => manualInputRef.current?.focus(), 300);
+      }, 12000);
+
       const onDecode = (result: any, error: any) => {
         if (result) {
           const text = typeof result.getText === "function" ? result.getText() : result.text;
