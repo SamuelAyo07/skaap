@@ -194,7 +194,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       </div>
 
       {/* ── Camera viewfinder ── */}
-      <div className="mx-5 rounded-3xl overflow-hidden relative bg-foreground/[0.03] aspect-[4/3]">
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-foreground/[0.03] aspect-[4/3]">
         <div id="scanner-container" className="w-full h-full [&>video]:object-cover" />
 
         {/* Loading overlay */}
