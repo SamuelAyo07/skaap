@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  ShoppingBag, Camera, CameraOff, Search, Loader2,
-  Barcode, Trash2, ChevronDown, ChevronUp, Leaf, Minus, Plus,
-  Sparkles, X
+  ShoppingBag, Camera, Search, Loader2,
+  Barcode, Trash2, ChevronDown, Leaf,
+  Sparkles, X, RotateCcw
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { lookupBarcode } from "@/lib/openfoodfacts";
+import { Input } from "@/components/ui/input";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
