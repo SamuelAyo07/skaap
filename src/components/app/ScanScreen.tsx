@@ -177,6 +177,8 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const streamRef = useRef<MediaStream | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
+  const manualInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const allergens = useMemo(() => {
     if (!lastScanned) return [] as string[];
@@ -192,6 +194,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [lastScanned]);
 
   const stopCamera = useCallback(async () => {
+    if (cameraTimeoutRef.current) {
+      clearTimeout(cameraTimeoutRef.current);
+      cameraTimeoutRef.current = null;
+    }
+
     try {
       if (readerRef.current?.reset) {
         readerRef.current.reset();
@@ -312,6 +319,13 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       readerRef.current = reader;
       setCameraActive(true);
 
+      // After 12 seconds with no detection, stop camera and nudge user to manual entry
+      cameraTimeoutRef.current = setTimeout(() => {
+        void stopCamera();
+        setCameraError("Couldn't detect a barcode — try typing it manually below.");
+        setTimeout(() => manualInputRef.current?.focus(), 300);
+      }, 12000);
+
       const onDecode = (result: any, error: any) => {
         if (result) {
           const text = typeof result.getText === "function" ? result.getText() : result.text;
@@ -323,10 +337,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         }
 
         if (!error) return;
-        const ignorable = ["NotFoundException", "ChecksumException", "FormatException"];
-        if (!ignorable.includes(error?.name)) {
-          setCameraError("Scanner error. Try again or use manual entry.");
-        }
+        // Silently ignore all scan errors — user has manual entry as fallback
       };
 
       if (typeof reader.decodeFromStream === "function") {
@@ -429,9 +440,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             >
               <Camera size={18} /> Scan with Camera
             </motion.button>
-            <p className="text-[11px] text-muted-foreground text-center">
-              Fast mode enabled · scans every 100ms for checkout-speed demos
-            </p>
             {cameraError && (
               <p className="text-xs text-destructive text-center max-w-[260px]">{cameraError}</p>
             )}
@@ -493,6 +501,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </p>
         <form onSubmit={(e) => { e.preventDefault(); void handleManualLookup(); }} className="flex gap-2">
           <Input
+            ref={manualInputRef}
             type="text"
             inputMode="numeric"
             value={manualBarcode}
