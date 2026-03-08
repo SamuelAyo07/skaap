@@ -80,7 +80,7 @@ const Index = () => {
         <div className="relative max-w-5xl mx-auto px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-1.5 bg-background/10 text-background/80 text-xs font-medium px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
-              <Sparkles size={12} /> Now launching on the East Coast
+              <Sparkles size={12} /> Now launching on the East Coast 🇺🇸
             </span>
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-6">
               Scan it.<br />Pay instantly.<br /><span className="text-gradient">Walk out.</span>
