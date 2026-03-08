@@ -14,61 +14,14 @@ interface HomeScreenProps {
 }
 
 const demoStores = [
-  // Boston area
-  { id: "1", name: "Trader Joe's", address: "899 Boylston St, Boston", image: storeTraderJoes, lat: 42.3487, lng: -71.0838 },
-  { id: "2", name: "Whole Foods Market", address: "340 River St, Cambridge", image: storeWholeFoods, lat: 42.3646, lng: -71.1047 },
-  { id: "3", name: "Star Market", address: "33 Kilmarnock St, Boston", image: storeStarMarket, lat: 42.3429, lng: -71.0994 },
-  { id: "4", name: "Stop & Shop", address: "1100 Massachusetts Ave, Cambridge", image: storeSuperstore, lat: 42.3736, lng: -71.1189 },
-  { id: "5", name: "Market Basket", address: "400 Somerville Ave, Somerville", image: storeFreshco, lat: 42.3803, lng: -71.0968 },
-  { id: "b1", name: "Wegmans", address: "138 Chestnut Hill Ave, Brighton", image: storeSuperstore, lat: 42.3385, lng: -71.1527 },
-  { id: "b2", name: "Aldi", address: "175 Allstate Rd, Dorchester", image: storeFreshco, lat: 42.3012, lng: -71.0544 },
-  // New York area
-  { id: "6", name: "Whole Foods", address: "10 Columbus Cir, New York", image: storeWholeFoods, lat: 40.7687, lng: -73.9833 },
-  { id: "7", name: "Trader Joe's", address: "142 E 14th St, New York", image: storeTraderJoes, lat: 40.7338, lng: -73.9882 },
-  { id: "8", name: "Walmart Supercenter", address: "570 Gateway Dr, Brooklyn", image: storeWalmart, lat: 40.6586, lng: -73.8830 },
-  { id: "n1", name: "Wegmans", address: "Brooklyn Navy Yard, Brooklyn", image: storeSuperstore, lat: 40.7005, lng: -73.9712 },
-  { id: "n2", name: "Trader Joe's", address: "436 W 14th St, New York", image: storeTraderJoes, lat: 40.7407, lng: -74.0062 },
-  { id: "n3", name: "Target", address: "517 E 117th St, New York", image: storeWalmart, lat: 40.7971, lng: -73.9381 },
-  { id: "n4", name: "Aldi", address: "132-01 31st Ave, Flushing", image: storeFreshco, lat: 40.7703, lng: -73.8413 },
-  // Miami area
-  { id: "9", name: "Publix", address: "1776 Brickell Ave, Miami", image: storeRcs, lat: 25.7572, lng: -80.1918 },
-  { id: "10", name: "Whole Foods", address: "12150 Biscayne Blvd, N Miami", image: storeWholeFoods, lat: 25.8914, lng: -80.1627 },
-  { id: "m1", name: "Sedano's", address: "2709 W Flagler St, Miami", image: storeFreshco, lat: 25.7665, lng: -80.2478 },
-  { id: "m2", name: "Walmart", address: "3200 NW 79th St, Miami", image: storeWalmart, lat: 25.8366, lng: -80.2564 },
-  // DC area
-  { id: "11", name: "Whole Foods", address: "2323 Wisconsin Ave NW, DC", image: storeWholeFoods, lat: 38.9219, lng: -77.0707 },
-  { id: "12", name: "Trader Joe's", address: "1101 Pennsylvania Ave SE, DC", image: storeTraderJoes, lat: 38.882, lng: -76.9908 },
-  { id: "d1", name: "Giant Food", address: "300 H St NE, DC", image: storeSuperstore, lat: 38.9003, lng: -76.9972 },
-  { id: "d2", name: "Safeway", address: "1701 Corcoran St NW, DC", image: storeRcs, lat: 38.9119, lng: -77.0385 },
-  // Atlanta
-  { id: "13", name: "Kroger", address: "3330 Piedmont Rd NE, Atlanta", image: storeSuperstore, lat: 33.8441, lng: -84.3752 },
-  { id: "14", name: "Publix", address: "595 Piedmont Ave NE, Atlanta", image: storeRcs, lat: 33.7716, lng: -84.382 },
-  { id: "a1", name: "Whole Foods", address: "650 Ponce De Leon Ave, Atlanta", image: storeWholeFoods, lat: 33.7725, lng: -84.3651 },
-  { id: "a2", name: "Trader Joe's", address: "931 Monroe Dr NE, Atlanta", image: storeTraderJoes, lat: 33.7797, lng: -84.3641 },
-  // Philadelphia
-  { id: "15", name: "Whole Foods", address: "2101 Pennsylvania Ave, Philly", image: storeWholeFoods, lat: 39.9579, lng: -75.173 },
-  { id: "p1", name: "Trader Joe's", address: "2121 Market St, Philly", image: storeTraderJoes, lat: 39.9537, lng: -75.1744 },
-  { id: "p2", name: "Acme Markets", address: "1400 S Penn Square, Philly", image: storeSuperstore, lat: 39.9506, lng: -75.1658 },
-  // Chicago
-  { id: "c1", name: "Whole Foods", address: "1550 N Kingsbury St, Chicago", image: storeWholeFoods, lat: 41.9097, lng: -87.6528 },
-  { id: "c2", name: "Trader Joe's", address: "44 E Ontario St, Chicago", image: storeTraderJoes, lat: 41.8934, lng: -87.6255 },
-  { id: "c3", name: "Mariano's", address: "333 E Benton Pl, Chicago", image: storeSuperstore, lat: 41.8891, lng: -87.6176 },
-  // Los Angeles
-  { id: "l1", name: "Trader Joe's", address: "263 S La Brea Ave, LA", image: storeTraderJoes, lat: 34.0635, lng: -118.3445 },
-  { id: "l2", name: "Whole Foods", address: "6350 W 3rd St, LA", image: storeWholeFoods, lat: 34.0695, lng: -118.3563 },
-  { id: "l3", name: "Ralph's", address: "260 S La Brea Ave, LA", image: storeSuperstore, lat: 34.0634, lng: -118.3445 },
-  // San Francisco
-  { id: "s1", name: "Trader Joe's", address: "401 Bay St, San Francisco", image: storeTraderJoes, lat: 37.8061, lng: -122.4170 },
-  { id: "s2", name: "Whole Foods", address: "399 4th St, San Francisco", image: storeWholeFoods, lat: 37.7824, lng: -122.3998 },
-  // Seattle
-  { id: "se1", name: "Whole Foods", address: "2210 Westlake Ave, Seattle", image: storeWholeFoods, lat: 47.6185, lng: -122.3382 },
-  { id: "se2", name: "Trader Joe's", address: "112 W Galer St, Seattle", image: storeTraderJoes, lat: 47.6351, lng: -122.3578 },
-  // Houston
-  { id: "h1", name: "H-E-B", address: "5895 San Felipe St, Houston", image: storeRcs, lat: 29.7507, lng: -95.4903 },
-  { id: "h2", name: "Kroger", address: "3300 Montrose Blvd, Houston", image: storeSuperstore, lat: 29.7405, lng: -95.3914 },
-  // Denver
-  { id: "de1", name: "King Soopers", address: "2750 S Colorado Blvd, Denver", image: storeSuperstore, lat: 39.6714, lng: -104.9412 },
-  { id: "de2", name: "Whole Foods", address: "2375 E 1st Ave, Denver", image: storeWholeFoods, lat: 39.7193, lng: -104.9541 },
+  { id: "1", name: "Skaap Demo Market", address: "101 Main Street", image: storeTraderJoes, lat: 42.3601, lng: -71.0589 },
+  { id: "2", name: "City Fresh Demo", address: "240 River Avenue", image: storeWholeFoods, lat: 42.3646, lng: -71.1047 },
+  { id: "3", name: "Neighborhood Grocery", address: "33 Kilmarnock Road", image: storeStarMarket, lat: 42.3429, lng: -71.0994 },
+  { id: "4", name: "Quick Basket", address: "1100 Massachusetts Avenue", image: storeFreshco, lat: 42.3736, lng: -71.1189 },
+  { id: "5", name: "Urban Pantry", address: "400 Somerville Avenue", image: storeRcs, lat: 42.3803, lng: -71.0968 },
+  { id: "6", name: "Downtown Foods", address: "10 Columbus Circle", image: storeWalmart, lat: 40.7687, lng: -73.9833 },
+  { id: "7", name: "Local Choice Market", address: "1776 Brickell Avenue", image: storeRcs, lat: 25.7572, lng: -80.1918 },
+  { id: "8", name: "FreshPoint Demo", address: "2323 Wisconsin Avenue", image: storeWholeFoods, lat: 38.9219, lng: -77.0707 },
 ];
 
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
