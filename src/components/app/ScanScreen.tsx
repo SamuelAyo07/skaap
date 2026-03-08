@@ -182,18 +182,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const manualInputRef = useRef<HTMLInputElement | null>(null);
   const cameraTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const allergens = useMemo(() => {
-    if (!lastScanned) return [] as string[];
-
-    if (lastScanned.allergens?.length) {
-      return [...new Set(lastScanned.allergens.map(normalizeAllergenText))];
-    }
-
-    if (!lastScanned.ingredients) return [] as string[];
-
-    const normalizedIngredients = normalizeAllergenText(lastScanned.ingredients);
-    return ALLERGEN_KEYWORDS.filter((keyword) => normalizedIngredients.includes(keyword));
-  }, [lastScanned]);
 
   const stopCamera = useCallback(async () => {
     if (cameraTimeoutRef.current) {
