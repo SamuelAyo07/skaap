@@ -24,7 +24,7 @@ const AppPage = () => {
     if (tab === "home") setScreen("home");
     else if (tab === "scan") setScreen("scan");
     else if (tab === "bag") setScreen("bag");
-    else if (tab === "profile") setScreen("home");
+    else if (tab === "profile") setScreen("profile");
   };
 
   return (
