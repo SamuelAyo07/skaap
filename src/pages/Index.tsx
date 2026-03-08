@@ -8,9 +8,9 @@ import {
   Heart, Users, Zap,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import stepScan from "@/assets/step-scan.png";
-import stepPay from "@/assets/step-pay.png";
-import stepReceipt from "@/assets/step-receipt.png";
+import stepScan from "@/assets/step-scan.webp";
+import stepPay from "@/assets/step-pay.webp";
+import stepReceipt from "@/assets/step-receipt.webp";
 
 
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
@@ -69,8 +69,8 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3 mr-1">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors"><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors"><Linkedin size={18} /></a>
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-muted-foreground hover:text-foreground transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors"><Linkedin size={18} /></a>
             </div>
             <button onClick={() => navigate("/login")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Sign In</button>
             <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
@@ -140,7 +140,7 @@ const Index = () => {
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
                   <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 bg-muted/30 border border-border/40">
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                    <img src={item.img} alt={`SKAAP app ${item.title} step screenshot`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
                   <h3 className="font-bold text-base text-foreground tracking-tight">{item.title}</h3>
                   <p className="text-muted-foreground text-xs mt-0.5">{item.desc}</p>
@@ -257,7 +257,7 @@ const Index = () => {
             {faqs.map((faq, i) => (
               <FadeIn key={i} delay={i * 0.03}>
                 <motion.div className="border border-border rounded-xl overflow-hidden">
-                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-3.5 text-left">
+                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
                     <span className="font-semibold text-foreground text-sm">{faq.q}</span>
                     <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} className="text-muted-foreground" /></motion.div>
                   </button>
@@ -287,7 +287,7 @@ const Index = () => {
               <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <div className="relative flex-1">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full bg-card border border-border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow" />
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="w-full bg-card border border-border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow" />
                 </div>
                 <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-foreground text-background px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity">
                   {submitting ? "Sending…" : "Get in Touch"}
@@ -316,8 +316,8 @@ const Index = () => {
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
             </div>
           </div>
           <div className="border-t border-background/10 mt-6 pt-6 text-center">
