@@ -563,7 +563,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             </div>
 
             <div className="p-4">
-              <h3 className="font-bold text-lg text-scanner-ink leading-tight">{lastScanned.name}</h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-bold text-lg text-scanner-ink leading-tight">{lastScanned.name}</h3>
+                {detectedFormat && (
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide bg-scanner-ink text-primary-foreground rounded-full px-2 py-0.5">
+                    {detectedFormat}
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-muted-foreground mt-1">{lastScanned.brand || "Unknown brand"}</p>
               <p className="text-3xl font-black text-scanner-accent mt-3">${lastScanned.price.toFixed(2)}</p>
 
