@@ -111,6 +111,12 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
           </motion.button>
         </div>
       )}
+
+      <ProductInfoSheet
+        product={infoProduct}
+        open={!!infoProduct}
+        onClose={() => setInfoProduct(null)}
+      />
     </div>
   );
 };
