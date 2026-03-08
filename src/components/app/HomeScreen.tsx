@@ -186,7 +186,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-5"
+        className="mb-3"
       >
         <p className="text-xs text-muted-foreground mb-0.5">
           {nearestName ? `${nearestName} is closest` : "Pick a store to start"}

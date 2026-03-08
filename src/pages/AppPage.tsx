@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CartProvider } from "@/context/CartContext";
 import BottomNav from "@/components/app/BottomNav";
 import HomeScreen from "@/components/app/HomeScreen";
@@ -8,6 +8,7 @@ import PaymentScreen from "@/components/app/PaymentScreen";
 import OrderCompleteScreen from "@/components/app/OrderCompleteScreen";
 import ProfileScreen from "@/components/app/ProfileScreen";
 import { motion, AnimatePresence } from "framer-motion";
+import skaapIcon from "@/assets/skaap-icon.png";
 
 const pageVariants = {
   initial: { opacity: 0, x: 30 },
@@ -18,6 +19,12 @@ const pageVariants = {
 const AppPage = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState("home");
+  const [splashDone, setSplashDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 1600);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -29,41 +36,82 @@ const AppPage = () => {
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-background flex justify-center">
+      <div className="min-h-screen bg-foreground flex justify-center">
         <div className="w-full max-w-[390px] min-h-screen relative bg-background shadow-elevated overflow-hidden">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={screen}
-              variants={pageVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="min-h-screen"
-            >
-              {screen === "home" && (
-                <HomeScreen onSelectStore={() => { setScreen("scan"); setActiveTab("scan"); }} />
-              )}
-              {screen === "scan" && (
-                <ScanScreen onOpenBag={() => { setScreen("bag"); setActiveTab("bag"); }} />
-              )}
-              {screen === "bag" && (
-                <BagScreen onPayNow={() => setScreen("payment")} />
-              )}
-              {screen === "payment" && (
-                <PaymentScreen
-                  onComplete={() => setScreen("complete")}
-                  onBack={() => setScreen("bag")}
+            {!splashDone ? (
+              <motion.div
+                key="splash"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="fixed inset-0 max-w-[390px] mx-auto bg-foreground flex flex-col items-center justify-center z-[100]"
+              >
+                <motion.img
+                  src={skaapIcon}
+                  alt="SKAAP"
+                  className="w-20 h-20 rounded-3xl"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 15 }}
                 />
-              )}
-              {screen === "complete" && (
-                <OrderCompleteScreen onDone={() => { setScreen("home"); setActiveTab("home"); }} />
-              )}
-              {screen === "profile" && <ProfileScreen />}
-            </motion.div>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-background font-bold text-2xl tracking-tight mt-4"
+                >
+                  SKAAP
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.4 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-background text-xs mt-1 font-medium"
+                >
+                  Skip every line
+                </motion.p>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }}
+                  className="w-12 h-[2px] bg-background/20 rounded-full mt-6 origin-left"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={screen}
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="min-h-screen"
+              >
+                {screen === "home" && (
+                  <HomeScreen onSelectStore={() => { setScreen("scan"); setActiveTab("scan"); }} />
+                )}
+                {screen === "scan" && (
+                  <ScanScreen onOpenBag={() => { setScreen("bag"); setActiveTab("bag"); }} />
+                )}
+                {screen === "bag" && (
+                  <BagScreen onPayNow={() => setScreen("payment")} />
+                )}
+                {screen === "payment" && (
+                  <PaymentScreen
+                    onComplete={() => setScreen("complete")}
+                    onBack={() => setScreen("bag")}
+                  />
+                )}
+                {screen === "complete" && (
+                  <OrderCompleteScreen onDone={() => { setScreen("home"); setActiveTab("home"); }} />
+                )}
+                {screen === "profile" && <ProfileScreen />}
+              </motion.div>
+            )}
           </AnimatePresence>
 
-          {screen !== "complete" && screen !== "payment" && (
+          {splashDone && screen !== "complete" && screen !== "payment" && (
             <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
           )}
         </div>

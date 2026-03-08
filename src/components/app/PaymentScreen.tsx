@@ -27,7 +27,7 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col min-h-screen bg-background"
+      className="flex flex-col min-h-screen bg-background pt-10"
     >
       <div className="px-4 pt-12 pb-4">
         <button onClick={onBack} className="flex items-center gap-1 text-accent font-medium mb-4">
