@@ -181,7 +181,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   }
 
   return (
-    <div className="px-4 pt-12 pb-20 bg-background min-h-screen">
+    <div className="px-4 pt-10 pb-20 bg-background min-h-screen">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

@@ -16,7 +16,7 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 pt-12 pb-2">
+      <div className="px-4 pt-10 pb-2">
         <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
