@@ -340,6 +340,27 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* ─── STICKY MOBILE CTA ─── */}
+      <AnimatePresence>
+        {showSticky && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-border/50 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+          >
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={() => navigate("/app")}
+              className="w-full bg-accent text-accent-foreground py-3.5 rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-hero"
+            >
+              <Play size={14} fill="currentColor" /> Try the Demo — 30 sec
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
