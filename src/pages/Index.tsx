@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import {
@@ -75,13 +76,23 @@ const Index = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-  // Removed useScroll/useTransform to fix compatibility
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) setSubmitted(true);
+    if (!email || submitting) return;
+    setSubmitting(true);
+    try {
+      await supabase.functions.invoke("contact-notify", {
+        body: { email, type: "general" },
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Submit error:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const faqs = [
@@ -377,8 +388,8 @@ const Index = () => {
                     className="w-full bg-card border border-border rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} type="submit" className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm">
-                  Get in Touch
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm disabled:opacity-60">
+                  {submitting ? "Sending…" : "Get in Touch"}
                 </motion.button>
               </form>
             )}
