@@ -154,6 +154,15 @@ const Index = () => {
               </FadeIn>
             ))}
           </div>
+          {/* Mid-page conversion CTA */}
+          <FadeIn delay={0.3}>
+            <div className="text-center mt-8 pt-6 border-t border-border/30">
+              <p className="text-muted-foreground text-sm mb-3">See it for yourself — takes 30 seconds</p>
+              <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-8 py-3.5 rounded-full font-bold text-sm flex items-center gap-2 mx-auto shadow-lg hover:opacity-90 transition-opacity">
+                <Play size={14} fill="currentColor" /> Try Demo Now
+              </motion.button>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
