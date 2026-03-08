@@ -269,31 +269,65 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         transition={{ delay: 0.15 }}
         className="mt-4 mb-4"
       >
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2 px-0.5">
-          🔥 Deals near you
-        </p>
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+        <div className="flex items-center gap-1.5 mb-2 px-0.5">
+          <motion.span
+            animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            className="text-sm"
+          >
+            🔥
+          </motion.span>
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+            Deals near you
+          </p>
+          <motion.span
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="ml-auto text-[9px] text-accent font-bold uppercase tracking-wider"
+          >
+            Live
+          </motion.span>
+        </div>
+        <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
           {[
-            { emoji: "🥑", item: "Avocados", deal: "2 for $3", store: visibleStores[0]?.name || "Store", color: "bg-green-500/10 text-green-700" },
-            { emoji: "🍞", item: "Sourdough Bread", deal: "$2.99", store: visibleStores[1]?.name || "Store", color: "bg-amber-500/10 text-amber-700" },
-            { emoji: "🥛", item: "Oat Milk", deal: "Buy 1 Get 1", store: visibleStores[2]?.name || "Store", color: "bg-blue-500/10 text-blue-700" },
-            { emoji: "🍌", item: "Organic Bananas", deal: "$0.59/lb", store: visibleStores[0]?.name || "Store", color: "bg-yellow-500/10 text-yellow-700" },
-            { emoji: "🧀", item: "Cheddar Block", deal: "30% off", store: visibleStores[3]?.name || "Store", color: "bg-orange-500/10 text-orange-700" },
+            { emoji: "🥑", item: "Avocados", deal: "2 for $3", store: visibleStores[0]?.name || "Store", color: "bg-green-500/10 text-green-700", borderColor: "border-green-500/20" },
+            { emoji: "🍞", item: "Sourdough Bread", deal: "$2.99", store: visibleStores[1]?.name || "Store", color: "bg-amber-500/10 text-amber-700", borderColor: "border-amber-500/20" },
+            { emoji: "🥛", item: "Oat Milk", deal: "Buy 1 Get 1", store: visibleStores[2]?.name || "Store", color: "bg-blue-500/10 text-blue-700", borderColor: "border-blue-500/20" },
+            { emoji: "🍌", item: "Organic Bananas", deal: "$0.59/lb", store: visibleStores[0]?.name || "Store", color: "bg-yellow-500/10 text-yellow-700", borderColor: "border-yellow-500/20" },
+            { emoji: "🧀", item: "Cheddar Block", deal: "30% off", store: visibleStores[3]?.name || "Store", color: "bg-orange-500/10 text-orange-700", borderColor: "border-orange-500/20" },
           ].map((deal, i) => (
             <motion.button
               key={i}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.06 }}
-              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.08, type: "spring", stiffness: 300, damping: 20 }}
+              whileHover={{ y: -4, scale: 1.03 }}
+              whileTap={{ scale: 0.92, rotate: -2 }}
               onClick={onSelectStore}
-              className="flex-shrink-0 w-[140px] bg-muted/50 rounded-xl p-3 text-left border border-border/30"
+              className={`flex-shrink-0 w-[140px] bg-muted/50 rounded-xl p-3 text-left border ${deal.borderColor} relative overflow-hidden group`}
             >
-              <span className="text-2xl">{deal.emoji}</span>
+              {/* Shimmer effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 5 + i * 2, ease: "easeInOut" }}
+              />
+              <motion.span
+                className="text-2xl block"
+                whileHover={{ scale: 1.3, rotate: 15 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                {deal.emoji}
+              </motion.span>
               <p className="text-[12px] font-semibold text-foreground mt-1.5 truncate">{deal.item}</p>
-              <span className={`inline-block text-[10px] font-bold rounded-full px-2 py-0.5 mt-1 ${deal.color}`}>
+              <motion.span
+                className={`inline-block text-[10px] font-bold rounded-full px-2 py-0.5 mt-1 ${deal.color}`}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+              >
                 {deal.deal}
-              </span>
+              </motion.span>
               <p className="text-[9px] text-muted-foreground mt-1 truncate">{deal.store}</p>
             </motion.button>
           ))}
@@ -303,8 +337,8 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
       {/* Section label */}
       {visibleStores.length > 1 && (
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
           className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2 px-0.5"
         >
@@ -317,17 +351,20 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         {visibleStores.slice(1).map((store, i) => (
           <motion.button
             key={store.id}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.22 + i * 0.05, type: "spring", stiffness: 200, damping: 24 }}
-            whileTap={{ scale: 0.97 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.32 + i * 0.06, type: "spring", stiffness: 260, damping: 22 }}
+            whileHover={{ x: 4, backgroundColor: "hsl(var(--muted) / 0.8)" }}
+            whileTap={{ scale: 0.96 }}
             onClick={onSelectStore}
             className="w-full flex items-center gap-3 bg-muted/50 rounded-xl p-3 text-left group"
           >
-            <img
+            <motion.img
               src={store.image}
               alt={store.name}
               className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 300 }}
             />
             <div className="flex-1 min-w-0">
               <h3 className="text-[13px] font-semibold text-foreground truncate tracking-tight">{store.name}</h3>
@@ -342,7 +379,12 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
                   {distances[store.id].toFixed(1)} mi
                 </span>
               )}
-              <ChevronRight size={13} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+              <motion.div
+                animate={{ x: [0, 3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 + i * 0.5 }}
+              >
+                <ChevronRight size={13} className="text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+              </motion.div>
             </div>
           </motion.button>
         ))}
