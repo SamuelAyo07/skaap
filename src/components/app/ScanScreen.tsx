@@ -335,42 +335,34 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         )}
       </div>
 
-      {/* ── Manual barcode input (collapsible) ── */}
-      <AnimatePresence>
-        {showManualInput && !cameraActive && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="mx-5 mt-3">
-              <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={manualBarcode}
-                    onChange={(e) => setManualBarcode(e.target.value)}
-                    placeholder="Enter barcode…"
-                    className="w-full bg-foreground/[0.03] rounded-full pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                    disabled={isLookingUp}
-                    autoFocus
-                  />
-                </div>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  type="submit"
-                  disabled={isLookingUp || !manualBarcode.trim()}
-                  className="bg-foreground text-background rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-30"
-                >
-                  <Search size={16} />
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Manual barcode input ── */}
+      {!cameraActive && (
+        <div className="mx-5 mt-3 rounded-2xl bg-muted/30 border border-border/40 p-3">
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">
+            Manual barcode entry
+          </p>
+          <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={manualBarcode}
+              onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
+              placeholder="Enter barcode"
+              className="h-11 rounded-full bg-background"
+              disabled={isLookingUp}
+              aria-label="Manual barcode input"
+            />
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={isLookingUp || !manualBarcode.trim()}
+              className="bg-foreground text-background rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-30"
+            >
+              <Search size={16} />
+            </motion.button>
+          </form>
+        </div>
+      )}
 
       {/* Error message */}
       <AnimatePresence>
