@@ -74,6 +74,14 @@ const Index = () => {
             <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 mr-1">
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Instagram size={16} />
+              </a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Linkedin size={16} />
+              </a>
+            </div>
             <button onClick={() => navigate("/login")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">
               Sign In
             </button>
