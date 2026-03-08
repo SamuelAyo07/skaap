@@ -289,37 +289,43 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
 
                   {/* 4. Nutrition Facts Panel */}
                   {n && (
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground mb-2">Nutrition Facts</h4>
-                      <p className="text-[11px] text-muted-foreground mb-2">Per 100g</p>
-                      <div className="rounded-xl border border-border/50 overflow-hidden">
+                    <div className="bg-muted/30 rounded-2xl p-4 border border-border/30">
+                      <h4 className="text-sm font-black text-foreground mb-1 tracking-tight">Nutrition Facts</h4>
+                      <p className="text-[10px] text-muted-foreground mb-3 font-medium">Per 100g</p>
+                      <div className="space-y-2">
                         {[
-                          { label: "Calories", value: n.energyKcal100g, unit: "kcal", level: undefined },
-                          { label: "Fat", value: n.fat100g, unit: "g", level: nl?.fat },
-                          { label: "  Saturated Fat", value: n.saturatedFat100g, unit: "g", level: nl?.saturatedFat, indent: true },
-                          { label: "Carbohydrates", value: n.carbs100g, unit: "g", level: undefined },
-                          { label: "  Sugars", value: n.sugars100g, unit: "g", level: nl?.sugars, indent: true },
-                          { label: "Fiber", value: n.fiber100g, unit: "g", level: undefined },
-                          { label: "Protein", value: n.protein100g, unit: "g", level: undefined },
-                          { label: "Salt", value: n.salt100g, unit: "g", level: nl?.salt },
-                        ].map((row, i) => (
-                          <div
-                            key={row.label}
-                            className={`flex items-center px-3.5 py-2 text-[13px] ${i !== 0 ? "border-t border-border/30" : ""} ${row.indent ? "pl-7" : ""}`}
-                          >
-                            <div className="flex items-center gap-2 flex-1">
-                              {row.level && (
-                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${nutrientLevelColor(row.level)}`} />
-                              )}
-                              <span className={`${row.indent ? "text-muted-foreground" : "font-medium text-foreground"}`}>
-                                {row.label.trim()}
-                              </span>
+                          { label: "Calories", value: n.energyKcal100g, unit: "kcal", level: undefined, max: 800 },
+                          { label: "Fat", value: n.fat100g, unit: "g", level: nl?.fat, max: 100 },
+                          { label: "Sat. Fat", value: n.saturatedFat100g, unit: "g", level: nl?.saturatedFat, indent: true, max: 40 },
+                          { label: "Carbs", value: n.carbs100g, unit: "g", level: undefined, max: 100 },
+                          { label: "Sugars", value: n.sugars100g, unit: "g", level: nl?.sugars, indent: true, max: 100 },
+                          { label: "Fiber", value: n.fiber100g, unit: "g", level: undefined, max: 30 },
+                          { label: "Protein", value: n.protein100g, unit: "g", level: undefined, max: 50 },
+                          { label: "Salt", value: n.salt100g, unit: "g", level: nl?.salt, max: 6 },
+                        ].map((row) => {
+                          const pct = row.value != null ? Math.min((Number(row.value) / row.max) * 100, 100) : 0;
+                          const barColor = row.level ? nutrientLevelColor(row.level) : "bg-foreground/20";
+                          return (
+                            <div key={row.label} className={row.indent ? "pl-3" : ""}>
+                              <div className="flex items-center justify-between text-[12px] mb-0.5">
+                                <span className={row.indent ? "text-muted-foreground" : "font-semibold text-foreground"}>
+                                  {row.label}
+                                </span>
+                                <span className="text-muted-foreground font-medium text-[11px]">
+                                  {row.value != null ? `${Number(row.value).toFixed(1)} ${row.unit}` : "—"}
+                                </span>
+                              </div>
+                              <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${pct}%` }}
+                                  transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+                                  className={`h-full rounded-full ${barColor}`}
+                                />
+                              </div>
                             </div>
-                            <span className="text-muted-foreground font-medium">
-                              {row.value != null ? `${Number(row.value).toFixed(1)} ${row.unit}` : "—"}
-                            </span>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
