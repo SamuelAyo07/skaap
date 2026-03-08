@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, Receipt,
   Mail, Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin,
@@ -29,6 +29,14 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  // Show sticky CTA after scrolling past hero
+  useEffect(() => {
+    const handleScroll = () => setShowSticky(window.scrollY > 500);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,16 +97,27 @@ const Index = () => {
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-5">
               Scan it.<br />Pay instantly.<br /><span className="text-gradient">Walk out.</span>
             </h1>
-            <p className="text-background/50 text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-background/50 text-lg md:text-xl mb-4 max-w-2xl mx-auto font-light leading-relaxed">
               Your phone becomes the checkout. No lines, no registers, no waiting.
             </p>
+            {/* Social proof */}
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex -space-x-2">
+                {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
+                  <div key={i} className="w-6 h-6 rounded-full bg-background/20 border-2 border-foreground flex items-center justify-center text-[10px]">{c}</div>
+                ))}
+              </div>
+              <p className="text-background/40 text-xs font-medium">
+                <span className="text-background/70 font-bold">85+ people</span> tried SKAAP this week
+              </p>
+            </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-3">
             <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
               <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <Play size={20} fill="currentColor" /> Try the Demo
             </motion.button>
-            <p className="text-background/25 text-xs">30 seconds · No account needed</p>
+            <p className="text-background/25 text-xs">30 seconds · No signup · Works on any phone</p>
             <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors">
               <Store size={15} /> I Own a Store
             </a>
@@ -135,6 +154,15 @@ const Index = () => {
               </FadeIn>
             ))}
           </div>
+          {/* Mid-page conversion CTA */}
+          <FadeIn delay={0.3}>
+            <div className="text-center mt-8 pt-6 border-t border-border/30">
+              <p className="text-muted-foreground text-sm mb-3">See it for yourself — takes 30 seconds</p>
+              <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-8 py-3.5 rounded-full font-bold text-sm flex items-center gap-2 mx-auto shadow-lg hover:opacity-90 transition-opacity">
+                <Play size={14} fill="currentColor" /> Try Demo Now
+              </motion.button>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -312,6 +340,27 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* ─── STICKY MOBILE CTA ─── */}
+      <AnimatePresence>
+        {showSticky && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-border/50 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+          >
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={() => navigate("/app")}
+              className="w-full bg-accent text-accent-foreground py-3.5 rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-hero"
+            >
+              <Play size={14} fill="currentColor" /> Try the Demo — 30 sec
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
