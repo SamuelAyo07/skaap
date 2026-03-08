@@ -206,37 +206,28 @@ const Index = () => {
 
       {/* ─── FOR SHOPPERS ────────────────────────── */}
       <section className="py-24 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <FadeInSection>
-            <div className="text-center mb-16">
-              <span className="text-accent text-xs font-bold uppercase tracking-widest">For Shoppers</span>
-              <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Your time matters</h2>
-              <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-lg font-light">
-                Life's too short for checkout lines. Shop the way you want — fast, free, and on your terms.
-              </p>
-            </div>
+            <span className="text-accent text-xs font-bold uppercase tracking-widest">For Shoppers</span>
+            <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Skip every line.<br />Starting now.</h2>
+            <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-lg font-light leading-relaxed">
+              Walk in, scan what you want, pay from your phone, and walk out. No lines. No registers. No waiting. Ever.
+            </p>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {[
-              { icon: ScanLine, title: "Scan as you shop", desc: "Point your camera at any barcode. Your bag updates in real time." },
-              { icon: CreditCard, title: "Pay from your pocket", desc: "Apple Pay, Google Pay, or card. Checkout is in your hand." },
-              { icon: QrCode, title: "Flash & walk out", desc: "Show your QR receipt at the exit. No bagging, no waiting around." },
-              { icon: ShieldCheck, title: "Completely secure", desc: "Bank-level encryption. Your payment data never touches our servers." },
-            ].map((b, i) => (
-              <FadeInSection key={i} delay={0.08 + i * 0.06}>
-                <motion.div whileHover={{ y: -2 }} className="flex gap-4 p-5 rounded-2xl bg-muted/40 border border-border/50">
-                  <div className="w-10 h-10 rounded-xl bg-foreground flex items-center justify-center flex-shrink-0">
-                    <b.icon size={18} className="text-background" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground tracking-tight">{b.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{b.desc}</p>
-                  </div>
-                </motion.div>
-              </FadeInSection>
-            ))}
-          </div>
+          <FadeInSection delay={0.15}>
+            <div className="mt-10">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate("/app")}
+                className="bg-foreground text-background px-10 py-5 rounded-full font-bold text-lg inline-flex items-center gap-2.5 shadow-elevated"
+              >
+                <Play size={16} fill="currentColor" /> Try It Yourself — Free
+              </motion.button>
+              <p className="text-muted-foreground text-xs mt-3">No account needed. 30 seconds to see the magic.</p>
+            </div>
+          </FadeInSection>
         </div>
       </section>
 
