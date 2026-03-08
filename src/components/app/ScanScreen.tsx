@@ -622,6 +622,12 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
           </motion.button>
         </div>
       )}
+
+      <ProductInfoSheet
+        product={infoProduct}
+        open={!!infoProduct}
+        onClose={() => setInfoProduct(null)}
+      />
     </div>
   );
 };
