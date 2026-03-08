@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, Receipt,
   Mail, Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin,
@@ -29,14 +29,8 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
-  const [showSticky, setShowSticky] = useState(false);
 
-  // Show sticky CTA after scrolling past hero
-  useEffect(() => {
-    const handleScroll = () => setShowSticky(window.scrollY > 500);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,10 +180,9 @@ const Index = () => {
             ))}
           </div>
           <FadeIn delay={0.3}>
-            <div className="flex flex-col items-center mt-6 gap-2">
-              <p className="text-muted-foreground text-xs font-medium">🏪 Walk into any store and try it now</p>
+            <div className="flex flex-col items-center mt-5 gap-1.5">
               <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
-                <Play size={12} fill="currentColor" /> Try Smart Info
+                <Play size={12} fill="currentColor" /> Try SKAAP at Any Store Now
               </motion.button>
             </div>
           </FadeIn>
@@ -333,26 +326,6 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* ─── STICKY MOBILE CTA ─── */}
-      <AnimatePresence>
-        {showSticky && (
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-border/50 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
-          >
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              onClick={() => navigate("/app")}
-              className="w-full bg-accent text-accent-foreground py-3.5 rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-hero"
-            >
-              <Play size={14} fill="currentColor" /> Try the Demo — 30 sec
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
