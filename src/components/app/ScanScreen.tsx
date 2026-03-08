@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  ShoppingBag, Plus, Camera, CameraOff, Search, Loader2,
-  Package, Barcode, Trash2, ChevronDown, ChevronUp, Leaf, Flame, Droplets
+  ShoppingBag, Camera, CameraOff, Search, Loader2,
+  Barcode, Trash2, ChevronDown, ChevronUp, Leaf, Minus, Plus,
+  Sparkles, X
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -21,13 +22,12 @@ const nutriScoreColors: Record<string, string> = {
   e: "bg-red-600",
 };
 
-const NutritionBadge = ({ label, value, unit }: { label: string; value?: number; unit: string }) => {
+const NutritionPill = ({ label, value, unit }: { label: string; value?: number; unit: string }) => {
   if (value == null) return null;
   return (
-    <div className="flex flex-col items-center bg-muted rounded-lg px-2 py-1.5 min-w-[54px]">
-      <span className="text-xs font-bold text-foreground">{Math.round(value)}</span>
-      <span className="text-[9px] text-muted-foreground">{unit}</span>
-      <span className="text-[9px] text-muted-foreground mt-0.5">{label}</span>
+    <div className="flex items-center gap-1.5 bg-muted/60 backdrop-blur-sm rounded-full px-3 py-1.5">
+      <span className="text-[11px] font-semibold text-foreground">{Math.round(value)}{unit}</span>
+      <span className="text-[10px] text-muted-foreground">{label}</span>
     </div>
   );
 };
@@ -42,6 +42,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [manualBarcode, setManualBarcode] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [showManualInput, setShowManualInput] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
@@ -58,7 +59,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     if (!barcode || processedBarcodesRef.current.has(barcode)) return;
     processedBarcodesRef.current.add(barcode);
 
-    // Stop camera when barcode detected
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
@@ -77,7 +77,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       addItem(product);
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
-      // Signal auto-restart
       autoRestartRef.current = true;
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
@@ -101,6 +100,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
       setManualBarcode("");
+      setShowManualInput(false);
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
     }
@@ -151,7 +151,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     setCameraActive(false);
   }, []);
 
-  // Auto-restart camera after a scan
   useEffect(() => {
     if (!isLookingUp && autoRestartRef.current && !cameraActive) {
       autoRestartRef.current = false;
@@ -169,237 +168,302 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header */}
-      <div className="px-5 pt-14 pb-2">
+      {/* ── Minimal header ── */}
+      <div className="px-6 pt-14 pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-extrabold text-secondary tracking-tight">SKAAP</h1>
-            <p className="text-[10px] text-muted-foreground font-medium tracking-wide mt-0.5">
-              Scan it. Skip the line. Escape the wait.
-            </p>
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Scan</h1>
           </div>
-          <button onClick={onOpenBag} className="relative p-2.5 bg-secondary text-secondary-foreground rounded-xl">
-            <ShoppingBag size={20} />
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onOpenBag}
+            className="relative w-11 h-11 bg-foreground/5 backdrop-blur-xl rounded-full flex items-center justify-center"
+          >
+            <ShoppingBag size={20} className="text-foreground" />
             {itemCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg"
               >
                 {itemCount}
               </motion.span>
             )}
-          </button>
+          </motion.button>
         </div>
       </div>
 
-      {/* Camera viewfinder */}
-      <div className="mx-4 rounded-2xl overflow-hidden relative bg-secondary aspect-[4/3] border border-border">
+      {/* ── Camera viewfinder ── */}
+      <div className="mx-5 rounded-3xl overflow-hidden relative bg-foreground/[0.03] aspect-[4/3]">
         <div id="scanner-container" className="w-full h-full [&>video]:object-cover" />
 
+        {/* Loading overlay */}
         {isLookingUp && (
-          <div className="absolute inset-0 bg-secondary/95 backdrop-blur-md flex flex-col items-center justify-center z-30">
-            <Loader2 size={32} className="text-primary animate-spin mb-3" />
-            <p className="text-sm text-secondary-foreground font-semibold">Looking up product…</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 bg-background/80 backdrop-blur-xl flex flex-col items-center justify-center z-30"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              <Loader2 size={28} className="text-primary" />
+            </motion.div>
+            <p className="text-sm text-foreground font-medium mt-3">Looking up product…</p>
+          </motion.div>
         )}
 
+        {/* Idle state */}
         {!cameraActive && !isLookingUp && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-secondary z-10">
-            <div className="absolute inset-5 rounded-xl pointer-events-none">
-              <div className="absolute top-0 left-0 w-10 h-10 rounded-tl-lg border-t-[3px] border-l-[3px] border-primary" />
-              <div className="absolute top-0 right-0 w-10 h-10 rounded-tr-lg border-t-[3px] border-r-[3px] border-primary" />
-              <div className="absolute bottom-0 left-0 w-10 h-10 rounded-bl-lg border-b-[3px] border-l-[3px] border-primary" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 rounded-br-lg border-b-[3px] border-r-[3px] border-primary" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            {/* Corner brackets */}
+            <div className="absolute inset-6 pointer-events-none">
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-foreground/20 rounded-tl-xl" />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-foreground/20 rounded-tr-xl" />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-foreground/20 rounded-bl-xl" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-foreground/20 rounded-br-xl" />
             </div>
+
+            {/* Scanning line */}
             <motion.div
-              animate={{ y: [-50, 50, -50] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-8 right-8 h-0.5 bg-gradient-to-r from-transparent via-primary/60 to-transparent rounded-full z-20"
+              animate={{ y: [-40, 40, -40] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute left-10 right-10 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"
             />
-            <div className="flex flex-col items-center gap-3 z-30">
-              <div className="bg-secondary-foreground/10 backdrop-blur-sm rounded-full p-4 mb-1">
-                <Camera size={28} className="text-primary" />
-              </div>
+
+            <div className="flex flex-col items-center gap-4 z-20">
               <motion.button
                 whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={startCamera}
-                className="bg-primary text-primary-foreground rounded-2xl px-7 py-3.5 flex items-center gap-2.5 font-bold text-sm shadow-lg"
+                className="bg-foreground text-background rounded-full px-7 py-3.5 flex items-center gap-2.5 font-semibold text-sm shadow-elevated"
               >
-                <Camera size={18} /> Scan with Camera
+                <Camera size={18} /> Start Scanning
               </motion.button>
+
+              <button
+                onClick={() => setShowManualInput(!showManualInput)}
+                className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground transition-colors"
+              >
+                <Barcode size={13} /> Enter barcode manually
+              </button>
+
               {cameraError && (
-                <p className="text-xs text-primary-foreground/80 text-center px-6 bg-primary/20 rounded-lg py-2">
-                  Camera access denied. Allow permissions.
+                <p className="text-xs text-destructive/80 text-center px-6">
+                  Camera unavailable. Check permissions.
                 </p>
               )}
             </div>
           </div>
         )}
 
+        {/* Active camera overlay */}
         {cameraActive && !isLookingUp && (
           <>
             <div className="absolute inset-0 z-10 pointer-events-none">
-              <div className="absolute inset-5 rounded-xl">
-                <div className="absolute top-0 left-0 w-10 h-10 rounded-tl-lg border-t-[3px] border-l-[3px] border-primary" />
-                <div className="absolute top-0 right-0 w-10 h-10 rounded-tr-lg border-t-[3px] border-r-[3px] border-primary" />
-                <div className="absolute bottom-0 left-0 w-10 h-10 rounded-bl-lg border-b-[3px] border-l-[3px] border-primary" />
-                <div className="absolute bottom-0 right-0 w-10 h-10 rounded-br-lg border-b-[3px] border-r-[3px] border-primary" />
+              <div className="absolute inset-6">
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-tl-xl" />
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-tr-xl" />
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-bl-xl" />
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-br-xl" />
               </div>
               <motion.div
-                animate={{ y: [20, 180, 20] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-8 right-8 h-0.5 bg-gradient-to-r from-transparent via-primary/80 to-transparent rounded-full shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                animate={{ y: [24, 170, 24] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute left-10 right-10 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_8px_hsl(var(--primary)/0.3)]"
               />
             </div>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={stopCamera}
-              className="absolute top-3 right-3 z-20 bg-secondary-foreground/20 backdrop-blur-sm text-secondary-foreground p-2.5 rounded-xl"
+              className="absolute top-4 right-4 z-20 w-9 h-9 bg-background/60 backdrop-blur-xl text-foreground rounded-full flex items-center justify-center"
             >
-              <CameraOff size={16} />
-            </button>
-            <div className="absolute bottom-3 left-3 right-3 z-20">
-              <div className="bg-secondary-foreground/10 backdrop-blur-sm rounded-xl px-3 py-2 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <p className="text-xs text-secondary-foreground font-medium">Scanning for barcodes…</p>
+              <X size={16} />
+            </motion.button>
+            <div className="absolute bottom-4 left-4 right-4 z-20">
+              <div className="bg-background/60 backdrop-blur-xl rounded-full px-4 py-2 flex items-center gap-2.5 w-fit mx-auto">
+                <motion.div
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="w-1.5 h-1.5 rounded-full bg-primary"
+                />
+                <p className="text-xs text-foreground font-medium">Scanning…</p>
               </div>
             </div>
           </>
         )}
       </div>
 
-      {/* Manual barcode input */}
-      <div className="mx-4 mt-3">
-        <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
-          <div className="flex-1 relative">
-            <Barcode size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              inputMode="numeric"
-              value={manualBarcode}
-              onChange={(e) => setManualBarcode(e.target.value)}
-              placeholder="Enter barcode number…"
-              className="w-full bg-card border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
-              disabled={isLookingUp}
-            />
-          </div>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={isLookingUp || !manualBarcode.trim()}
-            className="bg-primary text-primary-foreground rounded-xl px-4 py-2.5 flex items-center gap-1.5 text-sm font-semibold disabled:opacity-40"
+      {/* ── Manual barcode input (collapsible) ── */}
+      <AnimatePresence>
+        {showManualInput && !cameraActive && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
           >
-            <Search size={16} /> Look up
-          </motion.button>
-        </form>
-        <AnimatePresence>
-          {lookupError && (
-            <motion.p
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="text-xs text-destructive mt-2 bg-destructive/5 rounded-lg py-1.5 px-3"
-            >
-              {lookupError}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Content area */}
-      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-24">
-        {/* Last scanned product detail */}
-        <AnimatePresence mode="popLayout">
-          {lastScanned && (
-            <motion.div
-              key={`detail-${lastScanned.id}`}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-card rounded-2xl shadow-card p-4 mb-4 border border-border"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted flex-shrink-0 border border-border">
-                  <img
-                    src={lastScanned.image}
-                    alt={lastScanned.name}
-                    className="w-full h-full object-contain p-1"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+            <div className="mx-5 mt-3">
+              <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={manualBarcode}
+                    onChange={(e) => setManualBarcode(e.target.value)}
+                    placeholder="Enter barcode…"
+                    className="w-full bg-foreground/[0.03] rounded-full pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    disabled={isLookingUp}
+                    autoFocus
                   />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-sm text-foreground line-clamp-2 leading-tight">{lastScanned.name}</h3>
-                  {lastScanned.brand && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.brand}</p>
-                  )}
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    {lastScanned.weight && (
-                      <span className="text-[10px] text-muted-foreground bg-muted rounded-md px-2 py-0.5">{lastScanned.weight}</span>
-                    )}
-                    {lastScanned.nutriScore && (
-                      <span className={`text-[10px] font-bold text-white rounded-md px-2 py-0.5 uppercase ${nutriScoreColors[lastScanned.nutriScore.toLowerCase()] || "bg-muted-foreground"}`}>
-                        Nutri-Score {lastScanned.nutriScore.toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <p className="text-lg font-extrabold text-primary">${lastScanned.price.toFixed(2)}</p>
-                    <span className="text-[10px] text-muted-foreground bg-success/10 text-success font-semibold rounded-md px-2 py-0.5">
-                      ✓ Added to cart
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Nutrition row */}
-              {lastScanned.nutrition && (
-                <div className="mt-3">
-                  <div className="flex gap-1.5 overflow-x-auto pb-1">
-                    <NutritionBadge label="Cal" value={lastScanned.nutrition.calories} unit="kcal" />
-                    <NutritionBadge label="Fat" value={lastScanned.nutrition.fat} unit="g" />
-                    <NutritionBadge label="Sugar" value={lastScanned.nutrition.sugars} unit="g" />
-                    <NutritionBadge label="Protein" value={lastScanned.nutrition.protein} unit="g" />
-                    <NutritionBadge label="Salt" value={lastScanned.nutrition.salt} unit="g" />
-                  </div>
-                </div>
-              )}
-
-              {/* Expandable ingredients */}
-              {lastScanned.ingredients && (
-                <button
-                  onClick={() => setExpandedNutrition(!expandedNutrition)}
-                  className="w-full mt-2 flex items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  type="submit"
+                  disabled={isLookingUp || !manualBarcode.trim()}
+                  className="bg-foreground text-background rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-30"
                 >
-                  <span className="flex items-center gap-1"><Leaf size={12} /> Ingredients</span>
-                  {expandedNutrition ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
-              )}
-              <AnimatePresence>
-                {expandedNutrition && lastScanned.ingredients && (
-                  <motion.p
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="text-[11px] text-muted-foreground leading-relaxed overflow-hidden"
-                  >
-                    {lastScanned.ingredients}
-                  </motion.p>
-                )}
-              </AnimatePresence>
+                  <Search size={16} />
+                </motion.button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error message */}
+      <AnimatePresence>
+        {lookupError && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mx-5 mt-2"
+          >
+            <p className="text-xs text-destructive bg-destructive/5 rounded-full py-2 px-4 text-center">
+              {lookupError}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Content area ── */}
+      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-28">
+
+        {/* Added feedback toast */}
+        <AnimatePresence>
+          {showAddedFeedback && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="flex items-center gap-2 bg-foreground text-background rounded-full px-4 py-2.5 mb-4 w-fit mx-auto shadow-elevated"
+            >
+              <Sparkles size={14} />
+              <span className="text-xs font-semibold">Added to cart</span>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Running cart */}
+        {/* Last scanned product */}
+        <AnimatePresence mode="popLayout">
+          {lastScanned && (
+            <motion.div
+              key={`detail-${lastScanned.id}`}
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-card rounded-3xl p-5 mb-4 border border-border/50"
+              style={{ boxShadow: "0 2px 20px -4px hsl(var(--foreground) / 0.06)" }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-[72px] h-[72px] rounded-2xl overflow-hidden bg-muted/40 flex-shrink-0 flex items-center justify-center">
+                  <img
+                    src={lastScanned.image}
+                    alt={lastScanned.name}
+                    className="w-full h-full object-contain p-1.5"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-[15px] text-foreground leading-tight line-clamp-2">{lastScanned.name}</h3>
+                  {lastScanned.brand && (
+                    <p className="text-xs text-muted-foreground mt-0.5">{lastScanned.brand}</p>
+                  )}
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                    {lastScanned.weight && (
+                      <span className="text-[10px] text-muted-foreground bg-muted/60 rounded-full px-2.5 py-0.5">{lastScanned.weight}</span>
+                    )}
+                    {lastScanned.nutriScore && (
+                      <span className={`text-[10px] font-bold text-white rounded-full px-2.5 py-0.5 uppercase ${nutriScoreColors[lastScanned.nutriScore.toLowerCase()] || "bg-muted-foreground"}`}>
+                        {lastScanned.nutriScore.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xl font-black text-foreground mt-2">${lastScanned.price.toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Nutrition pills */}
+              {lastScanned.nutrition && (
+                <div className="flex gap-1.5 mt-4 overflow-x-auto pb-1 scrollbar-hide">
+                  <NutritionPill label="Cal" value={lastScanned.nutrition.calories} unit="" />
+                  <NutritionPill label="Fat" value={lastScanned.nutrition.fat} unit="g" />
+                  <NutritionPill label="Sugar" value={lastScanned.nutrition.sugars} unit="g" />
+                  <NutritionPill label="Protein" value={lastScanned.nutrition.protein} unit="g" />
+                  <NutritionPill label="Salt" value={lastScanned.nutrition.salt} unit="g" />
+                </div>
+              )}
+
+              {/* Ingredients toggle */}
+              {lastScanned.ingredients && (
+                <>
+                  <button
+                    onClick={() => setExpandedNutrition(!expandedNutrition)}
+                    className="w-full mt-3 flex items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors py-1.5"
+                  >
+                    <span className="flex items-center gap-1.5"><Leaf size={12} /> Ingredients</span>
+                    <motion.div animate={{ rotate: expandedNutrition ? 180 : 0 }}>
+                      <ChevronDown size={14} />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence>
+                    {expandedNutrition && (
+                      <motion.p
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="text-[11px] text-muted-foreground leading-relaxed overflow-hidden"
+                      >
+                        {lastScanned.ingredients}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Cart items */}
         {items.length > 0 && (
           <div className="mb-4">
-            <p className="text-xs font-bold text-secondary uppercase tracking-wider mb-2">
-              Cart ({itemCount} {itemCount === 1 ? "item" : "items"})
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3">
+              Your Cart
             </p>
-            <div className="bg-card rounded-2xl border border-border overflow-hidden">
-              {items.map((item, i) => (
-                <div key={item.product.id} className={`flex items-center gap-3 p-3 ${i > 0 ? "border-t border-border" : ""}`}>
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border">
+            <div className="space-y-2">
+              {items.map((item) => (
+                <motion.div
+                  key={item.product.id}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/50"
+                  style={{ boxShadow: "0 1px 8px -2px hsl(var(--foreground) / 0.04)" }}
+                >
+                  <div className="w-11 h-11 rounded-xl overflow-hidden bg-muted/40 flex-shrink-0">
                     <img
                       src={item.product.image}
                       alt={item.product.name}
@@ -408,59 +472,61 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-semibold text-foreground truncate">{item.product.name}</h4>
-                    {item.product.brand && <p className="text-[10px] text-muted-foreground truncate">{item.product.brand}</p>}
+                    <h4 className="text-[13px] font-semibold text-foreground truncate">{item.product.name}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      ${item.product.price.toFixed(2)} {item.quantity > 1 && `× ${item.quantity}`}
+                    </p>
                   </div>
-                  <div className="text-right flex items-center gap-2">
-                    <div>
-                      <p className="text-sm font-bold text-primary">${(item.product.price * item.quantity).toFixed(2)}</p>
-                      {item.quantity > 1 && <p className="text-[10px] text-muted-foreground">×{item.quantity}</p>}
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm font-bold text-foreground mr-2">${(item.product.price * item.quantity).toFixed(2)}</p>
                     <button
                       onClick={() => removeItem(item.product.id)}
-                      className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                      className="w-7 h-7 rounded-full bg-foreground/5 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} />
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
+            </div>
 
-              {/* Summary */}
-              <div className="border-t border-border bg-muted/50 p-3 space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium text-foreground">${total.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Tax</span>
-                  <span className="font-medium text-foreground">${tax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm font-bold pt-1 border-t border-border">
-                  <span className="text-foreground">Total</span>
-                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
-                </div>
+            {/* Summary */}
+            <div className="mt-4 bg-foreground/[0.02] rounded-2xl p-4 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium text-foreground">${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-medium text-foreground">${tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm font-bold pt-2 border-t border-border/50">
+                <span className="text-foreground">Total</span>
+                <span className="text-foreground">${grandTotal.toFixed(2)}</span>
               </div>
             </div>
 
-            {/* Checkout */}
+            {/* Checkout button */}
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={onOpenBag}
-              className="w-full mt-3 bg-primary text-primary-foreground rounded-2xl py-3.5 font-bold text-sm shadow-lg"
+              className="w-full mt-4 bg-foreground text-background rounded-full py-4 font-semibold text-[15px] shadow-elevated"
             >
               Checkout · ${grandTotal.toFixed(2)}
             </motion.button>
           </div>
         )}
 
+        {/* Empty state */}
         {items.length === 0 && !lastScanned && (
-          <div className="flex flex-col items-center justify-center pt-10 text-muted-foreground">
-            <div className="bg-muted/50 rounded-2xl p-5 mb-4">
-              <Package size={36} className="opacity-40" />
+          <div className="flex flex-col items-center justify-center pt-12 text-center">
+            <div className="w-16 h-16 rounded-full bg-foreground/[0.03] flex items-center justify-center mb-4">
+              <Barcode size={28} className="text-muted-foreground/40" />
             </div>
-            <p className="text-sm font-medium">No products scanned yet</p>
-            <p className="text-xs mt-1 text-muted-foreground/70">Tap "Scan with Camera" or enter a barcode</p>
+            <p className="text-sm font-semibold text-foreground">Ready to scan</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+              Point your camera at a barcode to get started
+            </p>
           </div>
         )}
       </div>
