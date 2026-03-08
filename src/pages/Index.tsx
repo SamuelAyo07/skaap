@@ -316,8 +316,8 @@ const Index = () => {
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-background/50 hover:text-background transition-colors"><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-background/50 hover:text-background transition-colors"><Linkedin size={18} /></a>
             </div>
           </div>
           <div className="border-t border-background/10 mt-6 pt-6 text-center">
