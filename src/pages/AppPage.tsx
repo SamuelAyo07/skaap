@@ -19,6 +19,7 @@ const pageVariants = {
 };
 
 const AppPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState("home");
   const [splashDone, setSplashDone] = useState(false);
