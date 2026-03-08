@@ -64,9 +64,12 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
                       {item.product.name}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                    <p className="text-[16px] font-bold text-scanner-accent mt-1">
-                      ${item.product.price.toFixed(2)}ea
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-[16px] font-bold text-scanner-accent">
+                        ${item.product.price.toFixed(2)}ea
+                      </p>
+                      <ProductInfoButton onClick={() => setInfoProduct(item.product)} />
+                    </div>
                   </div>
                   <div className="flex flex-col items-center gap-1 flex-shrink-0">
                     <motion.button
