@@ -10,6 +10,7 @@ interface BagScreenProps {
 
 const BagScreen = ({ onPayNow }: BagScreenProps) => {
   const { items, updateQuantity, total } = useCart();
+  const [infoProduct, setInfoProduct] = useState<Product | null>(null);
 
   const tax = total * 0.11;
   const grandTotal = total + tax;
