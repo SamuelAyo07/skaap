@@ -169,7 +169,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* ── Minimal header ── */}
-      <div className="px-4 pt-12 pb-3">
+      <div className="px-4 pt-10 pb-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan</h1>
