@@ -45,6 +45,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
+  const autoRestartRef = useRef(false);
 
   const handleProductFound = useCallback((product: Product) => {
     setLastScanned(product);
@@ -76,6 +77,8 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       addItem(product);
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
+      // Signal auto-restart
+      autoRestartRef.current = true;
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
     }
@@ -147,6 +150,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     }
     setCameraActive(false);
   }, []);
+
+  // Auto-restart camera after a scan
+  useEffect(() => {
+    if (!isLookingUp && autoRestartRef.current && !cameraActive) {
+      autoRestartRef.current = false;
+      const timer = setTimeout(() => startCamera(), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLookingUp, cameraActive, startCamera]);
 
   useEffect(() => {
     return () => { stopCamera(); };
