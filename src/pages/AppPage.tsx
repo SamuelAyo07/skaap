@@ -59,6 +59,7 @@ const AppPage = () => {
               {screen === "complete" && (
                 <OrderCompleteScreen onDone={() => { setScreen("home"); setActiveTab("home"); }} />
               )}
+              {screen === "profile" && <ProfileScreen />}
             </motion.div>
           </AnimatePresence>
 
