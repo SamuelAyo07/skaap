@@ -164,7 +164,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
 
   const [lastScanned, setLastScanned] = useState<Product | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
-  const [showNutritionDetails, setShowNutritionDetails] = useState(false);
+  
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [showAddedFeedback, setShowAddedFeedback] = useState<string | null>(null);
   const [manualBarcode, setManualBarcode] = useState("");
