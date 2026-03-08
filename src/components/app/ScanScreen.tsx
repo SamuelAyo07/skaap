@@ -133,7 +133,7 @@ const inferFormat = (barcode: string): string => {
 };
 
 const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
-  const { addItem, removeItem, items, itemCount, total } = useCart();
+  const { addItem, removeItem, updateQuantity, items, itemCount, total } = useCart();
 
   const [lastScanned, setLastScanned] = useState<Product | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
