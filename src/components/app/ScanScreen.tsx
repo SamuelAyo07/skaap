@@ -574,7 +574,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{item.product.name}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.product.weight}</p>
-                    <p className="text-[15px] font-bold text-scanner-accent mt-0.5">${item.product.price.toFixed(2)}ea</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[15px] font-bold text-scanner-accent">${item.product.price.toFixed(2)}ea</p>
+                      <ProductInfoButton onClick={() => setInfoProduct(item.product)} />
+                    </div>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-7 h-7 rounded-full bg-foreground/[0.06] flex items-center justify-center">
