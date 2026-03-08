@@ -90,15 +90,16 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
       </div>
 
       {items.length > 0 && (
-        <div className="absolute bottom-16 left-0 right-0 px-4 pb-3 pt-2.5 glass border-t border-border/50">
+        <div className="absolute bottom-16 left-0 right-0 px-4 pb-3 pt-2.5">
           <motion.button
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             whileTap={{ scale: 0.97 }}
             onClick={onPayNow}
-            className="w-full bg-foreground text-background rounded-full py-3.5 font-bold text-[15px] tracking-tight"
+            className="w-full bg-scanner-accent text-primary-foreground rounded-2xl py-4 font-bold text-[15px] tracking-tight flex items-center justify-between px-6"
           >
-            Pay Now · ${grandTotal.toFixed(2)}
+            <span>CHECKOUT</span>
+            <span>${grandTotal.toFixed(2)}</span>
           </motion.button>
         </div>
       )}
