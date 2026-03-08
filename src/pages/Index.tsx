@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, QrCode,
-  Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
-  Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin
+  Mail, Clock, Smile, ShieldCheck, TrendingUp, Zap,
+  Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin,
+  Heart, Users, BarChart3, Receipt
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import heroPhone from "@/assets/hero-phone-mockup.png";
 import AnimatedCounter from "@/components/website/AnimatedCounter";
 import ComparisonTable from "@/components/website/ComparisonTable";
 
@@ -25,46 +25,6 @@ const FadeInSection = ({ children, className = "", delay = 0 }: { children: Reac
     >
       {children}
     </motion.div>
-  );
-};
-
-const DemoPhone = () => {
-  const [step, setStep] = useState(0);
-  const steps = [
-    { title: "Select store", subtitle: "Pick your nearby store", icon: MapPin },
-    { title: "Scan items", subtitle: "Point camera at barcodes", icon: ScanLine },
-    { title: "Pay instantly", subtitle: "Apple Pay, card, or Google Pay", icon: CreditCard },
-    { title: "Walk out", subtitle: "Show QR at exit — done", icon: QrCode },
-  ];
-
-  return (
-    <div className="relative mx-auto w-[280px]">
-      <div className="bg-foreground rounded-[2.5rem] p-3 shadow-hero">
-        <div className="bg-background rounded-[2rem] overflow-hidden">
-          <div className="flex justify-center pt-3 pb-4">
-            <div className="w-24 h-6 bg-foreground rounded-full" />
-          </div>
-          <div className="px-5 pb-8">
-            <motion.div key={step} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: "easeOut" }}>
-              <div className="w-14 h-14 rounded-2xl bg-foreground flex items-center justify-center mb-4">
-                {(() => { const Icon = steps[step].icon; return <Icon size={22} className="text-background" />; })()}
-              </div>
-              <h4 className="font-bold text-foreground text-xl tracking-tight">{steps[step].title}</h4>
-              <p className="text-muted-foreground text-sm mt-1">{steps[step].subtitle}</p>
-            </motion.div>
-            <div className="flex gap-2 mt-8">
-              {steps.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setStep(i)}
-                  className={`h-1 rounded-full transition-all duration-300 ${i === step ? "w-8 bg-foreground" : "w-2 bg-muted-foreground/20"}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 
@@ -92,10 +52,11 @@ const Index = () => {
   };
 
   const faqs = [
-    { q: "How does SKAAP work?", a: "Download the app, walk into a participating store, scan items with your phone camera as you shop, pay in-app, and show your QR code at the exit. No checkout lines." },
-    { q: "Which stores support SKAAP?", a: "We're launching with select stores across the East Coast. Enter your ZIP code to find stores near you." },
-    { q: "Is it secure?", a: "SKAAP uses bank-level encryption for all transactions. Your payment info is tokenized and never stored on our servers." },
-    { q: "What does it cost store owners?", a: "Just 0.9% per transaction. No hardware costs, no monthly fees, no contracts." },
+    { q: "How does SKAAP work?", a: "Walk into any participating store, scan items with your phone as you shop, pay in-app, and show your QR receipt at the exit. That's it — no lines, no registers." },
+    { q: "Which stores support SKAAP?", a: "We're launching with local grocers and convenience stores across the East Coast, starting in Boston. More cities coming soon." },
+    { q: "Is it secure?", a: "Absolutely. SKAAP uses bank-level 256-bit encryption. Your payment data is tokenized and never stored on our servers." },
+    { q: "What does it cost for stores?", a: "Free for the first 90 days. After that, a simple, affordable monthly plan — no per-transaction fees, no surprises." },
+    { q: "Do I need special hardware?", a: "No. Your customers already have everything they need — their phones. No POS terminals, no kiosks, no installation." },
   ];
 
   return (
@@ -108,8 +69,8 @@ const Index = () => {
             <span className="font-bold text-lg text-foreground tracking-tight">SKAAP</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
-            <a href="#shoppers" className="hover:text-foreground transition-colors">Shoppers</a>
-            <a href="#stores" className="hover:text-foreground transition-colors">Retailers</a>
+            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it Works</a>
+            <a href="#retailers" className="hover:text-foreground transition-colors">Retailers</a>
             <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-3">
@@ -129,50 +90,38 @@ const Index = () => {
 
       {/* ─── HERO ────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-foreground">
-        {/* Subtle grid */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(0 0% 100%) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
 
-        <div className="relative max-w-6xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
-          <div className="flex-1 text-center lg:text-left">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}>
-              <span className="inline-flex items-center gap-1.5 bg-background/10 text-background/80 text-xs font-medium px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
-                <Sparkles size={12} /> Now launching on the East Coast
-              </span>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-background leading-[0.95] tracking-tighter mb-6">
-                Scan it.<br />
-                Skip the line.<br />
-                <span className="text-gradient">Walk out.</span>
-              </h1>
-              <p className="text-background/45 text-lg md:text-xl mb-10 max-w-lg mx-auto lg:mx-0 font-light leading-relaxed">
-                Your phone is the checkout. Scan, pay, and leave — no lines, no waiting, no friction.
-              </p>
-            </motion.div>
+        <div className="relative max-w-5xl mx-auto px-6 text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}>
+            <span className="inline-flex items-center gap-1.5 bg-background/10 text-background/80 text-xs font-medium px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
+              <Sparkles size={12} /> Now launching on the East Coast
+            </span>
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-background leading-[0.92] tracking-tighter mb-6">
+              Scan it.<br />
+              Pay instantly.<br />
+              <span className="text-gradient">Walk out.</span>
+            </h1>
+            <p className="text-background/50 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+              Your phone becomes the checkout. No lines, no registers, no waiting. Just shop, scan, and go.
+            </p>
+          </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate("/app")}
-                className="bg-accent text-accent-foreground px-8 py-4 rounded-full font-bold text-base flex items-center justify-center gap-2.5 shadow-hero"
-              >
-                <Play size={16} fill="currentColor" /> Try the Demo
-              </motion.button>
-              <a
-                href="#stores"
-                className="border border-background/20 text-background/80 px-8 py-4 rounded-full font-semibold text-base flex items-center justify-center gap-2 hover:bg-background/5 transition-colors"
-              >
-                <Store size={16} /> I Own a Store
-              </a>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.7, type: "spring", stiffness: 100, damping: 20 }}
-            className="flex-1 flex justify-center"
-          >
-            <img src={heroPhone} alt="SKAAP App" className="w-64 md:w-80 drop-shadow-2xl" />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.5 }} className="flex flex-col sm:flex-row gap-3 justify-center">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate("/app")}
+              className="bg-accent text-accent-foreground px-10 py-5 rounded-full font-bold text-lg flex items-center justify-center gap-2.5 shadow-hero"
+            >
+              <Play size={18} fill="currentColor" /> Try the Demo
+            </motion.button>
+            <a
+              href="#retailers"
+              className="border border-background/20 text-background/80 px-8 py-5 rounded-full font-semibold text-base flex items-center justify-center gap-2 hover:bg-background/5 transition-colors"
+            >
+              <Store size={16} /> I Own a Store
+            </a>
           </motion.div>
         </div>
 
@@ -181,8 +130,54 @@ const Index = () => {
         </motion.div>
       </section>
 
+      {/* ─── HOW IT WORKS ────────────────────────── */}
+      <section id="how-it-works" className="py-24 bg-background">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeInSection>
+            <div className="text-center mb-16">
+              <span className="text-accent text-xs font-bold uppercase tracking-widest">How it Works</span>
+              <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Three steps. That's it.</h2>
+              <p className="text-muted-foreground mt-4 max-w-md mx-auto text-lg font-light">No app training. No learning curve. If you can take a photo, you can use SKAAP.</p>
+            </div>
+          </FadeInSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {[
+              { step: "01", icon: ScanLine, title: "Scan products", desc: "Point your camera at any barcode while you shop. Items add to your bag instantly." },
+              { step: "02", icon: CreditCard, title: "Pay in-app", desc: "Apple Pay, Google Pay, or card. One tap and you're done — no register needed." },
+              { step: "03", icon: Receipt, title: "Show receipt & go", desc: "Flash your QR receipt at the exit. Walk out. That's the whole experience." },
+            ].map((item, i) => (
+              <FadeInSection key={i} delay={i * 0.1}>
+                <motion.div whileHover={{ y: -4 }} className="relative bg-muted/40 rounded-3xl p-8 text-center border border-border/50 group">
+                  <span className="text-7xl font-black text-foreground/[0.04] absolute top-4 right-6 select-none">{item.step}</span>
+                  <div className="w-14 h-14 rounded-2xl bg-foreground flex items-center justify-center mx-auto mb-5">
+                    <item.icon size={24} className="text-background" />
+                  </div>
+                  <h3 className="font-bold text-xl text-foreground tracking-tight mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                </motion.div>
+              </FadeInSection>
+            ))}
+          </div>
+
+          {/* Demo CTA */}
+          <FadeInSection delay={0.2}>
+            <div className="text-center">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate("/app")}
+                className="bg-foreground text-background px-8 py-4 rounded-full font-bold text-base inline-flex items-center gap-2.5 shadow-elevated"
+              >
+                <Play size={14} fill="currentColor" /> See it in action
+              </motion.button>
+            </div>
+          </FadeInSection>
+        </div>
+      </section>
+
       {/* ─── STATS ──────────────────────────────── */}
-      <section className="bg-background py-16 border-b border-border">
+      <section className="bg-foreground py-16">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
           {[
             { icon: Clock, end: 19, suffix: " min", desc: "Average time saved per trip" },
@@ -191,10 +186,10 @@ const Index = () => {
           ].map((item, i) => (
             <FadeInSection key={i} delay={i * 0.08}>
               <div className="text-center">
-                <p className="text-5xl md:text-6xl font-black text-foreground tracking-tighter">
+                <p className="text-5xl md:text-6xl font-black text-background tracking-tighter">
                   <AnimatedCounter end={item.end} suffix={item.suffix} />
                 </p>
-                <p className="text-muted-foreground text-sm mt-2 font-medium">{item.desc}</p>
+                <p className="text-background/40 text-sm mt-2 font-medium">{item.desc}</p>
               </div>
             </FadeInSection>
           ))}
@@ -202,41 +197,37 @@ const Index = () => {
       </section>
 
       {/* ─── FOR SHOPPERS ────────────────────────── */}
-      <section id="shoppers" className="py-24 bg-background">
+      <section className="py-24 bg-background">
         <div className="max-w-6xl mx-auto px-6">
           <FadeInSection>
             <div className="text-center mb-16">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">For Shoppers</span>
-              <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Your trip, reimagined</h2>
-              <p className="text-muted-foreground mt-4 max-w-md mx-auto text-lg font-light">No more waiting. Just scan, pay, and go.</p>
+              <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Your time matters</h2>
+              <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-lg font-light">
+                Life's too short for checkout lines. Shop the way you want — fast, free, and on your terms.
+              </p>
             </div>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <FadeInSection delay={0.1}>
-              <DemoPhone />
-            </FadeInSection>
-
-            <div className="space-y-1">
-              {[
-                { icon: ScanLine, title: "Scan as you shop", desc: "Point your camera at any barcode. Items appear instantly." },
-                { icon: CreditCard, title: "Pay from your pocket", desc: "Apple Pay, Google Pay, or card. Checkout in your hand." },
-                { icon: QrCode, title: "Flash & walk out", desc: "Show your QR at the exit. No bagging, no waiting." },
-                { icon: ShieldCheck, title: "Bank-level security", desc: "256-bit encryption. Payment data is tokenized." },
-              ].map((b, i) => (
-                <FadeInSection key={i} delay={0.12 + i * 0.08}>
-                  <motion.div whileHover={{ x: 4 }} className="flex gap-4 p-4 rounded-2xl hover:bg-muted/60 transition-colors cursor-default">
-                    <div className="w-10 h-10 rounded-xl bg-foreground flex items-center justify-center flex-shrink-0">
-                      <b.icon size={18} className="text-background" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-foreground tracking-tight">{b.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-0.5">{b.desc}</p>
-                    </div>
-                  </motion.div>
-                </FadeInSection>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            {[
+              { icon: ScanLine, title: "Scan as you shop", desc: "Point your camera at any barcode. Your bag updates in real time." },
+              { icon: CreditCard, title: "Pay from your pocket", desc: "Apple Pay, Google Pay, or card. Checkout is in your hand." },
+              { icon: QrCode, title: "Flash & walk out", desc: "Show your QR receipt at the exit. No bagging, no waiting around." },
+              { icon: ShieldCheck, title: "Completely secure", desc: "Bank-level encryption. Your payment data never touches our servers." },
+            ].map((b, i) => (
+              <FadeInSection key={i} delay={0.08 + i * 0.06}>
+                <motion.div whileHover={{ y: -2 }} className="flex gap-4 p-5 rounded-2xl bg-muted/40 border border-border/50">
+                  <div className="w-10 h-10 rounded-xl bg-foreground flex items-center justify-center flex-shrink-0">
+                    <b.icon size={18} className="text-background" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground tracking-tight">{b.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{b.desc}</p>
+                  </div>
+                </motion.div>
+              </FadeInSection>
+            ))}
           </div>
         </div>
       </section>
@@ -246,10 +237,10 @@ const Index = () => {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <FadeInSection>
             <h2 className="text-4xl md:text-6xl font-black text-background tracking-tight leading-tight mb-6">
-              Ready to skip<br />the line?
+              See what checkout<br />should feel like
             </h2>
             <p className="text-background/40 text-lg mb-10 max-w-md mx-auto font-light">
-              Experience the future of grocery shopping. It takes 30 seconds.
+              Try the full experience in 30 seconds. No account needed.
             </p>
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -281,23 +272,46 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ───────────────────────── */}
-      <section id="stores" className="bg-foreground py-24">
+      <section id="retailers" className="bg-foreground py-24">
         <div className="max-w-6xl mx-auto px-6">
           <FadeInSection>
-            <div className="text-center mb-16">
+            <div className="text-center mb-6">
               <span className="text-accent text-xs font-bold uppercase tracking-widest">For Retailers</span>
-              <h2 className="text-4xl md:text-6xl font-black text-background mt-3 tracking-tight">Upgrade your checkout</h2>
-              <p className="text-background/35 mt-4 max-w-md mx-auto text-lg font-light">No hardware. No contracts. Happier customers.</p>
+              <h2 className="text-4xl md:text-6xl font-black text-background mt-3 tracking-tight">
+                Built for the stores<br className="hidden md:block" /> that built your neighborhood
+              </h2>
+              <p className="text-background/40 mt-5 max-w-2xl mx-auto text-lg font-light leading-relaxed">
+                Local grocers. Corner stores. Family-run markets. The businesses that know your name deserve the same tools as the giants. SKAAP gives them that — and more.
+              </p>
+            </div>
+          </FadeInSection>
+
+          {/* Emotional value prop */}
+          <FadeInSection delay={0.1}>
+            <div className="bg-background/5 border border-background/10 rounded-3xl p-8 md:p-10 mb-12 max-w-3xl mx-auto">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center flex-shrink-0">
+                  <Heart size={22} className="text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-xl text-background tracking-tight mb-2">
+                    Your store matters. We're here to prove it.
+                  </h3>
+                  <p className="text-background/45 leading-relaxed">
+                    The world is changing fast. AI. Digital wallets. Same-day delivery. The big chains have entire teams building for the future. You have grit, loyal customers, and a community that depends on you. SKAAP is the technology partner that levels the playing field — so your store doesn't just survive this new era, it leads it.
+                  </p>
+                </div>
+              </div>
             </div>
           </FadeInSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14">
             {[
-              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones. No POS terminals needed." },
-              { icon: Zap, title: "Live in 48 hours", desc: "Upload your inventory and you're ready to go." },
-              { icon: TrendingUp, title: "0.9% per transaction", desc: "No monthly fees. Cancel anytime." },
+              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones. No new POS terminals. No installation." },
+              { icon: Zap, title: "Live in 48 hours", desc: "Upload your inventory and start accepting scan-to-pay customers in two days." },
+              { icon: Users, title: "Happier customers", desc: "Faster trips, less friction. The kind of experience that brings people back." },
             ].map((card, i) => (
-              <FadeInSection key={i} delay={i * 0.08}>
+              <FadeInSection key={i} delay={0.12 + i * 0.08}>
                 <motion.div whileHover={{ y: -3 }} className="bg-background/5 border border-background/10 rounded-2xl p-6">
                   <div className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center mb-4">
                     <card.icon size={20} className="text-accent-foreground" />
@@ -309,13 +323,23 @@ const Index = () => {
             ))}
           </div>
 
+          {/* Pricing */}
+          <FadeInSection delay={0.15}>
+            <div className="bg-accent/10 border border-accent/20 rounded-2xl p-6 md:p-8 max-w-2xl mx-auto text-center mb-14">
+              <h3 className="font-bold text-2xl text-background tracking-tight mb-2">Free for 90 days</h3>
+              <p className="text-background/50 leading-relaxed">
+                Try SKAAP with zero risk. No credit card, no commitment. After your trial, continue with an affordable monthly plan — pricing designed for small businesses, not enterprise budgets.
+              </p>
+            </div>
+          </FadeInSection>
+
           <FadeInSection delay={0.2}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
               {[
-                { end: 32, suffix: "%", label: "Less checkout staffing" },
-                { end: 4.8, suffix: "★", label: "Rating boost", decimals: 1 },
-                { end: 28, suffix: "%", label: "More repeat visits" },
-                { end: 48, suffix: "h", prefix: "<", label: "Signup to live" },
+                { end: 32, suffix: "%", label: "Less checkout staffing needed" },
+                { end: 4.8, suffix: "★", label: "Average store rating boost", decimals: 1 },
+                { end: 28, suffix: "%", label: "Increase in repeat visits" },
+                { end: 48, suffix: "h", prefix: "<", label: "From signup to live" },
               ].map((s, i) => (
                 <div key={i} className="text-center p-3">
                   <p className="text-3xl font-black text-accent tabular-nums">
@@ -330,7 +354,7 @@ const Index = () => {
           <FadeInSection delay={0.25}>
             <div className="text-center space-y-3">
               <a href="#contact" className="inline-flex items-center gap-2.5 bg-accent text-accent-foreground px-8 py-4 rounded-full font-bold text-base shadow-hero hover:opacity-90 transition-opacity">
-                Onboard Your Store <ArrowRight size={16} />
+                Get Started Free <ArrowRight size={16} />
               </a>
               <br />
               <motion.button
@@ -380,7 +404,7 @@ const Index = () => {
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeInSection>
             <h2 className="text-3xl font-black text-foreground mb-3 tracking-tight">Let's talk</h2>
-            <p className="text-muted-foreground text-sm mb-8">Drop your email and we'll be in touch.</p>
+            <p className="text-muted-foreground text-sm mb-8">Whether you're a shopper or a store owner — drop your email and we'll be in touch.</p>
           </FadeInSection>
 
           <FadeInSection delay={0.1}>
@@ -422,8 +446,8 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-background/40 font-medium">
-              <a href="#shoppers" className="hover:text-background transition-colors">Shoppers</a>
-              <a href="#stores" className="hover:text-background transition-colors">Retailers</a>
+              <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
+              <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
               <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
               <div className="flex items-center gap-3 ml-2">
