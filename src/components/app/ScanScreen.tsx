@@ -458,30 +458,30 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         )}
       </div>
 
-      <div className="mx-5 mt-3 rounded-2xl bg-muted/30 border border-border/40 p-3">
-        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">
-          Manual barcode entry
-        </p>
-        <form onSubmit={(e) => { e.preventDefault(); void handleManualLookup(); }} className="flex gap-2">
-          <Input
-            ref={manualInputRef}
-            type="text"
-            inputMode="numeric"
-            value={manualBarcode}
-            onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
-            placeholder="Enter barcode"
-            className="h-11 rounded-full bg-background"
-            disabled={isLookingUp}
-            aria-label="Manual barcode input"
-          />
+      <div className="mx-4 mt-2.5">
+        <form onSubmit={(e) => { e.preventDefault(); void handleManualLookup(); }} className="flex gap-2 items-center">
+          <div className="flex-1 relative">
+            <Barcode size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
+            <Input
+              ref={manualInputRef}
+              type="text"
+              inputMode="numeric"
+              value={manualBarcode}
+              onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
+              placeholder="Type barcode manually"
+              className="h-10 rounded-full bg-muted/40 border-border/30 pl-9 text-[13px]"
+              disabled={isLookingUp}
+              aria-label="Manual barcode input"
+            />
+          </div>
           <motion.button
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={isLookingUp || !manualBarcode.trim()}
-            className="bg-scanner-accent text-primary-foreground rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-40"
+            className="bg-scanner-accent text-primary-foreground rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-40 flex-shrink-0"
             aria-label="Lookup barcode"
           >
-            <Search size={16} />
+            <Search size={15} />
           </motion.button>
         </form>
       </div>
