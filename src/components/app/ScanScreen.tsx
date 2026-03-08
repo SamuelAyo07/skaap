@@ -10,6 +10,7 @@ import {
   X,
   Flashlight,
   FlashlightOff,
+  ChevronDown,
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -163,6 +164,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
 
   const [lastScanned, setLastScanned] = useState<Product | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [showNutritionDetails, setShowNutritionDetails] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [showAddedFeedback, setShowAddedFeedback] = useState<string | null>(null);
   const [manualBarcode, setManualBarcode] = useState("");
@@ -583,38 +585,60 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               <p className="text-sm text-muted-foreground mt-1">{lastScanned.brand || "Unknown brand"}</p>
               <p className="text-3xl font-black text-scanner-accent mt-3">${lastScanned.price.toFixed(2)}</p>
 
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <div className="rounded-xl border border-border bg-muted/20 p-2.5">
-                  <p className="text-[11px] text-muted-foreground">Calories</p>
-                  <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.calories ?? 0)}</p>
-                </div>
-                <div className="rounded-xl border border-border bg-muted/20 p-2.5">
-                  <p className="text-[11px] text-muted-foreground">Fat</p>
-                  <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.fat ?? 0)}g</p>
-                </div>
-                <div className="rounded-xl border border-border bg-muted/20 p-2.5">
-                  <p className="text-[11px] text-muted-foreground">Sugar</p>
-                  <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.sugars ?? 0)}g</p>
-                </div>
-                <div className="rounded-xl border border-border bg-muted/20 p-2.5">
-                  <p className="text-[11px] text-muted-foreground">Protein</p>
-                  <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.protein ?? 0)}g</p>
-                </div>
-              </div>
+              {/* Collapsible nutrition details */}
+              <button
+                onClick={() => setShowNutritionDetails(!showNutritionDetails)}
+                className="w-full mt-3 flex items-center justify-between text-xs text-muted-foreground hover:text-foreground transition-colors py-2 border-t border-border/40"
+              >
+                <span className="font-semibold">Nutrition & Ingredients</span>
+                <motion.div animate={{ rotate: showNutritionDetails ? 180 : 0 }}>
+                  <ChevronDown size={14} />
+                </motion.div>
+              </button>
 
-              <div className="mt-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Ingredients</p>
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  {lastScanned.ingredients || "No ingredients listed."}
-                </p>
-              </div>
+              <AnimatePresence>
+                {showNutritionDetails && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <div className="rounded-xl border border-border bg-muted/20 p-2.5">
+                        <p className="text-[11px] text-muted-foreground">Calories</p>
+                        <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.calories ?? 0)}</p>
+                      </div>
+                      <div className="rounded-xl border border-border bg-muted/20 p-2.5">
+                        <p className="text-[11px] text-muted-foreground">Fat</p>
+                        <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.fat ?? 0)}g</p>
+                      </div>
+                      <div className="rounded-xl border border-border bg-muted/20 p-2.5">
+                        <p className="text-[11px] text-muted-foreground">Sugar</p>
+                        <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.sugars ?? 0)}g</p>
+                      </div>
+                      <div className="rounded-xl border border-border bg-muted/20 p-2.5">
+                        <p className="text-[11px] text-muted-foreground">Protein</p>
+                        <p className="text-sm font-bold text-scanner-ink">{Math.round(lastScanned.nutrition?.protein ?? 0)}g</p>
+                      </div>
+                    </div>
 
-              {allergens.length > 0 && (
-                <div className="mt-3 rounded-xl border border-destructive/40 bg-destructive/10 p-2.5">
-                  <p className="text-[11px] font-bold text-destructive uppercase tracking-wider">Allergens</p>
-                  <p className="text-xs text-destructive mt-1">{allergens.join(", ")}</p>
-                </div>
-              )}
+                    <div className="mt-3">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Ingredients</p>
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">
+                        {lastScanned.ingredients || "No ingredients listed."}
+                      </p>
+                    </div>
+
+                    {allergens.length > 0 && (
+                      <div className="mt-3 rounded-xl border border-destructive/40 bg-destructive/10 p-2.5">
+                        <p className="text-[11px] font-bold text-destructive uppercase tracking-wider">Allergens</p>
+                        <p className="text-xs text-destructive mt-1">{allergens.join(", ")}</p>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <motion.button
                 whileTap={{ scale: 0.97 }}
