@@ -176,7 +176,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
             onDragEnd={(_, dragInfo) => {
               if (dragInfo.offset.y > 100) onClose();
             }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl max-h-[70vh] flex flex-col shadow-elevated"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl max-h-[75vh] flex flex-col shadow-elevated"
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1">

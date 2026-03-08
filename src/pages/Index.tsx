@@ -138,33 +138,38 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── SMART INFO (compact banner with demo image) ─── */}
-      <section className="py-8 bg-muted/30">
+      {/* ─── SMART INFO ─── */}
+      <section className="py-12 bg-muted/30">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="bg-background border border-border/50 rounded-2xl p-5 md:p-6 flex items-center gap-5">
-              <div className="w-16 h-28 md:w-20 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-muted/20 border border-border/30 hidden sm:block">
-                <img src={smartInfoDemo} alt="Smart Info demo" className="w-full h-full object-cover" />
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
+                🌿 Smart Info
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-base">🌿</span>
-                  <span className="text-accent text-[10px] font-bold uppercase tracking-widest">Smart Info</span>
-                </div>
-                <h3 className="text-lg md:text-xl font-black text-foreground tracking-tight leading-snug">
-                  Know what you're buying — instantly.
-                </h3>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-xl hidden md:block">
-                  Tap any scanned item for Nutri-Score, allergens, additives & nutrition facts.
-                </p>
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {["Nutri-Score", "Allergens", "Additives", "Nutrition"].map((tag) => (
-                    <span key={tag} className="text-[10px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-full">{tag}</span>
-                  ))}
-                </div>
-              </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0">
-                <Play size={12} fill="currentColor" /> Try It
+              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Know what you're buying.</h2>
+              <p className="text-sm text-muted-foreground mt-2 max-w-lg mx-auto">Tap any scanned item for instant nutrition insights — without slowing down your checkout.</p>
+            </div>
+          </FadeIn>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { emoji: "🅰️", title: "Nutri-Score", desc: "A–E nutrition grade at a glance", color: "from-[hsl(142,71%,35%)]/10 to-transparent" },
+              { emoji: "⚠️", title: "Allergens", desc: "Bold allergen warnings instantly", color: "from-accent/10 to-transparent" },
+              { emoji: "🧪", title: "Additives", desc: "E-numbers decoded with risk levels", color: "from-[hsl(30,90%,55%)]/10 to-transparent" },
+              { emoji: "📊", title: "Nutrition Facts", desc: "Full per-100g breakdown with levels", color: "from-[hsl(220,70%,55%)]/10 to-transparent" },
+            ].map((item, i) => (
+              <FadeIn key={i} delay={i * 0.06}>
+                <motion.div whileHover={{ y: -3 }} className={`bg-gradient-to-b ${item.color} bg-background border border-border/40 rounded-2xl p-4 text-center`}>
+                  <span className="text-2xl block mb-2">{item.emoji}</span>
+                  <h3 className="font-bold text-sm text-foreground tracking-tight">{item.title}</h3>
+                  <p className="text-[11px] text-muted-foreground mt-1 leading-snug">{item.desc}</p>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+          <FadeIn delay={0.3}>
+            <div className="flex justify-center mt-6">
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
+                <Play size={12} fill="currentColor" /> Try Smart Info
               </motion.button>
             </div>
           </FadeIn>
