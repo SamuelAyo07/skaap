@@ -501,6 +501,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </p>
         <form onSubmit={(e) => { e.preventDefault(); void handleManualLookup(); }} className="flex gap-2">
           <Input
+            ref={manualInputRef}
             type="text"
             inputMode="numeric"
             value={manualBarcode}
