@@ -6,6 +6,7 @@ import ScanScreen from "@/components/app/ScanScreen";
 import BagScreen from "@/components/app/BagScreen";
 import PaymentScreen from "@/components/app/PaymentScreen";
 import OrderCompleteScreen from "@/components/app/OrderCompleteScreen";
+import ProfileScreen from "@/components/app/ProfileScreen";
 import { motion, AnimatePresence } from "framer-motion";
 
 const pageVariants = {
