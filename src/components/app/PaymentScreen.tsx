@@ -26,24 +26,24 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="px-5 pt-14 pb-24 min-h-screen bg-background"
+      className="px-4 pt-12 pb-20 min-h-screen bg-background"
     >
-      <button onClick={onBack} className="flex items-center gap-1 text-accent font-medium mb-6">
-        <ArrowLeft size={16} />
-        <span className="text-sm">Back</span>
+      <button onClick={onBack} className="flex items-center gap-1 text-accent font-medium mb-5">
+        <ArrowLeft size={15} />
+        <span className="text-[13px]">Back</span>
       </button>
 
-      <h1 className="text-[28px] font-bold text-foreground tracking-tight mb-8">Payment</h1>
+      <h1 className="text-2xl font-bold text-foreground tracking-tight mb-6">Payment</h1>
 
       {/* Total */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.06, type: "spring", stiffness: 200, damping: 24 }}
-        className="bg-foreground rounded-3xl p-6 mb-8 text-center"
+        className="bg-foreground rounded-2xl p-5 mb-6 text-center"
       >
-        <p className="text-xs text-background/40 font-medium uppercase tracking-widest mb-2">Total</p>
-        <p className="text-4xl font-black text-background tabular-nums tracking-tight">${grandTotal.toFixed(2)}</p>
+        <p className="text-[10px] text-background/40 font-medium uppercase tracking-widest mb-1.5">Total</p>
+        <p className="text-3xl font-black text-background tabular-nums tracking-tight">${grandTotal.toFixed(2)}</p>
       </motion.div>
 
       {/* Quick pay */}
@@ -51,26 +51,26 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 24 }}
-        className="flex gap-2.5 mb-8"
+        className="flex gap-2 mb-6"
       >
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className="flex-1 bg-foreground text-background rounded-2xl py-3.5 flex items-center justify-center gap-2 font-semibold text-sm"
+          className="flex-1 bg-foreground text-background rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-[13px]"
         >
-          <Apple size={18} /> Apple Pay
+          <Apple size={16} /> Apple Pay
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className="flex-1 bg-foreground text-background rounded-2xl py-3.5 flex items-center justify-center gap-2 font-semibold text-sm"
+          className="flex-1 bg-foreground text-background rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-[13px]"
         >
           G Pay
         </motion.button>
       </motion.div>
 
       {/* Divider */}
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 h-px bg-border" />
-        <span className="text-xs text-muted-foreground font-medium">or pay with card</span>
+        <span className="text-[11px] text-muted-foreground font-medium">or pay with card</span>
         <div className="flex-1 h-px bg-border" />
       </div>
 
@@ -79,34 +79,34 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.16, type: "spring", stiffness: 200, damping: 24 }}
-        className="space-y-3 mb-8"
+        className="space-y-2.5 mb-6"
       >
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Card Number</label>
+          <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Card Number</label>
           <div className="relative">
             <input
               type="text"
               placeholder="4242 4242 4242 4242"
-              className="w-full bg-muted/50 border border-border rounded-xl py-3.5 pl-4 pr-10 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
+              className="w-full bg-muted/50 border border-border rounded-xl py-3 pl-3.5 pr-10 text-[13px] outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
             />
-            <CreditCard size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <CreditCard size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           </div>
         </div>
-        <div className="flex gap-2.5">
+        <div className="flex gap-2">
           <div className="flex-1">
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Expiry</label>
+            <label className="text-[11px] font-medium text-muted-foreground mb-1 block">Expiry</label>
             <input
               type="text"
               placeholder="MM/YY"
-              className="w-full bg-muted/50 border border-border rounded-xl py-3.5 px-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
+              className="w-full bg-muted/50 border border-border rounded-xl py-3 px-3.5 text-[13px] outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
             />
           </div>
           <div className="flex-1">
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">CVV</label>
+            <label className="text-[11px] font-medium text-muted-foreground mb-1 block">CVV</label>
             <input
               type="text"
               placeholder="123"
-              className="w-full bg-muted/50 border border-border rounded-xl py-3.5 px-4 text-sm outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
+              className="w-full bg-muted/50 border border-border rounded-xl py-3 px-3.5 text-[13px] outline-none focus:ring-2 focus:ring-foreground/10 transition-shadow"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
         whileTap={{ scale: 0.97 }}
         onClick={handlePay}
         disabled={processing}
-        className="w-full bg-foreground text-background rounded-full py-4 font-bold text-base disabled:opacity-60 flex items-center justify-center gap-2"
+        className="w-full bg-foreground text-background rounded-full py-3.5 font-bold text-[15px] disabled:opacity-60 flex items-center justify-center gap-2"
       >
         {processing ? (
           <motion.span
@@ -132,14 +132,14 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
           </motion.span>
         ) : (
           <>
-            <Lock size={14} />
+            <Lock size={13} />
             <span className="tracking-tight">Complete Purchase</span>
           </>
         )}
       </motion.button>
 
-      <p className="text-[10px] text-muted-foreground text-center mt-3 flex items-center justify-center gap-1">
-        <Lock size={9} /> Secured with 256-bit encryption
+      <p className="text-[9px] text-muted-foreground text-center mt-2.5 flex items-center justify-center gap-1">
+        <Lock size={8} /> Secured with 256-bit encryption
       </p>
     </motion.div>
   );

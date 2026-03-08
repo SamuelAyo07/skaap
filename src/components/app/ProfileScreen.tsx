@@ -51,41 +51,41 @@ const ProfileScreen = () => {
 
   if (activeSection === "orders") {
     return (
-      <div className="px-5 pt-14 pb-24 bg-background min-h-screen">
+      <div className="px-4 pt-12 pb-20 bg-background min-h-screen">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <button
             onClick={() => setActiveSection("main")}
-            className="flex items-center gap-1 text-sm text-accent font-medium mb-6"
+            className="flex items-center gap-1 text-[13px] text-accent font-medium mb-4"
           >
-            <ArrowLeft size={14} /> Back
+            <ArrowLeft size={13} /> Back
           </button>
-          <h1 className="text-[28px] font-bold text-foreground tracking-tight mb-6">Orders</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight mb-4">Orders</h1>
         </motion.div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           {demoOrders.map((order, i) => (
             <motion.div
               key={order.id}
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05, type: "spring", stiffness: 200, damping: 24 }}
-              className="bg-muted/50 rounded-2xl p-4"
+              className="bg-muted/50 rounded-xl p-3.5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center">
-                    <Package size={13} className="text-background" />
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-foreground flex items-center justify-center">
+                    <Package size={12} className="text-background" />
                   </div>
-                  <span className="text-xs text-muted-foreground font-medium">{formatDate(order.created_at)}</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">{formatDate(order.created_at)}</span>
                 </div>
-                <span className="text-sm font-bold text-foreground tabular-nums">${order.total.toFixed(2)}</span>
+                <span className="text-[13px] font-bold text-foreground tabular-nums">${order.total.toFixed(2)}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
                 {(order.items as any[]).map((it: any) => it.name || it.product?.name || "Item").join(", ")}
               </p>
-              <div className="mt-2.5 flex items-center gap-1.5">
+              <div className="mt-2 flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                <span className="text-[10px] text-muted-foreground capitalize font-medium">{order.status}</span>
+                <span className="text-[9px] text-muted-foreground capitalize font-medium">{order.status}</span>
               </div>
             </motion.div>
           ))}
@@ -102,14 +102,14 @@ const ProfileScreen = () => {
   ];
 
   return (
-    <div className="px-5 pt-14 pb-24 bg-background min-h-screen">
+    <div className="px-4 pt-12 pb-20 bg-background min-h-screen">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-5"
       >
-        <h1 className="text-[28px] font-bold text-foreground tracking-tight">Profile</h1>
+        <h1 className="text-2xl font-bold text-foreground tracking-tight">Profile</h1>
       </motion.div>
 
       {/* User card */}
@@ -117,16 +117,16 @@ const ProfileScreen = () => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.06, type: "spring", stiffness: 200, damping: 24 }}
-        className="bg-foreground rounded-3xl p-5 mb-6 flex items-center gap-4"
+        className="bg-foreground rounded-2xl p-4 mb-4 flex items-center gap-3.5"
       >
-        <div className="w-14 h-14 rounded-full bg-background/15 flex items-center justify-center">
-          <User size={24} className="text-background" />
+        <div className="w-12 h-12 rounded-full bg-background/15 flex items-center justify-center">
+          <User size={22} className="text-background" />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-base font-bold text-background truncate tracking-tight">
+          <h2 className="text-[15px] font-bold text-background truncate tracking-tight">
             {user?.user_metadata?.full_name || "Demo User"}
           </h2>
-          <p className="text-xs text-background/50 truncate">
+          <p className="text-[11px] text-background/50 truncate">
             {user?.email || "demo@skaap.app"}
           </p>
         </div>
@@ -137,16 +137,16 @@ const ProfileScreen = () => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, type: "spring", stiffness: 200, damping: 24 }}
-        className="grid grid-cols-3 gap-2 mb-6"
+        className="grid grid-cols-3 gap-1.5 mb-4"
       >
         {[
           { label: "Orders", value: demoOrders.length.toString() },
           { label: "Saved", value: "$12.40" },
           { label: "Points", value: "340" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-muted/50 rounded-2xl p-4 text-center">
-            <p className="text-xl font-bold text-foreground tabular-nums">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">{stat.label}</p>
+          <div key={stat.label} className="bg-muted/50 rounded-xl p-3 text-center">
+            <p className="text-lg font-bold text-foreground tabular-nums">{stat.value}</p>
+            <p className="text-[9px] text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">{stat.label}</p>
           </div>
         ))}
       </motion.div>
@@ -156,7 +156,7 @@ const ProfileScreen = () => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, type: "spring", stiffness: 200, damping: 24 }}
-        className="bg-muted/50 rounded-2xl overflow-hidden mb-3"
+        className="bg-muted/50 rounded-xl overflow-hidden mb-2.5"
       >
         {settingsItems.map((item, i) => {
           const Icon = item.icon;
@@ -164,13 +164,13 @@ const ProfileScreen = () => {
             <button
               key={item.label}
               onClick={item.action}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 text-left active:bg-muted transition-colors ${
+              className={`w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-muted transition-colors ${
                 i < settingsItems.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
-              <Icon size={18} className="text-muted-foreground" />
-              <span className="flex-1 text-sm font-medium text-foreground">{item.label}</span>
-              <ChevronRight size={14} className="text-muted-foreground/40" />
+              <Icon size={16} className="text-muted-foreground" />
+              <span className="flex-1 text-[13px] font-medium text-foreground">{item.label}</span>
+              <ChevronRight size={13} className="text-muted-foreground/40" />
             </button>
           );
         })}
@@ -182,10 +182,10 @@ const ProfileScreen = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.24, type: "spring", stiffness: 200, damping: 24 }}
         onClick={() => supabase.auth.signOut()}
-        className="w-full flex items-center gap-3.5 bg-muted/50 rounded-2xl px-4 py-3.5 text-left active:bg-muted transition-colors"
+        className="w-full flex items-center gap-3 bg-muted/50 rounded-xl px-3.5 py-3 text-left active:bg-muted transition-colors"
       >
-        <LogOut size={18} className="text-accent" />
-        <span className="text-sm font-medium text-accent">Sign Out</span>
+        <LogOut size={16} className="text-accent" />
+        <span className="text-[13px] font-medium text-accent">Sign Out</span>
       </motion.button>
     </div>
   );

@@ -169,10 +169,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* ── Minimal header ── */}
-      <div className="px-6 pt-14 pb-4">
+      <div className="px-4 pt-12 pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">Scan</h1>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan</h1>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -194,7 +194,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       </div>
 
       {/* ── Camera viewfinder ── */}
-      <div className="mx-5 rounded-3xl overflow-hidden relative bg-foreground/[0.03] aspect-[4/3]">
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-foreground/[0.03] aspect-[4/3]">
         <div id="scanner-container" className="w-full h-full [&>video]:object-cover" />
 
         {/* Loading overlay */}
@@ -349,7 +349,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       </AnimatePresence>
 
       {/* ── Content area ── */}
-      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-28">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-24">
 
         {/* Added feedback toast */}
         <AnimatePresence>
