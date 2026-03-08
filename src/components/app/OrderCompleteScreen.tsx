@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Clock, DollarSign } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { motion } from "framer-motion";
 
@@ -10,7 +10,8 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
   const { total, clearCart } = useCart();
   const orderId = `#${Math.floor(100000 + Math.random() * 900000)}`;
   const today = new Date();
-  const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")} ${String(today.getHours()).padStart(2, "0")}:${String(today.getMinutes()).padStart(2, "0")}`;
+  const dateStr = today.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const timeStr = today.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
   const savedMinutes = Math.floor(12 + Math.random() * 15);
   const savedMoney = (total * 0.08).toFixed(2);
 
@@ -20,55 +21,47 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-5 pb-24 pt-14">
+    <div className="flex flex-col items-center justify-center min-h-screen px-6 pb-24 pt-14 bg-background">
+      {/* Check icon */}
       <motion.div
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-        className="mb-6"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 14, delay: 0.2 }}
+        className="w-20 h-20 rounded-full bg-foreground flex items-center justify-center mb-6"
       >
-        <CheckCircle size={80} className="text-success" strokeWidth={1.5} />
+        <CheckCircle size={36} className="text-background" strokeWidth={2} />
       </motion.div>
 
       <motion.h1
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="text-2xl font-bold text-foreground mb-1"
+        transition={{ delay: 0.45 }}
+        className="text-[28px] font-black text-foreground tracking-tight mb-1"
       >
-        Order Complete!
+        You're all set
       </motion.h1>
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="text-muted-foreground text-sm italic mb-6"
+        transition={{ delay: 0.55 }}
+        className="text-muted-foreground text-sm mb-8"
       >
-        Today you saved {savedMinutes} min in line
+        Order {orderId} · {dateStr}, {timeStr}
       </motion.p>
 
+      {/* QR Code */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="text-center mb-6"
-      >
-        <p className="font-semibold text-foreground">Order {orderId}</p>
-        <p className="text-xs text-muted-foreground">{dateStr}</p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, type: "spring" }}
-        className="w-48 h-48 bg-card border-2 border-border rounded-2xl flex items-center justify-center mb-4 shadow-card"
+        transition={{ delay: 0.65, type: "spring", stiffness: 200, damping: 20 }}
+        className="w-44 h-44 bg-foreground rounded-3xl flex items-center justify-center mb-3 shadow-hero"
       >
-        <div className="grid grid-cols-7 gap-0.5">
+        <div className="grid grid-cols-7 gap-[3px] p-4">
           {Array.from({ length: 49 }).map((_, i) => (
             <div
               key={i}
-              className={`w-4 h-4 rounded-[2px] ${
-                Math.random() > 0.35 ? "bg-foreground" : "bg-transparent"
+              className={`w-3.5 h-3.5 rounded-[2px] ${
+                Math.random() > 0.35 ? "bg-background" : "bg-transparent"
               }`}
             />
           ))}
@@ -78,28 +71,43 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="font-bold text-sm text-foreground mb-6"
+        transition={{ delay: 0.85 }}
+        className="font-semibold text-xs text-muted-foreground mb-8 uppercase tracking-widest"
       >
-        Show this QR at the exit
+        Show at exit
       </motion.p>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.1 }}
-        className="text-primary font-bold text-lg mb-8"
-      >
-        Today you saved ${savedMoney}
-      </motion.p>
-
-      <motion.button
-        initial={{ opacity: 0, y: 20 }}
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
+        transition={{ delay: 0.95 }}
+        className="flex gap-3 mb-10 w-full max-w-[280px]"
+      >
+        <div className="flex-1 bg-muted/50 rounded-2xl p-3.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Clock size={12} className="text-muted-foreground" />
+          </div>
+          <p className="text-lg font-black text-foreground tabular-nums">{savedMinutes} min</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Time saved</p>
+        </div>
+        <div className="flex-1 bg-muted/50 rounded-2xl p-3.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <DollarSign size={12} className="text-muted-foreground" />
+          </div>
+          <p className="text-lg font-black text-foreground tabular-nums">${savedMoney}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Money saved</p>
+        </div>
+      </motion.div>
+
+      {/* Done button */}
+      <motion.button
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.05 }}
         whileTap={{ scale: 0.97 }}
         onClick={handleDone}
-        className="w-full max-w-[280px] bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-base"
+        className="w-full max-w-[280px] bg-foreground text-background rounded-full py-4 font-bold text-base tracking-tight"
       >
         Done
       </motion.button>
