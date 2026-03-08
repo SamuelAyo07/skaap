@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { Product } from "@/data/products";
+import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
 interface BagScreenProps {
   onPayNow: () => void;
 }
