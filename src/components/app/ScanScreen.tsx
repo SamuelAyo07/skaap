@@ -194,6 +194,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [lastScanned]);
 
   const stopCamera = useCallback(async () => {
+    if (cameraTimeoutRef.current) {
+      clearTimeout(cameraTimeoutRef.current);
+      cameraTimeoutRef.current = null;
+    }
+
     try {
       if (readerRef.current?.reset) {
         readerRef.current.reset();
