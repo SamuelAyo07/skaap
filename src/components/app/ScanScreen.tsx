@@ -177,6 +177,8 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const streamRef = useRef<MediaStream | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
+  const manualInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const allergens = useMemo(() => {
     if (!lastScanned) return [] as string[];
