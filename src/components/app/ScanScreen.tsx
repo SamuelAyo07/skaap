@@ -38,12 +38,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [lastScanned, setLastScanned] = useState<Product | null>(null);
   const [expandedNutrition, setExpandedNutrition] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-  const [cameraError, setCameraError] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const [showAddedFeedback, setShowAddedFeedback] = useState<string | null>(null);
   const [manualBarcode, setManualBarcode] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
-  const [showManualInput, setShowManualInput] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
