@@ -293,7 +293,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       const onDecode = (result: any, error: any) => {
         if (result) {
           const text = typeof result.getText === "function" ? result.getText() : result.text;
-          void handleDetectedBarcode(text);
+          const fmt = typeof result.getBarcodeFormat === "function"
+            ? formatZXingName(result.getBarcodeFormat())
+            : undefined;
+          void handleDetectedBarcode(text, fmt);
           return;
         }
 
