@@ -27,54 +27,48 @@ const eastCoastStores: StoreLocation[] = [
   { name: "Trader Joe's - Ardmore", chain: "Trader Joe's", address: "112 Coulter Ave, Ardmore, PA 19003", lat: 40.0078, lng: -75.2911 },
 ];
 
-const zipMap: Record<string, { lat: number; lng: number }> = {
-  "10": { lat: 40.758, lng: -73.9855 },
-  "33": { lat: 25.7617, lng: -80.1918 },
-  "02": { lat: 42.3601, lng: -71.0589 },
-  "20": { lat: 38.9072, lng: -77.0369 },
-  "30": { lat: 33.749, lng: -84.388 },
-  "28": { lat: 35.2271, lng: -80.8431 },
-  "19": { lat: 39.9526, lng: -75.1652 },
-};
-
 const StoreMap = () => {
   const [selectedStore, setSelectedStore] = useState<StoreLocation | null>(null);
-  const [center, setCenter] = useState<[number, number]>([39.5, -77.0]);
+  const [center, setCenter] = useState<{ lat: number; lng: number }>({ lat: 39.5, lng: -77.0 });
   const [zip, setZip] = useState("");
-  const [filteredStores, setFilteredStores] = useState(eastCoastStores);
   const [activeChain, setActiveChain] = useState<string | null>(null);
 
   const chains = useMemo(() => Array.from(new Set(eastCoastStores.map((s) => s.chain))), []);
 
+  const filteredStores = useMemo(() => {
+    if (!activeChain) return eastCoastStores;
+    return eastCoastStores.filter((s) => s.chain === activeChain);
+  }, [activeChain]);
+
   const mapSrc = useMemo(() => {
-    const [lat, lng] = center;
-    const bbox = `${lng - 2.2},${lat - 1.2},${lng + 2.2},${lat + 1.2}`;
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat}%2C${lng}`;
-  }, [center]);
+    const q = selectedStore
+      ? encodeURIComponent(selectedStore.address)
+      : `${center.lat},${center.lng}`;
+    return `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d50000!2d${center.lng}!3d${center.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus&q=${q}`;
+  }, [center, selectedStore]);
+
+  const zipMap: Record<string, { lat: number; lng: number }> = {
+    "10": { lat: 40.758, lng: -73.9855 },
+    "33": { lat: 25.7617, lng: -80.1918 },
+    "02": { lat: 42.3601, lng: -71.0589 },
+    "20": { lat: 38.9072, lng: -77.0369 },
+    "30": { lat: 33.749, lng: -84.388 },
+    "28": { lat: 35.2271, lng: -80.8431 },
+    "19": { lat: 39.9526, lng: -75.1652 },
+  };
 
   const handleSearch = () => {
     const prefix = zip.trim().substring(0, 2);
     const location = zipMap[prefix];
     if (location) {
-      setCenter([location.lat, location.lng]);
+      setCenter(location);
       setSelectedStore(null);
     }
   };
 
   const handleChainFilter = (chain: string) => {
-    if (activeChain === chain) {
-      setActiveChain(null);
-      setFilteredStores(eastCoastStores);
-      return;
-    }
-
-    const nextStores = eastCoastStores.filter((s) => s.chain === chain);
-    setActiveChain(chain);
-    setFilteredStores(nextStores);
-
-    if (selectedStore && !nextStores.some((s) => s.name === selectedStore.name)) {
-      setSelectedStore(null);
-    }
+    setActiveChain(activeChain === chain ? null : chain);
+    setSelectedStore(null);
   };
 
   return (
@@ -85,6 +79,8 @@ const StoreMap = () => {
           title="Store map"
           src={mapSrc}
           loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
           className="h-full w-full border-0"
           style={{ borderRadius: "1.5rem 1.5rem 0 0" }}
         />
@@ -145,7 +141,7 @@ const StoreMap = () => {
               key={store.name}
               onClick={() => {
                 setSelectedStore(store);
-                setCenter([store.lat, store.lng]);
+                setCenter({ lat: store.lat, lng: store.lng });
               }}
               className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-colors ${
                 selectedStore?.name === store.name ? "bg-primary/5 border border-primary/20" : "hover:bg-muted"

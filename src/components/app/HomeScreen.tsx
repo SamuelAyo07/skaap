@@ -1,18 +1,18 @@
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import storeWalmart from "@/assets/store-walmart.jpg";
-import storeFreshco from "@/assets/store-freshco.jpg";
-import storeRCS from "@/assets/store-rcs.jpg";
+import storeTraderJoes from "@/assets/store-traderjoes-boston.jpg";
+import storeWholeFoods from "@/assets/store-wholefoods-cambridge.jpg";
+import storeStarMarket from "@/assets/store-starmarket-boston.jpg";
 
 interface HomeScreenProps {
   onSelectStore: () => void;
 }
 
 const stores = [
-  { id: "1", name: "Trader Joe's", address: "899 Boylston St, Boston, MA 02115", image: storeWalmart },
-  { id: "2", name: "Whole Foods Market", address: "340 River St, Cambridge, MA 02139", image: storeFreshco },
-  { id: "3", name: "Star Market", address: "33 Kilmarnock St, Boston, MA 02215", image: storeRCS },
+  { id: "1", name: "Trader Joe's", address: "899 Boylston St, Boston, MA 02115", image: storeTraderJoes },
+  { id: "2", name: "Whole Foods Market", address: "340 River St, Cambridge, MA 02139", image: storeWholeFoods },
+  { id: "3", name: "Star Market", address: "33 Kilmarnock St, Boston, MA 02215", image: storeStarMarket },
 ];
 
 const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
