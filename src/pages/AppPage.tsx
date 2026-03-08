@@ -39,8 +39,8 @@ const AppPage = () => {
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-foreground flex justify-center">
-        <div className="w-full max-w-[390px] min-h-screen relative bg-background shadow-elevated overflow-hidden">
+      <div className="min-h-screen flex justify-center bg-background md:bg-foreground">
+        <div className="w-full md:max-w-[390px] min-h-screen relative bg-background md:shadow-elevated overflow-hidden">
           {splashDone && screen === "home" && (
             <button
               onClick={() => navigate("/")}
@@ -56,7 +56,7 @@ const AppPage = () => {
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, scale: 1.1 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed inset-0 max-w-[390px] mx-auto bg-foreground flex flex-col items-center justify-center z-[100]"
+                className="fixed inset-0 md:max-w-[390px] mx-auto bg-foreground flex flex-col items-center justify-center z-[100]"
               >
                 <motion.img
                   src={skaapIcon}
