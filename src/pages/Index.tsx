@@ -254,7 +254,7 @@ const Index = () => {
       {/* ─── FOOTER ─── */}
       <footer className="bg-foreground py-10">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col items-center gap-6">
             <div className="flex items-center gap-2.5">
               <img src={skaapIcon} alt="SKAAP" className="w-8 h-8 rounded-lg" />
               <div>
@@ -262,15 +262,15 @@ const Index = () => {
                 <p className="text-xs text-background/30">Your phone is the checkout.</p>
               </div>
             </div>
-            <div className="flex items-center gap-6 text-sm text-background/40 font-medium">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-background/50 font-medium">
               <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
               <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
-              <div className="flex items-center gap-3 ml-2">
-                <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-background transition-colors"><Instagram size={18} /></a>
-                <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="hover:text-background transition-colors"><Linkedin size={18} /></a>
-              </div>
+            </div>
+            <div className="flex items-center gap-5">
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Instagram size={22} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="text-background/50 hover:text-background transition-colors"><Linkedin size={22} /></a>
             </div>
           </div>
           <div className="border-t border-background/10 mt-8 pt-8 text-center">
