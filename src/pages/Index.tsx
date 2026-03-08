@@ -204,14 +204,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── FOR SHOPPERS ────────────────────────── */}
-      <section className="py-24 bg-background">
+      {/* ─── FOR SHOPPERS — JUST SKAAP IT ─────── */}
+      <section className="py-20 md:py-28 bg-foreground">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <FadeInSection>
             <span className="text-accent text-xs font-bold uppercase tracking-widest">For Shoppers</span>
-            <h2 className="text-4xl md:text-6xl font-black text-foreground mt-3 tracking-tight">Skip every line.<br />Starting now.</h2>
-            <p className="text-muted-foreground mt-4 max-w-lg mx-auto text-lg font-light leading-relaxed">
-              Walk in, scan what you want, pay from your phone, and walk out. No lines. No registers. No waiting. Ever.
+            <h2 className="text-4xl md:text-7xl font-black text-background mt-3 tracking-tight leading-[0.92]">
+              Just SKAAP it.
+            </h2>
+            <p className="text-background/45 mt-5 max-w-md mx-auto text-lg font-light leading-relaxed">
+              No lines. No registers. No waiting. Ever.
             </p>
           </FadeInSection>
 
@@ -221,34 +223,12 @@ const Index = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => navigate("/app")}
-                className="bg-foreground text-background px-10 py-5 rounded-full font-bold text-lg inline-flex items-center gap-2.5 shadow-elevated"
+                className="bg-accent text-accent-foreground px-10 py-5 rounded-full font-bold text-lg inline-flex items-center gap-2.5 shadow-hero"
               >
                 <Play size={16} fill="currentColor" /> Try It Yourself — Free
               </motion.button>
-              <p className="text-muted-foreground text-xs mt-3">No account needed. 30 seconds to see the magic.</p>
+              <p className="text-background/30 text-xs mt-3">30 seconds. No account needed.</p>
             </div>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* ─── CTA BANNER ─────────────────────────── */}
-      <section className="py-20 bg-foreground">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <FadeInSection>
-            <h2 className="text-4xl md:text-6xl font-black text-background tracking-tight leading-tight mb-6">
-              See what checkout<br />should feel like
-            </h2>
-            <p className="text-background/40 text-lg mb-10 max-w-md mx-auto font-light">
-              Try the full experience in 30 seconds. No account needed.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/app")}
-              className="bg-accent text-accent-foreground px-10 py-5 rounded-full font-bold text-lg shadow-hero inline-flex items-center gap-3"
-            >
-              <Play size={18} fill="currentColor" /> Try the Demo Now
-            </motion.button>
           </FadeInSection>
         </div>
       </section>
