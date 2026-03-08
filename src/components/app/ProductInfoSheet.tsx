@@ -274,8 +274,16 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                               <span className="text-2xl font-black">{info.novaGroup}</span>
                             </motion.div>
                           </TooltipTrigger>
-                          <TooltipContent side="bottom" className="max-w-[240px] text-xs">
-                            {novaLabels[info.novaGroup].label}
+                          <TooltipContent side="bottom" className="max-w-[260px] p-3">
+                            <p className="text-[11px] font-bold mb-1.5">NOVA Food Classification</p>
+                            <div className="space-y-1">
+                              {([1, 2, 3, 4] as const).map((g) => (
+                                <div key={g} className={`flex items-center gap-2 text-[10px] ${info.novaGroup === g ? "font-bold" : "opacity-60"}`}>
+                                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[9px] font-black ${novaLabels[g].color}`}>{g}</span>
+                                  <span>{novaLabels[g].label}</span>
+                                </div>
+                              ))}
+                            </div>
                           </TooltipContent>
                         </Tooltip>
                       ) : (
