@@ -6,7 +6,7 @@ import {
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { lookupBarcode } from "@/lib/openfoodfacts";
 
 interface ScanScreenProps {
