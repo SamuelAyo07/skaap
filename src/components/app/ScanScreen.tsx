@@ -343,6 +343,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     const barcode = manualBarcode.replace(/\s+/g, "").trim();
     if (!barcode) return;
 
+    setDetectedFormat(inferFormat(barcode));
     await lookupAndShowProduct(barcode);
     setManualBarcode("");
   }, [lookupAndShowProduct, manualBarcode]);
