@@ -56,7 +56,7 @@ const AppPage = () => {
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, scale: 1.1 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed inset-0 max-w-[390px] mx-auto bg-foreground flex flex-col items-center justify-center z-[100]"
+                className="fixed inset-0 md:max-w-[390px] mx-auto bg-foreground flex flex-col items-center justify-center z-[100]"
               >
                 <motion.img
                   src={skaapIcon}
