@@ -262,13 +262,51 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         </div>
       </motion.button>
 
+      {/* ─── Deals Section ─── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+        className="mt-4 mb-4"
+      >
+        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2 px-0.5">
+          🔥 Deals near you
+        </p>
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+          {[
+            { emoji: "🥑", item: "Avocados", deal: "2 for $3", store: visibleStores[0]?.name || "Store", color: "bg-green-500/10 text-green-700" },
+            { emoji: "🍞", item: "Sourdough Bread", deal: "$2.99", store: visibleStores[1]?.name || "Store", color: "bg-amber-500/10 text-amber-700" },
+            { emoji: "🥛", item: "Oat Milk", deal: "Buy 1 Get 1", store: visibleStores[2]?.name || "Store", color: "bg-blue-500/10 text-blue-700" },
+            { emoji: "🍌", item: "Organic Bananas", deal: "$0.59/lb", store: visibleStores[0]?.name || "Store", color: "bg-yellow-500/10 text-yellow-700" },
+            { emoji: "🧀", item: "Cheddar Block", deal: "30% off", store: visibleStores[3]?.name || "Store", color: "bg-orange-500/10 text-orange-700" },
+          ].map((deal, i) => (
+            <motion.button
+              key={i}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.06 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onSelectStore}
+              className="flex-shrink-0 w-[140px] bg-muted/50 rounded-xl p-3 text-left border border-border/30"
+            >
+              <span className="text-2xl">{deal.emoji}</span>
+              <p className="text-[12px] font-semibold text-foreground mt-1.5 truncate">{deal.item}</p>
+              <span className={`inline-block text-[10px] font-bold rounded-full px-2 py-0.5 mt-1 ${deal.color}`}>
+                {deal.deal}
+              </span>
+              <p className="text-[9px] text-muted-foreground mt-1 truncate">{deal.store}</p>
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Section label */}
       {visibleStores.length > 1 && (
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-4 mb-2 px-0.5"
+          transition={{ delay: 0.3 }}
+          className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2 px-0.5"
         >
           Nearby
         </motion.p>
