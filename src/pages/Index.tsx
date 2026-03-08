@@ -388,8 +388,8 @@ const Index = () => {
                     className="w-full bg-card border border-border rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} type="submit" className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm">
-                  Get in Touch
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold text-sm disabled:opacity-60">
+                  {submitting ? "Sending…" : "Get in Touch"}
                 </motion.button>
               </form>
             )}
