@@ -142,6 +142,48 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ─── SMART INFO ─── */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-5xl mx-auto px-6">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="text-accent text-xs font-bold uppercase tracking-widest">Smart Info</span>
+              <h2 className="text-4xl md:text-5xl font-black text-foreground mt-3 tracking-tight">
+                Know what you're buying.<br className="hidden md:block" /> Instantly.
+              </h2>
+              <p className="text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
+                Tap any scanned item for real-time nutrition data — Nutri-Score, ingredients, allergens, additives, and certifications. All powered by open data, right in the checkout flow.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { emoji: "🅰️", title: "Nutri-Score", desc: "A-to-E nutritional quality rating at a glance — color-coded so you know in a second." },
+              { emoji: "🧪", title: "Additives & Allergens", desc: "See every E-number with risk levels, plus allergens highlighted in bold." },
+              { emoji: "📊", title: "Full Nutrition Facts", desc: "Calories, fats, sugars, protein, fiber — per 100g with color-coded levels." },
+              { emoji: "🏷️", title: "Labels & Certifications", desc: "Organic, Vegan, Fair Trade, Non-GMO — see what's on the label without reading it." },
+            ].map((card, i) => (
+              <FadeIn key={i} delay={i * 0.06}>
+                <motion.div whileHover={{ y: -3 }} className="bg-background border border-border/50 rounded-2xl p-6 h-full">
+                  <span className="text-2xl mb-3 block">{card.emoji}</span>
+                  <h3 className="font-bold text-foreground tracking-tight mb-1.5">{card.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn delay={0.25}>
+            <div className="text-center mt-10">
+              <p className="text-xs text-muted-foreground">
+                Nutritional data powered by Open Food Facts · 100% optional · never slows down checkout
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* ─── FOR RETAILERS ─── */}
       <section id="retailers" className="bg-foreground py-20">
         <div className="max-w-5xl mx-auto px-6">
