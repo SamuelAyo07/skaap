@@ -77,17 +77,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       addItem(product);
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
-      // Auto-restart camera after a brief pause
-      setTimeout(() => {
-        startCamera();
-      }, 2000);
+      // Signal auto-restart
+      autoRestartRef.current = true;
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
     }
 
     setIsLookingUp(false);
     setTimeout(() => processedBarcodesRef.current.delete(barcode), 3000);
-  }, [handleProductFound, addItem, startCamera]);
+  }, [handleProductFound, addItem]);
 
   const handleManualLookup = useCallback(async () => {
     const barcode = manualBarcode.trim();
