@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, QrCode,
   Mail, MapPin, Clock, Smile, ShieldCheck, TrendingUp, Zap,
-  Smartphone, ArrowRight, ChevronDown, Play, Sparkles
+  Smartphone, ArrowRight, ChevronDown, Play, Sparkles, Instagram, Linkedin
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import heroPhone from "@/assets/hero-phone-mockup.png";
@@ -421,11 +421,19 @@ const Index = () => {
                 <p className="text-xs text-background/30">Your phone is the checkout.</p>
               </div>
             </div>
-            <div className="flex gap-6 text-sm text-background/40 font-medium">
+            <div className="flex items-center gap-6 text-sm text-background/40 font-medium">
               <a href="#shoppers" className="hover:text-background transition-colors">Shoppers</a>
               <a href="#stores" className="hover:text-background transition-colors">Retailers</a>
               <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
+              <div className="flex items-center gap-3 ml-2">
+                <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-background transition-colors">
+                  <Instagram size={18} />
+                </a>
+                <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" className="hover:text-background transition-colors">
+                  <Linkedin size={18} />
+                </a>
+              </div>
             </div>
           </div>
           <div className="border-t border-background/10 mt-8 pt-8 text-center">
