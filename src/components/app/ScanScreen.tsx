@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  ShoppingBag, Camera, CameraOff, Search, Loader2,
-  Barcode, Trash2, ChevronDown, ChevronUp, Leaf, Minus, Plus,
-  Sparkles, X
+  ShoppingBag, Camera, Search, Loader2,
+  Barcode, Trash2, ChevronDown, Leaf,
+  Sparkles, X, RotateCcw
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { lookupBarcode } from "@/lib/openfoodfacts";
+import { Input } from "@/components/ui/input";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
@@ -37,12 +38,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [lastScanned, setLastScanned] = useState<Product | null>(null);
   const [expandedNutrition, setExpandedNutrition] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-  const [cameraError, setCameraError] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const [showAddedFeedback, setShowAddedFeedback] = useState<string | null>(null);
   const [manualBarcode, setManualBarcode] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
-  const [showManualInput, setShowManualInput] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const processedBarcodesRef = useRef<Set<string>>(new Set());
@@ -87,7 +87,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [handleProductFound, addItem]);
 
   const handleManualLookup = useCallback(async () => {
-    const barcode = manualBarcode.trim();
+    const barcode = manualBarcode.replace(/\s+/g, "").trim();
     if (!barcode) return;
 
     setIsLookingUp(true);
@@ -100,7 +100,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       setShowAddedFeedback(product.id);
       setTimeout(() => setShowAddedFeedback(null), 1500);
       setManualBarcode("");
-      setShowManualInput(false);
     } else {
       setLookupError(`No product found for barcode: ${barcode}`);
     }
@@ -108,8 +107,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   }, [manualBarcode, handleProductFound, addItem]);
 
   const startCamera = useCallback(async () => {
-    if (scannerRef.current || isStartingRef.current) return;
+    if (scannerRef.current || isStartingRef.current || isLookingUp) return;
     isStartingRef.current = true;
+    setLookupError(null);
+    setCameraError(null);
+
     try {
       const scanner = new Html5Qrcode("scanner-container", {
         formatsToSupport: [
@@ -124,21 +126,58 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         verbose: false,
       });
       scannerRef.current = scanner;
-      await scanner.start(
-        { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 280, height: 160 }, aspectRatio: 1.333 },
-        handleBarcodeScan,
-        () => {}
-      );
+
+      const config = {
+        fps: 12,
+        qrbox: (viewfinderWidth: number, viewfinderHeight: number) => ({
+          width: Math.max(Math.min(Math.floor(viewfinderWidth * 0.9), 340), 220),
+          height: Math.max(Math.min(Math.floor(viewfinderHeight * 0.45), 200), 120),
+        }),
+        aspectRatio: 1.777,
+      };
+
+      const cameras = await Html5Qrcode.getCameras();
+      const backCameraId = cameras.find((camera) => /back|rear|environment/i.test(camera.label))?.id;
+      const defaultCameraId = cameras[0]?.id;
+
+      const scanAttempts: Array<() => Promise<void>> = [];
+      if (backCameraId) {
+        scanAttempts.push(() => scanner.start(backCameraId, config, handleBarcodeScan, () => {}));
+      }
+      scanAttempts.push(() => scanner.start({ facingMode: { ideal: "environment" } }, config, handleBarcodeScan, () => {}));
+      if (defaultCameraId && defaultCameraId !== backCameraId) {
+        scanAttempts.push(() => scanner.start(defaultCameraId, config, handleBarcodeScan, () => {}));
+      }
+
+      let started = false;
+      let lastError: unknown = null;
+      for (const attempt of scanAttempts) {
+        try {
+          await attempt();
+          started = true;
+          break;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      if (!started) {
+        throw lastError || new Error("Unable to access camera");
+      }
+
       setCameraActive(true);
-      setCameraError(false);
+      setCameraError(null);
     } catch {
-      setCameraError(true);
+      setCameraError("Camera unavailable. Allow camera access or use manual entry below.");
       setCameraActive(false);
+      try {
+        await scannerRef.current?.clear();
+      } catch {}
       scannerRef.current = null;
+    } finally {
+      isStartingRef.current = false;
     }
-    isStartingRef.current = false;
-  }, [handleBarcodeScan]);
+  }, [handleBarcodeScan, isLookingUp]);
 
   const stopCamera = useCallback(async () => {
     if (scannerRef.current) {
@@ -242,17 +281,18 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                 <Camera size={18} /> Start Scanning
               </motion.button>
 
-              <button
-                onClick={() => setShowManualInput(!showManualInput)}
-                className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground transition-colors"
-              >
-                <Barcode size={13} /> Enter barcode manually
-              </button>
-
               {cameraError && (
-                <p className="text-xs text-destructive/80 text-center px-6">
-                  Camera unavailable. Check permissions.
-                </p>
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-xs text-destructive/80 text-center px-6">
+                    {cameraError}
+                  </p>
+                  <button
+                    onClick={startCamera}
+                    className="text-xs text-foreground font-medium flex items-center gap-1.5 hover:text-muted-foreground transition-colors"
+                  >
+                    <RotateCcw size={12} /> Try camera again
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -295,42 +335,34 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         )}
       </div>
 
-      {/* ── Manual barcode input (collapsible) ── */}
-      <AnimatePresence>
-        {showManualInput && !cameraActive && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="mx-5 mt-3">
-              <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={manualBarcode}
-                    onChange={(e) => setManualBarcode(e.target.value)}
-                    placeholder="Enter barcode…"
-                    className="w-full bg-foreground/[0.03] rounded-full pl-4 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                    disabled={isLookingUp}
-                    autoFocus
-                  />
-                </div>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  type="submit"
-                  disabled={isLookingUp || !manualBarcode.trim()}
-                  className="bg-foreground text-background rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-30"
-                >
-                  <Search size={16} />
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Manual barcode input ── */}
+      {!cameraActive && (
+        <div className="mx-5 mt-3 rounded-2xl bg-muted/30 border border-border/40 p-3">
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">
+            Manual barcode entry
+          </p>
+          <form onSubmit={(e) => { e.preventDefault(); handleManualLookup(); }} className="flex gap-2">
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={manualBarcode}
+              onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
+              placeholder="Enter barcode"
+              className="h-11 rounded-full bg-background"
+              disabled={isLookingUp}
+              aria-label="Manual barcode input"
+            />
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={isLookingUp || !manualBarcode.trim()}
+              className="bg-foreground text-background rounded-full w-11 h-11 flex items-center justify-center disabled:opacity-30"
+            >
+              <Search size={16} />
+            </motion.button>
+          </form>
+        </div>
+      )}
 
       {/* Error message */}
       <AnimatePresence>

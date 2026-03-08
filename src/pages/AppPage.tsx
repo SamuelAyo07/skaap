@@ -8,6 +8,8 @@ import PaymentScreen from "@/components/app/PaymentScreen";
 import OrderCompleteScreen from "@/components/app/OrderCompleteScreen";
 import ProfileScreen from "@/components/app/ProfileScreen";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 
 const pageVariants = {
@@ -17,6 +19,7 @@ const pageVariants = {
 };
 
 const AppPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [screen, setScreen] = useState("home");
   const [splashDone, setSplashDone] = useState(false);
@@ -38,6 +41,14 @@ const AppPage = () => {
     <CartProvider>
       <div className="min-h-screen bg-foreground flex justify-center">
         <div className="w-full max-w-[390px] min-h-screen relative bg-background shadow-elevated overflow-hidden">
+          {splashDone && screen === "home" && (
+            <button
+              onClick={() => navigate("/")}
+              className="absolute top-3 left-3 z-[90] inline-flex items-center gap-1 rounded-full border border-border bg-background/90 px-2.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur"
+            >
+              <ChevronLeft size={12} /> Back to website
+            </button>
+          )}
           <AnimatePresence mode="wait">
             {!splashDone ? (
               <motion.div
