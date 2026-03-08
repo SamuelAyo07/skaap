@@ -208,10 +208,10 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                   </p>
                 </div>
               ) : info ? (
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {/* 1. Product Header */}
                   <div className="flex gap-4 pt-2">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted/20 flex-shrink-0">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-muted/20 flex-shrink-0 border border-border/30">
                       <img
                         src={info.imageUrl || product.image}
                         alt={info.productName}
@@ -222,54 +222,67 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-[17px] text-foreground leading-snug line-clamp-2">
+                      <h3 className="font-black text-[18px] text-foreground leading-snug line-clamp-2 tracking-tight">
                         {info.productName}
                       </h3>
                       {info.brand && (
-                        <p className="text-xs text-muted-foreground mt-0.5">{info.brand}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 font-medium">{info.brand}</p>
                       )}
                       {info.quantity && (
-                        <p className="text-xs text-muted-foreground">{info.quantity}</p>
+                        <p className="text-[11px] text-muted-foreground/70">{info.quantity}</p>
                       )}
                     </div>
                   </div>
 
-                  {/* 2. Nutri-Score + 3. NOVA Group */}
-                  <div className="flex flex-wrap gap-2">
+                  {/* 2. Nutri-Score + 3. NOVA Group — visual badges */}
+                  <div className="flex gap-2">
                     <TooltipProvider delayDuration={200}>
                       {info.nutriScoreGrade ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${nutriScoreColors[info.nutriScoreGrade.toLowerCase()] || "bg-muted text-muted-foreground"}`}
+                            <motion.div
+                              initial={{ scale: 0.9, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.1 }}
+                              className={`flex-1 rounded-2xl px-4 py-3 flex flex-col items-center justify-center gap-0.5 ${nutriScoreColors[info.nutriScoreGrade.toLowerCase()] || "bg-muted text-muted-foreground"}`}
                             >
-                              Nutri-Score {info.nutriScoreGrade.toUpperCase()}
-                            </div>
+                              <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">Nutri-Score</span>
+                              <span className="text-2xl font-black">{info.nutriScoreGrade.toUpperCase()}</span>
+                            </motion.div>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-[240px] text-xs">
-                            Nutri-Score is a European nutritional rating from A (best) to E (worst), based on
-                            nutritional quality per 100g.
+                            European nutritional rating from A (best) to E (worst).
                           </TooltipContent>
                         </Tooltip>
                       ) : (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">
-                          Score Unavailable
+                        <div className="flex-1 rounded-2xl px-4 py-3 flex flex-col items-center justify-center gap-0.5 bg-muted text-muted-foreground">
+                          <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">Nutri-Score</span>
+                          <span className="text-lg font-bold">—</span>
                         </div>
                       )}
 
-                      {info.novaGroup && novaLabels[info.novaGroup] && (
+                      {info.novaGroup && novaLabels[info.novaGroup] ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${novaLabels[info.novaGroup].color}`}
+                            <motion.div
+                              initial={{ scale: 0.9, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.15 }}
+                              className={`flex-1 rounded-2xl px-4 py-3 flex flex-col items-center justify-center gap-0.5 ${novaLabels[info.novaGroup].color}`}
                             >
-                              NOVA {info.novaGroup}
-                            </div>
+                              <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">NOVA Group</span>
+                              <span className="text-2xl font-black">{info.novaGroup}</span>
+                            </motion.div>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-[240px] text-xs">
                             {novaLabels[info.novaGroup].label}
                           </TooltipContent>
                         </Tooltip>
+                      ) : (
+                        <div className="flex-1 rounded-2xl px-4 py-3 flex flex-col items-center justify-center gap-0.5 bg-muted text-muted-foreground">
+                          <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">NOVA</span>
+                          <span className="text-lg font-bold">—</span>
+                        </div>
                       )}
                     </TooltipProvider>
                   </div>
