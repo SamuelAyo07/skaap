@@ -37,6 +37,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems((prev) => prev.filter((i) => i.product.id !== productId));
   }, []);
 
+  const updateQuantity = useCallback((productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      setItems((prev) => prev.filter((i) => i.product.id !== productId));
+    } else {
+      setItems((prev) =>
+        prev.map((i) =>
+          i.product.id === productId ? { ...i, quantity } : i
+        )
+      );
+    }
+  }, []);
+
   const clearCart = useCallback(() => setItems([]), []);
 
   const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
