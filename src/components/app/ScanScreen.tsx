@@ -281,17 +281,18 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                 <Camera size={18} /> Start Scanning
               </motion.button>
 
-              <button
-                onClick={() => setShowManualInput(!showManualInput)}
-                className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground transition-colors"
-              >
-                <Barcode size={13} /> Enter barcode manually
-              </button>
-
               {cameraError && (
-                <p className="text-xs text-destructive/80 text-center px-6">
-                  Camera unavailable. Check permissions.
-                </p>
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-xs text-destructive/80 text-center px-6">
+                    {cameraError}
+                  </p>
+                  <button
+                    onClick={startCamera}
+                    className="text-xs text-foreground font-medium flex items-center gap-1.5 hover:text-muted-foreground transition-colors"
+                  >
+                    <RotateCcw size={12} /> Try camera again
+                  </button>
+                </div>
               )}
             </div>
           </div>
