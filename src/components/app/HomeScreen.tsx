@@ -7,7 +7,6 @@ import storeWholeFoods from "@/assets/store-wholefoods-cambridge.jpg";
 import storeStarMarket from "@/assets/store-starmarket-boston.jpg";
 import storeWalmart from "@/assets/store-walmart.jpg";
 import storeFreshco from "@/assets/store-freshco.jpg";
-import storeSuperstore from "@/assets/store-superstore.png";
 import storeRcs from "@/assets/store-rcs.jpg";
 
 interface HomeScreenProps {
