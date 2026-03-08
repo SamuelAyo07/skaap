@@ -349,7 +349,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       </AnimatePresence>
 
       {/* ── Content area ── */}
-      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-28">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-24">
 
         {/* Added feedback toast */}
         <AnimatePresence>

@@ -21,22 +21,21 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 pb-24 pt-14 bg-background">
-      {/* Check icon */}
+    <div className="flex flex-col items-center justify-center min-h-screen px-5 pb-20 pt-12 bg-background">
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 14, delay: 0.2 }}
-        className="w-20 h-20 rounded-full bg-foreground flex items-center justify-center mb-6"
+        className="w-16 h-16 rounded-full bg-foreground flex items-center justify-center mb-5"
       >
-        <CheckCircle size={36} className="text-background" strokeWidth={2} />
+        <CheckCircle size={30} className="text-background" strokeWidth={2} />
       </motion.div>
 
       <motion.h1
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45 }}
-        className="text-[28px] font-black text-foreground tracking-tight mb-1"
+        className="text-2xl font-black text-foreground tracking-tight mb-1"
       >
         You're all set
       </motion.h1>
@@ -44,7 +43,7 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.55 }}
-        className="text-muted-foreground text-sm mb-8"
+        className="text-muted-foreground text-xs mb-6"
       >
         Order {orderId} · {dateStr}, {timeStr}
       </motion.p>
@@ -54,13 +53,13 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.65, type: "spring", stiffness: 200, damping: 20 }}
-        className="w-44 h-44 bg-foreground rounded-3xl flex items-center justify-center mb-3 shadow-hero"
+        className="w-36 h-36 bg-foreground rounded-2xl flex items-center justify-center mb-2.5 shadow-hero"
       >
-        <div className="grid grid-cols-7 gap-[3px] p-4">
+        <div className="grid grid-cols-7 gap-[2.5px] p-3">
           {Array.from({ length: 49 }).map((_, i) => (
             <div
               key={i}
-              className={`w-3.5 h-3.5 rounded-[2px] ${
+              className={`w-3 h-3 rounded-[2px] ${
                 Math.random() > 0.35 ? "bg-background" : "bg-transparent"
               }`}
             />
@@ -72,7 +71,7 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.85 }}
-        className="font-semibold text-xs text-muted-foreground mb-8 uppercase tracking-widest"
+        className="font-semibold text-[10px] text-muted-foreground mb-6 uppercase tracking-widest"
       >
         Show at exit
       </motion.p>
@@ -82,21 +81,21 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.95 }}
-        className="flex gap-3 mb-10 w-full max-w-[280px]"
+        className="flex gap-2.5 mb-8 w-full max-w-[260px]"
       >
-        <div className="flex-1 bg-muted/50 rounded-2xl p-3.5 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Clock size={12} className="text-muted-foreground" />
+        <div className="flex-1 bg-muted/50 rounded-xl p-3 text-center">
+          <div className="flex items-center justify-center gap-1 mb-0.5">
+            <Clock size={11} className="text-muted-foreground" />
           </div>
-          <p className="text-lg font-black text-foreground tabular-nums">{savedMinutes} min</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Time saved</p>
+          <p className="text-base font-black text-foreground tabular-nums">{savedMinutes} min</p>
+          <p className="text-[9px] text-muted-foreground font-medium">Time saved</p>
         </div>
-        <div className="flex-1 bg-muted/50 rounded-2xl p-3.5 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <DollarSign size={12} className="text-muted-foreground" />
+        <div className="flex-1 bg-muted/50 rounded-xl p-3 text-center">
+          <div className="flex items-center justify-center gap-1 mb-0.5">
+            <DollarSign size={11} className="text-muted-foreground" />
           </div>
-          <p className="text-lg font-black text-foreground tabular-nums">${savedMoney}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Money saved</p>
+          <p className="text-base font-black text-foreground tabular-nums">${savedMoney}</p>
+          <p className="text-[9px] text-muted-foreground font-medium">Money saved</p>
         </div>
       </motion.div>
 
@@ -107,7 +106,7 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         transition={{ delay: 1.05 }}
         whileTap={{ scale: 0.97 }}
         onClick={handleDone}
-        className="w-full max-w-[280px] bg-foreground text-background rounded-full py-4 font-bold text-base tracking-tight"
+        className="w-full max-w-[260px] bg-foreground text-background rounded-full py-3.5 font-bold text-[15px] tracking-tight"
       >
         Done
       </motion.button>
