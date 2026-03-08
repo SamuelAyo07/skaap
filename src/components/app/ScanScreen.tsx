@@ -169,10 +169,10 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* ── Minimal header ── */}
-      <div className="px-6 pt-14 pb-4">
+      <div className="px-4 pt-12 pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">Scan</h1>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan</h1>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
