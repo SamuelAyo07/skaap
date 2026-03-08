@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, ShoppingBag, Settings, ChevronRight, LogOut, Bell, CreditCard, HelpCircle, Package } from "lucide-react";
-import skaapIcon from "@/assets/skaap-icon.png";
+import { User, ShoppingBag, ChevronRight, LogOut, Bell, CreditCard, HelpCircle, Package, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Order {
@@ -56,37 +55,37 @@ const ProfileScreen = () => {
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <button
             onClick={() => setActiveSection("main")}
-            className="text-sm text-primary font-medium mb-4"
+            className="flex items-center gap-1 text-sm text-accent font-medium mb-6"
           >
-            ← Back
+            <ArrowLeft size={14} /> Back
           </button>
-          <h1 className="text-xl font-bold text-foreground mb-6">Order History</h1>
+          <h1 className="text-[28px] font-bold text-foreground tracking-tight mb-6">Orders</h1>
         </motion.div>
 
         <div className="space-y-3">
           {demoOrders.map((order, i) => (
             <motion.div
               key={order.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="bg-card rounded-2xl p-4 shadow-card"
+              transition={{ delay: i * 0.05, type: "spring", stiffness: 200, damping: 24 }}
+              className="bg-muted/50 rounded-2xl p-4"
             >
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Package size={14} className="text-primary" />
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center">
+                    <Package size={13} className="text-background" />
                   </div>
-                  <span className="text-xs text-muted-foreground">{formatDate(order.created_at)}</span>
+                  <span className="text-xs text-muted-foreground font-medium">{formatDate(order.created_at)}</span>
                 </div>
-                <span className="text-sm font-bold text-foreground">${order.total.toFixed(2)}</span>
+                <span className="text-sm font-bold text-foreground tabular-nums">${order.total.toFixed(2)}</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {(order.items as any[]).map((it: any) => it.name || it.product?.name || "Item").join(", ")}
               </p>
-              <div className="mt-2 flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--success))]" />
-                <span className="text-[10px] text-muted-foreground capitalize">{order.status}</span>
+              <div className="mt-2.5 flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-success" />
+                <span className="text-[10px] text-muted-foreground capitalize font-medium">{order.status}</span>
               </div>
             </motion.div>
           ))}
@@ -104,31 +103,30 @@ const ProfileScreen = () => {
 
   return (
     <div className="px-5 pt-14 pb-24 bg-background min-h-screen">
-      {/* Profile header */}
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 mb-8"
+        className="mb-8"
       >
-        <img src={skaapIcon} alt="SKAAP" className="w-10 h-10 rounded-xl" />
-        <h1 className="text-lg font-bold text-foreground">Profile</h1>
+        <h1 className="text-[28px] font-bold text-foreground tracking-tight">Profile</h1>
       </motion.div>
 
       {/* User card */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-        className="bg-card rounded-[20px] p-5 shadow-elevated mb-6 flex items-center gap-4"
+        transition={{ delay: 0.06, type: "spring", stiffness: 200, damping: 24 }}
+        className="bg-foreground rounded-3xl p-5 mb-6 flex items-center gap-4"
       >
-        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-          <User size={24} className="text-primary" />
+        <div className="w-14 h-14 rounded-full bg-background/15 flex items-center justify-center">
+          <User size={24} className="text-background" />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-base font-bold text-foreground truncate">
+          <h2 className="text-base font-bold text-background truncate tracking-tight">
             {user?.user_metadata?.full_name || "Demo User"}
           </h2>
-          <p className="text-xs text-muted-foreground truncate">
+          <p className="text-xs text-background/50 truncate">
             {user?.email || "demo@skaap.app"}
           </p>
         </div>
@@ -136,29 +134,29 @@ const ProfileScreen = () => {
 
       {/* Quick stats */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.14 }}
-        className="grid grid-cols-3 gap-3 mb-6"
+        transition={{ delay: 0.12, type: "spring", stiffness: 200, damping: 24 }}
+        className="grid grid-cols-3 gap-2 mb-6"
       >
         {[
           { label: "Orders", value: demoOrders.length.toString() },
           { label: "Saved", value: "$12.40" },
           { label: "Points", value: "340" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-card rounded-2xl p-3.5 shadow-card text-center">
-            <p className="text-lg font-bold text-foreground">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
+          <div key={stat.label} className="bg-muted/50 rounded-2xl p-4 text-center">
+            <p className="text-xl font-bold text-foreground tabular-nums">{stat.value}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">{stat.label}</p>
           </div>
         ))}
       </motion.div>
 
       {/* Settings list */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-card rounded-2xl shadow-card overflow-hidden mb-4"
+        transition={{ delay: 0.18, type: "spring", stiffness: 200, damping: 24 }}
+        className="bg-muted/50 rounded-2xl overflow-hidden mb-3"
       >
         {settingsItems.map((item, i) => {
           const Icon = item.icon;
@@ -166,13 +164,13 @@ const ProfileScreen = () => {
             <button
               key={item.label}
               onClick={item.action}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 text-left hover:bg-muted/50 transition-colors ${
-                i < settingsItems.length - 1 ? "border-b border-border" : ""
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 text-left active:bg-muted transition-colors ${
+                i < settingsItems.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
               <Icon size={18} className="text-muted-foreground" />
               <span className="flex-1 text-sm font-medium text-foreground">{item.label}</span>
-              <ChevronRight size={16} className="text-muted-foreground/40" />
+              <ChevronRight size={14} className="text-muted-foreground/40" />
             </button>
           );
         })}
@@ -180,14 +178,14 @@ const ProfileScreen = () => {
 
       {/* Sign out */}
       <motion.button
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.26 }}
+        transition={{ delay: 0.24, type: "spring", stiffness: 200, damping: 24 }}
         onClick={() => supabase.auth.signOut()}
-        className="w-full flex items-center gap-3.5 bg-card rounded-2xl px-4 py-3.5 shadow-card text-left hover:bg-muted/50 transition-colors"
+        className="w-full flex items-center gap-3.5 bg-muted/50 rounded-2xl px-4 py-3.5 text-left active:bg-muted transition-colors"
       >
-        <LogOut size={18} className="text-destructive" />
-        <span className="text-sm font-medium text-destructive">Sign Out</span>
+        <LogOut size={18} className="text-accent" />
+        <span className="text-sm font-medium text-accent">Sign Out</span>
       </motion.button>
     </div>
   );
