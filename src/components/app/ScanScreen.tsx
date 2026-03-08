@@ -364,7 +364,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     <div className="flex flex-col h-full bg-background">
       <div className="px-4 pt-10 pb-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan your<br/>product</h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onOpenBag}
