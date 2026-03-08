@@ -71,10 +71,13 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.85 }}
-        className="font-semibold text-[10px] text-muted-foreground mb-6 uppercase tracking-widest"
+        className="font-semibold text-[10px] text-muted-foreground mb-4 uppercase tracking-widest text-center"
       >
-        Show at exit
+        Demo receipt QR · show at exit
       </motion.p>
+      <p className="text-center text-xs text-foreground/80 mb-6">
+        Thanks for SKAAPing it — you just SKAAPed it.
+      </p>
 
       {/* Stats */}
       <motion.div

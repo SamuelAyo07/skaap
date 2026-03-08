@@ -19,6 +19,8 @@ export default {
       colors: {
         navy: "hsl(210 29% 10%)",
         "skaap-red": "hsl(349 65% 53%)",
+        "scanner-accent": "hsl(var(--scanner-accent))",
+        "scanner-ink": "hsl(var(--scanner-ink))",
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
