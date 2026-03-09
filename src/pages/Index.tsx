@@ -92,8 +92,8 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#0A1220", minHeight: "65vh", paddingTop: 64 }}>
-        <div className="w-full max-w-[640px] mx-auto px-6 py-10 text-center">
+      <section className="relative flex items-center justify-center" style={{ background: "#0A1220", minHeight: "60vh", paddingTop: 64 }}>
+        <div className="w-full max-w-[640px] mx-auto px-6 py-6 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>
@@ -142,7 +142,7 @@ const Index = () => {
       </section>
 
       {/* ─── TWO FEATURES ─── */}
-      <section className="py-14 bg-background">
+      <section className="py-8 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
@@ -209,7 +209,7 @@ const Index = () => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-10 bg-background">
+      <section id="how-it-works" className="py-6 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
@@ -238,7 +238,7 @@ const Index = () => {
       </section>
 
       {/* ─── SMART INFO — NUTRITION CHAMPION ─── */}
-      <section className="py-10" style={{ background: "#F7F7F7" }}>
+      <section className="py-6" style={{ background: "#F7F7F7" }}>
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-6">
@@ -291,7 +291,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" style={{ background: "#0F1A2E" }} className="py-12">
+      <section id="retailers" style={{ background: "#0F1A2E" }} className="py-8">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-5">
@@ -347,7 +347,7 @@ const Index = () => {
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-10 bg-background">
+      <section className="py-6 bg-background">
         <div className="max-w-2xl mx-auto px-6">
           <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#0F1A2E" }}>Questions</h2></FadeIn>
           <div className="space-y-1.5">
@@ -371,7 +371,7 @@ const Index = () => {
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{ background: "#F7F7F7" }} className="py-10">
+      <section id="contact" style={{ background: "#F7F7F7" }} className="py-6">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
             <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0F1A2E" }}>Let's talk</h2>
@@ -396,7 +396,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer style={{ background: "#0F1A2E" }} className="py-8">
+      <footer style={{ background: "#0F1A2E" }} className="py-6">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5">
