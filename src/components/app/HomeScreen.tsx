@@ -87,7 +87,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         setLocationError(true);
         setPhase("ready");
       },
-      { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
 
     return () => clearTimeout(timeout);
