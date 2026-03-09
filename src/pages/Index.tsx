@@ -135,7 +135,7 @@ const Index = () => {
           </motion.div>
 
           {/* Scroll indicator */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-10">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-6">
             <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.25)" }} />
           </motion.div>
         </div>
