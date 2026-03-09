@@ -355,7 +355,7 @@ const Index = () => {
               <FadeIn key={i} delay={i * 0.03}>
                 <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#F3F4F6" }}>
                   <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
-                    <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>{faq.q}</span>
+                    <span className="font-semibold text-sm" style={{ color: "#0F1A2E" }}>{faq.q}</span>
                     <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "#6B7280" }} /></motion.div>
                   </button>
                   {faqOpen === i && (
