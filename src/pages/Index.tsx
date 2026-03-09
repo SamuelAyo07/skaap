@@ -92,7 +92,7 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#1B2A4A", minHeight: "100vh", paddingTop: 64 }}>
+      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75vh", paddingTop: 64 }}>
         <div className="w-full max-w-[640px] mx-auto px-6 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
