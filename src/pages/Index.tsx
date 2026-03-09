@@ -75,9 +75,9 @@ const Index = () => {
               <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-muted-foreground hover:text-foreground transition-colors"><Instagram size={18} /></a>
               <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors"><Linkedin size={18} /></a>
             </div>
-            <button onClick={() => navigate("/login")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Sign In</button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
-              <Play size={12} fill="currentColor" /> Try Demo
+            <button onClick={() => navigate("/app")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Scan & Pay</button>
+            <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="bg-accent text-accent-foreground px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
+              <ScanLine size={12} /> Try Free Scan
             </motion.button>
           </div>
         </div>
@@ -110,9 +110,9 @@ const Index = () => {
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-3">
-            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/scan")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
               <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Play size={20} fill="currentColor" /> Try the Demo
+              <ScanLine size={20} /> Try Free Scan
             </motion.button>
             <p className="text-background/25 text-xs">30 seconds · No signup · Works on any phone</p>
             <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors">
@@ -201,7 +201,7 @@ const Index = () => {
                 <p className="text-sm font-bold text-foreground tracking-tight">Walk into any store. Scan anything.</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">Works with 3M+ food products and 1M+ cosmetics worldwide via Open Food Facts &amp; Open Beauty Facts.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app?mode=scan")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
                 Scan Now
               </motion.button>
             </div>
@@ -261,8 +261,8 @@ const Index = () => {
                 Get Started — Free for 90 Days <ArrowRight size={14} />
               </a>
               <br />
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
-                See Retailer Dashboard →
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/app")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
+                Try Scan & Pay Demo →
               </motion.button>
             </div>
           </FadeIn>
@@ -332,7 +332,7 @@ const Index = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-background/50 font-medium">
               <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
-              <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
+              <button onClick={() => navigate("/scan")} className="hover:text-background transition-colors">Free Scan</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
