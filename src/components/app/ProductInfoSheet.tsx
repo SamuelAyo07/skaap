@@ -133,6 +133,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
     setLoading(true);
     setNotFound(false);
 
+    trackEvent("product_info_viewed", { product: product.name, barcode: product.barcode });
     fetchProductInfo(product.barcode).then((result) => {
       if (cancelled) return;
       setLoading(false);
