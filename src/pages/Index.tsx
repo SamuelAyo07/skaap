@@ -48,7 +48,7 @@ const Index = () => {
 
   const faqs = [
     { q: "How does SKAAP work?", a: "Scan items with your phone as you shop, pay in-app, show your QR receipt at the exit. No lines, no registers." },
-    { q: "Which stores support SKAAP?", a: "Launching with local grocers across the East Coast, starting in Boston. More cities coming soon." },
+    { q: "Which stores support SKAAP?", a: "Any grocery store, anywhere in the world. SKAAP uses your location to find real stores near you — and our nutrition scanner works with 3M+ food products and 1M+ cosmetics via Open Food Facts & Open Beauty Facts." },
     { q: "Is it secure?", a: "Bank-level 256-bit encryption. Payment data is tokenized and never stored on our servers." },
     { q: "What does it cost for stores?", a: "Free for 90 days. Then a simple monthly plan — no per-transaction fees." },
   ];
