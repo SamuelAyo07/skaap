@@ -27,6 +27,7 @@ const AppPage = () => {
   const [splashDone, setSplashDone] = useState(directScan); // skip splash for direct scan
 
   useEffect(() => {
+    if (directScan) return; // no splash for direct scan
     const timer = setTimeout(() => setSplashDone(true), 1600);
     return () => clearTimeout(timer);
   }, []);
