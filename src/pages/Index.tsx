@@ -356,7 +356,7 @@ const Index = () => {
                 <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#F3F4F6" }}>
                   <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
                     <span className="font-semibold text-sm" style={{ color: "#0A1220" }}>{faq.q}</span>
-                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "#6B7280" }} /></motion.div>
+                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "#4B5563" }} /></motion.div>
                   </button>
                   {faqOpen === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={{ duration: 0.2 }}>
