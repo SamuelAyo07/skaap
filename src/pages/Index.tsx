@@ -396,7 +396,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer style={{ background: "#0F1A2E" }} className="py-8">
+      <footer style={{ background: "#0F1A2E" }} className="py-6">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5">
