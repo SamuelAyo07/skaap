@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { lookupBarcode } from "@/lib/openfoodfacts";
 import { Input } from "@/components/ui/input";
 import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
+import { trackEvent } from "@/lib/analytics";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
