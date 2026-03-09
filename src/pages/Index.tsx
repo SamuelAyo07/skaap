@@ -225,7 +225,7 @@ const Index = () => {
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
-                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 border" style={{ borderColor: "rgba(0,0,0,0.06)", background: "#F7F7F7" }}>
+                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 border" style={{ borderColor: "rgba(0,0,0,0.08)", background: "#F0F0F0" }}>
                     <img src={item.img} alt={`SKAAP ${item.title} step`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
                   <h3 className="font-bold text-base tracking-tight" style={{ color: "#0F1A2E" }}>{item.title}</h3>
