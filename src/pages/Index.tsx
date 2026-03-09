@@ -282,7 +282,7 @@ const Index = () => {
                 <p className="text-sm font-bold tracking-tight" style={{ color: "#0F1A2E" }}>Walk into any store. Scan anything.</p>
                 <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>Works with 3M+ food products and 1M+ cosmetics worldwide.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#1B2A4A", color: "#fff" }}>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#0F1A2E", color: "#fff" }}>
                 Scan Now
               </motion.button>
             </div>
