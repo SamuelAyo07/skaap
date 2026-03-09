@@ -291,7 +291,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" style={{ background: "#0F1A2E" }} className="py-12">
+      <section id="retailers" style={{ background: "#0F1A2E" }} className="py-8">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-5">
