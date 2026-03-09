@@ -172,7 +172,7 @@ const Index = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/scan")}
                   className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  style={{ background: "#E8314A", color: "#fff" }}
+                  style={{ background: "#C4263D", color: "#fff" }}
                 >
                   <ScanLine size={16} /> Try Free Scan
                 </motion.button>
