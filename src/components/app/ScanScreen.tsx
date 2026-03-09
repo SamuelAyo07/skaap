@@ -215,6 +215,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       setDetectedFormat(formatName || inferFormat(barcode));
       await stopCamera();
       playScanBeep();
+      trackEvent("scan_success", { barcode, format: formatName || inferFormat(barcode) });
       await lookupAndShowProduct(barcode);
 
       setTimeout(() => {
