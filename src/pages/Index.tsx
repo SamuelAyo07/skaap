@@ -371,7 +371,7 @@ const Index = () => {
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{ background: "#F7F7F7" }} className="py-10">
+      <section id="contact" style={{ background: "#F7F7F7" }} className="py-6">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
             <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0F1A2E" }}>Let's talk</h2>
