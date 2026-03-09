@@ -198,7 +198,7 @@ const Index = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/app")}
                   className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  style={{ background: "#fff", color: "#1B2A4A" }}
+                  style={{ background: "#fff", color: "#0F1A2E" }}
                 >
                   <Barcode size={16} /> Try the Demo
                 </motion.button>
