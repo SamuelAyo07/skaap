@@ -213,8 +213,8 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>How it Works</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Three steps. That's it.</h2>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>How it Works</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0F1A2E" }}>Three steps. That's it.</h2>
             </div>
           </FadeIn>
           <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
