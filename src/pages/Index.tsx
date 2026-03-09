@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, Receipt,
