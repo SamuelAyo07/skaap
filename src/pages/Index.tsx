@@ -159,7 +159,7 @@ const Index = () => {
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#C4263D" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#1B2A4A" }}>Know Your Food</h3>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0F1A2E" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
                   Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
                 </p>
