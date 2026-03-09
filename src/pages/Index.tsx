@@ -165,7 +165,7 @@ const Index = () => {
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
-                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#1B2A4A" }}>{chip}</span>
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#0F1A2E" }}>{chip}</span>
                   ))}
                 </div>
                 <motion.button
