@@ -326,7 +326,7 @@ const Index = () => {
             ].map((card, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.06}>
                 <motion.div whileHover={{ y: -3 }} className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "#C4263D" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "#B0202F" }}>
                     <card.icon size={18} color="#fff" />
                   </div>
                   <h3 className="font-bold text-white mb-1 tracking-tight text-sm">{card.title}</h3>
