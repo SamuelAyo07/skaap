@@ -228,8 +228,8 @@ const Index = () => {
                   <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 border" style={{ borderColor: "rgba(0,0,0,0.08)", background: "#F0F0F0" }}>
                     <img src={item.img} alt={`SKAAP ${item.title} step`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
-                  <h3 className="font-bold text-base tracking-tight" style={{ color: "#0F1A2E" }}>{item.title}</h3>
-                  <p className="text-xs mt-0.5" style={{ color: "#6B7280" }}>{item.desc}</p>
+                  <h3 className="font-bold text-base tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
+                  <p className="text-xs mt-0.5" style={{ color: "#4B5563" }}>{item.desc}</p>
                 </div>
               </FadeIn>
             ))}
