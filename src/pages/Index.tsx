@@ -295,7 +295,7 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-5">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>For Retailers</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>For Retailers</span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2 tracking-tight">
                 Built for the stores<br className="hidden md:block" /> that built your neighborhood
               </h2>
