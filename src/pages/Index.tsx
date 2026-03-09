@@ -155,12 +155,12 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Feature 1 — Food Intelligence */}
             <FadeIn delay={0.05}>
-              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F7F7F7", border: "1px solid rgba(0,0,0,0.04)" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#C4263D" }}>
+              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F0F0F0", border: "1px solid rgba(0,0,0,0.06)" }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#B0202F" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0F1A2E" }}>Know Your Food</h3>
-                <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
                   Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
