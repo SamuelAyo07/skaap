@@ -374,7 +374,7 @@ const Index = () => {
       <section id="contact" style={{ background: "#F7F7F7" }} className="py-10">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#1B2A4A" }}>Let's talk</h2>
+            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0F1A2E" }}>Let's talk</h2>
             <p className="text-sm mb-6" style={{ color: "#6B7280" }}>Shopper or store owner, drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
