@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, ChevronRight, Sparkles, Bell, Store } from "lucide-react";
 import { fetchNearbyStores, type NearbyStore } from "@/lib/nearbyStores";
+import { trackEvent } from "@/lib/analytics";
 
 // Fallback store images (cycled for visual variety)
 import storeTraderJoes from "@/assets/store-traderjoes-boston.jpg";
