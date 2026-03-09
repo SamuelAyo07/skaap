@@ -86,6 +86,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
       },
       () => {
         clearTimeout(timeout);
+        trackEvent("location_denied");
         setLocationError(true);
         setPhase("ready");
       },
