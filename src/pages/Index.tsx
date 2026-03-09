@@ -148,7 +148,7 @@ const Index = () => {
             <div className="text-center mb-8">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>What SKAAP Does</span>
               <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Two powerful tools. One app.</h2>
-              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#6B7280" }}>Everything you need to shop smarter. Know what's in your food and skip the checkout line.</p>
+              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>Everything you need to shop smarter. Know what's in your food and skip the checkout line.</p>
             </div>
           </FadeIn>
 
