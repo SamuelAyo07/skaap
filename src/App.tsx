@@ -20,9 +20,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/app" element={<AppPage />} />
           <Route path="/scan" element={<SkaapScan />} />
-          <Route path="/login" element={<Navigate to="/app" replace />} />
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
-          <Route path="/analytics" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
