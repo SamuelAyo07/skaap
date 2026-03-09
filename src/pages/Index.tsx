@@ -383,7 +383,7 @@ const Index = () => {
             ) : (
               <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <div className="relative flex-1">
-                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#6B7280" }} />
+                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#4B5563" }} />
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="w-full bg-background border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: "#F3F4F6" }} />
                 </div>
                 <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity" style={{ background: "#0A1220", color: "#fff" }}>
