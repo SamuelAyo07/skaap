@@ -142,7 +142,7 @@ const Index = () => {
       </section>
 
       {/* ─── TWO FEATURES ─── */}
-      <section className="py-14 bg-background">
+      <section className="py-8 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
