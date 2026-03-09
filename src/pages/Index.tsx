@@ -12,8 +12,6 @@ import stepScan from "@/assets/step-scan.webp";
 import stepPay from "@/assets/step-pay.webp";
 import stepReceipt from "@/assets/step-receipt.webp";
 
-
-
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -24,98 +22,6 @@ const FadeIn = ({ children, className = "", delay = 0 }: { children: React.React
   );
 };
 
-// Inline SVG QR code for https://useskaap.com/scan
-// Pre-rendered as static SVG path data (simplified QR)
-const QRCode = () => (
-  <svg viewBox="0 0 29 29" width="120" height="120" style={{ shapeRendering: "crispEdges" }}>
-    <rect width="29" height="29" fill="#fff" />
-    <g fill="#1B2A4A">
-      {/* Position patterns */}
-      <rect x="0" y="0" width="7" height="1"/><rect x="0" y="6" width="7" height="1"/>
-      <rect x="0" y="0" width="1" height="7"/><rect x="6" y="0" width="1" height="7"/>
-      <rect x="2" y="2" width="3" height="3"/>
-      <rect x="22" y="0" width="7" height="1"/><rect x="22" y="6" width="7" height="1"/>
-      <rect x="22" y="0" width="1" height="7"/><rect x="28" y="0" width="1" height="7"/>
-      <rect x="24" y="2" width="3" height="3"/>
-      <rect x="0" y="22" width="7" height="1"/><rect x="0" y="28" width="7" height="1"/>
-      <rect x="0" y="22" width="1" height="7"/><rect x="6" y="22" width="1" height="7"/>
-      <rect x="2" y="24" width="3" height="3"/>
-      {/* Timing */}
-      <rect x="8" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/>
-      <rect x="12" y="6" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/>
-      <rect x="16" y="6" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/>
-      <rect x="20" y="6" width="1" height="1"/>
-      <rect x="6" y="8" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/>
-      <rect x="6" y="12" width="1" height="1"/><rect x="6" y="14" width="1" height="1"/>
-      <rect x="6" y="16" width="1" height="1"/><rect x="6" y="18" width="1" height="1"/>
-      <rect x="6" y="20" width="1" height="1"/>
-      {/* Data modules (approximation for useskaap.com/scan) */}
-      <rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/>
-      <rect x="12" y="8" width="2" height="1"/><rect x="15" y="8" width="1" height="1"/>
-      <rect x="17" y="8" width="2" height="1"/><rect x="20" y="8" width="1" height="1"/>
-      <rect x="9" y="9" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/>
-      <rect x="13" y="9" width="2" height="1"/><rect x="16" y="9" width="1" height="1"/>
-      <rect x="19" y="9" width="2" height="1"/>
-      <rect x="8" y="10" width="2" height="1"/><rect x="11" y="10" width="1" height="1"/>
-      <rect x="14" y="10" width="1" height="1"/><rect x="17" y="10" width="1" height="1"/>
-      <rect x="19" y="10" width="1" height="1"/>
-      <rect x="9" y="11" width="1" height="1"/><rect x="12" y="11" width="2" height="1"/>
-      <rect x="15" y="11" width="1" height="1"/><rect x="18" y="11" width="2" height="1"/>
-      <rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="2" height="1"/>
-      <rect x="13" y="12" width="1" height="1"/><rect x="16" y="12" width="2" height="1"/>
-      <rect x="20" y="12" width="1" height="1"/>
-      <rect x="9" y="13" width="2" height="1"/><rect x="12" y="13" width="1" height="1"/>
-      <rect x="15" y="13" width="2" height="1"/><rect x="18" y="13" width="1" height="1"/>
-      <rect x="8" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/>
-      <rect x="14" y="14" width="2" height="1"/><rect x="17" y="14" width="1" height="1"/>
-      <rect x="19" y="14" width="2" height="1"/>
-      <rect x="10" y="15" width="1" height="1"/><rect x="13" y="15" width="2" height="1"/>
-      <rect x="16" y="15" width="1" height="1"/><rect x="19" y="15" width="1" height="1"/>
-      <rect x="8" y="16" width="2" height="1"/><rect x="12" y="16" width="1" height="1"/>
-      <rect x="15" y="16" width="2" height="1"/><rect x="18" y="16" width="1" height="1"/>
-      <rect x="20" y="16" width="1" height="1"/>
-      <rect x="9" y="17" width="1" height="1"/><rect x="11" y="17" width="2" height="1"/>
-      <rect x="14" y="17" width="1" height="1"/><rect x="17" y="17" width="2" height="1"/>
-      <rect x="8" y="18" width="1" height="1"/><rect x="10" y="18" width="1" height="1"/>
-      <rect x="13" y="18" width="1" height="1"/><rect x="16" y="18" width="1" height="1"/>
-      <rect x="19" y="18" width="2" height="1"/>
-      <rect x="9" y="19" width="2" height="1"/><rect x="12" y="19" width="2" height="1"/>
-      <rect x="15" y="19" width="1" height="1"/><rect x="18" y="19" width="1" height="1"/>
-      <rect x="8" y="20" width="1" height="1"/><rect x="11" y="20" width="1" height="1"/>
-      <rect x="14" y="20" width="2" height="1"/><rect x="17" y="20" width="1" height="1"/>
-      <rect x="20" y="20" width="1" height="1"/>
-      {/* Bottom-right data */}
-      <rect x="22" y="8" width="1" height="1"/><rect x="24" y="8" width="2" height="1"/>
-      <rect x="27" y="8" width="1" height="1"/>
-      <rect x="23" y="9" width="1" height="1"/><rect x="25" y="9" width="1" height="1"/>
-      <rect x="22" y="10" width="2" height="1"/><rect x="26" y="10" width="2" height="1"/>
-      <rect x="8" y="22" width="1" height="1"/><rect x="10" y="22" width="2" height="1"/>
-      <rect x="13" y="22" width="1" height="1"/><rect x="16" y="22" width="2" height="1"/>
-      <rect x="9" y="23" width="1" height="1"/><rect x="12" y="23" width="2" height="1"/>
-      <rect x="15" y="23" width="1" height="1"/><rect x="18" y="23" width="1" height="1"/>
-      <rect x="8" y="24" width="2" height="1"/><rect x="11" y="24" width="1" height="1"/>
-      <rect x="14" y="24" width="1" height="1"/><rect x="17" y="24" width="2" height="1"/>
-    </g>
-  </svg>
-);
-
-// Static EAN-13 barcode SVG for 3017620422003
-const EAN13Barcode = () => (
-  <svg viewBox="0 0 220 80" width="220" height="80" className="mx-auto">
-    <rect width="220" height="80" fill="#fff" rx="4" />
-    {/* Simplified barcode bars */}
-    <g fill="#1B2A4A">
-      {Array.from({ length: 60 }, (_, i) => {
-        const x = 20 + i * 3;
-        const w = i % 3 === 0 ? 2 : 1;
-        const h = i === 0 || i === 29 || i === 59 ? 55 : 48;
-        return <rect key={i} x={x} y={8} width={w} height={h} />;
-      })}
-    </g>
-    <text x="110" y="74" textAnchor="middle" fontSize="10" fill="#6B7280" fontFamily="Inter, system-ui">3017620422003</text>
-  </svg>
-);
-
 const Index = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -124,13 +30,11 @@ const Index = () => {
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-  // Instagram UTM detection
   const isFromInstagram = useMemo(() => {
     const src = searchParams.get("utm_source")?.toLowerCase();
     const ref = searchParams.get("ref")?.toLowerCase();
     return src === "instagram" || ref === "ig" || ref === "instagram";
   }, [searchParams]);
-
 
   useEffect(() => {
     trackEvent("page_view", { page: "landing", utm_source: searchParams.get("utm_source") }, "/");
@@ -151,98 +55,113 @@ const Index = () => {
   };
 
   const faqs = [
-    { q: "How does SKAAP work?", a: "Scan items with your phone as you shop, pay in-app, show your QR receipt at the exit. No lines, no registers. Our nutrition scanner works with 3M+ food products and 1M+ cosmetics." },
-    { q: "Which stores support SKAAP?", a: "Any grocery store, anywhere in the world. SKAAP uses your location to find real stores near you — and our nutrition scanner works with 3M+ food products and 1M+ cosmetics via Open Food Facts & Open Beauty Facts." },
-    { q: "Is it secure?", a: "Bank-level 256-bit encryption. Payment data is tokenized and never stored on our servers." },
-    { q: "What does it cost for stores?", a: "Free for 90 days. Then a simple monthly plan — no per-transaction fees." },
+    { q: "How does SKAAP work?", a: "Scan items with your phone as you shop, pay in the app, show your QR receipt at the exit. No lines, no registers. Our nutrition scanner works with 3M+ food products and 1M+ cosmetics." },
+    { q: "Which stores support SKAAP?", a: "Any grocery store, anywhere in the world. SKAAP uses your location to find real stores near you. Our nutrition scanner works with 3M+ food products and 1M+ cosmetics via Open Food Facts & Open Beauty Facts." },
+    { q: "Is it secure?", a: "Bank level 256 bit encryption. Payment data is tokenized and never stored on our servers." },
+    { q: "What does it cost for stores?", a: "Free for 90 days. Then a simple monthly plan with no per transaction fees." },
   ];
 
   const heroHeadline = isFromInstagram
-    ? "You saw it on Instagram.\nNow try it."
-    : "Know what's in\nyour food.";
+    ? <>You saw it on Instagram.<br />Now try it.</>
+    : <>Scan it.<br />Pay instantly.<br /><span style={{ color: "#E8314A" }}>Walk out.</span></>;
 
-  const desktopSub = isFromInstagram
+  const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
-    : "Scan any barcode. See Nutri-Score, ingredients, and additives instantly. Free.";
-
-  const mobileSub = isFromInstagram
-    ? "Tap below. Your camera opens instantly."
-    : "You're on your phone. Your camera is ready. Tap below.";
+    : "Your phone becomes the checkout. No lines, no registers, no waiting.";
 
   return (
-    <div className="min-h-screen bg-background font-sans overflow-x-hidden">
+    <div className="min-h-screen font-sans overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50 bg-background border-b" style={{ borderColor: "#F3F4F6", height: 64 }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: "#1B2A4A", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
-            <span className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Skaap</span>
+            <span className="font-extrabold text-xl tracking-tight text-white">SKAAP</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium" style={{ color: "#6B7280" }}>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it Works</a>
-            <a href="#retailers" className="hover:text-foreground transition-colors">For Retailers</a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>
+            <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
+            <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
+            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 mr-1">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-muted-foreground hover:text-foreground transition-colors"><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors"><Linkedin size={18} /></a>
-            </div>
-            <button onClick={() => navigate("/app")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Scan & Pay</button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2" style={{ background: "#E8314A", color: "#fff" }}>
-              <ScanLine size={12} /> Try Free Scan
-            </motion.button>
+            <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" style={{ color: "rgba(255,255,255,0.5)" }}><Instagram size={18} /></a>
+            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" style={{ color: "rgba(255,255,255,0.5)" }}><Linkedin size={18} /></a>
+            <button onClick={() => navigate("/app")} className="hidden md:block text-sm font-medium transition-colors" style={{ color: "rgba(255,255,255,0.5)" }}>Sign In</button>
           </div>
         </div>
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative bg-background flex items-center justify-center" style={{ minHeight: "85vh", paddingTop: 64 }}>
+      <section className="relative flex items-center justify-center" style={{ background: "#1B2A4A", minHeight: "100vh", paddingTop: 64 }}>
         <div className="w-full max-w-[640px] mx-auto px-6 text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="font-extrabold tracking-tighter leading-[1.1] whitespace-pre-line" style={{ color: "#1B2A4A", fontSize: "clamp(36px, 7vw, 56px)" }}>
-              {heroHeadline}
-            </h1>
-
-            {/* Desktop subheadline */}
-            <p className="hidden md:block mt-4 text-xl" style={{ color: "#6B7280" }}>{desktopSub}</p>
-            {/* Mobile subheadline */}
-            <p className="md:hidden mt-4 text-base" style={{ color: "#6B7280" }}>{mobileSub}</p>
+          {/* Launch badge */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}>
+              ✨ Now launching on the East Coast 🇺🇸
+            </span>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-10">
-            {/* Primary CTA */}
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+            className="font-extrabold tracking-tighter leading-[1.05] text-white mt-8"
+            style={{ fontSize: "clamp(40px, 9vw, 72px)" }}
+          >
+            {heroHeadline}
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-5 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.5)" }}>
+            {heroSub}
+          </motion.p>
+
+          {/* Social proof */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-6">
+            <div className="flex -space-x-2">
+              {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #1B2A4A" }}>{c}</div>
+              ))}
+            </div>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
+              <strong className="text-white">85+ people</strong> tried SKAAP this week
+            </span>
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-8">
             <motion.button
               whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/scan")}
+              onClick={() => navigate("/app")}
               className="w-full md:w-[320px] font-extrabold text-lg flex items-center justify-center gap-3 mx-auto cta-pulse-mobile"
-              style={{ background: "#E8314A", color: "#fff", height: 64, borderRadius: 12 }}
+              style={{ background: "#E8314A", color: "#fff", height: 64, borderRadius: 32 }}
             >
-              Try Free Scan →
+              ▶ Try the Demo
             </motion.button>
+            <p className="text-xs mt-3" style={{ color: "rgba(255,255,255,0.35)" }}>30 seconds · No signup · Works on any phone</p>
+          </motion.div>
 
-            {/* Desktop QR handoff card */}
-            <div className="hidden md:flex mt-8 mx-auto items-center gap-5 p-5 rounded-2xl" style={{ background: "#F7F7F7", maxWidth: 440, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-              <div className="flex-shrink-0">
-                <QRCode />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>On your phone?</p>
-                <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>Scan this to open SKAAP on your camera</p>
-                <p className="text-[11px] mt-2" style={{ color: "#9CA3AF" }}>Works in Safari, Chrome, and all mobile browsers</p>
-              </div>
-            </div>
+          {/* I Own a Store */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-4">
+            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
+              <Store size={16} /> I Own a Store
+            </a>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-10">
+            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.25)" }} />
           </motion.div>
         </div>
       </section>
 
       {/* ─── TWO FEATURES ─── */}
-      <section className="py-16 bg-background">
+      <section className="py-14 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-10">
+            <div className="text-center mb-8">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>What SKAAP Does</span>
               <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Two powerful tools. One app.</h2>
-              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#6B7280" }}>Everything you need to shop smarter — know what's in your food and skip the checkout line.</p>
+              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#6B7280" }}>Everything you need to shop smarter. Know what's in your food and skip the checkout line.</p>
             </div>
           </FadeIn>
 
@@ -255,7 +174,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#1B2A4A" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
-                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score — all decoded in real time. Works with 3M+ food products and 1M+ cosmetics.
+                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
@@ -281,7 +200,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Scan & Pay</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  Walk into any partner store, scan items as you shop, add to cart, pay in-app, and walk out with a QR receipt. No lines. No registers. No waiting. Your phone is the checkout.
+                  Walk into any partner store, scan items as you shop, add to cart, pay in the app, and walk out with a QR receipt. No lines. No registers. No waiting.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["📱 Mobile Checkout", "🛒 Smart Cart", "🧾 QR Receipt", "⚡ Skip the Line"].map((chip) => (
@@ -294,7 +213,7 @@ const Index = () => {
                   className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                   style={{ background: "#fff", color: "#1B2A4A" }}
                 >
-                  <Barcode size={16} /> Try Scan & Pay Demo
+                  <Barcode size={16} /> Try the Demo
                 </motion.button>
               </motion.div>
             </FadeIn>
@@ -303,10 +222,10 @@ const Index = () => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-14 bg-background">
+      <section id="how-it-works" className="py-10 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-10">
+            <div className="text-center mb-8">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>How it Works</span>
               <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Three steps. That's it.</h2>
             </div>
@@ -332,7 +251,7 @@ const Index = () => {
       </section>
 
       {/* ─── SMART INFO — NUTRITION CHAMPION ─── */}
-      <section className="py-12" style={{ background: "#F7F7F7" }}>
+      <section className="py-10" style={{ background: "#F7F7F7" }}>
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-6">
@@ -343,19 +262,19 @@ const Index = () => {
                 Your personal food &amp; beauty analyst.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#6B7280" }}>
-                Scan any product — food or cosmetics — and instantly see what's really inside. SKAAP Score, Nutri-Score, allergens, additives, and ingredient safety decoded in real time.
+                Scan any product and instantly see what's really inside. SKAAP Score, Nutri-Score, allergens, additives, and ingredient safety decoded in real time.
               </p>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
             {[
-              { emoji: "🎯", title: "SKAAP Score", desc: "0–100 health score at a glance" },
-              { emoji: "🅰️", title: "Nutri-Score", desc: "A–E nutrition grade" },
-              { emoji: "🧪", title: "Additive Risks", desc: "E-numbers decoded with risk levels" },
-              { emoji: "🏭", title: "NOVA Processing", desc: "See how processed your food is (1–4)" },
+              { emoji: "🎯", title: "SKAAP Score", desc: "0 to 100 health score at a glance" },
+              { emoji: "🅰️", title: "Nutri-Score", desc: "A to E nutrition grade" },
+              { emoji: "🧪", title: "Additive Risks", desc: "E numbers decoded with risk levels" },
+              { emoji: "🏭", title: "NOVA Processing", desc: "See how processed your food is (1 to 4)" },
               { emoji: "💄", title: "Cosmetics Safety", desc: "Ingredient analysis for beauty products" },
-              { emoji: "📊", title: "Full Nutrition", desc: "Fat, sugar, salt, protein — color-coded" },
+              { emoji: "📊", title: "Full Nutrition", desc: "Fat, sugar, salt, protein color coded" },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.04}>
                 <motion.div whileHover={{ y: -2 }} className="bg-background border rounded-2xl p-3.5 text-center" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
@@ -385,7 +304,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" style={{ background: "#1B2A4A" }} className="py-14">
+      <section id="retailers" style={{ background: "#1B2A4A" }} className="py-12">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-5">
@@ -397,7 +316,7 @@ const Index = () => {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <div className="rounded-2xl p-6 mb-8 max-w-3xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <div className="rounded-2xl p-6 mb-6 max-w-3xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#E8314A" }}>
                   <Heart size={18} color="#fff" />
@@ -412,10 +331,10 @@ const Index = () => {
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
             {[
               { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones." },
-              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan-to-pay." },
+              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan to pay." },
               { icon: Users, title: "Happier customers", desc: "Faster trips, more repeat visits." },
             ].map((card, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.06}>
@@ -431,21 +350,17 @@ const Index = () => {
           </div>
 
           <FadeIn delay={0.2}>
-            <div className="text-center space-y-2">
+            <div className="text-center">
               <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#E8314A", color: "#fff" }}>
-                Get Started — Free for 90 Days <ArrowRight size={14} />
+                Get Started. Free for 90 Days <ArrowRight size={14} />
               </a>
-              <br />
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/app")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-xs transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
-                Try Scan & Pay Demo →
-              </motion.button>
             </div>
           </FadeIn>
         </div>
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-12 bg-background">
+      <section className="py-10 bg-background">
         <div className="max-w-2xl mx-auto px-6">
           <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#1B2A4A" }}>Questions</h2></FadeIn>
           <div className="space-y-1.5">
@@ -469,11 +384,11 @@ const Index = () => {
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{ background: "#F7F7F7" }} className="py-12">
+      <section id="contact" style={{ background: "#F7F7F7" }} className="py-10">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
             <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#1B2A4A" }}>Let's talk</h2>
-            <p className="text-sm mb-6" style={{ color: "#6B7280" }}>Shopper or store owner — drop your email.</p>
+            <p className="text-sm mb-6" style={{ color: "#6B7280" }}>Shopper or store owner, drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
             {submitted ? (
