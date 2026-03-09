@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Navigation, ChevronRight, Sparkles, Bell } from "lucide-react";
-import skaapIcon from "@/assets/skaap-icon.png";
+import { motion } from "framer-motion";
+import { MapPin, Navigation, ChevronRight, Sparkles, Bell, Store } from "lucide-react";
+import { fetchNearbyStores, type NearbyStore } from "@/lib/nearbyStores";
+
+// Fallback store images (cycled for visual variety)
 import storeTraderJoes from "@/assets/store-traderjoes-boston.jpg";
 import storeWholeFoods from "@/assets/store-wholefoods-cambridge.jpg";
 import storeStarMarket from "@/assets/store-starmarket-boston.jpg";
@@ -9,23 +11,14 @@ import storeWalmart from "@/assets/store-walmart.jpg";
 import storeFreshco from "@/assets/store-freshco.jpg";
 import storeRcs from "@/assets/store-rcs.jpg";
 
+const storeImages = [storeTraderJoes, storeWholeFoods, storeStarMarket, storeWalmart, storeFreshco, storeRcs];
+
 interface HomeScreenProps {
   onSelectStore: () => void;
 }
 
-const demoStores = [
-  { id: "1", name: "Skaap Demo Market", address: "101 Main Street", image: storeTraderJoes, lat: 42.3601, lng: -71.0589 },
-  { id: "2", name: "City Fresh Demo", address: "240 River Avenue", image: storeWholeFoods, lat: 42.3646, lng: -71.1047 },
-  { id: "3", name: "Neighborhood Grocery", address: "33 Kilmarnock Road", image: storeStarMarket, lat: 42.3429, lng: -71.0994 },
-  { id: "4", name: "Quick Basket", address: "1100 Massachusetts Avenue", image: storeFreshco, lat: 42.3736, lng: -71.1189 },
-  { id: "5", name: "Urban Pantry", address: "400 Somerville Avenue", image: storeRcs, lat: 42.3803, lng: -71.0968 },
-  { id: "6", name: "Downtown Foods", address: "10 Columbus Circle", image: storeWalmart, lat: 40.7687, lng: -73.9833 },
-  { id: "7", name: "Local Choice Market", address: "1776 Brickell Avenue", image: storeRcs, lat: 25.7572, lng: -80.1918 },
-  { id: "8", name: "FreshPoint Demo", address: "2323 Wisconsin Avenue", image: storeWholeFoods, lat: 38.9219, lng: -77.0707 },
-];
-
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  const R = 3959;
+  const R = 3959; // miles
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
   const a =
@@ -43,47 +36,81 @@ function getGreeting(): string {
 
 type Phase = "locating" | "ready";
 
+interface DisplayStore extends NearbyStore {
+  image: string;
+  dist?: number;
+}
+
 const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   const [phase, setPhase] = useState<Phase>("locating");
-  const [sortedStores, setSortedStores] = useState(demoStores);
+  const [stores, setStores] = useState<DisplayStore[]>([]);
   const [distances, setDistances] = useState<Record<string, number>>({});
   const [nearestName, setNearestName] = useState("");
   const [notifRequested, setNotifRequested] = useState(false);
+  const [locationError, setLocationError] = useState(false);
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setSortedStores(demoStores);
+      setLocationError(true);
       setPhase("ready");
       return;
     }
 
-    const timeout = setTimeout(() => setPhase("ready"), 4000);
+    const timeout = setTimeout(() => {
+      setLocationError(true);
+      setPhase("ready");
+    }, 8000);
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         clearTimeout(timeout);
         const { latitude, longitude } = pos.coords;
-        const withDist = demoStores.map((s) => ({
-          ...s,
-          dist: getDistance(latitude, longitude, s.lat, s.lng),
-        }));
-        withDist.sort((a, b) => a.dist - b.dist);
-        const distMap: Record<string, number> = {};
-        withDist.forEach((s) => (distMap[s.id] = s.dist));
-        setDistances(distMap);
-        setSortedStores(withDist);
-        setNearestName(withDist[0].name);
-        setPhase("ready");
+
+        try {
+          const realStores = await fetchNearbyStores(latitude, longitude, 5000, 15);
+
+          if (realStores.length === 0) {
+            // Try wider radius
+            const widerStores = await fetchNearbyStores(latitude, longitude, 15000, 15);
+            processStores(widerStores, latitude, longitude);
+          } else {
+            processStores(realStores, latitude, longitude);
+          }
+        } catch (err) {
+          console.error("Failed to fetch nearby stores:", err);
+          setLocationError(true);
+          setPhase("ready");
+        }
       },
       () => {
         clearTimeout(timeout);
+        setLocationError(true);
         setPhase("ready");
       },
-      { enableHighAccuracy: false, timeout: 3500, maximumAge: 60000 }
+      { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
     );
 
     return () => clearTimeout(timeout);
   }, []);
+
+  const processStores = (rawStores: NearbyStore[], lat: number, lng: number) => {
+    const withDist: DisplayStore[] = rawStores.map((s, i) => ({
+      ...s,
+      dist: getDistance(lat, lng, s.lat, s.lng),
+      image: storeImages[i % storeImages.length],
+    }));
+    withDist.sort((a, b) => (a.dist ?? 999) - (b.dist ?? 999));
+
+    const distMap: Record<string, number> = {};
+    withDist.forEach((s) => {
+      if (s.dist != null) distMap[s.id] = s.dist;
+    });
+
+    setDistances(distMap);
+    setStores(withDist);
+    if (withDist.length > 0) setNearestName(withDist[0].name);
+    setPhase("ready");
+  };
 
   const requestNotifications = async () => {
     if ("Notification" in window) {
@@ -98,7 +125,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
     }
   };
 
-  const visibleStores = sortedStores.slice(0, 8);
+  const visibleStores = stores.slice(0, 8);
 
   if (phase === "locating") {
     return (
@@ -123,10 +150,46 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
               <Navigation size={22} className="text-background" />
             </div>
           </div>
-          <h2 className="text-xl font-bold text-foreground tracking-tight mb-1.5">Finding your store</h2>
+          <h2 className="text-xl font-bold text-foreground tracking-tight mb-1.5">Finding nearby stores</h2>
           <p className="text-xs text-muted-foreground text-center max-w-[220px]">
-            Using your location to find the nearest store
+            Searching for real stores around you…
           </p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // No stores found or location denied
+  if (visibleStores.length === 0) {
+    return (
+      <div className="px-4 pt-10 pb-20 bg-background min-h-screen">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-3">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight leading-tight">{getGreeting()}</h1>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center text-center py-16 px-4"
+        >
+          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+            <Store size={28} className="text-muted-foreground" />
+          </div>
+          <h3 className="font-bold text-foreground mb-1.5 tracking-tight">
+            {locationError ? "Enable location to find stores" : "No stores found nearby"}
+          </h3>
+          <p className="text-xs text-muted-foreground max-w-[260px] leading-relaxed">
+            {locationError
+              ? "Allow location access in your browser settings, then refresh to discover real stores around you."
+              : "Try again from a different location — Skaap works with any grocery store worldwide."}
+          </p>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onSelectStore}
+            className="mt-6 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold"
+          >
+            Try Demo Mode Instead
+          </motion.button>
         </motion.div>
       </div>
     );
@@ -199,7 +262,9 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center gap-1">
                 <MapPin size={11} className="text-background/60" />
-                <p className="text-background/60 text-[11px]">{visibleStores[0].address}</p>
+                <p className="text-background/60 text-[11px]">
+                  {visibleStores[0].address || "Tap to start scanning"}
+                </p>
               </div>
               <div className="flex items-center gap-1 bg-background/15 backdrop-blur-md rounded-full px-2.5 py-0.5">
                 {distances[visibleStores[0].id] != null && (
@@ -213,7 +278,6 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
           </div>
         </div>
       </motion.button>
-
 
       {/* Section label */}
       {visibleStores.length > 1 && (
@@ -251,7 +315,9 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
               <h3 className="text-[13px] font-semibold text-foreground truncate tracking-tight">{store.name}</h3>
               <div className="flex items-center gap-1 mt-0.5">
                 <MapPin size={9} className="text-muted-foreground flex-shrink-0" />
-                <p className="text-[11px] text-muted-foreground truncate">{store.address}</p>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {store.address || "Grocery store"}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
