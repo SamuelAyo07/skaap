@@ -181,7 +181,7 @@ const Index = () => {
 
             {/* Feature 2 — Scan & Pay */}
             <FadeIn delay={0.1}>
-              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#0F1A2E" }}>
+              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#0A1220" }}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.15)" }}>
                   <Store size={22} color="#fff" />
                 </div>
