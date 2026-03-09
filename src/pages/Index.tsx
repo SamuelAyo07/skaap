@@ -347,7 +347,7 @@ const Index = () => {
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-10 bg-background">
+      <section className="py-6 bg-background">
         <div className="max-w-2xl mx-auto px-6">
           <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#0F1A2E" }}>Questions</h2></FadeIn>
           <div className="space-y-1.5">
