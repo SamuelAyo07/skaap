@@ -374,8 +374,8 @@ const Index = () => {
       <section id="contact" style={{ background: "#EBEBEB" }} className="py-6">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0F1A2E" }}>Let's talk</h2>
-            <p className="text-sm mb-6" style={{ color: "#6B7280" }}>Shopper or store owner, drop your email.</p>
+            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0A1220" }}>Let's talk</h2>
+            <p className="text-sm mb-6" style={{ color: "#4B5563" }}>Shopper or store owner, drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
             {submitted ? (
