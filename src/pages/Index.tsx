@@ -31,7 +31,9 @@ const Index = () => {
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-
+  useEffect(() => {
+    trackEvent("page_view", { page: "landing" }, "/");
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
