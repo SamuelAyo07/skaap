@@ -131,10 +131,6 @@ const Index = () => {
     return src === "instagram" || ref === "ig" || ref === "instagram";
   }, [searchParams]);
 
-  // Pre-compute Nutella score
-  const nutellaScore = useMemo(() =>
-    calculateSkaapScore(NUTELLA_DEMO.nutriScoreGrade, NUTELLA_DEMO.additivesTags, NUTELLA_DEMO.labelsTags),
-  []);
 
   useEffect(() => {
     trackEvent("page_view", { page: "landing", utm_source: searchParams.get("utm_source") }, "/");
