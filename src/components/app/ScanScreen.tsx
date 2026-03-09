@@ -352,6 +352,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     if (!lastScanned) return;
 
     addItem(lastScanned);
+    trackEvent("add_to_cart", { product: lastScanned.name, price: lastScanned.price });
     setShowAddedFeedback(lastScanned.id);
     setTimeout(() => setShowAddedFeedback(null), 1200);
   }, [addItem, lastScanned]);
