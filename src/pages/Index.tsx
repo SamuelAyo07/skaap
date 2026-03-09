@@ -266,8 +266,8 @@ const Index = () => {
               <FadeIn key={i} delay={i * 0.04}>
                 <motion.div whileHover={{ y: -2 }} className="bg-background border rounded-2xl p-3.5 text-center" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
                   <span className="text-xl block mb-1.5">{item.emoji}</span>
-                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0F1A2E" }}>{item.title}</h3>
-                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
+                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
+                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "#4B5563" }}>{item.desc}</p>
                 </motion.div>
               </FadeIn>
             ))}
