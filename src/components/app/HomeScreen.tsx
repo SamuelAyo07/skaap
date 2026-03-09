@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, ChevronRight, Sparkles, Bell, Store } from "lucide-react";
 import { fetchNearbyStores, type NearbyStore } from "@/lib/nearbyStores";
+import { trackEvent } from "@/lib/analytics";
 
 // Fallback store images (cycled for visual variety)
 import storeTraderJoes from "@/assets/store-traderjoes-boston.jpg";
@@ -64,6 +65,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         clearTimeout(timeout);
+        trackEvent("location_granted");
         const { latitude, longitude } = pos.coords;
 
         try {
@@ -84,10 +86,11 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
       },
       () => {
         clearTimeout(timeout);
+        trackEvent("location_denied");
         setLocationError(true);
         setPhase("ready");
       },
-      { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
 
     return () => clearTimeout(timeout);

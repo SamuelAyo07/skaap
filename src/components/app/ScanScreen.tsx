@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { lookupBarcode } from "@/lib/openfoodfacts";
 import { Input } from "@/components/ui/input";
 import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
+import { trackEvent } from "@/lib/analytics";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
@@ -214,6 +215,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       setDetectedFormat(formatName || inferFormat(barcode));
       await stopCamera();
       playScanBeep();
+      trackEvent("scan_success", { barcode, format: formatName || inferFormat(barcode) });
       await lookupAndShowProduct(barcode);
 
       setTimeout(() => {
@@ -350,6 +352,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     if (!lastScanned) return;
 
     addItem(lastScanned);
+    trackEvent("add_to_cart", { product: lastScanned.name, price: lastScanned.price });
     setShowAddedFeedback(lastScanned.id);
     setTimeout(() => setShowAddedFeedback(null), 1200);
   }, [addItem, lastScanned]);

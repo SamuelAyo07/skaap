@@ -3,6 +3,7 @@ import { X, Info, Leaf } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "@/data/products";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
+import { trackEvent } from "@/lib/analytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -132,6 +133,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
     setLoading(true);
     setNotFound(false);
 
+    trackEvent("product_info_viewed", { product: product.name, barcode: product.barcode });
     fetchProductInfo(product.barcode).then((result) => {
       if (cancelled) return;
       setLoading(false);

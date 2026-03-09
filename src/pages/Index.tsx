@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, CreditCard, Receipt,
@@ -30,7 +31,9 @@ const Index = () => {
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-
+  useEffect(() => {
+    trackEvent("page_view", { page: "landing" }, "/");
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,8 +201,8 @@ const Index = () => {
                 <p className="text-sm font-bold text-foreground tracking-tight">Walk into any store. Scan anything.</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">Works with 3M+ food products and 1M+ cosmetics worldwide via Open Food Facts &amp; Open Beauty Facts.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
-                Try Now
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app?mode=scan")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
+                Scan Now
               </motion.button>
             </div>
           </FadeIn>

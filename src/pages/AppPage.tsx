@@ -8,7 +8,7 @@ import PaymentScreen from "@/components/app/PaymentScreen";
 import OrderCompleteScreen from "@/components/app/OrderCompleteScreen";
 import ProfileScreen from "@/components/app/ProfileScreen";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 
@@ -20,11 +20,14 @@ const pageVariants = {
 
 const AppPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("home");
-  const [screen, setScreen] = useState("home");
-  const [splashDone, setSplashDone] = useState(false);
+  const [searchParams] = useSearchParams();
+  const directScan = searchParams.get("mode") === "scan";
+  const [activeTab, setActiveTab] = useState(directScan ? "scan" : "home");
+  const [screen, setScreen] = useState(directScan ? "scan" : "home");
+  const [splashDone, setSplashDone] = useState(directScan); // skip splash for direct scan
 
   useEffect(() => {
+    if (directScan) return; // no splash for direct scan
     const timer = setTimeout(() => setSplashDone(true), 1600);
     return () => clearTimeout(timer);
   }, []);
