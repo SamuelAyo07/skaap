@@ -360,7 +360,7 @@ const Index = () => {
                   </button>
                   {faqOpen === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={{ duration: 0.2 }}>
-                      <div className="px-3.5 pb-3.5"><p className="text-sm leading-relaxed" style={{ color: "#6B7280" }}>{faq.a}</p></div>
+                      <div className="px-3.5 pb-3.5"><p className="text-sm leading-relaxed" style={{ color: "#4B5563" }}>{faq.a}</p></div>
                     </motion.div>
                   )}
                 </div>
