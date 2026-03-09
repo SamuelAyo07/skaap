@@ -338,7 +338,7 @@ const Index = () => {
 
           <FadeIn delay={0.2}>
             <div className="text-center">
-              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#C4263D", color: "#fff" }}>
+              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#B0202F", color: "#fff" }}>
                 Get Started. Free for 90 Days <ArrowRight size={14} />
               </a>
             </div>
