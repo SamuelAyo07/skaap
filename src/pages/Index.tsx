@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: "#0A1220", borderBottom: "1px solid rgba(255,255,255,0.06)", height: 64 }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: "#070D18", borderBottom: "1px solid rgba(255,255,255,0.05)", height: 64 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
