@@ -332,7 +332,7 @@ const Index = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-background/50 font-medium">
               <a href="#how-it-works" className="hover:text-background transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-background transition-colors">Retailers</a>
-              <button onClick={() => navigate("/login")} className="hover:text-background transition-colors">Sign In</button>
+              <button onClick={() => navigate("/scan")} className="hover:text-background transition-colors">Free Scan</button>
               <a href="#contact" className="hover:text-background transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
