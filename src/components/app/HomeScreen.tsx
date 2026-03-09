@@ -65,6 +65,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         clearTimeout(timeout);
+        trackEvent("location_granted");
         const { latitude, longitude } = pos.coords;
 
         try {
