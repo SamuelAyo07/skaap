@@ -110,9 +110,9 @@ const Index = () => {
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="flex flex-col items-center gap-3">
-            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/app")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => navigate("/scan")} className="bg-accent text-accent-foreground px-12 py-5 rounded-full font-black text-xl flex items-center gap-3 shadow-hero relative overflow-hidden group">
               <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Play size={20} fill="currentColor" /> Try the Demo
+              <ScanLine size={20} /> Try Free Scan
             </motion.button>
             <p className="text-background/25 text-xs">30 seconds · No signup · Works on any phone</p>
             <a href="#retailers" className="border border-background/20 text-background/70 px-7 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-background/5 transition-colors">
