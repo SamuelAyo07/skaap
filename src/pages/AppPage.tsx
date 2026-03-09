@@ -20,9 +20,11 @@ const pageVariants = {
 
 const AppPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("home");
-  const [screen, setScreen] = useState("home");
-  const [splashDone, setSplashDone] = useState(false);
+  const [searchParams] = useSearchParams();
+  const directScan = searchParams.get("mode") === "scan";
+  const [activeTab, setActiveTab] = useState(directScan ? "scan" : "home");
+  const [screen, setScreen] = useState(directScan ? "scan" : "home");
+  const [splashDone, setSplashDone] = useState(directScan); // skip splash for direct scan
 
   useEffect(() => {
     const timer = setTimeout(() => setSplashDone(true), 1600);
