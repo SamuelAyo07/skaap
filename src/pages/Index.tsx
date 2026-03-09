@@ -75,7 +75,7 @@ const Index = () => {
               <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" className="text-muted-foreground hover:text-foreground transition-colors"><Instagram size={18} /></a>
               <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors"><Linkedin size={18} /></a>
             </div>
-            <button onClick={() => navigate("/login")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Sign In</button>
+            <button onClick={() => navigate("/app")} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block font-medium">Scan & Pay</button>
             <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
               <Play size={12} fill="currentColor" /> Try Demo
             </motion.button>
