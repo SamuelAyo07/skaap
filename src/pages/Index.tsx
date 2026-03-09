@@ -151,38 +151,55 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── SMART INFO ─── */}
+      {/* ─── SMART INFO — YUKA-STYLE ─── */}
       <section className="py-12 bg-muted/30">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <div className="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
                 🌿 Smart Info
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Know what you're buying.</h2>
-              <p className="text-sm text-muted-foreground mt-2 max-w-lg mx-auto">Tap any scanned item for instant nutrition insights — without slowing down your checkout.</p>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
+                Your personal food &amp; beauty analyst.
+              </h2>
+              <p className="text-sm text-muted-foreground mt-2 max-w-xl mx-auto">
+                Scan any product — food or cosmetics — and instantly see what's really inside. Nutri-Score, allergens, additives, and ingredient safety decoded in real time.
+              </p>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+          {/* Compact feature grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
             {[
               { emoji: "🅰️", title: "Nutri-Score", desc: "A–E nutrition grade at a glance", color: "from-[hsl(142,71%,35%)]/10 to-transparent" },
-              { emoji: "⚠️", title: "Allergens", desc: "Bold allergen warnings instantly", color: "from-accent/10 to-transparent" },
-              { emoji: "🧪", title: "Additives", desc: "E-numbers decoded with risk levels", color: "from-[hsl(30,90%,55%)]/10 to-transparent" },
-              { emoji: "📊", title: "Nutrition Facts", desc: "Full per-100g breakdown with levels", color: "from-[hsl(220,70%,55%)]/10 to-transparent" },
+              { emoji: "⚠️", title: "Allergen Alerts", desc: "Instant warnings for 14 major allergens", color: "from-accent/10 to-transparent" },
+              { emoji: "🧪", title: "Additive Risks", desc: "E-numbers decoded: low, moderate, or high risk", color: "from-[hsl(30,90%,55%)]/10 to-transparent" },
+              { emoji: "🏭", title: "NOVA Processing", desc: "See how processed your food really is (1–4)", color: "from-[hsl(220,70%,55%)]/10 to-transparent" },
+              { emoji: "💄", title: "Cosmetics Safety", desc: "Ingredient analysis for beauty & skincare products", color: "from-[hsl(320,60%,55%)]/10 to-transparent" },
+              { emoji: "📊", title: "Full Nutrition", desc: "Fat, sugar, salt, protein — color-coded levels", color: "from-[hsl(48,95%,55%)]/10 to-transparent" },
             ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.06}>
-                <motion.div whileHover={{ y: -3 }} className={`bg-gradient-to-b ${item.color} bg-background border border-border/40 rounded-2xl p-4 text-center`}>
-                  <span className="text-2xl block mb-2">{item.emoji}</span>
-                  <h3 className="font-bold text-sm text-foreground tracking-tight">{item.title}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-1 leading-snug">{item.desc}</p>
+              <FadeIn key={i} delay={i * 0.04}>
+                <motion.div whileHover={{ y: -2 }} className={`bg-gradient-to-b ${item.color} bg-background border border-border/40 rounded-2xl p-3.5 text-center`}>
+                  <span className="text-xl block mb-1.5">{item.emoji}</span>
+                  <h3 className="font-bold text-[13px] text-foreground tracking-tight">{item.title}</h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{item.desc}</p>
                 </motion.div>
               </FadeIn>
             ))}
           </div>
-          <FadeIn delay={0.3}>
-            <div className="flex flex-col items-center mt-5 gap-1.5">
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
-                <Play size={12} fill="currentColor" /> Try SKAAP at Any Store Now
+
+          {/* Inline demo prompt */}
+          <FadeIn delay={0.25}>
+            <div className="bg-background border border-border/50 rounded-2xl p-4 flex items-center gap-4 max-w-2xl mx-auto">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-foreground flex items-center justify-center">
+                <ScanLine size={20} className="text-background" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-foreground tracking-tight">Walk into any store. Scan anything.</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Works with 3M+ food products and 1M+ cosmetics worldwide via Open Food Facts &amp; Open Beauty Facts.</p>
+              </div>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
+                Try Now
               </motion.button>
             </div>
           </FadeIn>
