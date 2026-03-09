@@ -261,8 +261,8 @@ const Index = () => {
                 Get Started — Free for 90 Days <ArrowRight size={14} />
               </a>
               <br />
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
-                See Retailer Dashboard →
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/app")} className="inline-flex items-center gap-2 border border-background/20 text-background/60 px-5 py-2.5 rounded-full font-medium text-xs hover:text-background transition-colors">
+                Try Scan & Pay Demo →
               </motion.button>
             </div>
           </FadeIn>
