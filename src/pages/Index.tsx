@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: "#1B2A4A", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: "#0F1A2E", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
@@ -92,7 +92,7 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75vh", paddingTop: 64 }}>
+      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75h", paddingTop: 64 }}>
         <div className="w-full max-w-[640px] mx-auto px-6 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
