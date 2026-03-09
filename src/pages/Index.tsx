@@ -127,21 +127,8 @@ const Index = () => {
             </span>
           </motion.div>
 
-          {/* CTA */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-8">
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/app")}
-              className="w-full md:w-[320px] font-extrabold text-lg flex items-center justify-center gap-3 mx-auto cta-pulse-mobile"
-              style={{ background: "#E8314A", color: "#fff", height: 64, borderRadius: 32 }}
-            >
-              ▶ Try the Demo
-            </motion.button>
-            <p className="text-xs mt-3" style={{ color: "rgba(255,255,255,0.35)" }}>30 seconds · No signup · Works on any phone</p>
-          </motion.div>
-
           {/* I Own a Store */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-4">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-6">
             <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
               <Store size={16} /> I Own a Store
             </a>
