@@ -305,7 +305,7 @@ const Index = () => {
           <FadeIn delay={0.1}>
             <div className="rounded-2xl p-6 mb-6 max-w-3xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#C4263D" }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#B0202F" }}>
                   <Heart size={18} color="#fff" />
                 </div>
                 <div>
