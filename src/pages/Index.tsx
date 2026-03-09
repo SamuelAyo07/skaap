@@ -242,100 +242,70 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── DEMO SECTION ─── */}
-      <section className="bg-background" style={{ padding: "64px 20px" }}>
-        <div className="mx-auto" style={{ maxWidth: 480 }}>
-          <p className="text-center font-semibold text-xs uppercase tracking-widest mb-5" style={{ color: "#9CA3AF", letterSpacing: "0.1em" }}>
-            LIVE EXAMPLE SCAN
-          </p>
-
-          {/* Demo result card */}
-          <div className="rounded-2xl p-5" style={{ background: "#fff", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
-            {/* Product header */}
-            <div className="flex items-center gap-3">
-              <img
-                src={NUTELLA_DEMO.imageUrl}
-                alt="Nutella"
-                className="rounded-xl object-cover"
-                width="64" height="64"
-                style={{ width: 64, height: 64 }}
-                loading="eager"
-              />
-              <div>
-                <p className="font-extrabold text-base" style={{ color: "#1B2A4A" }}>Nutella</p>
-                <p className="text-[13px]" style={{ color: "#6B7280" }}>Ferrero · 400g</p>
-              </div>
+      {/* ─── TWO FEATURES ─── */}
+      <section className="py-16 bg-background">
+        <div className="max-w-5xl mx-auto px-6">
+          <FadeIn>
+            <div className="text-center mb-10">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>What SKAAP Does</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Two powerful tools. One app.</h2>
+              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#6B7280" }}>Everything you need to shop smarter — know what's in your food and skip the checkout line.</p>
             </div>
+          </FadeIn>
 
-            {/* Score row */}
-            <div className="flex gap-3 mt-4">
-              <div className="flex-1 flex flex-col items-center justify-center py-3 rounded-xl" style={{ background: "#FF6D00", height: 100 }}>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80" style={{ letterSpacing: "0.05em" }}>NUTRI-SCORE</span>
-                <span className="text-[52px] font-extrabold leading-none text-white mt-1">D</span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center py-3 rounded-xl" style={{ background: "#C62828", height: 100 }}>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80">NOVA GROUP</span>
-                <span className="text-[52px] font-extrabold leading-none text-white mt-1">4</span>
-                <span className="text-[10px] text-white/80 mt-0.5">Ultra-processed</span>
-              </div>
-            </div>
-
-            {/* Additive rows — collapsible on mobile */}
-            <div className="md:block">
-              {/* Mobile toggle */}
-              <button
-                onClick={() => setDemoExpanded(!demoExpanded)}
-                className="md:hidden w-full text-center mt-4 font-semibold text-[13px]"
-                style={{ color: "#E8314A" }}
-              >
-                {demoExpanded ? "Hide details ↑" : "See ingredients & additives ↓"}
-              </button>
-
-              <motion.div
-                initial={false}
-                animate={{ height: demoExpanded ? "auto" : 0, opacity: demoExpanded ? 1 : 0 }}
-                className="overflow-hidden md:!h-auto md:!opacity-100"
-                transition={{ duration: 0.2 }}
-              >
-                <div className="mt-4 space-y-0">
-                  {NUTELLA_DEMO.additivesTags.map((tag, i) => {
-                    const code = tag.replace(/^en:/, "").toUpperCase();
-                    const risk = getAdditiveRisk(tag);
-                    const riskLabel = getAdditiveRiskLabel(risk);
-                    const riskColor = getAdditiveRiskColor(risk);
-                    const names = ["Soy lecithin", "Mono and diglycerides", "Sodium carbonates"];
-                    const pillBgs = ["#FEF3C7", "#FEF3C7", "#D1FAE5"];
-                    const pillColors = ["#92400E", "#92400E", "#065F46"];
-                    return (
-                      <div key={tag} className="flex items-center gap-2 py-2" style={{ borderBottom: i < 2 ? "1px solid #F3F4F6" : "none" }}>
-                        <span className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>{code}</span>
-                        <span className="text-[13px] flex-1" style={{ color: "#6B7280" }}>{names[i]}</span>
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: pillBgs[i], color: pillColors[i] }}>
-                          {i < 2 ? "Moderate" : "Low risk"}
-                        </span>
-                      </div>
-                    );
-                  })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Feature 1 — Food Intelligence */}
+            <FadeIn delay={0.05}>
+              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F7F7F7", border: "1px solid rgba(0,0,0,0.04)" }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#E8314A" }}>
+                  <Sparkles size={22} color="#fff" />
                 </div>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#1B2A4A" }}>Know Your Food</h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
+                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score — all decoded in real time. Works with 3M+ food products and 1M+ cosmetics.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#1B2A4A" }}>{chip}</span>
+                  ))}
+                </div>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/scan")}
+                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  style={{ background: "#E8314A", color: "#fff" }}
+                >
+                  <ScanLine size={16} /> Try Free Scan
+                </motion.button>
               </motion.div>
-            </div>
-          </div>
+            </FadeIn>
 
-          {/* Barcode graphic */}
-          <div className="mt-6 text-center">
-            <EAN13Barcode />
-            <p className="text-xs mt-2" style={{ color: "#9CA3AF" }}>Scan this barcode with your phone to try it yourself</p>
+            {/* Feature 2 — Scan & Pay */}
+            <FadeIn delay={0.1}>
+              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#1B2A4A" }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.15)" }}>
+                  <Store size={22} color="#fff" />
+                </div>
+                <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Scan & Pay</h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  Walk into any partner store, scan items as you shop, add to cart, pay in-app, and walk out with a QR receipt. No lines. No registers. No waiting. Your phone is the checkout.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {["📱 Mobile Checkout", "🛒 Smart Cart", "🧾 QR Receipt", "⚡ Skip the Line"].map((chip) => (
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>{chip}</span>
+                  ))}
+                </div>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/app")}
+                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  style={{ background: "#fff", color: "#1B2A4A" }}
+                >
+                  <Barcode size={16} /> Try Scan & Pay Demo
+                </motion.button>
+              </motion.div>
+            </FadeIn>
           </div>
-
-          {/* Second CTA */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate("/scan")}
-            className="w-full font-extrabold text-lg flex items-center justify-center gap-3 mt-6 mx-auto"
-            style={{ background: "#E8314A", color: "#fff", height: 64, borderRadius: 12 }}
-          >
-            Try Free Scan →
-          </motion.button>
         </div>
       </section>
 
