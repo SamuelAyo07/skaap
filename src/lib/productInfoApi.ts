@@ -32,31 +32,19 @@ export interface ProductFullInfo {
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
 
-export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo | null> {
-  if (sessionCache.has(barcode)) {
-    return sessionCache.get(barcode)!;
-  }
-
+async function tryFetch(url: string): Promise<ProductFullInfo | null> {
   try {
-    const res = await fetch(
-      `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`
-    );
-    if (!res.ok) {
-      sessionCache.set(barcode, null);
-      return null;
-    }
+    const res = await fetch(url);
+    if (!res.ok) return null;
 
     const data = await res.json();
-    if (data.status !== 1 || !data.product) {
-      sessionCache.set(barcode, null);
-      return null;
-    }
+    if (data.status !== 1 || !data.product) return null;
 
     const p = data.product;
     const n = p.nutriments || {};
     const nl = p.nutrient_levels || {};
 
-    const info: ProductFullInfo = {
+    return {
       productName: p.product_name || "Unknown Product",
       brand: p.brands || undefined,
       imageUrl: p.image_front_url || p.image_url || undefined,
@@ -84,11 +72,23 @@ export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo
       additivesTags: p.additives_tags?.length ? p.additives_tags : undefined,
       labelsTags: p.labels_tags?.length ? p.labels_tags : undefined,
     };
-
-    sessionCache.set(barcode, info);
-    return info;
   } catch {
-    sessionCache.set(barcode, null);
     return null;
   }
+}
+
+export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo | null> {
+  if (sessionCache.has(barcode)) {
+    return sessionCache.get(barcode)!;
+  }
+
+  // Try Open Food Facts first, then Open Beauty Facts for cosmetics/skincare
+  const encoded = encodeURIComponent(barcode);
+  let info = await tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`);
+  if (!info) {
+    info = await tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`);
+  }
+
+  sessionCache.set(barcode, info);
+  return info;
 }
