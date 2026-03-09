@@ -238,7 +238,7 @@ const Index = () => {
       </section>
 
       {/* ─── SMART INFO — NUTRITION CHAMPION ─── */}
-      <section className="py-10" style={{ background: "#F7F7F7" }}>
+      <section className="py-6" style={{ background: "#F7F7F7" }}>
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-6">
