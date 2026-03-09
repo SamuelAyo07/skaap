@@ -92,11 +92,11 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75h", paddingTop: 64 }}>
-        <div className="w-full max-w-[640px] mx-auto px-6 text-center">
+      <section className="relative flex items-center justify-center" style={{ background: "#0A1220", minHeight: "65vh", paddingTop: 64 }}>
+        <div className="w-full max-w-[640px] mx-auto px-6 py-10 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}>
+            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>
               ✨ Now launching on the East Coast 🇺🇸
             </span>
           </motion.div>
@@ -104,39 +104,39 @@ const Index = () => {
           {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-extrabold tracking-tighter leading-[1.05] text-white mt-8"
-            style={{ fontSize: "clamp(40px, 9vw, 72px)" }}
+            className="font-extrabold tracking-tighter leading-[1.05] text-white mt-6"
+            style={{ fontSize: "clamp(38px, 8.5vw, 68px)" }}
           >
             {heroHeadline}
           </motion.h1>
 
           {/* Subheadline */}
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-5 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-4 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.45)" }}>
             {heroSub}
           </motion.p>
 
           {/* Social proof */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-5">
             <div className="flex -space-x-2">
               {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #0F1A2E" }}>{c}</div>
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.12)", border: "2px solid #0A1220" }}>{c}</div>
               ))}
             </div>
-            <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>
               <strong className="text-white">85+ people</strong> tried SKAAP this week
             </span>
           </motion.div>
 
           {/* I Own a Store */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-6">
-            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-5">
+            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}>
               <Store size={16} /> I Own a Store
             </a>
           </motion.div>
 
           {/* Scroll indicator */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-6">
-            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.25)" }} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-4">
+            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.2)" }} />
           </motion.div>
         </div>
       </section>
