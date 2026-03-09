@@ -209,7 +209,7 @@ const Index = () => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-10 bg-background">
+      <section id="how-it-works" className="py-6 bg-background">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
