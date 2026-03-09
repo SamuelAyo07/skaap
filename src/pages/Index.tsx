@@ -63,7 +63,7 @@ const Index = () => {
 
   const heroHeadline = isFromInstagram
     ? <>You saw it on Instagram.<br />Now try it.</>
-    : <>Scan it.<br />Pay instantly.<br /><span style={{ color: "#E8314A" }}>Walk out.</span></>;
+    : <>Scan it.<br />Pay instantly.<br /><span style={{ color: "#C4263D" }}>Walk out.</span></>;
 
   const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: "#0F1A2E", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: "#0A1220", borderBottom: "1px solid rgba(255,255,255,0.06)", height: 64 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
@@ -92,11 +92,11 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75h", paddingTop: 64 }}>
-        <div className="w-full max-w-[640px] mx-auto px-6 text-center">
+      <section className="relative flex items-center justify-center" style={{ background: "#0A1220", minHeight: "65vh", paddingTop: 64 }}>
+        <div className="w-full max-w-[640px] mx-auto px-6 py-10 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}>
+            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>
               ✨ Now launching on the East Coast 🇺🇸
             </span>
           </motion.div>
@@ -104,39 +104,39 @@ const Index = () => {
           {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-extrabold tracking-tighter leading-[1.05] text-white mt-8"
-            style={{ fontSize: "clamp(40px, 9vw, 72px)" }}
+            className="font-extrabold tracking-tighter leading-[1.05] text-white mt-6"
+            style={{ fontSize: "clamp(38px, 8.5vw, 68px)" }}
           >
             {heroHeadline}
           </motion.h1>
 
           {/* Subheadline */}
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-5 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-4 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.45)" }}>
             {heroSub}
           </motion.p>
 
           {/* Social proof */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-5">
             <div className="flex -space-x-2">
               {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #0F1A2E" }}>{c}</div>
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.12)", border: "2px solid #0A1220" }}>{c}</div>
               ))}
             </div>
-            <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>
               <strong className="text-white">85+ people</strong> tried SKAAP this week
             </span>
           </motion.div>
 
           {/* I Own a Store */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-6">
-            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-5">
+            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}>
               <Store size={16} /> I Own a Store
             </a>
           </motion.div>
 
           {/* Scroll indicator */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-6">
-            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.25)" }} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-4">
+            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.2)" }} />
           </motion.div>
         </div>
       </section>
@@ -146,8 +146,8 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>What SKAAP Does</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Two powerful tools. One app.</h2>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>What SKAAP Does</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0F1A2E" }}>Two powerful tools. One app.</h2>
               <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#6B7280" }}>Everything you need to shop smarter. Know what's in your food and skip the checkout line.</p>
             </div>
           </FadeIn>
@@ -156,23 +156,23 @@ const Index = () => {
             {/* Feature 1 — Food Intelligence */}
             <FadeIn delay={0.05}>
               <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F7F7F7", border: "1px solid rgba(0,0,0,0.04)" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#E8314A" }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#C4263D" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#1B2A4A" }}>Know Your Food</h3>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0F1A2E" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
                   Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
-                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#1B2A4A" }}>{chip}</span>
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#0F1A2E" }}>{chip}</span>
                   ))}
                 </div>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/scan")}
                   className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  style={{ background: "#E8314A", color: "#fff" }}
+                  style={{ background: "#C4263D", color: "#fff" }}
                 >
                   <ScanLine size={16} /> Try Free Scan
                 </motion.button>
@@ -181,7 +181,7 @@ const Index = () => {
 
             {/* Feature 2 — Scan & Pay */}
             <FadeIn delay={0.1}>
-              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#1B2A4A" }}>
+              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#0F1A2E" }}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.15)" }}>
                   <Store size={22} color="#fff" />
                 </div>
@@ -198,7 +198,7 @@ const Index = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/app")}
                   className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  style={{ background: "#fff", color: "#1B2A4A" }}
+                  style={{ background: "#fff", color: "#0F1A2E" }}
                 >
                   <Barcode size={16} /> Try the Demo
                 </motion.button>
@@ -213,8 +213,8 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>How it Works</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#1B2A4A" }}>Three steps. That's it.</h2>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>How it Works</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0F1A2E" }}>Three steps. That's it.</h2>
             </div>
           </FadeIn>
           <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
@@ -228,7 +228,7 @@ const Index = () => {
                   <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 border" style={{ borderColor: "rgba(0,0,0,0.06)", background: "#F7F7F7" }}>
                     <img src={item.img} alt={`SKAAP ${item.title} step`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
-                  <h3 className="font-bold text-base tracking-tight" style={{ color: "#1B2A4A" }}>{item.title}</h3>
+                  <h3 className="font-bold text-base tracking-tight" style={{ color: "#0F1A2E" }}>{item.title}</h3>
                   <p className="text-xs mt-0.5" style={{ color: "#6B7280" }}>{item.desc}</p>
                 </div>
               </FadeIn>
@@ -242,10 +242,10 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,38,61,0.1)", color: "#C4263D" }}>
                 🌿 Smart Info
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#1B2A4A" }}>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0F1A2E" }}>
                 Your personal food &amp; beauty analyst.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#6B7280" }}>
@@ -266,7 +266,7 @@ const Index = () => {
               <FadeIn key={i} delay={i * 0.04}>
                 <motion.div whileHover={{ y: -2 }} className="bg-background border rounded-2xl p-3.5 text-center" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
                   <span className="text-xl block mb-1.5">{item.emoji}</span>
-                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#1B2A4A" }}>{item.title}</h3>
+                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0F1A2E" }}>{item.title}</h3>
                   <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
                 </motion.div>
               </FadeIn>
@@ -275,14 +275,14 @@ const Index = () => {
 
           <FadeIn delay={0.25}>
             <div className="bg-background border rounded-2xl p-4 flex items-center gap-4 max-w-2xl mx-auto" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "#1B2A4A" }}>
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "#0F1A2E" }}>
                 <ScanLine size={20} color="#fff" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold tracking-tight" style={{ color: "#1B2A4A" }}>Walk into any store. Scan anything.</p>
+                <p className="text-sm font-bold tracking-tight" style={{ color: "#0F1A2E" }}>Walk into any store. Scan anything.</p>
                 <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>Works with 3M+ food products and 1M+ cosmetics worldwide.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#1B2A4A", color: "#fff" }}>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#0F1A2E", color: "#fff" }}>
                 Scan Now
               </motion.button>
             </div>
@@ -291,11 +291,11 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" style={{ background: "#1B2A4A" }} className="py-12">
+      <section id="retailers" style={{ background: "#0F1A2E" }} className="py-12">
         <div className="max-w-5xl mx-auto px-6">
           <FadeIn>
             <div className="text-center mb-5">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>For Retailers</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C4263D" }}>For Retailers</span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2 tracking-tight">
                 Built for the stores<br className="hidden md:block" /> that built your neighborhood
               </h2>
@@ -305,7 +305,7 @@ const Index = () => {
           <FadeIn delay={0.1}>
             <div className="rounded-2xl p-6 mb-6 max-w-3xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#E8314A" }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#C4263D" }}>
                   <Heart size={18} color="#fff" />
                 </div>
                 <div>
@@ -326,7 +326,7 @@ const Index = () => {
             ].map((card, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.06}>
                 <motion.div whileHover={{ y: -3 }} className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "#E8314A" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "#C4263D" }}>
                     <card.icon size={18} color="#fff" />
                   </div>
                   <h3 className="font-bold text-white mb-1 tracking-tight text-sm">{card.title}</h3>
@@ -338,7 +338,7 @@ const Index = () => {
 
           <FadeIn delay={0.2}>
             <div className="text-center">
-              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#E8314A", color: "#fff" }}>
+              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#C4263D", color: "#fff" }}>
                 Get Started. Free for 90 Days <ArrowRight size={14} />
               </a>
             </div>
@@ -349,13 +349,13 @@ const Index = () => {
       {/* ─── FAQ ─── */}
       <section className="py-10 bg-background">
         <div className="max-w-2xl mx-auto px-6">
-          <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#1B2A4A" }}>Questions</h2></FadeIn>
+          <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#0F1A2E" }}>Questions</h2></FadeIn>
           <div className="space-y-1.5">
             {faqs.map((faq, i) => (
               <FadeIn key={i} delay={i * 0.03}>
                 <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#F3F4F6" }}>
                   <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
-                    <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>{faq.q}</span>
+                    <span className="font-semibold text-sm" style={{ color: "#0F1A2E" }}>{faq.q}</span>
                     <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "#6B7280" }} /></motion.div>
                   </button>
                   {faqOpen === i && (
@@ -374,7 +374,7 @@ const Index = () => {
       <section id="contact" style={{ background: "#F7F7F7" }} className="py-10">
         <div className="max-w-xl mx-auto px-6 text-center">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#1B2A4A" }}>Let's talk</h2>
+            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0F1A2E" }}>Let's talk</h2>
             <p className="text-sm mb-6" style={{ color: "#6B7280" }}>Shopper or store owner, drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
@@ -386,7 +386,7 @@ const Index = () => {
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#6B7280" }} />
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="w-full bg-background border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: "#F3F4F6" }} />
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity" style={{ background: "#1B2A4A", color: "#fff" }}>
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity" style={{ background: "#0F1A2E", color: "#fff" }}>
                   {submitting ? "Sending…" : "Get in Touch"}
                 </motion.button>
               </form>
@@ -396,7 +396,7 @@ const Index = () => {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer style={{ background: "#1B2A4A" }} className="py-8">
+      <footer style={{ background: "#0F1A2E" }} className="py-8">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5">

@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AppPage from "./pages/AppPage";
 import SkaapScan from "./pages/SkaapScan";
@@ -20,9 +20,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/app" element={<AppPage />} />
           <Route path="/scan" element={<SkaapScan />} />
-          <Route path="/login" element={<Navigate to="/app" replace />} />
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
-          <Route path="/analytics" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
