@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: "#1B2A4A", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
+      <nav className="fixed top-0 w-full z-50" style={{ background: "#0F1A2E", borderBottom: "1px solid rgba(255,255,255,0.08)", height: 64 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
@@ -92,7 +92,7 @@ const Index = () => {
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#1B2A4A", minHeight: "100vh", paddingTop: 64 }}>
+      <section className="relative flex items-center justify-center" style={{ background: "#0F1A2E", minHeight: "75h", paddingTop: 64 }}>
         <div className="w-full max-w-[640px] mx-auto px-6 text-center">
           {/* Launch badge */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -119,7 +119,7 @@ const Index = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-6">
             <div className="flex -space-x-2">
               {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #1B2A4A" }}>{c}</div>
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #0F1A2E" }}>{c}</div>
               ))}
             </div>
             <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -127,28 +127,15 @@ const Index = () => {
             </span>
           </motion.div>
 
-          {/* CTA */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-8">
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/app")}
-              className="w-full md:w-[320px] font-extrabold text-lg flex items-center justify-center gap-3 mx-auto cta-pulse-mobile"
-              style={{ background: "#E8314A", color: "#fff", height: 64, borderRadius: 32 }}
-            >
-              ▶ Try the Demo
-            </motion.button>
-            <p className="text-xs mt-3" style={{ color: "rgba(255,255,255,0.35)" }}>30 seconds · No signup · Works on any phone</p>
-          </motion.div>
-
           {/* I Own a Store */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-4">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-6">
             <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>
               <Store size={16} /> I Own a Store
             </a>
           </motion.div>
 
           {/* Scroll indicator */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-10">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-6">
             <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.25)" }} />
           </motion.div>
         </div>
