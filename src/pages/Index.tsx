@@ -119,7 +119,7 @@ const Index = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-6">
             <div className="flex -space-x-2">
               {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #1B2A4A" }}>{c}</div>
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.15)", border: "2px solid #0F1A2E" }}>{c}</div>
               ))}
             </div>
             <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
