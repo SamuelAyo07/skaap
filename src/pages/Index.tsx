@@ -245,7 +245,7 @@ const Index = () => {
               <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,38,61,0.1)", color: "#C4263D" }}>
                 🌿 Smart Info
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0F1A2E" }}>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Your personal food &amp; beauty analyst.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#6B7280" }}>
