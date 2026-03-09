@@ -275,7 +275,7 @@ const Index = () => {
 
           <FadeIn delay={0.25}>
             <div className="bg-background border rounded-2xl p-4 flex items-center gap-4 max-w-2xl mx-auto" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "#0F1A2E" }}>
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "#0A1220" }}>
                 <ScanLine size={20} color="#fff" />
               </div>
               <div className="flex-1 min-w-0">
