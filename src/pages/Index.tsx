@@ -123,7 +123,6 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
-  const [demoExpanded, setDemoExpanded] = useState(false);
 
   // Instagram UTM detection
   const isFromInstagram = useMemo(() => {
