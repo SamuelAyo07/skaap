@@ -156,7 +156,7 @@ const Index = () => {
             {/* Feature 1 — Food Intelligence */}
             <FadeIn delay={0.05}>
               <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F7F7F7", border: "1px solid rgba(0,0,0,0.04)" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#E8314A" }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#C4263D" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#1B2A4A" }}>Know Your Food</h3>
