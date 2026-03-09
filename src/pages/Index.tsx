@@ -11,10 +11,8 @@ import skaapIcon from "@/assets/skaap-icon.png";
 import stepScan from "@/assets/step-scan.webp";
 import stepPay from "@/assets/step-pay.webp";
 import stepReceipt from "@/assets/step-receipt.webp";
-import {
-  NUTELLA_DEMO, calculateSkaapScore, getScoreColor,
-  getAdditiveRisk, getAdditiveRiskLabel, getAdditiveRiskColor,
-} from "@/lib/skaapScore";
+// skaapScore used by scan page
+
 
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
