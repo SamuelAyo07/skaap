@@ -201,7 +201,7 @@ const Index = () => {
                 <p className="text-sm font-bold text-foreground tracking-tight">Walk into any store. Scan anything.</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">Works with 3M+ food products and 1M+ cosmetics worldwide via Open Food Facts &amp; Open Beauty Facts.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/app?mode=scan")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity flex-shrink-0">
                 Scan Now
               </motion.button>
             </div>
