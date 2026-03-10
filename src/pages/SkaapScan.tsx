@@ -1395,11 +1395,32 @@ const SkaapScan = () => {
     return (
       <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-          <button onClick={() => setScreen("home")} className="flex items-center gap-1.5">
+          <button onClick={() => setScreen("home")} className="flex items-center">
             <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
           </button>
           <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Saved Products</h1>
-          <div className="w-8" />
+          {basket.length >= 2 ? (
+            <button onClick={async () => {
+              // Generate shareable text comparison
+              const lines = basket.map((item, i) => 
+                `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
+              );
+              const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
+              
+              if (navigator.share) {
+                try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
+              } else {
+                try { await navigator.clipboard.writeText(shareText); } catch {}
+                // Brief visual feedback
+                const btn = document.getElementById("share-btn");
+                if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = ""; }, 1500); }
+              }
+            }} id="share-btn" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
+              <Share2 size={18} style={{ color: "#1B2A4A" }} />
+            </button>
+          ) : (
+            <div className="w-8" />
+          )}
         </div>
 
         <div className="px-5 pt-2 pb-28">
