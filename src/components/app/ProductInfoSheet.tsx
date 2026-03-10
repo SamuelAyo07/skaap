@@ -86,8 +86,8 @@ const shimmerStyle = {
   backgroundSize: "200% 100%",
   animation: "shimmer 1.4s infinite linear",
 };
-const Shimmer = ({ className }: { className?: string }) => (
-  <div className={className} style={{ ...shimmerStyle, borderRadius: "6px" }} />
+const Shimmer = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <div className={className} style={{ ...shimmerStyle, borderRadius: "6px", ...style }} />
 );
 
 const SheetSkeleton = () => (
