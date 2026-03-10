@@ -1422,6 +1422,32 @@ const SkaapScan = () => {
                   </motion.div>
                 )}
 
+                {/* SHARE PROMPT ROW — 44px */}
+                {scoreBreakdown && (
+                  <div className="flex items-center gap-[10px] px-5" style={{ height: 44, marginTop: 6 }}>
+                    <p className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>
+                      {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
+                        : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
+                        : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
+                        : "This one's rough. Share the warning."}
+                    </p>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleShareTap}
+                      disabled={shareGenerating}
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
+                      style={{
+                        height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
+                        background: shareState === "shared" ? "#2D7D46" : "#E8314A",
+                        color: "#fff", transition: "background 0.2s",
+                      }}
+                    >
+                      <Share2 size={14} />
+                      {shareState === "shared" ? "Shared ✓" : shareGenerating ? "..." : "Share Score"}
+                    </motion.button>
+                  </div>
+                )}
+
                 {/* THREE COLLAPSED ACCORDION ROWS — 44px each */}
                 <div style={{ marginTop: 4 }}>
                   {/* Row 1: Nutrition */}
