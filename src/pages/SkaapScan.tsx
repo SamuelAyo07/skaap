@@ -1171,34 +1171,59 @@ const SkaapScan = () => {
                   </div>
                 )}
 
-                {/* AI Recommendations — Feature 4 */}
+                {/* AI Recommendations — Feature 4 — Yuka-style */}
                 <div style={{ borderTop: "1px solid #F3F4F6" }}>
                   <div className="px-5 py-3">
                     <div className="flex items-center gap-2 mb-3">
-                      <h4 className="font-extrabold text-[15px]" style={{ color: "#1B2A4A" }}>Healthier Alternatives</h4>
+                      <h4 className="font-extrabold text-[17px]" style={{ color: "#1B2A4A" }}>Healthier Alternatives</h4>
                       <Sparkles size={12} style={{ color: "#9CA3AF" }} />
-                      <span className="text-[10px]" style={{ color: "#9CA3AF" }}>AI</span>
                     </div>
                     {aiRecsLoading ? (
-                      <div className="space-y-2">
-                        {[1,2,3].map(i => <Skeleton key={i} className="h-14 w-full rounded-lg" />)}
+                      <div className="space-y-3">
+                        {[1,2,3].map(i => (
+                          <div key={i} className="flex gap-3 p-3 rounded-2xl" style={{ background: "#F9FAFB" }}>
+                            <Skeleton className="w-16 h-16 rounded-xl flex-shrink-0" />
+                            <div className="flex-1 space-y-2 py-1">
+                              <Skeleton className="h-4 w-3/4" />
+                              <Skeleton className="h-3 w-full" />
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     ) : aiRecommendations && aiRecommendations.length > 0 ? (
-                      <div className="space-y-2">
-                        {aiRecommendations.map((rec, i) => (
-                          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#F7F7F7" }}>
-                            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-extrabold text-sm"
-                              style={{ background: nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46", color: "#fff" }}>
-                              {rec.estimatedScore?.toUpperCase() || "A"}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-[13px] truncate" style={{ color: "#1B2A4A" }}>{rec.name}</p>
-                              <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
-                            </div>
-                          </motion.div>
-                        ))}
+                      <div className="space-y-3">
+                        {aiRecommendations.map((rec, i) => {
+                          const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
+                          return (
+                            <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.12, duration: 0.3 }}
+                              className="flex gap-3 p-3 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                              {/* Score circle */}
+                              <div className="flex-shrink-0 flex flex-col items-center justify-center">
+                                <div className="w-14 h-14 rounded-full flex items-center justify-center relative" style={{ border: `3px solid ${scoreColor}` }}>
+                                  <span className="font-extrabold text-[18px]" style={{ color: scoreColor }}>
+                                    {rec.estimatedScore?.toUpperCase() || "A"}
+                                  </span>
+                                </div>
+                              </div>
+                              {/* Product info */}
+                              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                <p className="font-bold text-[14px] leading-tight" style={{ color: "#1B2A4A", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                                  {rec.name}
+                                </p>
+                                <p className="text-[12px] mt-1 leading-snug" style={{ color: "#6B7280", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                                  {rec.reason}
+                                </p>
+                              </div>
+                              {/* Better badge */}
+                              <div className="flex-shrink-0 flex items-center">
+                                <div className="px-2 py-1 rounded-lg text-[10px] font-bold" style={{ background: `${scoreColor}1A`, color: scoreColor }}>
+                                  Better
+                                </div>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
                       </div>
                     ) : (
                       <p className="text-[12px]" style={{ color: "#9CA3AF" }}>No recommendations available for this product.</p>
