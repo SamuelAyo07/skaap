@@ -1328,6 +1328,124 @@ const SkaapScan = () => {
     );
   }
 
+  // ─── SCREEN: BASKET (Saved Products Comparison) ───
+  if (screen === "basket") {
+    return (
+      <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
+        <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
+          <button onClick={() => setScreen("home")} className="flex items-center gap-1.5">
+            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
+          </button>
+          <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Saved Products</h1>
+          <div className="w-8" />
+        </div>
+
+        <div className="px-5 pt-2 pb-28">
+          {basket.length === 0 ? (
+            <div className="text-center py-16">
+              <Heart size={40} style={{ color: "#E5E7EB", margin: "0 auto" }} />
+              <p className="text-sm mt-4" style={{ color: "#6B7280" }}>No saved products yet</p>
+              <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>Scan products and tap Save to compare them</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-[12px] mb-4" style={{ color: "#9CA3AF" }}>{basket.length} product{basket.length !== 1 ? "s" : ""} saved · Compare side by side</p>
+
+              {/* Comparison grid */}
+              {basket.length >= 2 && (
+                <div className="mb-5 rounded-2xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+                  <div className="px-4 py-2.5" style={{ background: "#F9FAFB" }}>
+                    <h3 className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>Quick Compare</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <div className="flex" style={{ minWidth: basket.length * 140 }}>
+                      {basket.slice(0, 5).map(item => (
+                        <div key={item.barcode} className="flex-1 min-w-[130px] p-3 text-center" style={{ borderRight: "1px solid #F3F4F6" }}>
+                          <div className="w-14 h-14 rounded-xl overflow-hidden mx-auto mb-2" style={{ background: "#F7F7F7" }}>
+                            {item.image ? (
+                              <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center"><Barcode size={18} style={{ color: "#D1D5DB" }} /></div>
+                            )}
+                          </div>
+                          <p className="font-semibold text-[11px] leading-tight truncate" style={{ color: "#1B2A4A" }}>{item.name}</p>
+                          {item.skaapScore != null && (
+                            <div className="mt-2 flex items-center justify-center gap-1.5">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white"
+                                style={{ background: getScoreColor(item.skaapScore) }}>
+                                {item.skaapScore}
+                              </div>
+                            </div>
+                          )}
+                          {item.nutriScore && (
+                            <span className="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                              style={{ background: nutriColors[item.nutriScore.toLowerCase()]?.bg, color: "#fff" }}>
+                              {item.nutriScore.toUpperCase()}
+                            </span>
+                          )}
+                          <div className="mt-1.5 text-[10px]" style={{ color: "#9CA3AF" }}>
+                            {item.additiveCount === 0 ? "No additives" : `${item.additiveCount} additive${item.additiveCount > 1 ? "s" : ""}`}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Full list */}
+              <div className="space-y-2">
+                {basket.map((item, idx) => (
+                  <motion.div key={item.barcode} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="flex items-center gap-3 p-3 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                    <button onClick={() => handleBarcodeDetected(item.barcode)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#fff" }}>
+                        {item.image ? (
+                          <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center"><Barcode size={18} style={{ color: "#D1D5DB" }} /></div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-[14px] truncate" style={{ color: "#1B2A4A" }}>{item.name}</p>
+                        {item.brand && <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{item.brand}</p>}
+                        <div className="flex items-center gap-2 mt-1">
+                          {item.skaapScore != null && (
+                            <span className="text-[11px] font-extrabold px-1.5 py-0.5 rounded text-white" style={{ background: getScoreColor(item.skaapScore) }}>
+                              {item.skaapScore}/100
+                            </span>
+                          )}
+                          {item.nutriScore && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                              style={{ background: nutriColors[item.nutriScore.toLowerCase()]?.bg }}>
+                              {item.nutriScore.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                    <button onClick={() => { const updated = removeFromBasket(item.barcode); setBasket(updated); }}
+                      className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#FEF2F2" }}>
+                      <Trash2 size={16} style={{ color: "#EF4444" }} />
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3" style={{ maxWidth: 430, margin: "0 auto", background: "hsl(var(--background))", paddingBottom: "calc(env(safe-area-inset-bottom, 16px) + 16px)" }}>
+          <motion.button whileTap={{ scale: 0.97 }} onClick={() => setScreen("home")}
+            className="w-full font-extrabold text-base" style={{ background: "#1B2A4A", color: "#fff", height: 52, borderRadius: 12 }}>
+            Back to Scanner
+          </motion.button>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 };
 
