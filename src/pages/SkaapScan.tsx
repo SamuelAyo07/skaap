@@ -632,6 +632,8 @@ const SkaapScan = () => {
     setScoreBreakdown(null);
     setShowScoreModal(false);
     setSavedState("idle");
+    setShareState("idle");
+    setShareModalOpen(false);
     setAiSummary(null);
     setDietaryTags(null);
     setAiRecommendations(null);
