@@ -476,14 +476,23 @@ const SkaapScan = () => {
 
   const handleSave = () => {
     if (productInfo && currentBarcode) {
-      addToHistory({
-        barcode: currentBarcode, name: productInfo.productName, brand: productInfo.brand,
-        image: productInfo.imageUrl, nutriScore: productInfo.nutriScoreGrade,
-        skaapScore: scoreBreakdown?.total, scannedAt: Date.now(),
-      });
-      setHistory(getHistory());
-      setSavedState("saved");
-      setTimeout(() => setSavedState("idle"), 1500);
+      if (isInBasket(currentBarcode)) {
+        // Already saved — remove from basket
+        const updated = removeFromBasket(currentBarcode);
+        setBasket(updated);
+        setSavedState("idle");
+      } else {
+        // Add to basket
+        const updated = addToBasket({
+          barcode: currentBarcode, name: productInfo.productName, brand: productInfo.brand,
+          image: productInfo.imageUrl, nutriScore: productInfo.nutriScoreGrade,
+          skaapScore: scoreBreakdown?.total, novaGroup: productInfo.novaGroup,
+          additiveCount: productInfo.additivesTags?.length || 0, savedAt: Date.now(),
+        });
+        setBasket(updated);
+        setSavedState("saved");
+        setTimeout(() => setSavedState("idle"), 1500);
+      }
     }
   };
 
