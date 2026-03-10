@@ -1110,6 +1110,47 @@ const SkaapScan = () => {
 
     return (
       <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
+        {/* Share preview modal */}
+        <AnimatePresence>
+          {shareModalOpen && shareImageUrl && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] flex items-end justify-center" onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
+              <div className="absolute inset-0 bg-black/60" />
+              <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
+                style={{ height: "90vh" }}
+                onClick={e => e.stopPropagation()}>
+                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
+                <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
+                  className="absolute top-3 right-4 z-10" aria-label="Close">
+                  <X size={24} style={{ color: "#1B2A4A" }} />
+                </button>
+                <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6 flex flex-col">
+                  <div className="flex-1 flex items-center justify-center mb-4">
+                    <img src={shareImageUrl} alt="Share card preview"
+                      className="max-w-full max-h-full rounded-2xl object-contain"
+                      style={{ maxHeight: "calc(90vh - 260px)", boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }} />
+                  </div>
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
+                    className="w-full font-extrabold flex items-center justify-center gap-2"
+                    style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 12, fontSize: 16 }}>
+                    Share to Instagram Stories 📸
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
+                    className="w-full font-extrabold flex items-center justify-center gap-2"
+                    style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 12, fontSize: 16, marginTop: 10 }}>
+                    Share anywhere
+                  </motion.button>
+                  <p className="text-center mt-4" style={{ fontSize: 12, color: "#9CA3AF" }}>
+                    Tag us @useskaap and we'll repost your story 🙌
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Score transparency modal */}
         <AnimatePresence>
           {showScoreModal && scoreBreakdown && (
