@@ -1251,12 +1251,18 @@ const SkaapScan = () => {
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
               className="flex-1 font-semibold text-sm flex items-center justify-center gap-2"
               style={{
-                background: savedState === "saved" ? "#fff" : "#E8314A",
-                color: savedState === "saved" ? "#2D7D46" : "#fff",
-                border: savedState === "saved" ? "1.5px solid #2D7D46" : "none",
+                background: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#fff" : "#E8314A",
+                color: savedState === "saved" ? "#2D7D46" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
+                border: savedState === "saved" ? "1.5px solid #2D7D46" : isInBasket(currentBarcode) ? "1.5px solid #E8314A" : "none",
                 height: 44, borderRadius: 10,
               }}>
-              {savedState === "saved" ? "Saved ✓" : "Save"}
+              {savedState === "saved" ? (
+                <>Saved ✓</>
+              ) : isInBasket(currentBarcode) ? (
+                <><Heart size={16} fill="#E8314A" /> Saved</>
+              ) : (
+                <><Heart size={16} /> Save</>
+              )}
             </motion.button>
           </div>
         </motion.div>
