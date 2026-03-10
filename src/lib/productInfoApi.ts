@@ -5,6 +5,7 @@ export interface ProductFullInfo {
   productName: string;
   brand?: string;
   imageUrl?: string;
+  imageSmallUrl?: string;
   quantity?: string;
   nutriScoreGrade?: string;
   novaGroup?: number;
@@ -44,10 +45,11 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
     const n = p.nutriments || {};
     const nl = p.nutrient_levels || {};
 
-    return {
+  return {
       productName: p.product_name || "Unknown Product",
       brand: p.brands || undefined,
       imageUrl: p.image_front_url || p.image_url || undefined,
+      imageSmallUrl: p.image_front_small_url || undefined,
       quantity: p.quantity || undefined,
       nutriScoreGrade: p.nutriscore_grade || undefined,
       novaGroup: p.nova_group ? Number(p.nova_group) : undefined,
