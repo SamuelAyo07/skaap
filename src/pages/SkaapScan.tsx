@@ -395,9 +395,14 @@ const SkaapScan = () => {
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveExplanationLoading, setAdditiveExplanationLoading] = useState(false);
 
+  // Sheet state (must be top-level for hooks rules)
+  const [sheetExpanded, setSheetExpanded] = useState(false);
+  const sheetContentRef = useRef<HTMLDivElement>(null);
+
   // History
   const [history, setHistory] = useState<ScanHistoryItem[]>(getHistory());
   const [historySearch, setHistorySearch] = useState("");
+  const [scoreFilter, setScoreFilter] = useState<string>("all");
   const [scoreFilter, setScoreFilter] = useState<string>("all");
 
   // ─── Fire AI calls after product resolves ───
