@@ -385,6 +385,14 @@ const SkaapScan = () => {
   const [savedState, setSavedState] = useState<"idle" | "saved">("idle");
   const [basket, setBasket] = useState<BasketItem[]>(getBasket());
 
+  // Share feature states
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareImageBlob, setShareImageBlob] = useState<Blob | null>(null);
+  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [shareState, setShareState] = useState<"idle" | "shared">("idle");
+  const [shareGenerating, setShareGenerating] = useState(false);
+  const cachedSkaapIconRef = useRef<HTMLImageElement | null>(null);
+
   // AI states
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
