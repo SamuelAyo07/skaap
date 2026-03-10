@@ -234,6 +234,7 @@ const SkaapScan = () => {
   const [scoreBreakdown, setScoreBreakdown] = useState<SkaapScoreBreakdown | null>(null);
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [savedState, setSavedState] = useState<"idle" | "saved">("idle");
+  const [basket, setBasket] = useState<BasketItem[]>(getBasket());
 
   // AI states
   const [aiSummary, setAiSummary] = useState<string | null>(null);
