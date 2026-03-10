@@ -74,7 +74,7 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
   const padX = 24;
   const padTop = 64;
   const cardH = 190;
-  const padBot = 48;
+  const padBot = 56;
   const W = padX * 2 + cols * colW;
   const H = padTop + cardH + padBot;
   const canvas = document.createElement("canvas");
@@ -91,13 +91,29 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
   ctx.roundRect(0, 0, W, H, 16);
   ctx.fill();
 
-  // Header
-  ctx.fillStyle = "#1B2A4A";
-  ctx.font = "bold 16px Inter, system-ui, sans-serif";
-  ctx.fillText("🐑 SKAAP Comparison", padX, 38);
+  // Load logo
+  const logoImg = await new Promise<HTMLImageElement | null>(resolve => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = skaapIcon;
+  });
+
+  // Header with logo
+  if (logoImg) {
+    ctx.drawImage(logoImg, padX, 18, 28, 28);
+    ctx.fillStyle = "#0A1220";
+    ctx.font = "800 16px Inter, system-ui, sans-serif";
+    ctx.fillText("SKAAP", padX + 34, 38);
+  } else {
+    ctx.fillStyle = "#0A1220";
+    ctx.font = "800 16px Inter, system-ui, sans-serif";
+    ctx.fillText("SKAAP", padX, 38);
+  }
   ctx.fillStyle = "#9CA3AF";
   ctx.font = "400 10px Inter, system-ui, sans-serif";
-  ctx.fillText("useskaap.com", W - padX - ctx.measureText("useskaap.com").width, 38);
+  ctx.fillText("Comparison", padX + (logoImg ? 34 : 0) + ctx.measureText("SKAAP  ").width, 38);
 
   // Load images
   const images = await Promise.all(items.slice(0, cols).map(item => {
@@ -133,7 +149,7 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
     }
 
     // Name (truncated)
-    ctx.fillStyle = "#1B2A4A";
+    ctx.fillStyle = "#0A1220";
     ctx.font = "600 11px Inter, system-ui, sans-serif";
     const name = item.name.length > 16 ? item.name.slice(0, 15) + "…" : item.name;
     ctx.textAlign = "center";
@@ -155,7 +171,7 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
     // Nutri-Score chip
     if (item.nutriScore) {
       const ns = item.nutriScore.toLowerCase();
-      const nColor = ns === "a" ? "#2D7D46" : ns === "b" ? "#4CAF50" : ns === "c" ? "#FFC107" : ns === "d" ? "#FF6D00" : "#E8314A";
+      const nColor = ns === "a" ? "#2D7D46" : ns === "b" ? "#4CAF50" : ns === "c" ? "#FFC107" : ns === "d" ? "#FF6D00" : "#B0202F";
       const label = `Nutri ${item.nutriScore.toUpperCase()}`;
       ctx.fillStyle = nColor;
       const tw = ctx.measureText(label).width;
@@ -173,6 +189,25 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
     ctx.fillText(item.additiveCount === 0 ? "No additives" : `${item.additiveCount} additive${item.additiveCount > 1 ? "s" : ""}`, x + colW / 2, y + 182);
     ctx.textAlign = "left";
   });
+
+  // ─── Branded watermark footer ───
+  const footerY = H - 28;
+  ctx.fillStyle = "#F3F4F6";
+  ctx.beginPath();
+  ctx.roundRect(padX, footerY - 4, W - padX * 2, 22, 8);
+  ctx.fill();
+  if (logoImg) {
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(logoImg, padX + 8, footerY - 2, 16, 16);
+    ctx.globalAlpha = 1;
+  }
+  ctx.fillStyle = "#9CA3AF";
+  ctx.font = "500 9px Inter, system-ui, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("Made with SKAAP", padX + (logoImg ? 28 : 8), footerY + 10);
+  ctx.textAlign = "right";
+  ctx.fillText("useskaap.com", W - padX - 8, footerY + 10);
+  ctx.textAlign = "left";
 
   return new Promise(resolve => canvas.toBlob(b => resolve(b), "image/png"));
 }
