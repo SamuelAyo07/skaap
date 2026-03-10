@@ -536,6 +536,10 @@ const SkaapScan = () => {
     setExpandedSections(new Set());
     setScoreBreakdown(null);
     setSavedState("idle");
+    setShareState("idle");
+    setShareModalOpen(false);
+    setShareImageBlob(null);
+    if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
     setShowScoreModal(false);
     setAiSummary(null);
     setAiSummaryLoading(false);
