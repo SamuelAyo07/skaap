@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
-  ShoppingBag, Trash2, Heart,
+  ShoppingBag, Trash2, Heart, Share2, Search, Filter,
 } from "lucide-react";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -249,6 +249,8 @@ const SkaapScan = () => {
 
   // History
   const [history, setHistory] = useState<ScanHistoryItem[]>(getHistory());
+  const [historySearch, setHistorySearch] = useState("");
+  const [scoreFilter, setScoreFilter] = useState<string>("all");
 
   // ─── Fire AI calls after product resolves ───
   const fireAICalls = useCallback((info: ProductFullInfo, barcode: string, score: SkaapScoreBreakdown) => {
@@ -1272,18 +1274,78 @@ const SkaapScan = () => {
 
   // ─── SCREEN: HISTORY ───
   if (screen === "history") {
+
+    const filteredHistory = history.filter(item => {
+      const matchesSearch = !historySearch || 
+        item.name.toLowerCase().includes(historySearch.toLowerCase()) ||
+        (item.brand && item.brand.toLowerCase().includes(historySearch.toLowerCase()));
+      
+      let matchesScore = true;
+      if (scoreFilter === "excellent" && (item.skaapScore == null || item.skaapScore < 75)) matchesScore = false;
+      if (scoreFilter === "good" && (item.skaapScore == null || item.skaapScore < 50 || item.skaapScore >= 75)) matchesScore = false;
+      if (scoreFilter === "poor" && (item.skaapScore == null || item.skaapScore >= 50)) matchesScore = false;
+      
+      return matchesSearch && matchesScore;
+    });
+
     return (
       <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-          <h1 className="font-extrabold text-[22px] tracking-tight" style={{ color: "#1B2A4A" }}>Your Scans</h1>
-          <button onClick={() => { clearHistory(); setHistory([]); }} className="text-sm font-semibold" style={{ color: "#E8314A" }}>Clear all</button>
+          <button onClick={() => setScreen("home")} className="flex items-center">
+            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
+          </button>
+          <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Your Scans</h1>
+          <button onClick={() => { clearHistory(); setHistory([]); }} className="text-[12px] font-semibold" style={{ color: "#E8314A" }}>Clear</button>
         </div>
-        <div className="px-5 pt-2">
-          {history.length === 0 ? (
-            <div className="text-center py-16"><p className="text-sm" style={{ color: "#6B7280" }}>No scans yet</p></div>
+
+        {/* Search bar */}
+        <div className="px-5 pt-2 pb-1">
+          <div className="flex items-center gap-2 px-3 h-10 rounded-xl" style={{ background: "#F5F5F5" }}>
+            <Search size={16} style={{ color: "#9CA3AF" }} />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={historySearch}
+              onChange={(e) => setHistorySearch(e.target.value)}
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              style={{ color: "#1B2A4A" }}
+            />
+            {historySearch && (
+              <button onClick={() => setHistorySearch("")}><X size={14} style={{ color: "#9CA3AF" }} /></button>
+            )}
+          </div>
+        </div>
+
+        {/* Score filter chips */}
+        <div className="px-5 py-2 flex gap-2">
+          {[
+            { key: "all", label: "All" },
+            { key: "excellent", label: "75+" },
+            { key: "good", label: "50-74" },
+            { key: "poor", label: "< 50" },
+          ].map(f => (
+            <button key={f.key} onClick={() => setScoreFilter(f.key)}
+              className="px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors"
+              style={{
+                background: scoreFilter === f.key ? "#1B2A4A" : "#F5F5F5",
+                color: scoreFilter === f.key ? "#fff" : "#6B7280",
+              }}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="px-5 pt-1 pb-24">
+          {filteredHistory.length === 0 ? (
+            <div className="text-center py-12">
+              <Search size={32} style={{ color: "#E5E7EB", margin: "0 auto" }} />
+              <p className="text-sm mt-3" style={{ color: "#6B7280" }}>
+                {history.length === 0 ? "No scans yet" : "No products match your search"}
+              </p>
+            </div>
           ) : (
             <div className="divide-y" style={{ borderColor: "#F3F4F6" }}>
-              {history.map(item => (
+              {filteredHistory.map(item => (
                 <button key={item.barcode + item.scannedAt} onClick={() => handleBarcodeDetected(item.barcode)}
                   className="w-full flex items-center gap-3 py-3 text-left">
                   <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "#F7F7F7" }}>
@@ -1318,7 +1380,7 @@ const SkaapScan = () => {
             </div>
           )}
         </div>
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3" style={{ maxWidth: 430, margin: "0 auto", paddingBottom: "calc(env(safe-area-inset-bottom, 16px) + 16px)" }}>
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3" style={{ maxWidth: 430, margin: "0 auto", background: "hsl(var(--background))", paddingBottom: "calc(env(safe-area-inset-bottom, 16px) + 16px)" }}>
           <motion.button whileTap={{ scale: 0.97 }} onClick={() => setScreen("home")}
             className="w-full font-extrabold text-base" style={{ background: "#1B2A4A", color: "#fff", height: 52, borderRadius: 12 }}>
             Back to Scanner
@@ -1333,11 +1395,32 @@ const SkaapScan = () => {
     return (
       <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-          <button onClick={() => setScreen("home")} className="flex items-center gap-1.5">
+          <button onClick={() => setScreen("home")} className="flex items-center">
             <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
           </button>
           <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Saved Products</h1>
-          <div className="w-8" />
+          {basket.length >= 2 ? (
+            <button onClick={async () => {
+              // Generate shareable text comparison
+              const lines = basket.map((item, i) => 
+                `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
+              );
+              const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
+              
+              if (navigator.share) {
+                try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
+              } else {
+                try { await navigator.clipboard.writeText(shareText); } catch {}
+                // Brief visual feedback
+                const btn = document.getElementById("share-btn");
+                if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = ""; }, 1500); }
+              }
+            }} id="share-btn" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
+              <Share2 size={18} style={{ color: "#1B2A4A" }} />
+            </button>
+          ) : (
+            <div className="w-8" />
+          )}
         </div>
 
         <div className="px-5 pt-2 pb-28">
