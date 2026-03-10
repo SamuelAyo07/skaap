@@ -318,24 +318,26 @@ function formatTag(tag: string) {
 }
 
 // ─── Score Ring SVG Component ───
-function ScoreRing({ score, size = 120 }: { score: number; size?: number }) {
+function ScoreRing({ score, size = 120, showLabel = true }: { score: number; size?: number; showLabel?: boolean }) {
   const color = getScoreColor(score);
-  const r = (size - 12) / 2;
+  const strokeW = size <= 72 ? 4 : 6;
+  const r = (size - strokeW * 2) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (score / 100) * circumference;
   const reducedMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const fontSize = size <= 72 ? 28 : 40;
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#F3F4F6" strokeWidth="6" />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#F3F4F6" strokeWidth={strokeW} />
         <circle
-          cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="6"
+          cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={strokeW}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={reducedMotion ? offset : circumference}
           style={reducedMotion ? {} : {
-            transition: "stroke-dashoffset 0.6s ease-out 0.3s",
+            transition: "stroke-dashoffset 0.5s ease-out 0.3s",
           }}
           ref={(el) => {
             if (el && !reducedMotion) {
@@ -349,8 +351,8 @@ function ScoreRing({ score, size = 120 }: { score: number; size?: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-extrabold leading-none" style={{ fontSize: 40, color }}>{score}</span>
-        <span className="font-semibold text-[10px] uppercase tracking-wider mt-1" style={{ color: "#9CA3AF" }}>SKAAP SCORE</span>
+        <span className="font-extrabold leading-none" style={{ fontSize, color }}>{score}</span>
+        {showLabel && <span className="font-semibold uppercase tracking-wider mt-0.5" style={{ fontSize: 8, color: "#9CA3AF" }}>/ 100</span>}
       </div>
     </div>
   );
