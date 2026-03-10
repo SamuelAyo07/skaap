@@ -385,6 +385,14 @@ const SkaapScan = () => {
   const [savedState, setSavedState] = useState<"idle" | "saved">("idle");
   const [basket, setBasket] = useState<BasketItem[]>(getBasket());
 
+  // Share feature states
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareImageBlob, setShareImageBlob] = useState<Blob | null>(null);
+  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [shareState, setShareState] = useState<"idle" | "shared">("idle");
+  const [shareGenerating, setShareGenerating] = useState(false);
+  const cachedSkaapIconRef = useRef<HTMLImageElement | null>(null);
+
   // AI states
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
@@ -528,6 +536,10 @@ const SkaapScan = () => {
     setExpandedSections(new Set());
     setScoreBreakdown(null);
     setSavedState("idle");
+    setShareState("idle");
+    setShareModalOpen(false);
+    setShareImageBlob(null);
+    if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
     setShowScoreModal(false);
     setAiSummary(null);
     setAiSummaryLoading(false);
@@ -620,6 +632,8 @@ const SkaapScan = () => {
     setScoreBreakdown(null);
     setShowScoreModal(false);
     setSavedState("idle");
+    setShareState("idle");
+    setShareModalOpen(false);
     setAiSummary(null);
     setDietaryTags(null);
     setAiRecommendations(null);
@@ -660,6 +674,210 @@ const SkaapScan = () => {
   useEffect(() => {
     return () => stopCamera();
   }, [stopCamera]);
+
+  // Pre-load SKAAP icon for share card
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { cachedSkaapIconRef.current = img; };
+    img.src = skaapIcon;
+  }, []);
+
+  // ─── Share card canvas generation ───
+  const generateShareCard = useCallback(async () => {
+    if (!productInfo || !scoreBreakdown) return null;
+    const score = scoreBreakdown.total;
+    const W = 1080, H = 1920, dpr = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    // Score colors
+    const scoreColor = score >= 75 ? "#2D7D46" : score >= 50 ? "#FFC107" : score >= 25 ? "#FF6D00" : "#E8314A";
+    const verdict = score >= 75 ? "Excellent" : score >= 50 ? "Good" : score >= 25 ? "Mediocre" : "Poor";
+
+    // LAYER 1 — Background gradient
+    const gradEnd = score >= 75 ? "#1a3a2a" : score >= 50 ? "#2a2a0a" : score >= 25 ? "#2a1a0a" : "#2a0a0a";
+    const grad = ctx.createLinearGradient(0, 0, W * 0.4, H);
+    grad.addColorStop(0, "#0A1220");
+    grad.addColorStop(1, gradEnd);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // LAYER 2 — Subtle texture (seeded random from barcode)
+    let seed = 0;
+    for (let i = 0; i < currentBarcode.length; i++) seed = ((seed << 5) - seed + currentBarcode.charCodeAt(i)) | 0;
+    const seededRand = () => { seed = (seed * 16807) % 2147483647; return (seed & 0x7fffffff) / 0x7fffffff; };
+    for (let i = 0; i < 40; i++) {
+      const r = 2 + seededRand() * 4;
+      const x = seededRand() * W;
+      const y = seededRand() * H;
+      const opacity = 0.03 + seededRand() * 0.03;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+      ctx.fill();
+    }
+
+    // LAYER 3 — SKAAP branding top
+    ctx.textAlign = "center";
+    const iconImg = cachedSkaapIconRef.current;
+    if (iconImg) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(W / 2, 120, 24, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(iconImg, W / 2 - 24, 96, 48, 48);
+      ctx.restore();
+    }
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 28px Inter, system-ui, sans-serif";
+    ctx.letterSpacing = "0.15em";
+    ctx.fillText("SKAAP", W / 2, 180);
+    ctx.letterSpacing = "0";
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.font = "400 14px Inter, system-ui, sans-serif";
+    ctx.fillText("useskaap.com", W / 2, 206);
+
+    // LAYER 4 — Score hero center
+    const cy = H * 0.45;
+    const outerR = 180;
+    // Background ring
+    ctx.beginPath();
+    ctx.arc(W / 2, cy, outerR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 12;
+    ctx.stroke();
+    // Score arc
+    ctx.beginPath();
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + (score / 100) * Math.PI * 2;
+    ctx.arc(W / 2, cy, outerR, startAngle, endAngle);
+    ctx.strokeStyle = scoreColor;
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    ctx.lineCap = "butt";
+    // Score number
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 96px Inter, system-ui, sans-serif";
+    ctx.fillText(String(score), W / 2, cy + 32);
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.font = "600 20px Inter, system-ui, sans-serif";
+    ctx.fillText("/ 100", W / 2, cy + 62);
+    // Verdict
+    ctx.fillStyle = scoreColor;
+    ctx.font = "600 24px Inter, system-ui, sans-serif";
+    ctx.fillText(verdict, W / 2, cy + 98);
+
+    // Product name & brand
+    const nameY = cy + outerR + 70;
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 32px Inter, system-ui, sans-serif";
+    const displayN = productInfo.productName.length > 40
+      ? productInfo.productName.slice(0, 38) + "…"
+      : productInfo.productName;
+    ctx.fillText(displayN, W / 2, nameY);
+    if (productInfo.brand) {
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.font = "400 20px Inter, system-ui, sans-serif";
+      ctx.fillText(productInfo.brand, W / 2, nameY + 32);
+    }
+
+    // Three info pills
+    const pillY = nameY + 72;
+    const pillW = 60, pillH = 36, pillR = 18, pillGap = 16;
+    const pillData: { label: string; color: string }[] = [];
+    if (productInfo.nutriScoreGrade) {
+      const nsC = nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF";
+      pillData.push({ label: productInfo.nutriScoreGrade.toUpperCase(), color: nsC });
+    }
+    if (productInfo.novaGroup) {
+      pillData.push({ label: String(productInfo.novaGroup), color: "rgba(255,255,255,0.4)" });
+    }
+    const ac = productInfo.additivesTags?.length || 0;
+    pillData.push({ label: ac === 0 ? "✓" : String(ac), color: ac === 0 ? "#2D7D46" : "rgba(255,255,255,0.4)" });
+
+    const totalPillW = pillData.length * pillW + (pillData.length - 1) * pillGap;
+    let pillX = (W - totalPillW) / 2;
+    pillData.forEach(p => {
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
+      ctx.stroke();
+      ctx.fillStyle = p.color;
+      ctx.font = "800 18px Inter, system-ui, sans-serif";
+      ctx.fillText(p.label, pillX + pillW / 2, pillY + 24);
+      pillX += pillW + pillGap;
+    });
+
+    // LAYER 5 — Bottom CTA
+    const ctaY = 1720;
+    const ctaW = 900, ctaH = 160, ctaR = 24;
+    const ctaX = (W - ctaW) / 2;
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
+    ctx.fill();
+
+    // Score-based copy
+    let line1: string, line2: string;
+    if (score >= 75) { line1 = "Just SKAAPed this 🌿"; line2 = "Clean ingredients. Great score."; }
+    else if (score >= 50) { line1 = "Just SKAAPed this 👀"; line2 = "Not bad. But check the additives."; }
+    else if (score >= 25) { line1 = "Just SKAAPed this 😬"; line2 = "You might want to think twice."; }
+    else { line1 = "Just SKAAPed this 🚨"; line2 = "This one scored pretty rough."; }
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#1B2A4A";
+    ctx.font = "800 26px Inter, system-ui, sans-serif";
+    ctx.fillText(line1, W / 2, ctaY + 50);
+    ctx.fillStyle = "#6B7280";
+    ctx.font = "400 18px Inter, system-ui, sans-serif";
+    ctx.fillText(line2, W / 2, ctaY + 82);
+    ctx.fillStyle = "#E8314A";
+    ctx.font = "600 16px Inter, system-ui, sans-serif";
+    ctx.fillText("Try it free → useskaap.com/scan", W / 2, ctaY + 120);
+
+    // Invisible watermark
+    ctx.fillStyle = "rgba(255,255,255,0.02)";
+    ctx.font = "400 8px Inter, system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("Made with SKAAP · useskaap.com", W - 12, H - 8);
+    ctx.textAlign = "left";
+
+    return new Promise<Blob | null>(resolve => canvas.toBlob(b => resolve(b), "image/png"));
+  }, [productInfo, scoreBreakdown, currentBarcode]);
+
+  const handleShareTap = useCallback(async () => {
+    if (shareGenerating) return;
+    setShareGenerating(true);
+    const blob = await generateShareCard();
+    setShareGenerating(false);
+    if (!blob) return;
+    setShareImageBlob(blob);
+    setShareImageUrl(URL.createObjectURL(blob));
+    setShareModalOpen(true);
+  }, [generateShareCard, shareGenerating]);
+
+  const handleShareAction = useCallback(async (target: "instagram" | "anywhere") => {
+    if (!shareImageBlob) return;
+    const file = new File([shareImageBlob], "my-skaap-score.png", { type: "image/png" });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+    } else {
+      // Fallback: download
+      const url = URL.createObjectURL(shareImageBlob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "my-skaap-score.png";
+      a.click(); URL.revokeObjectURL(url);
+    }
+    setShareModalOpen(false);
+    if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
+    setShareState("shared");
+    setTimeout(() => setShareState("idle"), 2000);
+  }, [shareImageBlob, shareImageUrl]);
 
   const toggleTorch = async () => {
     const track = streamRef.current?.getVideoTracks()[0];
@@ -898,6 +1116,47 @@ const SkaapScan = () => {
 
     return (
       <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
+        {/* Share preview modal */}
+        <AnimatePresence>
+          {shareModalOpen && shareImageUrl && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] flex items-end justify-center" onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
+              <div className="absolute inset-0 bg-black/60" />
+              <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
+                style={{ height: "90vh" }}
+                onClick={e => e.stopPropagation()}>
+                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
+                <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
+                  className="absolute top-3 right-4 z-10" aria-label="Close">
+                  <X size={24} style={{ color: "#1B2A4A" }} />
+                </button>
+                <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6 flex flex-col">
+                  <div className="flex-1 flex items-center justify-center mb-4">
+                    <img src={shareImageUrl} alt="Share card preview"
+                      className="max-w-full max-h-full rounded-2xl object-contain"
+                      style={{ maxHeight: "calc(90vh - 260px)", boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }} />
+                  </div>
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
+                    className="w-full font-extrabold flex items-center justify-center gap-2"
+                    style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 12, fontSize: 16 }}>
+                    Share to Instagram Stories 📸
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
+                    className="w-full font-extrabold flex items-center justify-center gap-2"
+                    style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 12, fontSize: 16, marginTop: 10 }}>
+                    Share anywhere
+                  </motion.button>
+                  <p className="text-center mt-4" style={{ fontSize: 12, color: "#9CA3AF" }}>
+                    Tag us @useskaap and we'll repost your story 🙌
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Score transparency modal */}
         <AnimatePresence>
           {showScoreModal && scoreBreakdown && (
@@ -1208,6 +1467,32 @@ const SkaapScan = () => {
                       </span>
                     ))}
                   </motion.div>
+                )}
+
+                {/* SHARE PROMPT ROW — 44px */}
+                {scoreBreakdown && (
+                  <div className="flex items-center gap-[10px] px-5" style={{ height: 44, marginTop: 6 }}>
+                    <p className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>
+                      {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
+                        : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
+                        : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
+                        : "This one's rough. Share the warning."}
+                    </p>
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleShareTap}
+                      disabled={shareGenerating}
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
+                      style={{
+                        height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
+                        background: shareState === "shared" ? "#2D7D46" : "#E8314A",
+                        color: "#fff", transition: "background 0.2s",
+                      }}
+                    >
+                      <Share2 size={14} />
+                      {shareState === "shared" ? "Shared ✓" : shareGenerating ? "..." : "Share Score"}
+                    </motion.button>
+                  </div>
                 )}
 
                 {/* THREE COLLAPSED ACCORDION ROWS — 44px each */}
