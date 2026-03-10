@@ -1511,24 +1511,37 @@ const SkaapScan = () => {
           </button>
           <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Saved Products</h1>
           {basket.length >= 2 ? (
-            <button onClick={async () => {
-              // Generate shareable text comparison
-              const lines = basket.map((item, i) => 
-                `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
-              );
-              const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
-              
-              if (navigator.share) {
-                try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
-              } else {
-                try { await navigator.clipboard.writeText(shareText); } catch {}
-                // Brief visual feedback
-                const btn = document.getElementById("share-btn");
-                if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = ""; }, 1500); }
-              }
-            }} id="share-btn" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
-              <Share2 size={18} style={{ color: "#1B2A4A" }} />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button onClick={async () => {
+                const blob = await exportBasketImage(basket, getScoreColor);
+                if (!blob) return;
+                const file = new File([blob], "skaap-comparison.png", { type: "image/png" });
+                if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                  try { await navigator.share({ files: [file], title: "SKAAP Comparison" }); } catch {}
+                } else {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url; a.download = "skaap-comparison.png";
+                  a.click(); URL.revokeObjectURL(url);
+                }
+              }} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}
+                title="Export as image">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              </button>
+              <button onClick={async () => {
+                const lines = basket.map((item, i) =>
+                  `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
+                );
+                const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
+                if (navigator.share) {
+                  try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
+                } else {
+                  try { await navigator.clipboard.writeText(shareText); } catch {}
+                }
+              }} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
+                <Share2 size={18} style={{ color: "#1B2A4A" }} />
+              </button>
+            </div>
           ) : (
             <div className="w-8" />
           )}
