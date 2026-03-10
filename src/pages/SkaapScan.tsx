@@ -403,7 +403,6 @@ const SkaapScan = () => {
   const [history, setHistory] = useState<ScanHistoryItem[]>(getHistory());
   const [historySearch, setHistorySearch] = useState("");
   const [scoreFilter, setScoreFilter] = useState<string>("all");
-  const [scoreFilter, setScoreFilter] = useState<string>("all");
 
   // ─── Fire AI calls after product resolves ───
   const fireAICalls = useCallback((info: ProductFullInfo, barcode: string, score: SkaapScoreBreakdown) => {
