@@ -5,6 +5,7 @@ export interface ProductFullInfo {
   productName: string;
   brand?: string;
   imageUrl?: string;
+  imageSmallUrl?: string;
   quantity?: string;
   nutriScoreGrade?: string;
   novaGroup?: number;
