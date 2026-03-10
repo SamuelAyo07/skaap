@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check,
+  ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
 } from "lucide-react";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +12,10 @@ import {
   getAdditiveRisk, getAdditiveRiskColor, getAdditiveRiskLabel,
   getAdditiveDescription, SkaapScoreBreakdown,
 } from "@/lib/skaapScore";
+import {
+  fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
+  fetchRecommendations, DIETARY_LABELS, AIRecommendation,
+} from "@/lib/aiProductInsights";
 
 // ─── Types ───
 interface ScanHistoryItem {
@@ -24,7 +28,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info";
 
 // ─── localStorage cache helpers (7-day TTL) ───
 const CACHE_PREFIX = "skaap_cache_";
@@ -195,8 +199,66 @@ const SkaapScan = () => {
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [savedState, setSavedState] = useState<"idle" | "saved">("idle");
 
+  // AI states
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+  const [dietaryTags, setDietaryTags] = useState<Record<string, number> | null>(null);
+  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[] | null>(null);
+  const [aiRecsLoading, setAiRecsLoading] = useState(false);
+  const [expandedAdditive, setExpandedAdditive] = useState<string | null>(null);
+  const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
+  const [additiveExplanationLoading, setAdditiveExplanationLoading] = useState(false);
+
   // History
   const [history, setHistory] = useState<ScanHistoryItem[]>(getHistory());
+
+  // ─── Fire AI calls after product resolves ───
+  const fireAICalls = useCallback((info: ProductFullInfo, barcode: string, score: SkaapScoreBreakdown) => {
+    // Reset AI states
+    setAiSummary(null);
+    setDietaryTags(null);
+    setAiRecommendations(null);
+    setExpandedAdditive(null);
+    setAdditiveExplanation(null);
+
+    // Build nutrient concerns string
+    const concerns: string[] = [];
+    const nl = info.nutrientLevels;
+    if (nl?.fat === "high") concerns.push("high fat");
+    if (nl?.saturatedFat === "high") concerns.push("high saturated fat");
+    if (nl?.sugars === "high") concerns.push("high sugars");
+    if (nl?.salt === "high") concerns.push("high salt");
+
+    // Fire all in parallel — never await
+    setAiSummaryLoading(true);
+    fetchAISummary({
+      barcode,
+      productName: info.productName,
+      brandName: info.brand,
+      nutriScore: info.nutriScoreGrade,
+      novaGroup: info.novaGroup,
+      additiveCount: info.additivesTags?.length || 0,
+      worstRisk: score.worstAdditiveRisk,
+      isOrganic: score.isOrganic,
+      nutrientLevels: concerns.join(", ") || "none",
+    }).then(s => { setAiSummary(s); setAiSummaryLoading(false); }).catch(() => setAiSummaryLoading(false));
+
+    if (info.ingredientsText) {
+      fetchDietaryClassification({
+        barcode,
+        ingredientsText: info.ingredientsText,
+        allergensTags: info.allergensTags,
+      }).then(d => setDietaryTags(d)).catch(() => {});
+    }
+
+    setAiRecsLoading(true);
+    fetchRecommendations({
+      barcode,
+      productName: info.productName,
+      nutriScore: info.nutriScoreGrade,
+      additiveCount: info.additivesTags?.length || 0,
+    }).then(r => { setAiRecommendations(r); setAiRecsLoading(false); }).catch(() => setAiRecsLoading(false));
+  }, []);
 
   // ─── Camera ───
   const stopCamera = useCallback(() => {
@@ -269,6 +331,13 @@ const SkaapScan = () => {
     setScoreBreakdown(null);
     setSavedState("idle");
     setShowScoreModal(false);
+    setAiSummary(null);
+    setAiSummaryLoading(false);
+    setDietaryTags(null);
+    setAiRecommendations(null);
+    setAiRecsLoading(false);
+    setExpandedAdditive(null);
+    setAdditiveExplanation(null);
 
     const slowTimer = setTimeout(() => setSlowLoad(true), 3000);
 
@@ -287,6 +356,7 @@ const SkaapScan = () => {
         skaapScore: cachedScore.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      fireAICalls(cached, barcode, cachedScore);
       return;
     }
 
@@ -305,11 +375,12 @@ const SkaapScan = () => {
         skaapScore: score.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
     }
     setLoading(false);
-  }, [stopCamera]);
+  }, [stopCamera, fireAICalls]);
 
   const toggleSection = (key: string) => {
     setExpandedSections(prev => {
@@ -318,6 +389,29 @@ const SkaapScan = () => {
       return next;
     });
   };
+
+  const handleAdditiveExpand = useCallback((tag: string, productName: string) => {
+    if (expandedAdditive === tag) {
+      setExpandedAdditive(null);
+      setAdditiveExplanation(null);
+      return;
+    }
+    setExpandedAdditive(tag);
+    setAdditiveExplanation(null);
+    setAdditiveExplanationLoading(true);
+
+    const code = tag.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+    const risk = getAdditiveRisk(tag);
+    fetchAdditiveExplanation({
+      eNumber: code,
+      additiveName: formatTag(tag),
+      riskLevel: getAdditiveRiskLabel(risk),
+      productName,
+    }).then(exp => {
+      setAdditiveExplanation(exp);
+      setAdditiveExplanationLoading(false);
+    }).catch(() => setAdditiveExplanationLoading(false));
+  }, [expandedAdditive]);
 
   const scanAnother = () => {
     setProductInfo(null);
@@ -328,6 +422,9 @@ const SkaapScan = () => {
     setScoreBreakdown(null);
     setShowScoreModal(false);
     setSavedState("idle");
+    setAiSummary(null);
+    setDietaryTags(null);
+    setAiRecommendations(null);
     setScreen("scanning");
     setTimeout(() => startCamera(), 100);
   };
@@ -425,6 +522,61 @@ const SkaapScan = () => {
     );
   }
 
+  // ─── SCREEN: AI INFO ───
+  if (screen === "ai-info") {
+    return (
+      <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
+        <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
+          <button onClick={() => setScreen("result")} aria-label="Back">
+            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
+          </button>
+          <h1 className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>How SKAAP uses AI</h1>
+        </div>
+        <div className="px-5 py-6 space-y-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={16} style={{ color: "#E8314A" }} />
+              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Product Summaries</h2>
+            </div>
+            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+              AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know.
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={16} style={{ color: "#E8314A" }} />
+              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Additive Explanations</h2>
+            </div>
+            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+              When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data.
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={16} style={{ color: "#E8314A" }} />
+              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Dietary Classifications</h2>
+            </div>
+            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+              AI analyzes ingredient lists to classify products as Vegan, Vegetarian, Gluten-Free, etc. Hard safety overrides prevent incorrect labels — e.g., products with milk allergens will never be labeled Dairy-Free regardless of AI confidence.
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={16} style={{ color: "#E8314A" }} />
+              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Smart Recommendations</h2>
+            </div>
+            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+              AI suggests healthier alternatives based on the product's nutritional profile, additive count, and category. Recommendations prioritize widely available products with better Nutri-Scores.
+            </p>
+          </div>
+          <p className="text-[11px] text-center pt-4" style={{ color: "#9CA3AF" }}>
+            All AI content is marked with ✨ AI. Scores and risk levels are calculated using established nutritional science, not AI.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // ─── SCREEN: SCANNING ───
   if (screen === "scanning") {
     return (
@@ -486,7 +638,6 @@ const SkaapScan = () => {
     const nl = productInfo?.nutrientLevels;
     const addCount = productInfo?.additivesTags?.length || 0;
 
-    // Nutrient row helpers for Yuka-style layout
     const getNutrientVerdict = (label: string, val: number | undefined, level?: string) => {
       if (level === "high") return label === "Protein" || label === "Fiber" ? "High amount" : `High ${label.toLowerCase()}`;
       if (level === "moderate") return `Some ${label.toLowerCase()}`;
@@ -508,11 +659,9 @@ const SkaapScan = () => {
       { label: "Carbohydrates", val: n.carbs100g, unit: "g", level: n.carbs100g != null ? (n.carbs100g > 50 ? "high" : n.carbs100g > 25 ? "moderate" : "low") : undefined, icon: "🍞" },
     ] : [];
 
-    // Separate into negatives (high concern) and positives
     const negativeRows = nutrientRows.filter(r => !isPositiveNutrient(r.label));
     const positiveRows = nutrientRows.filter(r => isPositiveNutrient(r.label));
 
-    // Determine color for nutrient dot: negative nutrients: high=red, moderate=orange, low=green; positive nutrients: high=green, moderate=green, low=orange
     const getNutrientDotColor = (label: string, level?: string) => {
       if (!level) return "#9CA3AF";
       if (isPositiveNutrient(label)) {
@@ -582,7 +731,7 @@ const SkaapScan = () => {
           )}
         </AnimatePresence>
 
-        {/* Bottom sheet — Yuka-style */}
+        {/* Bottom sheet */}
         <motion.div initial={{ y: "100%" }} animate={{ y: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
           className="bg-background rounded-t-[20px] overflow-hidden flex flex-col" style={{ maxHeight: "82vh" }}>
@@ -609,6 +758,14 @@ const SkaapScan = () => {
                     </div>
                   </div>
                 </div>
+                {/* AI summary skeleton */}
+                <Skeleton className="h-10 w-full rounded-lg" />
+                {/* Signal chips skeleton */}
+                <div className="flex gap-2">
+                  <Skeleton className="h-7 w-24 rounded-full" />
+                  <Skeleton className="h-7 w-24 rounded-full" />
+                  <Skeleton className="h-7 w-20 rounded-full" />
+                </div>
                 {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-14 w-full rounded-xl" />)}
                 {slowLoad && <p className="text-center text-sm" style={{ color: "#6B7280" }}>Taking longer than usual...</p>}
               </div>
@@ -631,12 +788,11 @@ const SkaapScan = () => {
               </div>
             )}
 
-            {/* Product result — Yuka layout */}
+            {/* Product result */}
             {productInfo && !loading && (
               <>
-                {/* Hero section: large image + product info + score */}
+                {/* Hero section */}
                 <div className="flex gap-4 px-5 pt-3 pb-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
-                  {/* Product image — large like Yuka */}
                   <div className="flex-shrink-0 w-[120px] h-[140px] rounded-xl overflow-hidden" style={{ background: "#F7F7F7" }}>
                     {productInfo.imageUrl || productInfo.imageSmallUrl ? (
                       <img
@@ -653,7 +809,6 @@ const SkaapScan = () => {
                     )}
                   </div>
 
-                  {/* Product details + score */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
                       <h3 className="font-extrabold text-[18px] leading-tight" style={{ color: "#1B2A4A", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
@@ -664,7 +819,6 @@ const SkaapScan = () => {
                       )}
                     </div>
 
-                    {/* Score — Yuka style: colored dot + number/100 + verdict */}
                     {scoreBreakdown && (
                       <button onClick={() => setShowScoreModal(true)} className="flex items-center gap-2.5 mt-3">
                         <div className="w-8 h-8 rounded-full flex-shrink-0" style={{ background: getScoreColor(scoreBreakdown.total) }} />
@@ -681,6 +835,75 @@ const SkaapScan = () => {
                   </div>
                 </div>
 
+                {/* AI Summary — Feature 1 */}
+                <div className="px-5 py-3" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  {aiSummaryLoading ? (
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-full rounded" />
+                      <Skeleton className="h-4 w-3/4 rounded" />
+                    </div>
+                  ) : aiSummary ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                      <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>{aiSummary}</p>
+                      <p className="text-[10px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
+                        <Sparkles size={10} /> AI
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+                      {scoreBreakdown ? getStaticSummary(scoreBreakdown, productInfo) : "Loading product details..."}
+                    </p>
+                  )}
+                </div>
+
+                {/* Signal Chips Row */}
+                <div className="px-5 py-3 flex gap-2 flex-wrap" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  {productInfo.nutriScoreGrade && (
+                    <span className="inline-flex items-center gap-1.5 h-[30px] px-2.5 rounded-full text-[12px] font-semibold"
+                      style={{
+                        background: `${nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF"}1F`,
+                        border: `1px solid ${nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF"}66`,
+                        color: "#1B2A4A",
+                      }}>
+                      <div className="w-2 h-2 rounded-full" style={{ background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg }} />
+                      Nutri-Score {productInfo.nutriScoreGrade.toUpperCase()}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 h-[30px] px-2.5 rounded-full text-[12px] font-semibold"
+                    style={{
+                      background: addCount === 0 ? "#D1FAE51F" : `${getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none")}1F`,
+                      border: `1px solid ${addCount === 0 ? "#6EE7B7" : getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none")}66`,
+                      color: "#1B2A4A",
+                    }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: addCount === 0 ? "#2D7D46" : getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none") }} />
+                    {addCount === 0 ? "No additives" : `${addCount} additive${addCount > 1 ? "s" : ""}`}
+                  </span>
+                  {productInfo.novaGroup && novaColors[productInfo.novaGroup] && (
+                    <span className="inline-flex items-center gap-1.5 h-[30px] px-2.5 rounded-full text-[12px] font-semibold"
+                      style={{
+                        background: `${novaColors[productInfo.novaGroup].bg}1F`,
+                        border: `1px solid ${novaColors[productInfo.novaGroup].bg}66`,
+                        color: "#1B2A4A",
+                      }}>
+                      <div className="w-2 h-2 rounded-full" style={{ background: novaColors[productInfo.novaGroup].bg }} />
+                      NOVA {productInfo.novaGroup}
+                    </span>
+                  )}
+                </div>
+
+                {/* Dietary Classification Chips — Feature 3 */}
+                {dietaryTags && Object.keys(dietaryTags).length > 0 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}
+                    className="px-5 py-2 flex gap-2 flex-wrap" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                    {Object.keys(dietaryTags).map(key => (
+                      <span key={key} className="inline-flex items-center h-[28px] px-2.5 rounded-full text-[11px] font-semibold"
+                        style={{ background: "#F0FFF4", border: "1px solid #6EE7B7", color: "#065F46" }}>
+                        {DIETARY_LABELS[key] || key}
+                      </span>
+                    ))}
+                  </motion.div>
+                )}
+
                 {/* Negatives section */}
                 {negativeRows.length > 0 && (
                   <div className="pt-4 pb-1">
@@ -689,7 +912,7 @@ const SkaapScan = () => {
                       <span className="text-[12px]" style={{ color: "#9CA3AF" }}>per 100g</span>
                     </div>
 
-                    {/* Additives row — always show in negatives */}
+                    {/* Additives row */}
                     <button onClick={() => toggleSection("additives")}
                       className="w-full flex items-center gap-3 px-5 py-3 text-left" style={{ borderBottom: "1px solid #F9FAFB" }}>
                       <span className="text-[22px] w-8 flex-shrink-0 text-center">⚗️</span>
@@ -708,7 +931,7 @@ const SkaapScan = () => {
                       </div>
                     </button>
 
-                    {/* Additives expanded */}
+                    {/* Additives expanded with AI explainer — Feature 2 */}
                     <AnimatePresence>
                       {expandedSections.has("additives") && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
@@ -721,13 +944,43 @@ const SkaapScan = () => {
                                 const riskColor = getAdditiveRiskColor(risk);
                                 const riskLabel = getAdditiveRiskLabel(risk);
                                 const desc = getAdditiveDescription(a);
+                                const isExpanded = expandedAdditive === a;
                                 return (
-                                  <div key={a} className="py-2.5" style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                                    <div className="flex items-center justify-between">
-                                      <span className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
-                                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
+                                  <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                                    <button
+                                      onClick={() => handleAdditiveExpand(a, productInfo.productName)}
+                                      className="w-full py-2.5 text-left"
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
+                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
+                                      </div>
+                                      <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
+                                    </button>
+                                    {/* AI Additive Explanation */}
+                                    <div style={{
+                                      display: "grid",
+                                      gridTemplateRows: isExpanded ? "1fr" : "0fr",
+                                      transition: "grid-template-rows 220ms ease-out",
+                                    }}>
+                                      <div className="overflow-hidden">
+                                        <div className="pb-2 pl-1">
+                                          {additiveExplanationLoading && isExpanded ? (
+                                            <div className="space-y-1">
+                                              <Skeleton className="h-3 w-full rounded" />
+                                              <Skeleton className="h-3 w-4/5 rounded" />
+                                            </div>
+                                          ) : additiveExplanation && isExpanded ? (
+                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                              <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                              <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
+                                                <Sparkles size={8} /> AI
+                                              </p>
+                                            </motion.div>
+                                          ) : null}
+                                        </div>
+                                      </div>
                                     </div>
-                                    <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
                                   </div>
                                 );
                               })
@@ -791,7 +1044,7 @@ const SkaapScan = () => {
                   </div>
                 )}
 
-                {/* Ingredients — collapsible */}
+                {/* Ingredients */}
                 {productInfo.ingredientsText && (
                   <div style={{ borderTop: "1px solid #F3F4F6" }}>
                     <button onClick={() => toggleSection("ingredients")}
@@ -833,7 +1086,7 @@ const SkaapScan = () => {
                   </div>
                 )}
 
-                {/* Labels/Certifications */}
+                {/* Certifications */}
                 {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
                   <div style={{ borderTop: "1px solid #F3F4F6" }}>
                     <button onClick={() => toggleSection("labels")}
@@ -859,6 +1112,48 @@ const SkaapScan = () => {
                     </AnimatePresence>
                   </div>
                 )}
+
+                {/* AI Recommendations — Feature 4 */}
+                <div style={{ borderTop: "1px solid #F3F4F6" }}>
+                  <div className="px-5 py-3">
+                    <div className="flex items-center gap-2 mb-3">
+                      <h4 className="font-extrabold text-[15px]" style={{ color: "#1B2A4A" }}>Healthier Alternatives</h4>
+                      <Sparkles size={12} style={{ color: "#9CA3AF" }} />
+                      <span className="text-[10px]" style={{ color: "#9CA3AF" }}>AI</span>
+                    </div>
+                    {aiRecsLoading ? (
+                      <div className="space-y-2">
+                        {[1,2,3].map(i => <Skeleton key={i} className="h-14 w-full rounded-lg" />)}
+                      </div>
+                    ) : aiRecommendations && aiRecommendations.length > 0 ? (
+                      <div className="space-y-2">
+                        {aiRecommendations.map((rec, i) => (
+                          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#F7F7F7" }}>
+                            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-extrabold text-sm"
+                              style={{ background: nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46", color: "#fff" }}>
+                              {rec.estimatedScore?.toUpperCase() || "A"}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-[13px] truncate" style={{ color: "#1B2A4A" }}>{rec.name}</p>
+                              <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[12px]" style={{ color: "#9CA3AF" }}>No recommendations available for this product.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* AI info link */}
+                <div className="px-5 py-2 text-center" style={{ borderTop: "1px solid #F3F4F6" }}>
+                  <button onClick={() => setScreen("ai-info")} className="text-[11px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
+                    <Sparkles size={10} /> How SKAAP uses AI
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -947,32 +1242,21 @@ const SkaapScan = () => {
   return null;
 };
 
-// ─── Accordion Section Component ───
-function AccordionSection({ title, isOpen, onToggle, indicator, children }: {
-  title: string; isOpen: boolean; onToggle: () => void;
-  indicator?: React.ReactNode; children: React.ReactNode;
-}) {
-  return (
-    <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#F3F4F6" }}>
-      <button onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 text-left">
-        <span className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>{title}</span>
-        <div className="flex items-center gap-2">
-          {indicator}
-          <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-            <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
-          </motion.div>
-        </div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
-            <div className="px-4 pb-4">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+// ─── Static summary fallback ───
+function getStaticSummary(score: SkaapScoreBreakdown, info: ProductFullInfo): string {
+  if (score.nutriScoreGrade && ["a", "b"].includes(score.nutriScoreGrade.toLowerCase())) {
+    return `Good nutritional profile with ${score.additiveCount === 0 ? "no" : "some"} additives.`;
+  }
+  if (score.hasHighRiskAdditive) {
+    return "Contains a high-risk additive affecting the score.";
+  }
+  if (info.novaGroup === 4 && score.nutriScoreGrade && ["c", "d", "e"].includes(score.nutriScoreGrade.toLowerCase())) {
+    return "Ultra-processed with a below-average nutritional profile.";
+  }
+  if (score.isOrganic) {
+    return "Organic certified with a solid nutritional balance.";
+  }
+  return "Moderate nutritional quality. Check ingredients below.";
 }
 
 // ─── Allergen highlighting ───
