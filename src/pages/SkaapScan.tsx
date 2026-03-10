@@ -67,6 +67,117 @@ function isInBasket(barcode: string): boolean {
   return getBasket().some(b => b.barcode === barcode);
 }
 
+// ─── Canvas image export for basket comparison ───
+async function exportBasketImage(items: BasketItem[], getColor: (s: number) => string): Promise<Blob | null> {
+  const cols = Math.min(items.length, 4);
+  const colW = 150;
+  const padX = 24;
+  const padTop = 64;
+  const cardH = 190;
+  const padBot = 48;
+  const W = padX * 2 + cols * colW;
+  const H = padTop + cardH + padBot;
+  const canvas = document.createElement("canvas");
+  const dpr = 2;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.scale(dpr, dpr);
+
+  // Background
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath();
+  ctx.roundRect(0, 0, W, H, 16);
+  ctx.fill();
+
+  // Header
+  ctx.fillStyle = "#1B2A4A";
+  ctx.font = "bold 16px Inter, system-ui, sans-serif";
+  ctx.fillText("🐑 SKAAP Comparison", padX, 38);
+  ctx.fillStyle = "#9CA3AF";
+  ctx.font = "400 10px Inter, system-ui, sans-serif";
+  ctx.fillText("useskaap.com", W - padX - ctx.measureText("useskaap.com").width, 38);
+
+  // Load images
+  const images = await Promise.all(items.slice(0, cols).map(item => {
+    if (!item.image) return Promise.resolve(null);
+    return new Promise<HTMLImageElement | null>(resolve => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = item.image!;
+    });
+  }));
+
+  items.slice(0, cols).forEach((item, i) => {
+    const x = padX + i * colW;
+    const y = padTop;
+
+    // Product image area
+    ctx.fillStyle = "#F7F7F7";
+    ctx.beginPath();
+    ctx.roundRect(x + 8, y, colW - 16, 72, 10);
+    ctx.fill();
+    const img = images[i];
+    if (img) {
+      const s = 56;
+      ctx.drawImage(img, x + (colW - s) / 2, y + 8, s, s);
+    } else {
+      ctx.fillStyle = "#D1D5DB";
+      ctx.font = "400 10px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("No image", x + colW / 2, y + 42);
+      ctx.textAlign = "left";
+    }
+
+    // Name (truncated)
+    ctx.fillStyle = "#1B2A4A";
+    ctx.font = "600 11px Inter, system-ui, sans-serif";
+    const name = item.name.length > 16 ? item.name.slice(0, 15) + "…" : item.name;
+    ctx.textAlign = "center";
+    ctx.fillText(name, x + colW / 2, y + 92);
+
+    // Score circle
+    if (item.skaapScore != null) {
+      const cx = x + colW / 2;
+      const cy = y + 120;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.fillStyle = getColor(item.skaapScore);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "800 13px Inter, system-ui, sans-serif";
+      ctx.fillText(String(item.skaapScore), cx, cy + 5);
+    }
+
+    // Nutri-Score chip
+    if (item.nutriScore) {
+      const ns = item.nutriScore.toLowerCase();
+      const nColor = ns === "a" ? "#2D7D46" : ns === "b" ? "#4CAF50" : ns === "c" ? "#FFC107" : ns === "d" ? "#FF6D00" : "#E8314A";
+      const label = `Nutri ${item.nutriScore.toUpperCase()}`;
+      ctx.fillStyle = nColor;
+      const tw = ctx.measureText(label).width;
+      ctx.beginPath();
+      ctx.roundRect(x + (colW - tw - 12) / 2, y + 148, tw + 12, 18, 9);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 9px Inter, system-ui, sans-serif";
+      ctx.fillText(label, x + colW / 2, y + 160);
+    }
+
+    // Additives
+    ctx.fillStyle = "#9CA3AF";
+    ctx.font = "400 9px Inter, system-ui, sans-serif";
+    ctx.fillText(item.additiveCount === 0 ? "No additives" : `${item.additiveCount} additive${item.additiveCount > 1 ? "s" : ""}`, x + colW / 2, y + 182);
+    ctx.textAlign = "left";
+  });
+
+  return new Promise(resolve => canvas.toBlob(b => resolve(b), "image/png"));
+}
+
+
 // ─── localStorage cache helpers (7-day TTL) ───
 const CACHE_PREFIX = "skaap_cache_";
 const SCORE_CACHE_PREFIX = "skaap_score_";
@@ -1400,24 +1511,37 @@ const SkaapScan = () => {
           </button>
           <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#1B2A4A" }}>Saved Products</h1>
           {basket.length >= 2 ? (
-            <button onClick={async () => {
-              // Generate shareable text comparison
-              const lines = basket.map((item, i) => 
-                `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
-              );
-              const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
-              
-              if (navigator.share) {
-                try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
-              } else {
-                try { await navigator.clipboard.writeText(shareText); } catch {}
-                // Brief visual feedback
-                const btn = document.getElementById("share-btn");
-                if (btn) { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = ""; }, 1500); }
-              }
-            }} id="share-btn" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
-              <Share2 size={18} style={{ color: "#1B2A4A" }} />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button onClick={async () => {
+                const blob = await exportBasketImage(basket, getScoreColor);
+                if (!blob) return;
+                const file = new File([blob], "skaap-comparison.png", { type: "image/png" });
+                if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                  try { await navigator.share({ files: [file], title: "SKAAP Comparison" }); } catch {}
+                } else {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url; a.download = "skaap-comparison.png";
+                  a.click(); URL.revokeObjectURL(url);
+                }
+              }} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}
+                title="Export as image">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              </button>
+              <button onClick={async () => {
+                const lines = basket.map((item, i) =>
+                  `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
+                );
+                const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
+                if (navigator.share) {
+                  try { await navigator.share({ title: "SKAAP Comparison", text: shareText }); } catch {}
+                } else {
+                  try { await navigator.clipboard.writeText(shareText); } catch {}
+                }
+              }} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#F5F5F5" }}>
+                <Share2 size={18} style={{ color: "#1B2A4A" }} />
+              </button>
+            </div>
           ) : (
             <div className="w-8" />
           )}
