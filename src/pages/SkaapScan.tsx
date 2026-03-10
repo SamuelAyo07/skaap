@@ -1272,8 +1272,8 @@ const SkaapScan = () => {
 
   // ─── SCREEN: HISTORY ───
   if (screen === "history") {
-    const [historySearch, setHistorySearch] = React.useState("");
-    const [scoreFilter, setScoreFilter] = React.useState<string>("all");
+    const [historySearch, setHistorySearch] = useState("");
+    const [scoreFilter, setScoreFilter] = useState<string>("all");
 
     const filteredHistory = history.filter(item => {
       const matchesSearch = !historySearch || 
