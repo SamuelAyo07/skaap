@@ -28,7 +28,43 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket";
+
+// ─── Saved basket helpers ───
+const BASKET_KEY = "skaap_basket";
+
+interface BasketItem {
+  barcode: string;
+  name: string;
+  brand?: string;
+  image?: string;
+  nutriScore?: string;
+  skaapScore?: number;
+  novaGroup?: number;
+  additiveCount: number;
+  savedAt: number;
+}
+
+function getBasket(): BasketItem[] {
+  try { return JSON.parse(localStorage.getItem(BASKET_KEY) || "[]"); } catch { return []; }
+}
+
+function addToBasket(item: BasketItem): BasketItem[] {
+  const basket = getBasket().filter(b => b.barcode !== item.barcode);
+  basket.unshift(item);
+  localStorage.setItem(BASKET_KEY, JSON.stringify(basket.slice(0, 100)));
+  return basket;
+}
+
+function removeFromBasket(barcode: string): BasketItem[] {
+  const basket = getBasket().filter(b => b.barcode !== barcode);
+  localStorage.setItem(BASKET_KEY, JSON.stringify(basket));
+  return basket;
+}
+
+function isInBasket(barcode: string): boolean {
+  return getBasket().some(b => b.barcode === barcode);
+}
 
 // ─── localStorage cache helpers (7-day TTL) ───
 const CACHE_PREFIX = "skaap_cache_";
