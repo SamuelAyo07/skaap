@@ -1274,8 +1274,6 @@ const SkaapScan = () => {
 
   // ─── SCREEN: HISTORY ───
   if (screen === "history") {
-    const [historySearch, setHistorySearch] = useState("");
-    const [scoreFilter, setScoreFilter] = useState<string>("all");
 
     const filteredHistory = history.filter(item => {
       const matchesSearch = !historySearch || 
