@@ -399,6 +399,12 @@ const SkaapScan = () => {
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
 
+  // Auto-expand sheet when any accordion opens
+  const hasAnyExpanded = expandedSections.size > 0;
+  useEffect(() => {
+    setSheetExpanded(hasAnyExpanded);
+  }, [hasAnyExpanded]);
+
   // History
   const [history, setHistory] = useState<ScanHistoryItem[]>(getHistory());
   const [historySearch, setHistorySearch] = useState("");
