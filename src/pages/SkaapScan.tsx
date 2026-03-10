@@ -67,6 +67,117 @@ function isInBasket(barcode: string): boolean {
   return getBasket().some(b => b.barcode === barcode);
 }
 
+// ─── Canvas image export for basket comparison ───
+async function exportBasketImage(items: BasketItem[], getColor: (s: number) => string): Promise<Blob | null> {
+  const cols = Math.min(items.length, 4);
+  const colW = 150;
+  const padX = 24;
+  const padTop = 64;
+  const cardH = 190;
+  const padBot = 48;
+  const W = padX * 2 + cols * colW;
+  const H = padTop + cardH + padBot;
+  const canvas = document.createElement("canvas");
+  const dpr = 2;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.scale(dpr, dpr);
+
+  // Background
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath();
+  ctx.roundRect(0, 0, W, H, 16);
+  ctx.fill();
+
+  // Header
+  ctx.fillStyle = "#1B2A4A";
+  ctx.font = "bold 16px Inter, system-ui, sans-serif";
+  ctx.fillText("🐑 SKAAP Comparison", padX, 38);
+  ctx.fillStyle = "#9CA3AF";
+  ctx.font = "400 10px Inter, system-ui, sans-serif";
+  ctx.fillText("useskaap.com", W - padX - ctx.measureText("useskaap.com").width, 38);
+
+  // Load images
+  const images = await Promise.all(items.slice(0, cols).map(item => {
+    if (!item.image) return Promise.resolve(null);
+    return new Promise<HTMLImageElement | null>(resolve => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = item.image!;
+    });
+  }));
+
+  items.slice(0, cols).forEach((item, i) => {
+    const x = padX + i * colW;
+    const y = padTop;
+
+    // Product image area
+    ctx.fillStyle = "#F7F7F7";
+    ctx.beginPath();
+    ctx.roundRect(x + 8, y, colW - 16, 72, 10);
+    ctx.fill();
+    const img = images[i];
+    if (img) {
+      const s = 56;
+      ctx.drawImage(img, x + (colW - s) / 2, y + 8, s, s);
+    } else {
+      ctx.fillStyle = "#D1D5DB";
+      ctx.font = "400 10px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("No image", x + colW / 2, y + 42);
+      ctx.textAlign = "left";
+    }
+
+    // Name (truncated)
+    ctx.fillStyle = "#1B2A4A";
+    ctx.font = "600 11px Inter, system-ui, sans-serif";
+    const name = item.name.length > 16 ? item.name.slice(0, 15) + "…" : item.name;
+    ctx.textAlign = "center";
+    ctx.fillText(name, x + colW / 2, y + 92);
+
+    // Score circle
+    if (item.skaapScore != null) {
+      const cx = x + colW / 2;
+      const cy = y + 120;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.fillStyle = getColor(item.skaapScore);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "800 13px Inter, system-ui, sans-serif";
+      ctx.fillText(String(item.skaapScore), cx, cy + 5);
+    }
+
+    // Nutri-Score chip
+    if (item.nutriScore) {
+      const ns = item.nutriScore.toLowerCase();
+      const nColor = ns === "a" ? "#2D7D46" : ns === "b" ? "#4CAF50" : ns === "c" ? "#FFC107" : ns === "d" ? "#FF6D00" : "#E8314A";
+      const label = `Nutri ${item.nutriScore.toUpperCase()}`;
+      ctx.fillStyle = nColor;
+      const tw = ctx.measureText(label).width;
+      ctx.beginPath();
+      ctx.roundRect(x + (colW - tw - 12) / 2, y + 148, tw + 12, 18, 9);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 9px Inter, system-ui, sans-serif";
+      ctx.fillText(label, x + colW / 2, y + 160);
+    }
+
+    // Additives
+    ctx.fillStyle = "#9CA3AF";
+    ctx.font = "400 9px Inter, system-ui, sans-serif";
+    ctx.fillText(item.additiveCount === 0 ? "No additives" : `${item.additiveCount} additive${item.additiveCount > 1 ? "s" : ""}`, x + colW / 2, y + 182);
+    ctx.textAlign = "left";
+  });
+
+  return new Promise(resolve => canvas.toBlob(b => resolve(b), "image/png"));
+}
+
+
 // ─── localStorage cache helpers (7-day TTL) ───
 const CACHE_PREFIX = "skaap_cache_";
 const SCORE_CACHE_PREFIX = "skaap_score_";
