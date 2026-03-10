@@ -519,12 +519,23 @@ const SkaapScan = () => {
             <img src={skaapIcon} alt="Skaap" className="w-7 h-7 rounded-lg" width="28" height="28" />
             <span className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Skaap</span>
           </div>
-          {history.length > 0 && (
-            <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setHistory(getHistory()); setScreen("history"); }}
-              className="w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scan history">
-              <Clock size={22} style={{ color: "#1B2A4A" }} />
-            </motion.button>
-          )}
+          <div className="flex items-center gap-2">
+            {basket.length > 0 && (
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setBasket(getBasket()); setScreen("basket"); }}
+                className="w-10 h-10 rounded-full flex items-center justify-center relative" aria-label="Saved basket">
+                <Heart size={22} style={{ color: "#E8314A" }} fill="#E8314A" />
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#E8314A" }}>
+                  {basket.length}
+                </span>
+              </motion.button>
+            )}
+            {history.length > 0 && (
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setHistory(getHistory()); setScreen("history"); }}
+                className="w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scan history">
+                <Clock size={22} style={{ color: "#1B2A4A" }} />
+              </motion.button>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center" style={{ paddingBottom: 40 }}>
