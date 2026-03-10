@@ -484,6 +484,42 @@ const SkaapScan = () => {
   if (screen === "result") {
     const n = productInfo?.nutriments;
     const nl = productInfo?.nutrientLevels;
+    const addCount = productInfo?.additivesTags?.length || 0;
+
+    // Nutrient row helpers for Yuka-style layout
+    const getNutrientVerdict = (label: string, val: number | undefined, level?: string) => {
+      if (level === "high") return label === "Protein" || label === "Fiber" ? "High amount" : `High ${label.toLowerCase()}`;
+      if (level === "moderate") return `Some ${label.toLowerCase()}`;
+      if (level === "low") return `Low ${label.toLowerCase()}`;
+      if (val == null) return "—";
+      return "";
+    };
+
+    const isPositiveNutrient = (label: string) => ["Protein", "Fiber"].includes(label);
+
+    const nutrientRows = n ? [
+      { label: "Calories", val: n.energyKcal100g, unit: "Cal", level: n.energyKcal100g != null ? (n.energyKcal100g > 300 ? "high" : n.energyKcal100g > 150 ? "moderate" : "low") : undefined, icon: "🔥" },
+      { label: "Fat", val: n.fat100g, unit: "g", level: nl?.fat, icon: "💧" },
+      { label: "Saturated fat", val: n.saturatedFat100g, unit: "g", level: nl?.saturatedFat, icon: "💧" },
+      { label: "Sugars", val: n.sugars100g, unit: "g", level: nl?.sugars, icon: "🍬" },
+      { label: "Salt", val: n.salt100g, unit: "g", level: nl?.salt, icon: "🧂" },
+      { label: "Protein", val: n.protein100g, unit: "g", level: n.protein100g != null ? (n.protein100g > 10 ? "high" : n.protein100g > 5 ? "moderate" : "low") : undefined, icon: "🥩" },
+      { label: "Fiber", val: n.fiber100g, unit: "g", level: n.fiber100g != null ? (n.fiber100g > 5 ? "high" : n.fiber100g > 2 ? "moderate" : "low") : undefined, icon: "🌾" },
+      { label: "Carbohydrates", val: n.carbs100g, unit: "g", level: n.carbs100g != null ? (n.carbs100g > 50 ? "high" : n.carbs100g > 25 ? "moderate" : "low") : undefined, icon: "🍞" },
+    ] : [];
+
+    // Separate into negatives (high concern) and positives
+    const negativeRows = nutrientRows.filter(r => !isPositiveNutrient(r.label));
+    const positiveRows = nutrientRows.filter(r => isPositiveNutrient(r.label));
+
+    // Determine color for nutrient dot: negative nutrients: high=red, moderate=orange, low=green; positive nutrients: high=green, moderate=green, low=orange
+    const getNutrientDotColor = (label: string, level?: string) => {
+      if (!level) return "#9CA3AF";
+      if (isPositiveNutrient(label)) {
+        return level === "high" ? "#2D7D46" : level === "moderate" ? "#2D7D46" : "#FF6D00";
+      }
+      return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
+    };
 
     return (
       <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
@@ -497,16 +533,12 @@ const SkaapScan = () => {
                 transition={{ type: "spring", damping: 28, stiffness: 300 }}
                 className="relative bg-background w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh" }}
                 onClick={e => e.stopPropagation()}>
-                {/* Handle */}
                 <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
                 <button onClick={() => setShowScoreModal(false)} className="absolute top-3 right-4" aria-label="Close">
                   <X size={24} style={{ color: "#1B2A4A" }} />
                 </button>
-
                 <div className="px-5 pb-6 pt-4 overflow-y-auto" style={{ maxHeight: "calc(60vh - 32px)" }}>
                   <h3 className="font-extrabold text-xl mb-5" style={{ color: "#1B2A4A" }}>How we scored this</h3>
-
-                  {/* Nutrition */}
                   <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Nutritional Quality</span>
@@ -514,12 +546,8 @@ const SkaapScan = () => {
                         {scoreBreakdown.nutritionContribution} / 60 pts
                       </span>
                     </div>
-                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>
-                      Based on Nutri-Score {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"} · Sugar, fat, fiber, protein, calories
-                    </p>
+                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>Based on Nutri-Score {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"}</p>
                   </div>
-
-                  {/* Additives */}
                   <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Additives</span>
@@ -527,17 +555,13 @@ const SkaapScan = () => {
                         {scoreBreakdown.additiveContribution} / 30 pts
                       </span>
                     </div>
-                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>
-                      {scoreBreakdown.additiveCount} additives found · {scoreBreakdown.worstAdditiveRisk} risk detected
-                    </p>
+                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>{scoreBreakdown.additiveCount} additives · {scoreBreakdown.worstAdditiveRisk} risk</p>
                     {scoreBreakdown.hasHighRiskAdditive && (
                       <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "#FEF3C7", color: "#92400E" }}>
-                        ⚠ Score capped at 49 due to high-risk additive
+                        ⚠ Score capped at 49
                       </span>
                     )}
                   </div>
-
-                  {/* Organic */}
                   <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Organic</span>
@@ -546,12 +570,11 @@ const SkaapScan = () => {
                       </span>
                     </div>
                     <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>
-                      {scoreBreakdown.isOrganic ? "Organic certification reduces pesticide exposure" : "No organic certification found"}
+                      {scoreBreakdown.isOrganic ? "Organic certified" : "No organic certification"}
                     </p>
                   </div>
-
                   <p className="text-[11px] text-center mt-4" style={{ color: "#9CA3AF" }}>
-                    Scoring methodology based on Nutri-Score, EFSA additive research, and IARC guidelines. Data from Open Food Facts.
+                    Based on Nutri-Score, EFSA research, and IARC guidelines.
                   </p>
                 </div>
               </motion.div>
@@ -559,38 +582,41 @@ const SkaapScan = () => {
           )}
         </AnimatePresence>
 
-        {/* Bottom sheet */}
+        {/* Bottom sheet — Yuka-style */}
         <motion.div initial={{ y: "100%" }} animate={{ y: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="bg-background rounded-t-[20px] overflow-hidden flex flex-col" style={{ maxHeight: "75vh" }}>
+          className="bg-background rounded-t-[20px] overflow-hidden flex flex-col" style={{ maxHeight: "82vh" }}>
           <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
             <div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} />
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-2">
+          <div className="flex-1 overflow-y-auto">
             {/* Loading skeleton */}
             {loading && (
-              <div className="space-y-4 py-4">
-                <div className="flex gap-3 items-center">
-                  <Skeleton className="w-12 h-12 rounded-xl flex-shrink-0" />
-                  <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-4 w-3/4" />
+              <div className="px-5 py-4 space-y-4">
+                <div className="flex gap-4 items-start">
+                  <Skeleton className="w-[120px] h-[120px] rounded-xl flex-shrink-0" />
+                  <div className="flex-1 space-y-2 pt-2">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-3/4" />
                     <Skeleton className="h-3 w-1/2" />
+                    <div className="pt-2 flex items-center gap-2">
+                      <Skeleton className="w-10 h-10 rounded-full" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-5 w-20" />
+                        <Skeleton className="h-3 w-12" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-center"><Skeleton className="w-[120px] h-[120px] rounded-full" /></div>
-                <div className="flex gap-3">
-                  <Skeleton className="h-[72px] flex-1 rounded-xl" />
-                  <Skeleton className="h-[72px] flex-1 rounded-xl" />
-                </div>
-                {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
+                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-14 w-full rounded-xl" />)}
                 {slowLoad && <p className="text-center text-sm" style={{ color: "#6B7280" }}>Taking longer than usual...</p>}
               </div>
             )}
 
             {/* Not found */}
             {notFound && !loading && (
-              <div className="py-12 text-center">
+              <div className="py-12 text-center px-5">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#F7F7F7" }}>
                   <Barcode size={24} style={{ color: "#9CA3AF" }} />
                 </div>
@@ -605,220 +631,256 @@ const SkaapScan = () => {
               </div>
             )}
 
-            {/* Product result */}
+            {/* Product result — Yuka layout */}
             {productInfo && !loading && (
-              <div className="space-y-4 pt-2">
-                {/* Compact product header — 48px image */}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-[10px] overflow-hidden flex-shrink-0 border" style={{ borderColor: "#E5E7EB", background: "#F7F7F7" }}>
-                    {productInfo.imageUrl ? (
-                      <img src={productInfo.imageUrl} alt={productInfo.productName} className="w-full h-full object-contain p-0.5"
-                        width="48" height="48" onError={e => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+              <>
+                {/* Hero section: large image + product info + score */}
+                <div className="flex gap-4 px-5 pt-3 pb-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  {/* Product image — large like Yuka */}
+                  <div className="flex-shrink-0 w-[120px] h-[140px] rounded-xl overflow-hidden" style={{ background: "#F7F7F7" }}>
+                    {productInfo.imageUrl || productInfo.imageSmallUrl ? (
+                      <img
+                        src={productInfo.imageUrl || productInfo.imageSmallUrl}
+                        alt={productInfo.productName}
+                        className="w-full h-full object-contain p-2"
+                        loading="eager"
+                        onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center"><Barcode size={20} style={{ color: "#9CA3AF" }} /></div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-extrabold text-base leading-snug truncate" style={{ color: "#1B2A4A" }}>{productInfo.productName}</h3>
-                    <p className="text-xs truncate" style={{ color: "#9CA3AF" }}>
-                      {[productInfo.brand, productInfo.quantity].filter(Boolean).join(" · ")}
-                    </p>
-                  </div>
-                </div>
-
-                {/* SKAAP Score hero */}
-                {scoreBreakdown && (
-                  <div className="flex flex-col items-center py-2">
-                    <button onClick={() => setShowScoreModal(true)}
-                      aria-label={`SKAAP Score: ${scoreBreakdown.total} out of 100, ${getScoreVerdict(scoreBreakdown.total)}`}>
-                      <ScoreRing score={scoreBreakdown.total} />
-                    </button>
-                    <p className="font-semibold text-[15px] mt-3" style={{ color: getScoreColor(scoreBreakdown.total) }}>
-                      {getScoreVerdict(scoreBreakdown.total)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Nutri-Score + NOVA badges (compact 72px) */}
-                <div className="flex gap-3">
-                  <div className="flex-1 rounded-xl flex flex-col items-center justify-center" style={{
-                    background: productInfo.nutriScoreGrade ? nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#E5E7EB" : "#E5E7EB",
-                    color: productInfo.nutriScoreGrade ? nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.text || "#1B2A4A" : "#9CA3AF",
-                    height: 72,
-                  }}>
-                    <span className="text-[9px] font-semibold uppercase tracking-wider opacity-80">NUTRI-SCORE</span>
-                    <span className="text-4xl font-extrabold leading-none">{productInfo.nutriScoreGrade?.toUpperCase() || "—"}</span>
-                  </div>
-                  <div className="flex-1 rounded-xl flex flex-col items-center justify-center" style={{
-                    background: productInfo.novaGroup ? novaColors[productInfo.novaGroup]?.bg || "#E5E7EB" : "#E5E7EB",
-                    color: productInfo.novaGroup ? novaColors[productInfo.novaGroup]?.text || "#1B2A4A" : "#9CA3AF",
-                    height: 72,
-                  }}>
-                    <span className="text-[9px] font-semibold uppercase tracking-wider opacity-80">NOVA GROUP</span>
-                    <span className="text-4xl font-extrabold leading-none">{productInfo.novaGroup || "—"}</span>
-                    {productInfo.novaGroup && <span className="text-[9px] font-normal opacity-80">{novaColors[productInfo.novaGroup]?.label}</span>}
-                  </div>
-                </div>
-
-                {/* Score breakdown chips */}
-                {scoreBreakdown && (
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5" style={{ background: "#F7F7F7", color: "#1B2A4A" }}>
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: nutriColors[scoreBreakdown.nutriScoreGrade?.toLowerCase() || ""]?.bg || "#9CA3AF" }} />
-                      Nutrition · {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "—"}
-                    </span>
-                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5" style={{ background: "#F7F7F7", color: "#1B2A4A" }}>
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: getAdditiveRiskColor(scoreBreakdown.worstAdditiveRisk) }} />
-                      {scoreBreakdown.additiveCount} additives
-                    </span>
-                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{
-                      background: "#F7F7F7", color: scoreBreakdown.isOrganic ? "#2D7D46" : "#9CA3AF",
-                    }}>
-                      {scoreBreakdown.isOrganic ? "Organic ✓" : "Non-organic"}
-                    </span>
-                  </div>
-                )}
-
-                {/* Divider */}
-                <div style={{ borderTop: "1px solid #F3F4F6" }} />
-
-                {/* Nutrition */}
-                {n && (
-                  <AccordionSection title="Nutrition Facts" isOpen={expandedSections.has("nutrition")} onToggle={() => toggleSection("nutrition")}
-                    indicator={<div className="w-2 h-2 rounded-full" style={{ background: nl?.fat === "high" || nl?.sugars === "high" || nl?.salt === "high" ? "#E8314A" : nl?.fat === "moderate" || nl?.sugars === "moderate" ? "#FFC107" : "#2D7D46" }} />}>
-                    <div className="space-y-2.5">
-                      {[
-                        { label: "Calories", val: n.energyKcal100g, unit: "kcal", level: undefined, max: 800 },
-                        { label: "Fat", val: n.fat100g, unit: "g", level: nl?.fat, max: 100 },
-                        { label: "Saturated Fat", val: n.saturatedFat100g, unit: "g", level: nl?.saturatedFat, max: 40 },
-                        { label: "Carbohydrates", val: n.carbs100g, unit: "g", level: undefined, max: 100 },
-                        { label: "Sugars", val: n.sugars100g, unit: "g", level: nl?.sugars, max: 100 },
-                        { label: "Fiber", val: n.fiber100g, unit: "g", level: undefined, max: 30 },
-                        { label: "Protein", val: n.protein100g, unit: "g", level: undefined, max: 50 },
-                        { label: "Salt", val: n.salt100g, unit: "g", level: nl?.salt, max: 6 },
-                      ].map(row => {
-                        const pct = row.val != null ? Math.min((Number(row.val) / row.max) * 100, 100) : 0;
-                        return (
-                          <div key={row.label}>
-                            <div className="flex justify-between text-sm mb-0.5">
-                              <span style={{ color: "#6B7280" }}>{row.label}</span>
-                              <span className="font-semibold" style={{ color: "#1B2A4A" }}>{row.val != null ? `${Number(row.val).toFixed(1)} ${row.unit}` : "—"}</span>
-                            </div>
-                            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#F3F4F6" }}>
-                              <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: 0.2, duration: 0.5 }}
-                                className="h-full rounded-full" style={{ background: row.level ? nutrientLevelColor(row.level) : "rgba(27,42,74,0.2)" }} />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </AccordionSection>
-                )}
-
-                {/* Ingredients */}
-                {productInfo.ingredientsText && (
-                  <AccordionSection title="Ingredients" isOpen={expandedSections.has("ingredients")} onToggle={() => toggleSection("ingredients")}
-                    indicator={<span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1B2A4A", color: "#fff" }}>
-                      {productInfo.ingredientsText.split(",").length}
-                    </span>}>
-                    <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-                      {productInfo.allergensTags?.length
-                        ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
-                        : productInfo.ingredientsText}
-                    </p>
-                    {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        <span className="text-[11px] font-semibold" style={{ color: "#1B2A4A" }}>Allergens:</span>
-                        {productInfo.allergensTags.map(a => (
-                          <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>
-                            {formatTag(a)}
-                          </span>
-                        ))}
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Barcode size={32} style={{ color: "#D1D5DB" }} />
                       </div>
                     )}
-                  </AccordionSection>
-                )}
+                  </div>
 
-                {/* Additives — upgraded with descriptions */}
-                <AccordionSection title="Additives" isOpen={expandedSections.has("additives")} onToggle={() => toggleSection("additives")}
-                  indicator={
-                    productInfo.additivesTags && productInfo.additivesTags.length > 0
-                      ? <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1B2A4A", color: "#fff" }}>{productInfo.additivesTags.length}</span>
-                      : <span className="text-[11px] font-semibold" style={{ color: "#2D7D46" }}>None detected ✓</span>
-                  }>
-                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
+                  {/* Product details + score */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      {productInfo.additivesTags.map((a, i) => {
-                        const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                        const risk = getAdditiveRisk(a);
-                        const riskColor = getAdditiveRiskColor(risk);
-                        const riskLabel = getAdditiveRiskLabel(risk);
-                        const desc = getAdditiveDescription(a);
-                        return (
-                          <div key={a} className="py-3" style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                            <div className="flex items-center justify-between">
-                              <span>
-                                <span className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>{code}</span>
-                                <span className="font-semibold text-[13px] ml-1" style={{ color: "#1B2A4A" }}> · {formatTag(a)}</span>
-                              </span>
-                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md text-white flex-shrink-0" style={{ background: riskColor }}>
-                                {riskLabel}
-                              </span>
-                            </div>
-                            <p className="text-xs mt-1" style={{ color: "#6B7280" }}>{desc}</p>
-                          </div>
-                        );
-                      })}
+                      <h3 className="font-extrabold text-[18px] leading-tight" style={{ color: "#1B2A4A", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {productInfo.productName}
+                      </h3>
+                      {productInfo.brand && (
+                        <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>{productInfo.brand}</p>
+                      )}
                     </div>
-                  ) : (
-                    <div className="text-center py-4">
-                      <motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2" style={{ background: "rgba(45,125,70,0.1)" }}>
-                        <Check size={20} style={{ color: "#2D7D46" }} />
-                      </motion.div>
-                      <p className="font-semibold text-[15px]" style={{ color: "#2D7D46" }}>No additives detected</p>
-                      <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>This product contains no artificial additives.</p>
-                    </div>
-                  )}
-                </AccordionSection>
 
-                {/* Labels */}
-                {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
-                  <AccordionSection title="Certifications" isOpen={expandedSections.has("labels")} onToggle={() => toggleSection("labels")}>
-                    <div className="flex flex-wrap gap-1.5">
-                      {productInfo.labelsTags.map(l => (
-                        <span key={l} className="text-xs font-semibold px-2.5 py-1 rounded-lg border" style={{ borderColor: "#1B2A4A", color: "#1B2A4A" }}>
-                          {formatTag(l)}
-                        </span>
-                      ))}
+                    {/* Score — Yuka style: colored dot + number/100 + verdict */}
+                    {scoreBreakdown && (
+                      <button onClick={() => setShowScoreModal(true)} className="flex items-center gap-2.5 mt-3">
+                        <div className="w-8 h-8 rounded-full flex-shrink-0" style={{ background: getScoreColor(scoreBreakdown.total) }} />
+                        <div className="text-left">
+                          <span className="font-extrabold text-[20px] leading-none" style={{ color: "#1B2A4A" }}>
+                            {scoreBreakdown.total}<span className="font-extrabold text-[20px]">/100</span>
+                          </span>
+                          <p className="text-[13px] font-medium" style={{ color: "#9CA3AF" }}>
+                            {getScoreVerdict(scoreBreakdown.total)}
+                          </p>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Negatives section */}
+                {negativeRows.length > 0 && (
+                  <div className="pt-4 pb-1">
+                    <div className="flex items-center justify-between px-5 mb-1">
+                      <h4 className="font-extrabold text-[17px]" style={{ color: "#1B2A4A" }}>Negatives</h4>
+                      <span className="text-[12px]" style={{ color: "#9CA3AF" }}>per 100g</span>
                     </div>
-                  </AccordionSection>
+
+                    {/* Additives row — always show in negatives */}
+                    <button onClick={() => toggleSection("additives")}
+                      className="w-full flex items-center gap-3 px-5 py-3 text-left" style={{ borderBottom: "1px solid #F9FAFB" }}>
+                      <span className="text-[22px] w-8 flex-shrink-0 text-center">⚗️</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>Additives</p>
+                        <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
+                          {addCount === 0 ? "No additives detected" : `Contains additives to avoid`}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="font-semibold text-[14px]" style={{ color: "#1B2A4A" }}>{addCount}</span>
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: addCount === 0 ? "#2D7D46" : "#E8314A" }} />
+                        <motion.div animate={{ rotate: expandedSections.has("additives") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                        </motion.div>
+                      </div>
+                    </button>
+
+                    {/* Additives expanded */}
+                    <AnimatePresence>
+                      {expandedSections.has("additives") && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                          <div className="px-5 py-3" style={{ background: "#FAFAFA" }}>
+                            {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
+                              productInfo.additivesTags.map((a, i) => {
+                                const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                                const risk = getAdditiveRisk(a);
+                                const riskColor = getAdditiveRiskColor(risk);
+                                const riskLabel = getAdditiveRiskLabel(risk);
+                                const desc = getAdditiveDescription(a);
+                                return (
+                                  <div key={a} className="py-2.5" style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-bold text-[13px]" style={{ color: "#1B2A4A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
+                                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
+                                    </div>
+                                    <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="text-center py-3">
+                                <Check size={18} style={{ color: "#2D7D46", margin: "0 auto" }} />
+                                <p className="font-semibold text-[13px] mt-1" style={{ color: "#2D7D46" }}>No additives detected</p>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Negative nutrient rows */}
+                    {negativeRows.map(row => (
+                      <div key={row.label} className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: "1px solid #F9FAFB" }}>
+                        <span className="text-[22px] w-8 flex-shrink-0 text-center">{row.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>{row.label}</p>
+                          <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
+                            {row.val != null ? getNutrientVerdict(row.label, row.val, row.level) : "—"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="font-semibold text-[14px]" style={{ color: "#1B2A4A" }}>
+                            {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                          </span>
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ background: getNutrientDotColor(row.label, row.level) }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              </div>
+
+                {/* Positives section */}
+                {positiveRows.length > 0 && (
+                  <div className="pt-4 pb-1">
+                    <div className="flex items-center justify-between px-5 mb-1">
+                      <h4 className="font-extrabold text-[17px]" style={{ color: "#1B2A4A" }}>Positives</h4>
+                      <span className="text-[12px]" style={{ color: "#9CA3AF" }}>per 100g</span>
+                    </div>
+
+                    {positiveRows.map(row => (
+                      <div key={row.label} className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: "1px solid #F9FAFB" }}>
+                        <span className="text-[22px] w-8 flex-shrink-0 text-center">{row.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>{row.label}</p>
+                          <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
+                            {row.val != null ? getNutrientVerdict(row.label, row.val, row.level) : "—"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="font-semibold text-[14px]" style={{ color: "#1B2A4A" }}>
+                            {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                          </span>
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ background: getNutrientDotColor(row.label, row.level) }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Ingredients — collapsible */}
+                {productInfo.ingredientsText && (
+                  <div style={{ borderTop: "1px solid #F3F4F6" }}>
+                    <button onClick={() => toggleSection("ingredients")}
+                      className="w-full flex items-center justify-between px-5 py-3 text-left">
+                      <span className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>Ingredients</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1B2A4A", color: "#fff" }}>
+                          {productInfo.ingredientsText.split(",").length}
+                        </span>
+                        <motion.div animate={{ rotate: expandedSections.has("ingredients") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                        </motion.div>
+                      </div>
+                    </button>
+                    <AnimatePresence>
+                      {expandedSections.has("ingredients") && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                          <div className="px-5 pb-4" style={{ maxHeight: 160, overflowY: "auto" }}>
+                            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+                              {productInfo.allergensTags?.length
+                                ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
+                                : productInfo.ingredientsText}
+                            </p>
+                            {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
+                              <div className="mt-3 flex flex-wrap gap-1.5">
+                                <span className="text-[11px] font-semibold" style={{ color: "#1B2A4A" }}>Allergens:</span>
+                                {productInfo.allergensTags.map(a => (
+                                  <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>
+                                    {formatTag(a)}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {/* Labels/Certifications */}
+                {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
+                  <div style={{ borderTop: "1px solid #F3F4F6" }}>
+                    <button onClick={() => toggleSection("labels")}
+                      className="w-full flex items-center justify-between px-5 py-3 text-left">
+                      <span className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>Certifications</span>
+                      <motion.div animate={{ rotate: expandedSections.has("labels") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence>
+                      {expandedSections.has("labels") && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                          <div className="px-5 pb-4 flex flex-wrap gap-1.5">
+                            {productInfo.labelsTags.map(l => (
+                              <span key={l} className="text-xs font-semibold px-2.5 py-1 rounded-lg border" style={{ borderColor: "#1B2A4A", color: "#1B2A4A" }}>
+                                {formatTag(l)}
+                              </span>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          {/* Bottom action row — Scan Again + Save */}
-          <div className="px-5 pb-6 pt-2 flex-shrink-0 flex gap-3" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 16px) + 16px)" }}>
+          {/* Bottom action row */}
+          <div className="px-5 pb-6 pt-3 flex-shrink-0 flex gap-3" style={{ borderTop: "1px solid #F3F4F6", paddingBottom: "calc(env(safe-area-inset-bottom, 16px) + 16px)" }}>
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
               className="flex-1 font-semibold text-sm flex items-center justify-center gap-2"
-              style={{ border: "1px solid #E8314A", color: "#E8314A", background: "#fff", height: 44, borderRadius: 12 }}>
+              style={{ border: "1.5px solid #E8314A", color: "#E8314A", background: "#fff", height: 44, borderRadius: 10 }}>
               Scan Again
             </motion.button>
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
               className="flex-1 font-semibold text-sm flex items-center justify-center gap-2"
               style={{
-                border: savedState === "saved" ? "1px solid #2D7D46" : "1px solid #1B2A4A",
-                color: savedState === "saved" ? "#2D7D46" : "#1B2A4A",
-                background: "#fff", height: 44, borderRadius: 12,
+                background: savedState === "saved" ? "#fff" : "#E8314A",
+                color: savedState === "saved" ? "#2D7D46" : "#fff",
+                border: savedState === "saved" ? "1.5px solid #2D7D46" : "none",
+                height: 44, borderRadius: 10,
               }}>
               {savedState === "saved" ? "Saved ✓" : "Save"}
             </motion.button>
           </div>
-
-          <p className="text-center pb-2 text-[11px]" style={{ color: "#9CA3AF" }}>
-            Powered by Open Food Facts · Data may vary from physical product
-          </p>
         </motion.div>
       </div>
     );
