@@ -882,17 +882,6 @@ const SkaapScan = () => {
       return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
     };
 
-    // Sheet drag state
-    const [sheetExpanded, setSheetExpanded] = useState(false);
-    const sheetContentRef = useRef<HTMLDivElement>(null);
-
-    // Auto-expand when any accordion opens
-    const hasAnyExpanded = expandedSections.size > 0;
-    useEffect(() => {
-      if (hasAnyExpanded) setSheetExpanded(true);
-      if (!hasAnyExpanded) setSheetExpanded(false);
-    }, [hasAnyExpanded]);
-
     const sheetHeight = sheetExpanded ? "88vh" : "420px";
 
     const productName = productInfo?.productName || "";
