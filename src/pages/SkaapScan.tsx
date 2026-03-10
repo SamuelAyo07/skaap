@@ -212,11 +212,6 @@ async function exportBasketImage(items: BasketItem[], getColor: (s: number) => s
   return new Promise(resolve => canvas.toBlob(b => resolve(b), "image/png"));
 }
 
-  // Auto-expand sheet when any accordion opens
-  const hasAnyExpanded = expandedSections.size > 0;
-  useEffect(() => {
-    setSheetExpanded(hasAnyExpanded);
-  }, [hasAnyExpanded]);
 
 // ─── localStorage cache helpers (7-day TTL) ───
 const CACHE_PREFIX = "skaap_cache_";
