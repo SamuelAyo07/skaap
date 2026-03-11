@@ -572,6 +572,14 @@ const SkaapScan = () => {
         skaapScore: cachedScore.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Record user stats
+      const updatedStats = recordScan({
+        barcode, product_name: cached.productName, brand: cached.brand,
+        skaap_score: cachedScore.total, nutriscore_grade: cached.nutriScoreGrade,
+        scanned_at: Date.now(), image_url: cached.imageUrl,
+        additives: cached.additivesTags, nova_group: cached.novaGroup,
+      });
+      setUserStats(updatedStats);
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
