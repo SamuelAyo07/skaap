@@ -676,12 +676,22 @@ const SkaapScan = () => {
     return () => stopCamera();
   }, [stopCamera]);
 
-  // Pre-load SKAAP icon for share card
+  // Pre-load SKAAP icon + Inter fonts for share card
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => { cachedSkaapIconRef.current = img; };
     img.src = skaapIcon;
+    // Preload Inter font weights into document.fonts for canvas rendering
+    const weights = [
+      { weight: "400", name: "Inter400" },
+      { weight: "600", name: "Inter600" },
+      { weight: "800", name: "Inter800" },
+    ];
+    weights.forEach(({ weight, name }) => {
+      const font = new FontFace(name, `url(https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2)`, { weight });
+      font.load().then(f => document.fonts.add(f)).catch(() => {});
+    });
   }, []);
 
   // ─── Share card canvas generation ───
