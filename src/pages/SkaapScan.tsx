@@ -743,12 +743,12 @@ const SkaapScan = () => {
       ctx.restore();
     }
     ctx.fillStyle = "#fff";
-    ctx.font = "800 28px Inter, system-ui, sans-serif";
+    ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
     ctx.letterSpacing = "0.15em";
     ctx.fillText("SKAAP", W / 2, 180);
     ctx.letterSpacing = "0";
     ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 14px Inter, system-ui, sans-serif";
+    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
     ctx.fillText("useskaap.com", W / 2, 206);
 
     // LAYER 4 — Score hero center
