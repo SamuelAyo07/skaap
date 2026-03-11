@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
-  ShoppingBag, Trash2, Heart, Share2, Search, Filter,
+  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import skaapIcon from "@/assets/skaap-icon.png";
