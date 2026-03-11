@@ -1530,7 +1530,8 @@ const SkaapScan = () => {
                       style={{
                         height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
                         background: shareState === "shared" ? "#2D7D46" : "#E8314A",
-                        color: "#fff", transition: "background 0.2s",
+                        color: "#fff", transition: "background 0.2s, transform 0.2s",
+                        animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
                       <Share2 size={14} />
