@@ -842,13 +842,13 @@ const SkaapScan = () => {
 
     ctx.textAlign = "center";
     ctx.fillStyle = "#1B2A4A";
-    ctx.font = "800 26px Inter, system-ui, sans-serif";
+    ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
     ctx.fillText(line1, W / 2, ctaY + 50);
     ctx.fillStyle = "#6B7280";
-    ctx.font = "400 18px Inter, system-ui, sans-serif";
+    ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
     ctx.fillText(line2, W / 2, ctaY + 82);
     ctx.fillStyle = "#E8314A";
-    ctx.font = "600 16px Inter, system-ui, sans-serif";
+    ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText("Try it free → useskaap.com/scan", W / 2, ctaY + 120);
 
     // Invisible watermark
