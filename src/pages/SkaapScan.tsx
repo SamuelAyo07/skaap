@@ -394,6 +394,9 @@ const SkaapScan = () => {
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
   const [shareState, setShareState] = useState<"idle" | "shared">("idle");
   const [shareGenerating, setShareGenerating] = useState(false);
+  const [selectedCardType, setSelectedCardType] = useState<ShareCardType>(getLastShareType() as ShareCardType || "product");
+  const [userStats, setUserStats] = useState<UserStats>(getUserStats());
+  const [challengeCopied, setChallengeCopied] = useState(false);
   const cachedSkaapIconRef = useRef<HTMLImageElement | null>(null);
 
   // AI states
