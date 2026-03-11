@@ -694,6 +694,8 @@ const SkaapScan = () => {
   };
 
   useEffect(() => {
+    // Refresh streak on mount
+    setUserStats(refreshStreak());
     return () => stopCamera();
   }, [stopCamera]);
 
