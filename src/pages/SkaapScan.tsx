@@ -1214,7 +1214,7 @@ const SkaapScan = () => {
                 </button>
                 <div className="px-5 pb-6 pt-4 overflow-y-auto" style={{ maxHeight: "calc(60vh - 32px)" }}>
                   <h3 className="font-extrabold text-xl mb-5" style={{ color: "#1B2A4A" }}>How we scored this</h3>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Nutritional Quality</span>
                       <span className="font-semibold text-sm" style={{ color: nutriColors[scoreBreakdown.nutriScoreGrade?.toLowerCase() || ""]?.bg || "#6B7280" }}>
@@ -1223,7 +1223,7 @@ const SkaapScan = () => {
                     </div>
                     <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>Based on Nutri-Score {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"}</p>
                   </div>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Additives</span>
                       <span className="font-semibold text-sm" style={{ color: getAdditiveRiskColor(scoreBreakdown.worstAdditiveRisk) }}>
@@ -1232,12 +1232,12 @@ const SkaapScan = () => {
                     </div>
                     <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>{scoreBreakdown.additiveCount} additives · {scoreBreakdown.worstAdditiveRisk} risk</p>
                     {scoreBreakdown.hasHighRiskAdditive && (
-                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "#FEF3C7", color: "#92400E" }}>
+                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "rgba(254,243,199,0.7)", color: "#92400E", backdropFilter: "blur(8px)" }}>
                         ⚠ Score capped at 49
                       </span>
                     )}
                   </div>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Organic</span>
                       <span className="font-semibold text-sm" style={{ color: scoreBreakdown.isOrganic ? "#2D7D46" : "#9CA3AF" }}>
