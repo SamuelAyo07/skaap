@@ -819,7 +819,7 @@ const SkaapScan = () => {
       ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
       ctx.stroke();
       ctx.fillStyle = p.color;
-      ctx.font = "800 18px Inter, system-ui, sans-serif";
+      ctx.font = "800 18px Inter800, Inter, system-ui, sans-serif";
       ctx.fillText(p.label, pillX + pillW / 2, pillY + 24);
       pillX += pillW + pillGap;
     });
