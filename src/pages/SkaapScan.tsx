@@ -1523,11 +1523,19 @@ const SkaapScan = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleShareTap}
                       disabled={shareGenerating}
-                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold transition-all duration-200"
                       style={{
                         height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
-                        background: shareState === "shared" ? "#2D7D46" : "#E8314A",
-                        color: "#fff", transition: "background 0.2s, transform 0.2s",
+                        background: shareState === "shared"
+                          ? "linear-gradient(135deg, rgba(45,125,70,0.85), rgba(45,125,70,0.95))"
+                          : "linear-gradient(135deg, rgba(232,49,74,0.85), rgba(200,30,60,0.95))",
+                        color: "#fff",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        boxShadow: shareState === "shared"
+                          ? "0 2px 12px rgba(45,125,70,0.3)"
+                          : "0 2px 12px rgba(232,49,74,0.25)",
                         animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
