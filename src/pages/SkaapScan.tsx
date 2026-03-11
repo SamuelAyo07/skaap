@@ -1100,24 +1100,24 @@ const SkaapScan = () => {
                     ] as const).map(chip => {
                       const isSelected = selectedCardType === chip.type;
                       return (
-                        <button
+                        <motion.button
                           key={chip.type}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => !chip.locked && handleCardTypeChange(chip.type)}
-                          className="flex flex-col items-center justify-center gap-1 flex-shrink-0 relative"
+                          className={`flex flex-col items-center justify-center gap-1 flex-shrink-0 relative transition-all duration-200 ${isSelected ? "liquid-glass-chip-active" : "liquid-glass-chip"}`}
                           style={{
-                            width: 120, height: 80, borderRadius: 16,
-                            background: isSelected ? "#E8314A" : "#F7F7F7",
+                            width: 120, height: 80, borderRadius: 18,
                             scrollSnapAlign: "center",
-                            opacity: chip.locked ? 0.5 : 1,
+                            opacity: chip.locked ? 0.45 : 1,
                           }}
                         >
                           <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
                           <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
-                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.7)" : "#9CA3AF" }}>{chip.sub}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "#9CA3AF" }}>{chip.sub}</span>
                           {chip.locked && (
                             <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
                           )}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
