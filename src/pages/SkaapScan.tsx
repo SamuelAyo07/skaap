@@ -1061,9 +1061,9 @@ const SkaapScan = () => {
 
     return (
       <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
-        {/* Share preview modal */}
+        {/* Share preview modal with card type selector */}
         <AnimatePresence>
-          {shareModalOpen && shareImageUrl && (
+          {shareModalOpen && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[70] flex items-end justify-center"
@@ -1072,42 +1072,122 @@ const SkaapScan = () => {
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 24, stiffness: 200 }}
                 className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
-                style={{ height: "90vh" }}
+                style={{ height: "92vh" }}
                 onClick={e => e.stopPropagation()}>
                 <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
                   className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center" aria-label="Close">
                   <X size={24} style={{ color: "#9CA3AF" }} />
                 </button>
-                <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
-                  <div className="flex-1 flex items-center justify-center mb-4">
-                    <img src={shareImageUrl} alt="Share card preview"
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxHeight: "calc(90vh - 320px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }} />
+
+                {/* Headline */}
+                <div className="text-center mt-5 px-5">
+                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>How do you want to share?</p>
+                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick your moment</p>
+                </div>
+
+                {/* Card type selector chips */}
+                <div className="mt-5 px-5 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: "none" }}>
+                  <div className="flex gap-[10px]" style={{ scrollSnapType: "x mandatory", minWidth: "max-content" }}>
+                    {([
+                      { type: "product" as ShareCardType, icon: <Barcode size={28} />, label: "This Score", sub: "What I just scanned", locked: false },
+                      { type: "kitchen" as ShareCardType, icon: <Home size={28} />, label: "My Kitchen", sub: "My average score", locked: userStats.total_scans < 5 },
+                      { type: "swap" as ShareCardType, icon: <ArrowLeftRight size={28} />, label: "The Swap", sub: "Better alternative", locked: !aiRecommendations || aiRecommendations.length === 0 },
+                      { type: "streak" as ShareCardType, icon: <Flame size={28} />, label: "My Streak", sub: "Days eating clean", locked: userStats.current_streak < 1 },
+                      { type: "worst" as ShareCardType, icon: <Skull size={28} />, label: "Worst Ever", sub: "My lowest score", locked: userStats.total_scans < 3 },
+                    ] as const).map(chip => {
+                      const isSelected = selectedCardType === chip.type;
+                      return (
+                        <button
+                          key={chip.type}
+                          onClick={() => !chip.locked && handleCardTypeChange(chip.type)}
+                          className="flex flex-col items-center justify-center gap-1 flex-shrink-0 relative"
+                          style={{
+                            width: 120, height: 80, borderRadius: 16,
+                            background: isSelected ? "#E8314A" : "#F7F7F7",
+                            scrollSnapAlign: "center",
+                            opacity: chip.locked ? 0.5 : 1,
+                          }}
+                        >
+                          <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
+                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.7)" : "#9CA3AF" }}>{chip.sub}</span>
+                          {chip.locked && (
+                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
+
+                  {/* Locked state messages */}
+                  {selectedCardType === "kitchen" && userStats.total_scans < 5 && (
+                    <div className="mt-3 text-center">
+                      <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
+                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "#F3F4F6" }}>
+                        <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#E8314A" }} />
+                      </div>
+                    </div>
+                  )}
+                  {selectedCardType === "streak" && userStats.current_streak < 1 && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan a product scoring 70+ to start your streak</p>
+                  )}
+                  {selectedCardType === "swap" && (!aiRecommendations || aiRecommendations.length === 0) && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>
+                      {aiRecsLoading ? "Loading recommendations..." : "No swap found for this product"}
+                    </p>
+                  )}
+                  {selectedCardType === "worst" && userStats.total_scans < 3 && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan 3 products to unlock your Worst Ever card</p>
+                  )}
+                </div>
+
+                {/* Card preview + buttons */}
+                <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
+                  {/* Preview area */}
+                  <div className="flex-1 flex items-center justify-center mb-4">
+                    {shareImageUrl ? (
+                      <img src={shareImageUrl} alt="Share card preview"
+                        className="max-w-full max-h-full object-contain"
+                        style={{ maxHeight: "calc(92vh - 440px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)", aspectRatio: "9/16" }} />
+                    ) : (
+                      <div className="flex items-center justify-center" style={{ width: "100%", aspectRatio: "9/16", maxHeight: "calc(92vh - 440px)", borderRadius: 16, background: "#F7F7F7" }}>
+                        <div className="space-y-2 w-3/4">
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-40 w-40 rounded-full mx-auto" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Share buttons */}
                   <div className="flex flex-col gap-[10px]">
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#E8314A", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+                      style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
                       Share to Instagram Stories 📸
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#25D366", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <MessageCircle size={20} />
+                      style={{ background: "#25D366", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <MessageCircle size={18} />
                       Share to WhatsApp
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <Share2 size={20} style={{ color: "#E8314A" }} />
+                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <Share2 size={18} style={{ color: "#E8314A" }} />
                       Share anywhere
                     </motion.button>
                   </div>
-                  <p className="text-center mt-4" style={{ fontSize: 13, color: "#9CA3AF" }}>
+                  <p className="text-center mt-3" style={{ fontSize: 12, color: "#9CA3AF" }}>
                     Tag us @useskaap and we'll repost your story 🙌
                   </p>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
+                    {challengeCopied ? "Challenge link copied ✓" : "🏆 Challenge a friend to beat your score →"}
+                  </button>
                 </div>
               </motion.div>
             </motion.div>
