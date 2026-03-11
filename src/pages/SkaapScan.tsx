@@ -1829,31 +1829,38 @@ const SkaapScan = () => {
             )}
           </div>
 
-          {/* FIXED BOTTOM ACTION ROW — 64px */}
+          {/* FIXED BOTTOM ACTION ROW — 64px liquid glass */}
           <div
             className="flex-shrink-0 flex items-center gap-3 px-5"
             style={{
               height: 64,
-              borderTop: "1px solid #F3F4F6",
-              background: "#fff",
+              borderTop: "1px solid rgba(255,255,255,0.4)",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%)",
+              backdropFilter: "blur(40px) saturate(200%)",
+              WebkitBackdropFilter: "blur(40px) saturate(200%)",
+              boxShadow: "0 -4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6)",
               paddingBottom: "env(safe-area-inset-bottom, 0px)",
             }}
           >
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-              className="flex-1 font-semibold flex items-center justify-center"
+              className="flex-1 font-semibold flex items-center justify-center liquid-glass-btn"
               style={{
-                border: "1.5px solid #E8314A", color: "#E8314A", background: "#fff",
-                height: 40, borderRadius: 10, fontSize: 13,
+                color: "#E8314A", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)",
+                height: 40, borderRadius: 12, fontSize: 13,
               }}>
               Scan Again
             </motion.button>
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-              className="flex-1 font-semibold flex items-center justify-center gap-1.5"
+              className="flex-1 font-semibold flex items-center justify-center gap-1.5 liquid-glass-btn"
               style={{
-                background: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#fff" : "#E8314A",
+                background: savedState === "saved"
+                  ? "linear-gradient(135deg, rgba(45,125,70,0.15) 0%, rgba(45,125,70,0.05) 100%)"
+                  : isInBasket(currentBarcode)
+                  ? "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)"
+                  : "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(232,49,74,0.95) 100%)",
                 color: savedState === "saved" ? "#2D7D46" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                border: savedState === "saved" ? "1.5px solid #2D7D46" : isInBasket(currentBarcode) ? "1.5px solid #E8314A" : "1.5px solid #E8314A",
-                height: 40, borderRadius: 10, fontSize: 13,
+                height: 40, borderRadius: 12, fontSize: 13,
+                boxShadow: savedState === "saved" ? "none" : isInBasket(currentBarcode) ? "none" : "0 4px 16px rgba(232,49,74,0.25)",
               }}>
               {savedState === "saved" ? (
                 <>Saved ✓</>
