@@ -772,14 +772,14 @@ const SkaapScan = () => {
     ctx.lineCap = "butt";
     // Score number
     ctx.fillStyle = "#fff";
-    ctx.font = "800 96px Inter, system-ui, sans-serif";
+    ctx.font = "800 96px Inter800, Inter, system-ui, sans-serif";
     ctx.fillText(String(score), W / 2, cy + 32);
     ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.font = "600 20px Inter, system-ui, sans-serif";
+    ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText("/ 100", W / 2, cy + 62);
     // Verdict
     ctx.fillStyle = scoreColor;
-    ctx.font = "600 24px Inter, system-ui, sans-serif";
+    ctx.font = "600 24px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText(verdict, W / 2, cy + 98);
 
     // Product name & brand
