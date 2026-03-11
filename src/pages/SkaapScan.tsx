@@ -872,23 +872,44 @@ const SkaapScan = () => {
     setShareModalOpen(true);
   }, [generateShareCard, shareGenerating]);
 
-  const handleShareAction = useCallback(async (target: "instagram" | "anywhere") => {
+  const shareFilename = productInfo
+    ? `skaap-score-${productInfo.productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${scoreBreakdown?.total ?? 0}.png`
+    : "skaap-score.png";
+
+  const handleShareAction = useCallback(async (target: "instagram" | "whatsapp" | "anywhere") => {
     if (!shareImageBlob) return;
-    const file = new File([shareImageBlob], "my-skaap-score.png", { type: "image/png" });
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+    const file = new File([shareImageBlob], shareFilename, { type: "image/png" });
+
+    if (target === "whatsapp") {
+      // Try Web Share with file first, fallback to wa.me link
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+      } else {
+        const score = scoreBreakdown?.total ?? 0;
+        const waText = encodeURIComponent(`I just SKAAPed this and got ${score}/100. Try it free: useskaap.com/scan`);
+        window.open(`https://wa.me/?text=${waText}`, "_blank");
+      }
+    } else if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "I just SKAAPed this",
+          text: `Score: ${scoreBreakdown?.total ?? 0}/100 — useskaap.com/scan`,
+        });
+      } catch {}
     } else {
       // Fallback: download
       const url = URL.createObjectURL(shareImageBlob);
       const a = document.createElement("a");
-      a.href = url; a.download = "my-skaap-score.png";
+      a.href = url; a.download = shareFilename;
       a.click(); URL.revokeObjectURL(url);
+      toast("Image saved — open Instagram Stories and tap +", { duration: 3000 });
     }
     setShareModalOpen(false);
     if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
     setShareState("shared");
     setTimeout(() => setShareState("idle"), 2000);
-  }, [shareImageBlob, shareImageUrl]);
+  }, [shareImageBlob, shareImageUrl, shareFilename, scoreBreakdown]);
 
   const toggleTorch = async () => {
     const track = streamRef.current?.getVideoTracks()[0];
