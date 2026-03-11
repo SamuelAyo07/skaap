@@ -853,7 +853,7 @@ const SkaapScan = () => {
 
     // Invisible watermark
     ctx.fillStyle = "rgba(255,255,255,0.02)";
-    ctx.font = "400 8px Inter, system-ui, sans-serif";
+    ctx.font = "400 8px Inter400, Inter, system-ui, sans-serif";
     ctx.textAlign = "right";
     ctx.fillText("Made with SKAAP · useskaap.com", W - 12, H - 8);
     ctx.textAlign = "left";
