@@ -1520,7 +1520,7 @@ const SkaapScan = () => {
                       {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
                         : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
                         : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
-                        : "This one's rough. Share the warning."}
+                        : "This one's rough. Share the warning. 🚨"}
                     </p>
                     <motion.button
                       whileTap={{ scale: 0.95 }}
