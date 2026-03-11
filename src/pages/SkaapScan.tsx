@@ -785,14 +785,14 @@ const SkaapScan = () => {
     // Product name & brand
     const nameY = cy + outerR + 70;
     ctx.fillStyle = "#fff";
-    ctx.font = "800 32px Inter, system-ui, sans-serif";
+    ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
     const displayN = productInfo.productName.length > 40
       ? productInfo.productName.slice(0, 38) + "…"
       : productInfo.productName;
     ctx.fillText(displayN, W / 2, nameY);
     if (productInfo.brand) {
       ctx.fillStyle = "rgba(255,255,255,0.6)";
-      ctx.font = "400 20px Inter, system-ui, sans-serif";
+      ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
       ctx.fillText(productInfo.brand, W / 2, nameY + 32);
     }
 
