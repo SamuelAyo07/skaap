@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
-  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle,
+  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull,
 } from "lucide-react";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShareType, type UserStats } from "@/lib/skaapUserStats";
+import { generateShareCard as generateCard, type ShareCardType, type ShareProductData } from "@/lib/shareCardGenerator";
 import skaapIcon from "@/assets/skaap-icon.png";
 import {
   calculateSkaapScore, getScoreColor, getScoreVerdict,
@@ -392,6 +394,9 @@ const SkaapScan = () => {
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
   const [shareState, setShareState] = useState<"idle" | "shared">("idle");
   const [shareGenerating, setShareGenerating] = useState(false);
+  const [selectedCardType, setSelectedCardType] = useState<ShareCardType>(getLastShareType() as ShareCardType || "product");
+  const [userStats, setUserStats] = useState<UserStats>(getUserStats());
+  const [challengeCopied, setChallengeCopied] = useState(false);
   const cachedSkaapIconRef = useRef<HTMLImageElement | null>(null);
 
   // AI states
@@ -567,6 +572,14 @@ const SkaapScan = () => {
         skaapScore: cachedScore.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Record user stats
+      const updatedStats = recordScan({
+        barcode, product_name: cached.productName, brand: cached.brand,
+        skaap_score: cachedScore.total, nutriscore_grade: cached.nutriScoreGrade,
+        scanned_at: Date.now(), image_url: cached.imageUrl,
+        additives: cached.additivesTags, nova_group: cached.novaGroup,
+      });
+      setUserStats(updatedStats);
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
@@ -586,6 +599,14 @@ const SkaapScan = () => {
         skaapScore: score.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Record user stats
+      const updatedStats = recordScan({
+        barcode, product_name: info.productName, brand: info.brand,
+        skaap_score: score.total, nutriscore_grade: info.nutriScoreGrade,
+        scanned_at: Date.now(), image_url: info.imageUrl,
+        additives: info.additivesTags, nova_group: info.novaGroup,
+      });
+      setUserStats(updatedStats);
       fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
@@ -673,6 +694,8 @@ const SkaapScan = () => {
   };
 
   useEffect(() => {
+    // Refresh streak on mount
+    setUserStats(refreshStreak());
     return () => stopCamera();
   }, [stopCamera]);
 
@@ -694,186 +717,73 @@ const SkaapScan = () => {
     });
   }, []);
 
-  // ─── Share card canvas generation ───
-  const generateShareCard = useCallback(async () => {
+  // ─── Share card generation (delegates to module) ───
+  const buildProductData = useCallback((): ShareProductData | null => {
     if (!productInfo || !scoreBreakdown) return null;
-    const score = scoreBreakdown.total;
-    const W = 1080, H = 1920, dpr = 2;
-    const canvas = document.createElement("canvas");
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
+    return {
+      barcode: currentBarcode,
+      product_name: productInfo.productName,
+      brand: productInfo.brand,
+      skaap_score: scoreBreakdown.total,
+      nutriscore_grade: productInfo.nutriScoreGrade,
+      nova_group: productInfo.novaGroup,
+      additives: productInfo.additivesTags,
+      image_url: productInfo.imageUrl,
+      top_recommendation: aiRecommendations?.[0] || null,
+    };
+  }, [productInfo, scoreBreakdown, currentBarcode, aiRecommendations]);
 
-    // Score colors
-    const scoreColor = score >= 75 ? "#2D7D46" : score >= 50 ? "#FFC107" : score >= 25 ? "#FF6D00" : "#E8314A";
-    const verdict = score >= 75 ? "Excellent" : score >= 50 ? "Good" : score >= 25 ? "Mediocre" : "Poor";
+  const regeneratePreview = useCallback(async (cardType: ShareCardType) => {
+    const pd = buildProductData();
+    if (!pd) return;
+    // Check card availability
+    if (cardType === "kitchen" && userStats.total_scans < 5) return;
+    if (cardType === "streak" && userStats.current_streak < 1) return;
+    if (cardType === "worst" && userStats.total_scans < 3) return;
+    if (cardType === "swap" && !pd.top_recommendation) return;
 
-    // LAYER 1 — Background gradient
-    const gradEnd = score >= 75 ? "#1a3a2a" : score >= 50 ? "#2a2a0a" : score >= 25 ? "#2a1a0a" : "#2a0a0a";
-    const grad = ctx.createLinearGradient(0, 0, W * 0.4, H);
-    grad.addColorStop(0, "#0A1220");
-    grad.addColorStop(1, gradEnd);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-
-    // LAYER 2 — Subtle texture (seeded random from barcode)
-    let seed = 0;
-    for (let i = 0; i < currentBarcode.length; i++) seed = ((seed << 5) - seed + currentBarcode.charCodeAt(i)) | 0;
-    const seededRand = () => { seed = (seed * 16807) % 2147483647; return (seed & 0x7fffffff) / 0x7fffffff; };
-    for (let i = 0; i < 40; i++) {
-      const r = 2 + seededRand() * 4;
-      const x = seededRand() * W;
-      const y = seededRand() * H;
-      const opacity = 0.03 + seededRand() * 0.03;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${opacity})`;
-      ctx.fill();
-    }
-
-    // LAYER 3 — SKAAP branding top
-    ctx.textAlign = "center";
-    const iconImg = cachedSkaapIconRef.current;
-    if (iconImg) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(W / 2, 120, 24, 0, Math.PI * 2);
-      ctx.clip();
-      ctx.drawImage(iconImg, W / 2 - 24, 96, 48, 48);
-      ctx.restore();
-    }
-    ctx.fillStyle = "#fff";
-    ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-    ctx.letterSpacing = "0.15em";
-    ctx.fillText("SKAAP", W / 2, 180);
-    ctx.letterSpacing = "0";
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText("useskaap.com", W / 2, 206);
-
-    // LAYER 4 — Score hero center
-    const cy = H * 0.45;
-    const outerR = 180;
-    // Background ring
-    ctx.beginPath();
-    ctx.arc(W / 2, cy, outerR, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 12;
-    ctx.stroke();
-    // Score arc
-    ctx.beginPath();
-    const startAngle = -Math.PI / 2;
-    const endAngle = startAngle + (score / 100) * Math.PI * 2;
-    ctx.arc(W / 2, cy, outerR, startAngle, endAngle);
-    ctx.strokeStyle = scoreColor;
-    ctx.lineWidth = 12;
-    ctx.lineCap = "round";
-    ctx.stroke();
-    ctx.lineCap = "butt";
-    // Score number
-    ctx.fillStyle = "#fff";
-    ctx.font = "800 96px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(String(score), W / 2, cy + 32);
-    ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
-    ctx.fillText("/ 100", W / 2, cy + 62);
-    // Verdict
-    ctx.fillStyle = scoreColor;
-    ctx.font = "600 24px Inter600, Inter, system-ui, sans-serif";
-    ctx.fillText(verdict, W / 2, cy + 98);
-
-    // Product name & brand
-    const nameY = cy + outerR + 70;
-    ctx.fillStyle = "#fff";
-    ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
-    const displayN = productInfo.productName.length > 40
-      ? productInfo.productName.slice(0, 38) + "…"
-      : productInfo.productName;
-    ctx.fillText(displayN, W / 2, nameY);
-    if (productInfo.brand) {
-      ctx.fillStyle = "rgba(255,255,255,0.6)";
-      ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
-      ctx.fillText(productInfo.brand, W / 2, nameY + 32);
-    }
-
-    // Three info pills
-    const pillY = nameY + 72;
-    const pillW = 60, pillH = 36, pillR = 18, pillGap = 16;
-    const pillData: { label: string; color: string }[] = [];
-    if (productInfo.nutriScoreGrade) {
-      const nsC = nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF";
-      pillData.push({ label: productInfo.nutriScoreGrade.toUpperCase(), color: nsC });
-    }
-    if (productInfo.novaGroup) {
-      pillData.push({ label: String(productInfo.novaGroup), color: "rgba(255,255,255,0.4)" });
-    }
-    const ac = productInfo.additivesTags?.length || 0;
-    pillData.push({ label: ac === 0 ? "✓" : String(ac), color: ac === 0 ? "#2D7D46" : "rgba(255,255,255,0.4)" });
-
-    const totalPillW = pillData.length * pillW + (pillData.length - 1) * pillGap;
-    let pillX = (W - totalPillW) / 2;
-    pillData.forEach(p => {
-      ctx.strokeStyle = p.color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
-      ctx.stroke();
-      ctx.fillStyle = p.color;
-      ctx.font = "800 18px Inter800, Inter, system-ui, sans-serif";
-      ctx.fillText(p.label, pillX + pillW / 2, pillY + 24);
-      pillX += pillW + pillGap;
-    });
-
-    // LAYER 5 — Bottom CTA
-    const ctaY = 1720;
-    const ctaW = 900, ctaH = 160, ctaR = 24;
-    const ctaX = (W - ctaW) / 2;
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
-    ctx.fill();
-
-    // Score-based copy
-    let line1: string, line2: string;
-    if (score >= 75) { line1 = "Just SKAAPed this 🌿"; line2 = "Clean ingredients. Great score."; }
-    else if (score >= 50) { line1 = "Just SKAAPed this 👀"; line2 = "Not bad. But check the additives."; }
-    else if (score >= 25) { line1 = "Just SKAAPed this 😬"; line2 = "You might want to think twice."; }
-    else { line1 = "Just SKAAPed this 🚨"; line2 = "This one scored pretty rough."; }
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#1B2A4A";
-    ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(line1, W / 2, ctaY + 50);
-    ctx.fillStyle = "#6B7280";
-    ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(line2, W / 2, ctaY + 82);
-    ctx.fillStyle = "#E8314A";
-    ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
-    ctx.fillText("Try it free → useskaap.com/scan", W / 2, ctaY + 120);
-
-    // Invisible watermark
-    ctx.fillStyle = "rgba(255,255,255,0.02)";
-    ctx.font = "400 8px Inter400, Inter, system-ui, sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillText("Made with SKAAP · useskaap.com", W - 12, H - 8);
-    ctx.textAlign = "left";
-
-    return new Promise<Blob | null>(resolve => canvas.toBlob(b => resolve(b), "image/png"));
-  }, [productInfo, scoreBreakdown, currentBarcode]);
+    const blob = await generateCard(cardType, cachedSkaapIconRef.current, pd, userStats);
+    if (!blob) return;
+    if (shareImageUrl) URL.revokeObjectURL(shareImageUrl);
+    setShareImageBlob(blob);
+    setShareImageUrl(URL.createObjectURL(blob));
+  }, [buildProductData, userStats, shareImageUrl]);
 
   const handleShareTap = useCallback(async () => {
     if (shareGenerating) return;
     setShareGenerating(true);
-    const blob = await generateShareCard();
+    setChallengeCopied(false);
+    // Default to product card
+    const cardType = selectedCardType;
+    const pd = buildProductData();
+    if (!pd) { setShareGenerating(false); return; }
+
+    // Check if selected card is available, fallback to product
+    let activeType = cardType;
+    if (activeType === "kitchen" && userStats.total_scans < 5) activeType = "product";
+    if (activeType === "streak" && userStats.current_streak < 1) activeType = "product";
+    if (activeType === "worst" && userStats.total_scans < 3) activeType = "product";
+    if (activeType === "swap" && !pd.top_recommendation) activeType = "product";
+
+    setSelectedCardType(activeType);
+    const blob = await generateCard(activeType, cachedSkaapIconRef.current, pd, userStats);
     setShareGenerating(false);
     if (!blob) return;
     setShareImageBlob(blob);
     setShareImageUrl(URL.createObjectURL(blob));
     setShareModalOpen(true);
-  }, [generateShareCard, shareGenerating]);
+    setLastShareType(activeType);
+  }, [buildProductData, shareGenerating, selectedCardType, userStats]);
+
+  // When card type changes in selector, regenerate preview
+  const handleCardTypeChange = useCallback(async (type: ShareCardType) => {
+    setSelectedCardType(type);
+    setLastShareType(type);
+    await regeneratePreview(type);
+  }, [regeneratePreview]);
 
   const shareFilename = productInfo
-    ? `skaap-score-${productInfo.productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${scoreBreakdown?.total ?? 0}.png`
+    ? `skaap-${selectedCardType}-${productInfo.productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${scoreBreakdown?.total ?? 0}.png`
     : "skaap-score.png";
 
   const handleShareAction = useCallback(async (target: "instagram" | "whatsapp" | "anywhere") => {
@@ -881,7 +791,6 @@ const SkaapScan = () => {
     const file = new File([shareImageBlob], shareFilename, { type: "image/png" });
 
     if (target === "whatsapp") {
-      // Try Web Share with file first, fallback to wa.me link
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
       } else {
@@ -898,7 +807,6 @@ const SkaapScan = () => {
         });
       } catch {}
     } else {
-      // Fallback: download
       const url = URL.createObjectURL(shareImageBlob);
       const a = document.createElement("a");
       a.href = url; a.download = shareFilename;
@@ -910,6 +818,13 @@ const SkaapScan = () => {
     setShareState("shared");
     setTimeout(() => setShareState("idle"), 2000);
   }, [shareImageBlob, shareImageUrl, shareFilename, scoreBreakdown]);
+
+  const handleChallengeCopy = useCallback(() => {
+    const text = `Can you beat my SKAAP Kitchen Score of ${userStats.kitchen_score}/100? Try it free: useskaap.com/scan`;
+    navigator.clipboard?.writeText(text).catch(() => {});
+    setChallengeCopied(true);
+    setTimeout(() => setChallengeCopied(false), 2000);
+  }, [userStats.kitchen_score]);
 
   const toggleTorch = async () => {
     const track = streamRef.current?.getVideoTracks()[0];
@@ -1148,9 +1063,9 @@ const SkaapScan = () => {
 
     return (
       <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
-        {/* Share preview modal */}
+        {/* Share preview modal with card type selector */}
         <AnimatePresence>
-          {shareModalOpen && shareImageUrl && (
+          {shareModalOpen && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[70] flex items-end justify-center"
@@ -1159,42 +1074,122 @@ const SkaapScan = () => {
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 24, stiffness: 200 }}
                 className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
-                style={{ height: "90vh" }}
+                style={{ height: "92vh" }}
                 onClick={e => e.stopPropagation()}>
                 <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
                   className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center" aria-label="Close">
                   <X size={24} style={{ color: "#9CA3AF" }} />
                 </button>
-                <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
-                  <div className="flex-1 flex items-center justify-center mb-4">
-                    <img src={shareImageUrl} alt="Share card preview"
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxHeight: "calc(90vh - 320px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }} />
+
+                {/* Headline */}
+                <div className="text-center mt-5 px-5">
+                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>How do you want to share?</p>
+                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick your moment</p>
+                </div>
+
+                {/* Card type selector chips */}
+                <div className="mt-5 px-5 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: "none" }}>
+                  <div className="flex gap-[10px]" style={{ scrollSnapType: "x mandatory", minWidth: "max-content" }}>
+                    {([
+                      { type: "product" as ShareCardType, icon: <Barcode size={28} />, label: "This Score", sub: "What I just scanned", locked: false },
+                      { type: "kitchen" as ShareCardType, icon: <Home size={28} />, label: "My Kitchen", sub: "My average score", locked: userStats.total_scans < 5 },
+                      { type: "swap" as ShareCardType, icon: <ArrowLeftRight size={28} />, label: "The Swap", sub: "Better alternative", locked: !aiRecommendations || aiRecommendations.length === 0 },
+                      { type: "streak" as ShareCardType, icon: <Flame size={28} />, label: "My Streak", sub: "Days eating clean", locked: userStats.current_streak < 1 },
+                      { type: "worst" as ShareCardType, icon: <Skull size={28} />, label: "Worst Ever", sub: "My lowest score", locked: userStats.total_scans < 3 },
+                    ] as const).map(chip => {
+                      const isSelected = selectedCardType === chip.type;
+                      return (
+                        <button
+                          key={chip.type}
+                          onClick={() => !chip.locked && handleCardTypeChange(chip.type)}
+                          className="flex flex-col items-center justify-center gap-1 flex-shrink-0 relative"
+                          style={{
+                            width: 120, height: 80, borderRadius: 16,
+                            background: isSelected ? "#E8314A" : "#F7F7F7",
+                            scrollSnapAlign: "center",
+                            opacity: chip.locked ? 0.5 : 1,
+                          }}
+                        >
+                          <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
+                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.7)" : "#9CA3AF" }}>{chip.sub}</span>
+                          {chip.locked && (
+                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
+
+                  {/* Locked state messages */}
+                  {selectedCardType === "kitchen" && userStats.total_scans < 5 && (
+                    <div className="mt-3 text-center">
+                      <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
+                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "#F3F4F6" }}>
+                        <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#E8314A" }} />
+                      </div>
+                    </div>
+                  )}
+                  {selectedCardType === "streak" && userStats.current_streak < 1 && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan a product scoring 70+ to start your streak</p>
+                  )}
+                  {selectedCardType === "swap" && (!aiRecommendations || aiRecommendations.length === 0) && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>
+                      {aiRecsLoading ? "Loading recommendations..." : "No swap found for this product"}
+                    </p>
+                  )}
+                  {selectedCardType === "worst" && userStats.total_scans < 3 && (
+                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan 3 products to unlock your Worst Ever card</p>
+                  )}
+                </div>
+
+                {/* Card preview + buttons */}
+                <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
+                  {/* Preview area */}
+                  <div className="flex-1 flex items-center justify-center mb-4">
+                    {shareImageUrl ? (
+                      <img src={shareImageUrl} alt="Share card preview"
+                        className="max-w-full max-h-full object-contain"
+                        style={{ maxHeight: "calc(92vh - 440px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)", aspectRatio: "9/16" }} />
+                    ) : (
+                      <div className="flex items-center justify-center" style={{ width: "100%", aspectRatio: "9/16", maxHeight: "calc(92vh - 440px)", borderRadius: 16, background: "#F7F7F7" }}>
+                        <div className="space-y-2 w-3/4">
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-40 w-40 rounded-full mx-auto" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Share buttons */}
                   <div className="flex flex-col gap-[10px]">
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#E8314A", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+                      style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
                       Share to Instagram Stories 📸
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#25D366", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <MessageCircle size={20} />
+                      style={{ background: "#25D366", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <MessageCircle size={18} />
                       Share to WhatsApp
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
                       className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 56, borderRadius: 14, fontSize: 16 }}>
-                      <Share2 size={20} style={{ color: "#E8314A" }} />
+                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      <Share2 size={18} style={{ color: "#E8314A" }} />
                       Share anywhere
                     </motion.button>
                   </div>
-                  <p className="text-center mt-4" style={{ fontSize: 13, color: "#9CA3AF" }}>
+                  <p className="text-center mt-3" style={{ fontSize: 12, color: "#9CA3AF" }}>
                     Tag us @useskaap and we'll repost your story 🙌
                   </p>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
+                    {challengeCopied ? "Challenge link copied ✓" : "🏆 Challenge a friend to beat your score →"}
+                  </button>
                 </div>
               </motion.div>
             </motion.div>
