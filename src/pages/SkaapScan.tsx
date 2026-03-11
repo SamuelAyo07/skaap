@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
-  ShoppingBag, Trash2, Heart, Share2, Search, Filter,
+  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -675,12 +676,22 @@ const SkaapScan = () => {
     return () => stopCamera();
   }, [stopCamera]);
 
-  // Pre-load SKAAP icon for share card
+  // Pre-load SKAAP icon + Inter fonts for share card
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => { cachedSkaapIconRef.current = img; };
     img.src = skaapIcon;
+    // Preload Inter font weights into document.fonts for canvas rendering
+    const weights = [
+      { weight: "400", name: "Inter400" },
+      { weight: "600", name: "Inter600" },
+      { weight: "800", name: "Inter800" },
+    ];
+    weights.forEach(({ weight, name }) => {
+      const font = new FontFace(name, `url(https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.woff2)`, { weight });
+      font.load().then(f => document.fonts.add(f)).catch(() => {});
+    });
   }, []);
 
   // ─── Share card canvas generation ───
@@ -732,12 +743,12 @@ const SkaapScan = () => {
       ctx.restore();
     }
     ctx.fillStyle = "#fff";
-    ctx.font = "800 28px Inter, system-ui, sans-serif";
+    ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
     ctx.letterSpacing = "0.15em";
     ctx.fillText("SKAAP", W / 2, 180);
     ctx.letterSpacing = "0";
     ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 14px Inter, system-ui, sans-serif";
+    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
     ctx.fillText("useskaap.com", W / 2, 206);
 
     // LAYER 4 — Score hero center
@@ -761,27 +772,27 @@ const SkaapScan = () => {
     ctx.lineCap = "butt";
     // Score number
     ctx.fillStyle = "#fff";
-    ctx.font = "800 96px Inter, system-ui, sans-serif";
+    ctx.font = "800 96px Inter800, Inter, system-ui, sans-serif";
     ctx.fillText(String(score), W / 2, cy + 32);
     ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.font = "600 20px Inter, system-ui, sans-serif";
+    ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText("/ 100", W / 2, cy + 62);
     // Verdict
     ctx.fillStyle = scoreColor;
-    ctx.font = "600 24px Inter, system-ui, sans-serif";
+    ctx.font = "600 24px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText(verdict, W / 2, cy + 98);
 
     // Product name & brand
     const nameY = cy + outerR + 70;
     ctx.fillStyle = "#fff";
-    ctx.font = "800 32px Inter, system-ui, sans-serif";
+    ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
     const displayN = productInfo.productName.length > 40
       ? productInfo.productName.slice(0, 38) + "…"
       : productInfo.productName;
     ctx.fillText(displayN, W / 2, nameY);
     if (productInfo.brand) {
       ctx.fillStyle = "rgba(255,255,255,0.6)";
-      ctx.font = "400 20px Inter, system-ui, sans-serif";
+      ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
       ctx.fillText(productInfo.brand, W / 2, nameY + 32);
     }
 
@@ -808,7 +819,7 @@ const SkaapScan = () => {
       ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
       ctx.stroke();
       ctx.fillStyle = p.color;
-      ctx.font = "800 18px Inter, system-ui, sans-serif";
+      ctx.font = "800 18px Inter800, Inter, system-ui, sans-serif";
       ctx.fillText(p.label, pillX + pillW / 2, pillY + 24);
       pillX += pillW + pillGap;
     });
@@ -831,18 +842,18 @@ const SkaapScan = () => {
 
     ctx.textAlign = "center";
     ctx.fillStyle = "#1B2A4A";
-    ctx.font = "800 26px Inter, system-ui, sans-serif";
+    ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
     ctx.fillText(line1, W / 2, ctaY + 50);
     ctx.fillStyle = "#6B7280";
-    ctx.font = "400 18px Inter, system-ui, sans-serif";
+    ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
     ctx.fillText(line2, W / 2, ctaY + 82);
     ctx.fillStyle = "#E8314A";
-    ctx.font = "600 16px Inter, system-ui, sans-serif";
+    ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
     ctx.fillText("Try it free → useskaap.com/scan", W / 2, ctaY + 120);
 
     // Invisible watermark
     ctx.fillStyle = "rgba(255,255,255,0.02)";
-    ctx.font = "400 8px Inter, system-ui, sans-serif";
+    ctx.font = "400 8px Inter400, Inter, system-ui, sans-serif";
     ctx.textAlign = "right";
     ctx.fillText("Made with SKAAP · useskaap.com", W - 12, H - 8);
     ctx.textAlign = "left";
@@ -861,23 +872,44 @@ const SkaapScan = () => {
     setShareModalOpen(true);
   }, [generateShareCard, shareGenerating]);
 
-  const handleShareAction = useCallback(async (target: "instagram" | "anywhere") => {
+  const shareFilename = productInfo
+    ? `skaap-score-${productInfo.productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${scoreBreakdown?.total ?? 0}.png`
+    : "skaap-score.png";
+
+  const handleShareAction = useCallback(async (target: "instagram" | "whatsapp" | "anywhere") => {
     if (!shareImageBlob) return;
-    const file = new File([shareImageBlob], "my-skaap-score.png", { type: "image/png" });
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+    const file = new File([shareImageBlob], shareFilename, { type: "image/png" });
+
+    if (target === "whatsapp") {
+      // Try Web Share with file first, fallback to wa.me link
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+      } else {
+        const score = scoreBreakdown?.total ?? 0;
+        const waText = encodeURIComponent(`I just SKAAPed this and got ${score}/100. Try it free: useskaap.com/scan`);
+        window.open(`https://wa.me/?text=${waText}`, "_blank");
+      }
+    } else if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "I just SKAAPed this",
+          text: `Score: ${scoreBreakdown?.total ?? 0}/100 — useskaap.com/scan`,
+        });
+      } catch {}
     } else {
       // Fallback: download
       const url = URL.createObjectURL(shareImageBlob);
       const a = document.createElement("a");
-      a.href = url; a.download = "my-skaap-score.png";
+      a.href = url; a.download = shareFilename;
       a.click(); URL.revokeObjectURL(url);
+      toast("Image saved — open Instagram Stories and tap +", { duration: 3000 });
     }
     setShareModalOpen(false);
     if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
     setShareState("shared");
     setTimeout(() => setShareState("idle"), 2000);
-  }, [shareImageBlob, shareImageUrl]);
+  }, [shareImageBlob, shareImageUrl, shareFilename, scoreBreakdown]);
 
   const toggleTorch = async () => {
     const track = streamRef.current?.getVideoTracks()[0];
@@ -1120,35 +1152,47 @@ const SkaapScan = () => {
         <AnimatePresence>
           {shareModalOpen && shareImageUrl && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[70] flex items-end justify-center" onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
-              <div className="absolute inset-0 bg-black/60" />
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[70] flex items-end justify-center"
+              onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
+              <div className="absolute inset-0 bg-black/50" />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                transition={{ type: "spring", damping: 24, stiffness: 200 }}
                 className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
                 style={{ height: "90vh" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
+                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
-                  className="absolute top-3 right-4 z-10" aria-label="Close">
-                  <X size={24} style={{ color: "#1B2A4A" }} />
+                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center" aria-label="Close">
+                  <X size={24} style={{ color: "#9CA3AF" }} />
                 </button>
-                <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6 flex flex-col">
+                <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
                   <div className="flex-1 flex items-center justify-center mb-4">
                     <img src={shareImageUrl} alt="Share card preview"
-                      className="max-w-full max-h-full rounded-2xl object-contain"
-                      style={{ maxHeight: "calc(90vh - 260px)", boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }} />
+                      className="max-w-full max-h-full object-contain"
+                      style={{ maxHeight: "calc(90vh - 320px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }} />
                   </div>
-                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
-                    className="w-full font-extrabold flex items-center justify-center gap-2"
-                    style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 12, fontSize: 16 }}>
-                    Share to Instagram Stories 📸
-                  </motion.button>
-                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
-                    className="w-full font-extrabold flex items-center justify-center gap-2"
-                    style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 12, fontSize: 16, marginTop: 10 }}>
-                    Share anywhere
-                  </motion.button>
-                  <p className="text-center mt-4" style={{ fontSize: 12, color: "#9CA3AF" }}>
+                  <div className="flex flex-col gap-[10px]">
+                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
+                      className="w-full font-extrabold flex items-center justify-center gap-2"
+                      style={{ background: "#E8314A", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+                      Share to Instagram Stories 📸
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
+                      className="w-full font-extrabold flex items-center justify-center gap-2"
+                      style={{ background: "#25D366", color: "#fff", height: 56, borderRadius: 14, fontSize: 16 }}>
+                      <MessageCircle size={20} />
+                      Share to WhatsApp
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
+                      className="w-full font-extrabold flex items-center justify-center gap-2"
+                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 56, borderRadius: 14, fontSize: 16 }}>
+                      <Share2 size={20} style={{ color: "#E8314A" }} />
+                      Share anywhere
+                    </motion.button>
+                  </div>
+                  <p className="text-center mt-4" style={{ fontSize: 13, color: "#9CA3AF" }}>
                     Tag us @useskaap and we'll repost your story 🙌
                   </p>
                 </div>
@@ -1476,7 +1520,7 @@ const SkaapScan = () => {
                       {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
                         : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
                         : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
-                        : "This one's rough. Share the warning."}
+                        : "This one's rough. Share the warning. 🚨"}
                     </p>
                     <motion.button
                       whileTap={{ scale: 0.95 }}
@@ -1486,7 +1530,8 @@ const SkaapScan = () => {
                       style={{
                         height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
                         background: shareState === "shared" ? "#2D7D46" : "#E8314A",
-                        color: "#fff", transition: "background 0.2s",
+                        color: "#fff", transition: "background 0.2s, transform 0.2s",
+                        animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
                       <Share2 size={14} />
