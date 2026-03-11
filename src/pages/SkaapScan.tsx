@@ -1070,16 +1070,16 @@ const SkaapScan = () => {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[70] flex items-end justify-center"
               onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
-              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,18,32,0.3) 0%, rgba(10,18,32,0.7) 100%)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }} />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 24, stiffness: 200 }}
-                className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
-                style={{ height: "92vh" }}
+                className="relative w-full rounded-t-[24px] z-10 flex flex-col liquid-glass"
+                style={{ height: "92vh", background: "linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.98) 100%)", backdropFilter: "blur(60px) saturate(200%)", WebkitBackdropFilter: "blur(60px) saturate(200%)", borderTop: "1px solid rgba(255,255,255,0.7)", boxShadow: "0 -8px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} /></div>
+                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(0,0,0,0.12)" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
-                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center" aria-label="Close">
-                  <X size={24} style={{ color: "#9CA3AF" }} />
+                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.05)", backdropFilter: "blur(10px)" }} aria-label="Close">
+                  <X size={20} style={{ color: "#6B7280" }} />
                 </button>
 
                 {/* Headline */}
