@@ -1203,12 +1203,12 @@ const SkaapScan = () => {
           {showScoreModal && scoreBreakdown && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="fixed inset-0 z-[60] flex items-end justify-center" onClick={() => setShowScoreModal(false)}>
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 28, stiffness: 300 }}
-                className="relative bg-background w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh" }}
+                className="relative liquid-glass w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh", background: "linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%)", borderTop: "1px solid rgba(255,255,255,0.6)" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
+                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "rgba(27,42,74,0.15)" }} /></div>
                 <button onClick={() => setShowScoreModal(false)} className="absolute top-3 right-4" aria-label="Close">
                   <X size={24} style={{ color: "#1B2A4A" }} />
                 </button>
