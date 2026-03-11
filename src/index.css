@@ -161,3 +161,9 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+@keyframes sharePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
