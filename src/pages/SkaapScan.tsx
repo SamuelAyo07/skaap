@@ -1070,16 +1070,16 @@ const SkaapScan = () => {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[70] flex items-end justify-center"
               onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}>
-              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,18,32,0.3) 0%, rgba(10,18,32,0.7) 100%)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }} />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 24, stiffness: 200 }}
-                className="relative bg-background w-full rounded-t-[20px] z-10 flex flex-col"
-                style={{ height: "92vh" }}
+                className="relative w-full rounded-t-[24px] z-10 flex flex-col liquid-glass"
+                style={{ height: "92vh", background: "linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.98) 100%)", backdropFilter: "blur(60px) saturate(200%)", WebkitBackdropFilter: "blur(60px) saturate(200%)", borderTop: "1px solid rgba(255,255,255,0.7)", boxShadow: "0 -8px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} /></div>
+                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(0,0,0,0.12)" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
-                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center" aria-label="Close">
-                  <X size={24} style={{ color: "#9CA3AF" }} />
+                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.05)", backdropFilter: "blur(10px)" }} aria-label="Close">
+                  <X size={20} style={{ color: "#6B7280" }} />
                 </button>
 
                 {/* Headline */}
@@ -1100,24 +1100,24 @@ const SkaapScan = () => {
                     ] as const).map(chip => {
                       const isSelected = selectedCardType === chip.type;
                       return (
-                        <button
+                        <motion.button
                           key={chip.type}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => !chip.locked && handleCardTypeChange(chip.type)}
-                          className="flex flex-col items-center justify-center gap-1 flex-shrink-0 relative"
+                          className={`flex flex-col items-center justify-center gap-1 flex-shrink-0 relative transition-all duration-200 ${isSelected ? "liquid-glass-chip-active" : "liquid-glass-chip"}`}
                           style={{
-                            width: 120, height: 80, borderRadius: 16,
-                            background: isSelected ? "#E8314A" : "#F7F7F7",
+                            width: 120, height: 80, borderRadius: 18,
                             scrollSnapAlign: "center",
-                            opacity: chip.locked ? 0.5 : 1,
+                            opacity: chip.locked ? 0.45 : 1,
                           }}
                         >
                           <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
                           <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
-                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.7)" : "#9CA3AF" }}>{chip.sub}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "#9CA3AF" }}>{chip.sub}</span>
                           {chip.locked && (
                             <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
                           )}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -1149,11 +1149,13 @@ const SkaapScan = () => {
                   {/* Preview area */}
                   <div className="flex-1 flex items-center justify-center mb-4">
                     {shareImageUrl ? (
-                      <img src={shareImageUrl} alt="Share card preview"
-                        className="max-w-full max-h-full object-contain"
-                        style={{ maxHeight: "calc(92vh - 440px)", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.15)", aspectRatio: "9/16" }} />
+                      <div className="liquid-glass-preview rounded-[20px] p-2">
+                        <img src={shareImageUrl} alt="Share card preview"
+                          className="max-w-full max-h-full object-contain rounded-2xl"
+                          style={{ maxHeight: "calc(92vh - 440px)", aspectRatio: "9/16", boxShadow: "0 12px 48px rgba(0,0,0,0.12)" }} />
+                      </div>
                     ) : (
-                      <div className="flex items-center justify-center" style={{ width: "100%", aspectRatio: "9/16", maxHeight: "calc(92vh - 440px)", borderRadius: 16, background: "#F7F7F7" }}>
+                      <div className="flex items-center justify-center liquid-glass-preview rounded-[20px]" style={{ width: "100%", aspectRatio: "9/16", maxHeight: "calc(92vh - 440px)" }}>
                         <div className="space-y-2 w-3/4">
                           <Skeleton className="h-4 w-full" />
                           <Skeleton className="h-4 w-3/4" />
@@ -1166,20 +1168,20 @@ const SkaapScan = () => {
                   {/* Share buttons */}
                   <div className="flex flex-col gap-[10px]">
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#E8314A", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-btn"
+                      style={{ background: "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(200,30,60,0.95) 100%)", color: "#fff", height: 52, borderRadius: 16, fontSize: 15 }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
                       Share to Instagram Stories 📸
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#25D366", color: "#fff", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-btn"
+                      style={{ background: "linear-gradient(135deg, rgba(37,211,102,0.9) 0%, rgba(30,180,85,0.95) 100%)", color: "#fff", height: 52, borderRadius: 16, fontSize: 15 }}>
                       <MessageCircle size={18} />
                       Share to WhatsApp
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2"
-                      style={{ background: "#fff", color: "#E8314A", border: "1.5px solid #E8314A", height: 52, borderRadius: 14, fontSize: 15 }}>
+                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-chip"
+                      style={{ color: "#E8314A", height: 52, borderRadius: 16, fontSize: 15 }}>
                       <Share2 size={18} style={{ color: "#E8314A" }} />
                       Share anywhere
                     </motion.button>
@@ -1187,7 +1189,7 @@ const SkaapScan = () => {
                   <p className="text-center mt-3" style={{ fontSize: 12, color: "#9CA3AF" }}>
                     Tag us @useskaap and we'll repost your story 🙌
                   </p>
-                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
                     {challengeCopied ? "Challenge link copied ✓" : "🏆 Challenge a friend to beat your score →"}
                   </button>
                 </div>
@@ -1521,11 +1523,19 @@ const SkaapScan = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleShareTap}
                       disabled={shareGenerating}
-                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold transition-all duration-200"
                       style={{
                         height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
-                        background: shareState === "shared" ? "#2D7D46" : "#E8314A",
-                        color: "#fff", transition: "background 0.2s, transform 0.2s",
+                        background: shareState === "shared"
+                          ? "linear-gradient(135deg, rgba(45,125,70,0.85), rgba(45,125,70,0.95))"
+                          : "linear-gradient(135deg, rgba(232,49,74,0.85), rgba(200,30,60,0.95))",
+                        color: "#fff",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        boxShadow: shareState === "shared"
+                          ? "0 2px 12px rgba(45,125,70,0.3)"
+                          : "0 2px 12px rgba(232,49,74,0.25)",
                         animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
