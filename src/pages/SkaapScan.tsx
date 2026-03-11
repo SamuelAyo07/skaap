@@ -1203,18 +1203,18 @@ const SkaapScan = () => {
           {showScoreModal && scoreBreakdown && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="fixed inset-0 z-[60] flex items-end justify-center" onClick={() => setShowScoreModal(false)}>
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 28, stiffness: 300 }}
-                className="relative bg-background w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh" }}
+                className="relative liquid-glass w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh", background: "linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%)", borderTop: "1px solid rgba(255,255,255,0.6)" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "#E5E7EB" }} /></div>
+                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "rgba(27,42,74,0.15)" }} /></div>
                 <button onClick={() => setShowScoreModal(false)} className="absolute top-3 right-4" aria-label="Close">
                   <X size={24} style={{ color: "#1B2A4A" }} />
                 </button>
                 <div className="px-5 pb-6 pt-4 overflow-y-auto" style={{ maxHeight: "calc(60vh - 32px)" }}>
                   <h3 className="font-extrabold text-xl mb-5" style={{ color: "#1B2A4A" }}>How we scored this</h3>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Nutritional Quality</span>
                       <span className="font-semibold text-sm" style={{ color: nutriColors[scoreBreakdown.nutriScoreGrade?.toLowerCase() || ""]?.bg || "#6B7280" }}>
@@ -1223,7 +1223,7 @@ const SkaapScan = () => {
                     </div>
                     <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>Based on Nutri-Score {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"}</p>
                   </div>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Additives</span>
                       <span className="font-semibold text-sm" style={{ color: getAdditiveRiskColor(scoreBreakdown.worstAdditiveRisk) }}>
@@ -1232,12 +1232,12 @@ const SkaapScan = () => {
                     </div>
                     <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>{scoreBreakdown.additiveCount} additives · {scoreBreakdown.worstAdditiveRisk} risk</p>
                     {scoreBreakdown.hasHighRiskAdditive && (
-                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "#FEF3C7", color: "#92400E" }}>
+                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "rgba(254,243,199,0.7)", color: "#92400E", backdropFilter: "blur(8px)" }}>
                         ⚠ Score capped at 49
                       </span>
                     )}
                   </div>
-                  <div className="py-4" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Organic</span>
                       <span className="font-semibold text-sm" style={{ color: scoreBreakdown.isOrganic ? "#2D7D46" : "#9CA3AF" }}>
@@ -1829,31 +1829,38 @@ const SkaapScan = () => {
             )}
           </div>
 
-          {/* FIXED BOTTOM ACTION ROW — 64px */}
+          {/* FIXED BOTTOM ACTION ROW — 64px liquid glass */}
           <div
             className="flex-shrink-0 flex items-center gap-3 px-5"
             style={{
               height: 64,
-              borderTop: "1px solid #F3F4F6",
-              background: "#fff",
+              borderTop: "1px solid rgba(255,255,255,0.4)",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%)",
+              backdropFilter: "blur(40px) saturate(200%)",
+              WebkitBackdropFilter: "blur(40px) saturate(200%)",
+              boxShadow: "0 -4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6)",
               paddingBottom: "env(safe-area-inset-bottom, 0px)",
             }}
           >
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-              className="flex-1 font-semibold flex items-center justify-center"
+              className="flex-1 font-semibold flex items-center justify-center liquid-glass-btn"
               style={{
-                border: "1.5px solid #E8314A", color: "#E8314A", background: "#fff",
-                height: 40, borderRadius: 10, fontSize: 13,
+                color: "#E8314A", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)",
+                height: 40, borderRadius: 12, fontSize: 13,
               }}>
               Scan Again
             </motion.button>
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-              className="flex-1 font-semibold flex items-center justify-center gap-1.5"
+              className="flex-1 font-semibold flex items-center justify-center gap-1.5 liquid-glass-btn"
               style={{
-                background: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#fff" : "#E8314A",
+                background: savedState === "saved"
+                  ? "linear-gradient(135deg, rgba(45,125,70,0.15) 0%, rgba(45,125,70,0.05) 100%)"
+                  : isInBasket(currentBarcode)
+                  ? "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)"
+                  : "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(232,49,74,0.95) 100%)",
                 color: savedState === "saved" ? "#2D7D46" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                border: savedState === "saved" ? "1.5px solid #2D7D46" : isInBasket(currentBarcode) ? "1.5px solid #E8314A" : "1.5px solid #E8314A",
-                height: 40, borderRadius: 10, fontSize: 13,
+                height: 40, borderRadius: 12, fontSize: 13,
+                boxShadow: savedState === "saved" ? "none" : isInBasket(currentBarcode) ? "none" : "0 4px 16px rgba(232,49,74,0.25)",
               }}>
               {savedState === "saved" ? (
                 <>Saved ✓</>
