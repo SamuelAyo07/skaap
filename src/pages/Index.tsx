@@ -159,9 +159,9 @@ const Index = () => {
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#B0202F" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Food Intelligence</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
-                  Stop reading labels. Scan any barcode and SKAAP decodes additives, scores your food 0-100, and shows you what's actually safe — in under 5 seconds.
+                  Scan any barcode. Get a 0-100 health score, additive risks, and nutrition facts — faster than reading the label.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
