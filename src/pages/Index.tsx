@@ -63,11 +63,11 @@ const Index = () => {
 
   const heroHeadline = isFromInstagram
     ? <>You saw it on Instagram.<br />Now try it.</>
-    : <>Scan it.<br />Pay instantly.<br /><span style={{ color: "#B0202F" }}>Walk out.</span></>;
+    : <>See what's really<br />in your food.<br /><span style={{ color: "#B0202F" }}>Instantly.</span></>;
 
   const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
-    : "Your phone becomes the checkout. No lines, no registers, no waiting.";
+    : "Stop googling ingredients. Scan any product and get the full story in seconds.";
 
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
