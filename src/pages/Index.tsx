@@ -245,11 +245,11 @@ const Index = () => {
               <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(176,32,47,0.1)", color: "#B0202F" }}>
                 🌿 Smart Info
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Stop googling ingredients.
+               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                One scan. Full picture.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#4B5563" }}>
-                One scan. Full breakdown. Additives, allergens, processing level, and a 0-100 score — faster than reading the label.
+                Additives decoded. Nutrition scored. No googling required.
               </p>
             </div>
           </FadeIn>
