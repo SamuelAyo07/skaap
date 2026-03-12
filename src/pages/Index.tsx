@@ -246,10 +246,10 @@ const Index = () => {
                 🌿 Smart Info
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Your personal food &amp; beauty analyst.
+                Stop googling ingredients.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#4B5563" }}>
-                Scan any product and instantly see what's really inside. SKAAP Score, Nutri-Score, allergens, additives, and ingredient safety decoded in real time.
+                One scan. Full breakdown. Additives, allergens, processing level, and a 0-100 score — faster than reading the label.
               </p>
             </div>
           </FadeIn>
