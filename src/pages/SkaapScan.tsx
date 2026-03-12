@@ -1084,8 +1084,8 @@ const SkaapScan = () => {
 
                 {/* Headline */}
                 <div className="text-center mt-5 px-5">
-                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>How do you want to share?</p>
-                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick your moment</p>
+                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>Share your results ✨</p>
+                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick a card, make it yours, post it</p>
                 </div>
 
                 {/* Card type selector chips */}
@@ -1187,10 +1187,10 @@ const SkaapScan = () => {
                     </motion.button>
                   </div>
                   <p className="text-center mt-3" style={{ fontSize: 12, color: "#9CA3AF" }}>
-                    Tag us @useskaap and we'll repost your story 🙌
+                    Tag @useskaap and we'll repost your story 🙌
                   </p>
                   <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
-                    {challengeCopied ? "Challenge link copied ✓" : "🏆 Challenge a friend to beat your score →"}
+                    {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
                   </button>
                 </div>
               </motion.div>

@@ -63,11 +63,11 @@ const Index = () => {
 
   const heroHeadline = isFromInstagram
     ? <>You saw it on Instagram.<br />Now try it.</>
-    : <>Scan it.<br />Pay instantly.<br /><span style={{ color: "#B0202F" }}>Walk out.</span></>;
+    : <>See what's really<br />in your food.<br /><span style={{ color: "#B0202F" }}>Instantly.</span></>;
 
   const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
-    : "Your phone becomes the checkout. No lines, no registers, no waiting.";
+    : "Stop googling ingredients. Scan any product and get the full story in seconds.";
 
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
@@ -148,7 +148,7 @@ const Index = () => {
             <div className="text-center mb-8">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#B0202F" }}>What SKAAP Does</span>
               <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Two powerful tools. One app.</h2>
-              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>Everything you need to shop smarter. Know what's in your food and skip the checkout line.</p>
+              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>See what's in your food before you eat it. Save hours of ingredient googling.</p>
             </div>
           </FadeIn>
 
@@ -161,7 +161,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
-                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
+                  Stop reading labels. Scan any barcode and SKAAP decodes additives, scores your food 0-100, and shows you what's actually safe — in under 5 seconds.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
@@ -171,10 +171,10 @@ const Index = () => {
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/scan")}
-                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cta-pulse-mobile"
                   style={{ background: "#B0202F", color: "#fff" }}
                 >
-                  <ScanLine size={16} /> Try Free Scan
+                  <ScanLine size={16} /> Scan a Product — It's Free
                 </motion.button>
               </motion.div>
             </FadeIn>
@@ -246,10 +246,10 @@ const Index = () => {
                 🌿 Smart Info
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Your personal food &amp; beauty analyst.
+                Stop googling ingredients.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#4B5563" }}>
-                Scan any product and instantly see what's really inside. SKAAP Score, Nutri-Score, allergens, additives, and ingredient safety decoded in real time.
+                One scan. Full breakdown. Additives, allergens, processing level, and a 0-100 score — faster than reading the label.
               </p>
             </div>
           </FadeIn>
