@@ -63,11 +63,11 @@ const Index = () => {
 
   const heroHeadline = isFromInstagram
     ? <>You saw it on Instagram.<br />Now try it.</>
-    : <>See what's really<br />in your food.<br /><span style={{ color: "#B0202F" }}>Instantly.</span></>;
+    : <>Scan. Know.<br /><span style={{ color: "#B0202F" }}>Skip the line.</span></>;
 
   const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
-    : "Stop googling ingredients. Scan any product and get the full story in seconds.";
+    : "Food intelligence + mobile checkout. One app.";
 
   return (
     <div className="min-h-screen font-sans overflow-x-hidden">
@@ -147,8 +147,8 @@ const Index = () => {
           <FadeIn>
             <div className="text-center mb-8">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#B0202F" }}>What SKAAP Does</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Two powerful tools. One app.</h2>
-              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>See what's in your food before you eat it. Save hours of ingredient googling.</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Food intelligence. Mobile checkout.</h2>
+              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>Know what you're eating. Skip the register.</p>
             </div>
           </FadeIn>
 
@@ -159,9 +159,9 @@ const Index = () => {
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#B0202F" }}>
                   <Sparkles size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
+                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Food Intelligence</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
-                  Stop reading labels. Scan any barcode and SKAAP decodes additives, scores your food 0-100, and shows you what's actually safe — in under 5 seconds.
+                  Scan any barcode. Get a 0-100 health score, additive risks, and nutrition facts — faster than reading the label.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
@@ -245,11 +245,11 @@ const Index = () => {
               <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(176,32,47,0.1)", color: "#B0202F" }}>
                 🌿 Smart Info
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Stop googling ingredients.
+               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                One scan. Full picture.
               </h2>
               <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#4B5563" }}>
-                One scan. Full breakdown. Additives, allergens, processing level, and a 0-100 score — faster than reading the label.
+                Additives decoded. Nutrition scored. No googling required.
               </p>
             </div>
           </FadeIn>
@@ -409,7 +409,7 @@ const Index = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
               <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
-              <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Free Scan</button>
+              <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Food Intelligence</button>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
