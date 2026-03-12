@@ -786,11 +786,22 @@ const SkaapScan = () => {
     ? `skaap-${selectedCardType}-${productInfo.productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${scoreBreakdown?.total ?? 0}.png`
     : "skaap-score.png";
 
-  const handleShareAction = useCallback(async (target: "instagram" | "whatsapp" | "anywhere") => {
+  const handleShareAction = useCallback(async (target: "instagram" | "whatsapp" | "tiktok" | "anywhere") => {
     if (!shareImageBlob) return;
     const file = new File([shareImageBlob], shareFilename, { type: "image/png" });
 
-    if (target === "whatsapp") {
+    if (target === "tiktok") {
+      // TikTok doesn't have a direct share API — save image + open TikTok
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
+      } else {
+        const url = URL.createObjectURL(shareImageBlob);
+        const a = document.createElement("a");
+        a.href = url; a.download = shareFilename;
+        a.click(); URL.revokeObjectURL(url);
+        toast("Image saved — open TikTok and create a new post", { duration: 3000 });
+      }
+    } else if (target === "whatsapp") {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
       } else {
