@@ -161,7 +161,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
-                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
+                  Stop reading labels. Scan any barcode and SKAAP decodes additives, scores your food 0-100, and shows you what's actually safe — in under 5 seconds.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
@@ -171,10 +171,10 @@ const Index = () => {
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/scan")}
-                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cta-pulse-mobile"
                   style={{ background: "#B0202F", color: "#fff" }}
                 >
-                  <ScanLine size={16} /> Try Free Scan
+                  <ScanLine size={16} /> Scan a Product — It's Free
                 </motion.button>
               </motion.div>
             </FadeIn>
