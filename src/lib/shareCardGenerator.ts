@@ -1,4 +1,5 @@
 // ─── SKAAP Share Card Generator — 5 card types via HTML Canvas ───
+// Social-media optimized, branded, compact, fun, fit-to-screen 9:16
 import type { UserStats, ScoreEntry } from "./skaapUserStats";
 import type { AIRecommendation } from "./aiProductInsights";
 
@@ -24,6 +25,9 @@ function getScoreColor(s: number) {
 function getVerdict(s: number) {
   return s >= 75 ? "Excellent" : s >= 50 ? "Good" : s >= 25 ? "Mediocre" : "Poor";
 }
+function getEmoji(s: number) {
+  return s >= 75 ? "🌿" : s >= 50 ? "👀" : s >= 25 ? "😬" : "🚨";
+}
 
 // Seeded random
 function seededRandom(seed: number) {
@@ -45,12 +49,12 @@ function drawBackground(ctx: CanvasRenderingContext2D, gradEnd: string, barcode:
   grad.addColorStop(1, gradEnd);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
-  // Texture
+  // Texture dots
   const rand = seededRandom(seedFromBarcode(barcode));
-  for (let i = 0; i < 40; i++) {
-    const r = 2 + rand() * 4;
+  for (let i = 0; i < 50; i++) {
+    const r = 2 + rand() * 5;
     const x = rand() * W, y = rand() * H;
-    const opacity = 0.03 + rand() * 0.03;
+    const opacity = 0.03 + rand() * 0.04;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(255,255,255,${opacity})`;
@@ -63,28 +67,38 @@ function drawBranding(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
   if (icon) {
     ctx.save();
     ctx.beginPath();
-    ctx.arc(W / 2, 120, 24, 0, Math.PI * 2);
+    ctx.arc(W / 2, 100, 28, 0, Math.PI * 2);
     ctx.clip();
-    ctx.drawImage(icon, W / 2 - 24, 96, 48, 48);
+    ctx.drawImage(icon, W / 2 - 28, 72, 56, 56);
     ctx.restore();
   }
   ctx.fillStyle = "#fff";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
+  ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
   ctx.letterSpacing = "0.15em";
-  ctx.fillText("SKAAP", W / 2, 180);
+  ctx.fillText("SKAAP", W / 2, 164);
   ctx.letterSpacing = "0";
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText(subtitle || "useskaap.com", W / 2, 206);
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = "400 16px Inter400, Inter, system-ui, sans-serif";
+  ctx.fillText(subtitle || "See what's in your food", W / 2, 192);
 }
 
 function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, score: number, scoreNumSize = 96) {
   const color = getScoreColor(score);
+  // Glow
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 14;
+  ctx.stroke();
+  ctx.restore();
   // Background ring
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(255,255,255,0.15)";
-  ctx.lineWidth = 12;
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.lineWidth = 14;
   ctx.stroke();
   // Score arc
   ctx.beginPath();
@@ -92,7 +106,7 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   const end = start + (score / 100) * Math.PI * 2;
   ctx.arc(cx, cy, radius, start, end);
   ctx.strokeStyle = color;
-  ctx.lineWidth = 12;
+  ctx.lineWidth = 14;
   ctx.lineCap = "round";
   ctx.stroke();
   ctx.lineCap = "butt";
@@ -103,24 +117,54 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   ctx.fillText(String(score), cx, cy + scoreNumSize * 0.33);
 }
 
-function drawBottomCard(ctx: CanvasRenderingContext2D, line1: string, line2: string) {
-  const ctaY = 1720, ctaW = 900, ctaH = 160, ctaR = 24;
+function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline: string, tagline?: string) {
+  // Frosted card at bottom
+  const ctaY = 1660, ctaW = 940, ctaH = 220, ctaR = 28;
   const ctaX = (W - ctaW) / 2;
-  ctx.fillStyle = "#fff";
+  
+  // Glass effect background
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
   ctx.beginPath();
   ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
   ctx.fill();
+  
+  // Subtle border
+  ctx.strokeStyle = "rgba(255,255,255,0.6)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
+  ctx.stroke();
 
   ctx.textAlign = "center";
   ctx.fillStyle = "#1B2A4A";
-  ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText(line1, W / 2, ctaY + 50);
+  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(headline, W / 2, ctaY + 48);
+  
   ctx.fillStyle = "#6B7280";
   ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText(line2, W / 2, ctaY + 82);
+  ctx.fillText(subline, W / 2, ctaY + 80);
+  
+  // CTA pill button
+  const pillW = 380, pillH = 48, pillR = 24;
+  const pillX = (W - pillW) / 2, pillY = ctaY + 100;
   ctx.fillStyle = "#E8314A";
-  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText("Try it free → useskaap.com/scan", W / 2, ctaY + 120);
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
+  ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.font = "700 16px Inter600, Inter, system-ui, sans-serif";
+  ctx.fillText("Scan yours free → useskaap.com", W / 2, pillY + 31);
+  
+  // Tagline below pill
+  if (tagline) {
+    ctx.fillStyle = "#9CA3AF";
+    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(tagline, W / 2, pillY + 72);
+  } else {
+    ctx.fillStyle = "#9CA3AF";
+    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText("@useskaap · Tag us and we'll repost 🙌", W / 2, pillY + 72);
+  }
 }
 
 function drawWatermark(ctx: CanvasRenderingContext2D) {
@@ -131,71 +175,127 @@ function drawWatermark(ctx: CanvasRenderingContext2D) {
   ctx.textAlign = "left";
 }
 
+function drawInfoPill(ctx: CanvasRenderingContext2D, x: number, y: number, label: string, value: string, color: string) {
+  const pillW = 200, pillH = 44, pillR = 22;
+  const px = x - pillW / 2;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(px, y, pillW, pillH, pillR);
+  ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.font = "800 14px Inter800, Inter, system-ui, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(value, x, y + 18);
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = "400 12px Inter400, Inter, system-ui, sans-serif";
+  ctx.fillText(label, x, y + 34);
+}
+
 function drawPills(ctx: CanvasRenderingContext2D, y: number, nutriGrade?: string, novaGroup?: number, additiveCount?: number) {
   const nutriColors: Record<string, string> = { a: "#2D7D46", b: "#4CAF50", c: "#FFC107", d: "#FF6D00", e: "#E8314A" };
-  const pillW = 60, pillH = 36, pillR = 18, pillGap = 16;
-  const pills: { label: string; color: string }[] = [];
-  if (nutriGrade) pills.push({ label: nutriGrade.toUpperCase(), color: nutriColors[nutriGrade.toLowerCase()] || "#9CA3AF" });
-  if (novaGroup) pills.push({ label: String(novaGroup), color: "rgba(255,255,255,0.4)" });
+  const pills: { label: string; value: string; color: string }[] = [];
+  
+  if (nutriGrade) {
+    const c = nutriColors[nutriGrade.toLowerCase()] || "#9CA3AF";
+    pills.push({ label: "Nutri-Score", value: nutriGrade.toUpperCase(), color: c });
+  }
+  if (novaGroup) {
+    const novaC = novaGroup <= 2 ? "#2D7D46" : novaGroup === 3 ? "#FF6D00" : "#E8314A";
+    pills.push({ label: "Processing", value: `NOVA ${novaGroup}`, color: novaC });
+  }
   const ac = additiveCount ?? 0;
-  pills.push({ label: ac === 0 ? "✓" : String(ac), color: ac === 0 ? "#2D7D46" : "rgba(255,255,255,0.4)" });
+  pills.push({ label: "Additives", value: ac === 0 ? "None ✓" : `${ac} found`, color: ac === 0 ? "#2D7D46" : ac > 3 ? "#E8314A" : "#FF6D00" });
 
+  const pillW = 160, pillH = 52, pillR = 16, pillGap = 16;
   const totalW = pills.length * pillW + (pills.length - 1) * pillGap;
   let px = (W - totalW) / 2;
+  
   ctx.textAlign = "center";
   pills.forEach(p => {
-    ctx.strokeStyle = p.color;
-    ctx.lineWidth = 2;
+    // Pill background
+    ctx.fillStyle = `${p.color}20`;
+    ctx.beginPath();
+    ctx.roundRect(px, y, pillW, pillH, pillR);
+    ctx.fill();
+    ctx.strokeStyle = `${p.color}60`;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.roundRect(px, y, pillW, pillH, pillR);
     ctx.stroke();
-    ctx.fillStyle = p.color;
-    ctx.font = "800 18px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(p.label, px + pillW / 2, y + 24);
+    
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 16px Inter800, Inter, system-ui, sans-serif";
+    ctx.fillText(p.value, px + pillW / 2, y + 22);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.font = "400 11px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(p.label, px + pillW / 2, y + 40);
     px += pillW + pillGap;
   });
 }
 
-// ─── Card Type 1: This Product (existing) ───
+// ─── Card Type 1: This Product ───
 function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | null, p: ShareProductData) {
   const score = p.skaap_score;
   const gradEnd = score >= 75 ? "#1a3a2a" : score >= 50 ? "#2a2a0a" : score >= 25 ? "#2a1a0a" : "#2a0a0a";
   drawBackground(ctx, gradEnd, p.barcode);
   drawBranding(ctx, icon);
 
-  const cy = H * 0.45;
-  drawScoreRing(ctx, W / 2, cy, 180, score);
-  // / 100
-  ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
+  // "I just scanned this" label
   ctx.textAlign = "center";
-  ctx.fillText("/ 100", W / 2, cy + 62);
-  // Verdict
-  ctx.fillStyle = getScoreColor(score);
-  ctx.font = "600 24px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText(getVerdict(score), W / 2, cy + 98);
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.15em";
+  ctx.fillText("I JUST SCANNED THIS", W / 2, 250);
+  ctx.letterSpacing = "0";
 
-  // Product name & brand
-  const nameY = cy + 250;
+  // Product name + brand block
+  const nameY = 300;
   ctx.fillStyle = "#fff";
-  ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
-  const dn = p.product_name.length > 40 ? p.product_name.slice(0, 38) + "…" : p.product_name;
+  ctx.font = "800 36px Inter800, Inter, system-ui, sans-serif";
+  const dn = p.product_name.length > 35 ? p.product_name.slice(0, 33) + "…" : p.product_name;
   ctx.fillText(dn, W / 2, nameY);
   if (p.brand) {
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(p.brand, W / 2, nameY + 32);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.font = "400 22px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(p.brand, W / 2, nameY + 36);
   }
 
-  drawPills(ctx, nameY + 72, p.nutriscore_grade, p.nova_group, p.additives?.length);
+  // Giant score ring — centerpiece
+  const cy = H * 0.48;
+  drawScoreRing(ctx, W / 2, cy, 190, score, 110);
+  // / 100
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = "600 22px Inter600, Inter, system-ui, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("/ 100", W / 2, cy + 70);
+  // Verdict with emoji
+  const verdictColor = getScoreColor(score);
+  ctx.fillStyle = verdictColor;
+  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(`${getVerdict(score)} ${getEmoji(score)}`, W / 2, cy + 108);
 
-  // Bottom card
+  // Info pills row
+  drawPills(ctx, cy + 150, p.nutriscore_grade, p.nova_group, p.additives?.length);
+
+  // Top additives callout (if any risky ones)
+  if (p.additives && p.additives.length > 0) {
+    const topAdds = p.additives.slice(0, 3).map(a =>
+      a.replace(/^en:/, "").replace(/-.*$/, "").replace(/\b\w/g, c => c.toUpperCase())
+    );
+    const addY = cy + 230;
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.font = "400 16px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, addY);
+  }
+
+  // Bottom CTA
   let l1: string, l2: string;
-  if (score >= 75) { l1 = "Just SKAAPed this 🌿"; l2 = "Clean ingredients. Great score."; }
-  else if (score >= 50) { l1 = "Just SKAAPed this 👀"; l2 = "Not bad. But check the additives."; }
-  else if (score >= 25) { l1 = "Just SKAAPed this 😬"; l2 = "You might want to think twice."; }
-  else { l1 = "Just SKAAPed this 🚨"; l2 = "This one scored pretty rough."; }
-  drawBottomCard(ctx, l1, l2);
+  if (score >= 75) { l1 = "Just SKAAPed this 🌿"; l2 = "Clean ingredients. Would you eat it?"; }
+  else if (score >= 50) { l1 = "Just SKAAPed this 👀"; l2 = "Not terrible, but check the additives."; }
+  else if (score >= 25) { l1 = "Just SKAAPed this 😬"; l2 = "You should probably check yours too."; }
+  else { l1 = "Just SKAAPed this 🚨"; l2 = "This scored rough. What about YOUR food?"; }
+  drawBottomCTA(ctx, l1, l2);
   drawWatermark(ctx);
 }
 
@@ -204,62 +304,79 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
   const ks = stats.kitchen_score;
   const gradEnd = ks >= 50 ? "#1a3a2a" : "#2a1a0a";
   drawBackground(ctx, gradEnd, p.barcode);
-  drawBranding(ctx, icon);
+  drawBranding(ctx, icon, "Food Intelligence");
 
+  ctx.textAlign = "center";
+
+  // Section label
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.15em";
+  ctx.fillText("MY KITCHEN REPORT", W / 2, 250);
+  ctx.letterSpacing = "0";
+
+  // Kitchen score — large number
   const cy = H * 0.38;
   const color = getScoreColor(ks);
-
-  // House icon (drawn as text emoji)
-  ctx.textAlign = "center";
-  ctx.font = "80px serif";
-  ctx.fillText("🏠", W / 2, cy - 60);
-
-  ctx.fillStyle = "#fff";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText("My Kitchen Scores", W / 2, cy + 10);
+  
+  ctx.fillStyle = color;
+  ctx.font = "800 140px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(String(ks), W / 2, cy + 50);
+  
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = "600 24px Inter600, Inter, system-ui, sans-serif";
+  ctx.fillText("out of 100", W / 2, cy + 84);
 
   ctx.fillStyle = color;
-  ctx.font = "800 96px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText(String(ks), W / 2, cy + 120);
+  ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(`${getVerdict(ks)} Kitchen ${getEmoji(ks)}`, W / 2, cy + 126);
 
-  ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText("/ 100 average", W / 2, cy + 152);
-
-  ctx.fillStyle = color;
-  ctx.font = "600 22px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText(getVerdict(ks), W / 2, cy + 186);
-
-  // Three stats row
-  const statY = cy + 240;
+  // Three stats — glass cards
+  const statY = cy + 180;
+  const cardW = 280, cardH = 100, cardR = 20, cardGap = 20;
+  const totalCardsW = 3 * cardW + 2 * cardGap;
+  let startX = (W - totalCardsW) / 2;
+  
   const statData = [
-    { val: String(stats.total_scans), label: "products scanned", color: "#fff" },
-    { val: stats.kitchen_percentile + "%", label: "better than others", color },
-    { val: stats.current_streak + "🔥", label: "day streak", color: "#fff" },
+    { val: String(stats.total_scans), label: "products\nscanned", color: "#fff" },
+    { val: `${stats.kitchen_percentile}%`, label: "better than\nother users", color },
+    { val: `${stats.current_streak}🔥`, label: "day\nstreak", color: "#FFC107" },
   ];
-  const statGap = 240;
-  const startX = W / 2 - statGap;
+  
   statData.forEach((s, i) => {
-    const x = startX + i * statGap;
+    const x = startX + i * (cardW + cardGap);
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.beginPath();
+    ctx.roundRect(x, statY, cardW, cardH, cardR);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(x, statY, cardW, cardH, cardR);
+    ctx.stroke();
+    
     ctx.fillStyle = s.color;
-    ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(s.val, x, statY);
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(s.label, x, statY + 24);
+    ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(s.val, x + cardW / 2, statY + 40);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.font = "400 13px Inter400, Inter, system-ui, sans-serif";
+    const lines = s.label.split("\n");
+    lines.forEach((line, li) => {
+      ctx.fillText(line, x + cardW / 2, statY + 60 + li * 16);
+    });
   });
 
-  // Dynamic bottom card copy
+  // Fun copy
   let l1: string;
-  if (stats.current_streak > 6 && ks > 70) l1 = `Eating clean. ${stats.current_streak} days strong. 🌿`;
-  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "Even I have skeletons in my fridge. 💀";
-  else if (stats.total_scans > 50) l1 = "50 scans in. Still learning. 🔍";
-  else if (ks > 80) l1 = "My kitchen passed the SKAAP test. 🏆";
-  else if (ks < 40) l1 = "My kitchen and I need to have a talk. 😅";
-  else l1 = `Just SKAAPed my kitchen. ${ks}/100.`;
+  if (stats.current_streak > 6 && ks > 70) l1 = `${stats.current_streak} days of eating clean 🌿`;
+  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "My fridge has secrets 💀";
+  else if (stats.total_scans > 50) l1 = "50+ products scanned 🔍";
+  else if (ks > 80) l1 = "My kitchen passed the test 🏆";
+  else if (ks < 40) l1 = "My kitchen needs work 😅";
+  else l1 = `My kitchen scores ${ks}/100`;
 
-  const l2 = `Better than ${stats.kitchen_percentile}% of SKAAP users.`;
-  drawBottomCard(ctx, l1, l2);
+  drawBottomCTA(ctx, l1, `Better than ${stats.kitchen_percentile}% of SKAAP users`, "Think YOUR kitchen can beat this? 🏆");
   drawWatermark(ctx);
 }
 
@@ -268,147 +385,134 @@ function drawSwapCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
   const rec = p.top_recommendation;
   if (!rec) return;
 
-  // Split background
-  ctx.fillStyle = "#2a0a0a";
+  // Split background — red top, green bottom
+  const topGrad = ctx.createLinearGradient(0, 0, 0, H / 2);
+  topGrad.addColorStop(0, "#1a0808");
+  topGrad.addColorStop(1, "#2a0a0a");
+  ctx.fillStyle = topGrad;
   ctx.fillRect(0, 0, W, H / 2);
-  ctx.fillStyle = "#0a2a12";
+  
+  const botGrad = ctx.createLinearGradient(0, H / 2, 0, H);
+  botGrad.addColorStop(0, "#082a12");
+  botGrad.addColorStop(1, "#0a1a0a");
+  ctx.fillStyle = botGrad;
   ctx.fillRect(0, H / 2, W, H / 2);
 
   // Texture
   const rand = seededRandom(seedFromBarcode(p.barcode));
-  for (let i = 0; i < 40; i++) {
-    const r = 2 + rand() * 4;
+  for (let i = 0; i < 50; i++) {
+    const r = 2 + rand() * 5;
     const x = rand() * W, y = rand() * H;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${0.03 + rand() * 0.03})`;
+    ctx.fillStyle = `rgba(255,255,255,${0.03 + rand() * 0.04})`;
     ctx.fill();
   }
 
-  drawBranding(ctx, icon);
-
-  // Divider line
-  ctx.strokeStyle = "rgba(255,255,255,0.3)";
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(0, H / 2);
-  ctx.lineTo(W, H / 2);
-  ctx.stroke();
-
-  // Swap circle on divider
-  ctx.beginPath();
-  ctx.arc(W / 2, H / 2, 40, 0, Math.PI * 2);
-  ctx.fillStyle = "#fff";
-  ctx.fill();
-  ctx.fillStyle = "#1B2A4A";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("⇄", W / 2, H / 2 + 10);
+  drawBranding(ctx, icon, "Smart Swap");
 
   // TOP HALF — scanned product
   const topCy = H * 0.30;
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
-  ctx.letterSpacing = "0.1em";
-  ctx.fillText("WHAT I SCANNED", W / 2, topCy - 80);
+  ctx.textAlign = "center";
+  
+  // "WHAT I SCANNED" label
+  ctx.fillStyle = "#E8314A";
+  ctx.font = "800 14px Inter800, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.2em";
+  ctx.fillText("❌  WHAT I SCANNED", W / 2, topCy - 90);
   ctx.letterSpacing = "0";
 
   ctx.fillStyle = "#fff";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-  const topName = p.product_name.length > 30 ? p.product_name.slice(0, 28) + "…" : p.product_name;
-  ctx.fillText(topName, W / 2, topCy - 40);
+  ctx.font = "800 30px Inter800, Inter, system-ui, sans-serif";
+  const topName = p.product_name.length > 28 ? p.product_name.slice(0, 26) + "…" : p.product_name;
+  ctx.fillText(topName, W / 2, topCy - 50);
   if (p.brand) {
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
     ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(p.brand, W / 2, topCy - 14);
+    ctx.fillText(p.brand, W / 2, topCy - 22);
   }
-  drawScoreRing(ctx, W / 2, topCy + 60, 50, p.skaap_score, 44);
+  drawScoreRing(ctx, W / 2, topCy + 50, 55, p.skaap_score, 48);
 
-  if (p.nutriscore_grade) {
-    const nc: Record<string, string> = { a: "#2D7D46", b: "#4CAF50", c: "#FFC107", d: "#FF6D00", e: "#E8314A" };
-    const c = nc[p.nutriscore_grade.toLowerCase()] || "#9CA3AF";
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(W / 2 - 20, topCy + 124, 40, 24, 12);
-    ctx.stroke();
-    ctx.fillStyle = c;
-    ctx.font = "800 14px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(p.nutriscore_grade.toUpperCase(), W / 2, topCy + 140);
-  }
+  // Divider with swap icon
+  const divY = H / 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(100, divY);
+  ctx.lineTo(W - 100, divY);
+  ctx.stroke();
+  
+  // Swap circle
+  ctx.beginPath();
+  ctx.arc(W / 2, divY, 36, 0, Math.PI * 2);
+  ctx.fillStyle = "#fff";
+  ctx.fill();
+  ctx.fillStyle = "#1B2A4A";
+  ctx.font = "800 24px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText("⇅", W / 2, divY + 9);
 
   // BOTTOM HALF — recommendation
   const botCy = H * 0.68;
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
-  ctx.letterSpacing = "0.1em";
-  ctx.fillText("TRYING INSTEAD", W / 2, botCy - 80);
+  
+  ctx.fillStyle = "#2D7D46";
+  ctx.font = "800 14px Inter800, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.2em";
+  ctx.fillText("✓  TRYING INSTEAD", W / 2, botCy - 90);
   ctx.letterSpacing = "0";
 
   ctx.fillStyle = "#fff";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-  const botName = rec.name.length > 30 ? rec.name.slice(0, 28) + "…" : rec.name;
-  ctx.fillText(botName, W / 2, botCy - 40);
+  ctx.font = "800 30px Inter800, Inter, system-ui, sans-serif";
+  const botName = rec.name.length > 28 ? rec.name.slice(0, 26) + "…" : rec.name;
+  ctx.fillText(botName, W / 2, botCy - 50);
 
-  // Estimate swap score from nutri-score letter
   const letterScores: Record<string, number> = { a: 85, b: 72, c: 55, d: 35, e: 18 };
   const swapScore = letterScores[rec.estimatedScore?.toLowerCase() || "a"] || 80;
-  drawScoreRing(ctx, W / 2, botCy + 40, 50, swapScore, 44);
+  drawScoreRing(ctx, W / 2, botCy + 30, 55, swapScore, 48);
 
   const diff = swapScore - p.skaap_score;
   if (diff > 0) {
     ctx.fillStyle = "#2D7D46";
-    ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
-    ctx.fillText(`+ ${diff} points better`, W / 2, botCy + 110);
+    ctx.font = "800 20px Inter800, Inter, system-ui, sans-serif";
+    ctx.fillText(`+${diff} points better ↑`, W / 2, botCy + 110);
   }
 
-  if (rec.estimatedScore) {
-    const nc: Record<string, string> = { a: "#2D7D46", b: "#4CAF50", c: "#FFC107", d: "#FF6D00", e: "#E8314A" };
-    const c = nc[rec.estimatedScore.toLowerCase()] || "#2D7D46";
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(W / 2 - 20, botCy + 124, 40, 24, 12);
-    ctx.stroke();
-    ctx.fillStyle = c;
-    ctx.font = "800 14px Inter800, Inter, system-ui, sans-serif";
-    ctx.fillText(rec.estimatedScore.toUpperCase(), W / 2, botCy + 140);
-  }
-
-  // Bottom card
-  const swapName = rec.name.length > 20 ? rec.name.slice(0, 18) + "…" : rec.name;
-  const origName = p.product_name.length > 20 ? p.product_name.slice(0, 18) + "…" : p.product_name;
-  drawBottomCard(ctx, "Making the swap 🔄", `${origName} → ${swapName}`);
+  // Bottom CTA
+  drawBottomCTA(ctx, "Making the swap 🔄", `${p.skaap_score} → ${swapScore} points`, "What would YOUR swap look like?");
   drawWatermark(ctx);
 }
 
 // ─── Card Type 4: My Streak ───
 function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | null, stats: UserStats, barcode: string) {
   drawBackground(ctx, "#1B2A4A", barcode);
-  drawBranding(ctx, icon);
+  drawBranding(ctx, icon, "Clean Eating Tracker");
 
-  const cy = H * 0.35;
   ctx.textAlign = "center";
-  // Fire emoji
-  ctx.font = "120px serif";
-  ctx.fillText("🔥", W / 2, cy);
 
-  ctx.fillStyle = "#fff";
-  ctx.font = "800 96px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText(String(stats.current_streak), W / 2, cy + 110);
+  // Section label
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.font = "600 16px Inter600, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.15em";
+  ctx.fillText("EATING CLEAN FOR", W / 2, 260);
+  ctx.letterSpacing = "0";
+
+  const cy = H * 0.38;
+  // Fire emoji
+  ctx.font = "140px serif";
+  ctx.fillText("🔥", W / 2, cy - 20);
+
+  // Streak number — huge
+  ctx.fillStyle = "#FFC107";
+  ctx.font = "800 120px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(String(stats.current_streak), W / 2, cy + 120);
 
   ctx.fillStyle = "#FFC107";
-  ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText("day streak 🔥", W / 2, cy + 155);
-
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText("days of eating clean", W / 2, cy + 190);
+  ctx.font = "800 36px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(stats.current_streak === 1 ? "day" : "days straight", W / 2, cy + 165);
 
   // Day indicators — last 7 days
-  const indicatorY = cy + 260;
-  const circleR = 26;
-  const gap = 68;
+  const indicatorY = cy + 240;
+  const circleR = 28;
+  const gap = 72;
   const totalW7 = 7 * circleR * 2 + 6 * (gap - circleR * 2);
   const startX = (W - totalW7) / 2 + circleR;
   const today = new Date();
@@ -421,13 +525,18 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
     const x = startX + (6 - i) * gap;
 
     if (hasQualifying) {
+      // Filled circle with glow
+      ctx.save();
+      ctx.shadowColor = "#FFC107";
+      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(x, indicatorY, circleR, 0, Math.PI * 2);
       ctx.fillStyle = "#FFC107";
       ctx.fill();
+      ctx.restore();
       if (isToday) {
-        ctx.font = "16px serif";
-        ctx.fillText("🔥", x, indicatorY + 6);
+        ctx.font = "18px serif";
+        ctx.fillText("🔥", x, indicatorY + 7);
       } else {
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 3;
@@ -440,35 +549,35 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
     } else {
       ctx.beginPath();
       ctx.arc(x, indicatorY, circleR, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(255,255,255,0.3)";
+      ctx.strokeStyle = "rgba(255,255,255,0.2)";
       ctx.lineWidth = 2;
       ctx.stroke();
     }
 
     // Day label
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    ctx.font = "400 11px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()], x, indicatorY + circleR + 18);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.font = "400 12px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()], x, indicatorY + circleR + 20);
   }
 
-  // "Scanning with SKAAP since..."
+  // "Since" line
   if (stats.daily_scan_dates.length > 0) {
     const first = new Date(stats.daily_scan_dates.sort()[0] + "T00:00:00");
     const monthYear = first.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.font = "400 16px Inter400, Inter, system-ui, sans-serif";
     ctx.fillText(`Scanning with SKAAP since ${monthYear}`, W / 2, indicatorY + circleR + 60);
   }
 
-  // Bottom card
+  // Bottom CTA
   const s = stats.current_streak;
   let l1: string;
   if (s >= 30) l1 = "30 days of clean eating 🌿";
   else if (s >= 14) l1 = "Two weeks strong 🏆";
-  else if (s >= 7) l1 = "One week of eating clean 💪";
-  else if (s >= 3) l1 = "On a clean eating streak 🔥";
+  else if (s >= 7) l1 = "One week clean 💪";
+  else if (s >= 3) l1 = "On a streak 🔥";
   else l1 = "Just getting started 🌱";
-  drawBottomCard(ctx, l1, "Eating smarter one scan at a time.");
+  drawBottomCTA(ctx, l1, "Can you keep up?", "Start your streak → useskaap.com");
   drawWatermark(ctx);
 }
 
@@ -477,90 +586,81 @@ function drawWorstCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | n
   const worst = stats.worst_score_ever;
   if (!worst) return;
 
-  drawBackground(ctx, "#0A1220", worst.barcode);
-  // Override gradient to red
+  // Deep red ominous gradient
   const grad = ctx.createLinearGradient(0, 0, W * 0.4, H);
-  grad.addColorStop(0, "#2a0a0a");
+  grad.addColorStop(0, "#2a0505");
   grad.addColorStop(1, "#0A1220");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
-  // Re-draw texture
+  
+  // Texture
   const rand = seededRandom(seedFromBarcode(worst.barcode));
-  for (let i = 0; i < 40; i++) {
-    const r = 2 + rand() * 4;
+  for (let i = 0; i < 50; i++) {
+    const r = 2 + rand() * 5;
     const x = rand() * W, y = rand() * H;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${0.03 + rand() * 0.03})`;
+    ctx.fillStyle = `rgba(255,255,255,${0.03 + rand() * 0.04})`;
     ctx.fill();
   }
 
   drawBranding(ctx, icon, "HALL OF SHAME");
 
-  const cy = H * 0.40;
+  // Section label
   ctx.textAlign = "center";
+  ctx.fillStyle = "#E8314A";
+  ctx.font = "800 16px Inter800, Inter, system-ui, sans-serif";
+  ctx.letterSpacing = "0.15em";
+  ctx.fillText("💀  THE WORST THING IN MY KITCHEN", W / 2, 260);
+  ctx.letterSpacing = "0";
 
-  // Product image placeholder (red circle with ?)
+  const cy = H * 0.42;
+
+  // Red danger circle
+  ctx.save();
+  ctx.shadowColor = "#E8314A";
+  ctx.shadowBlur = 40;
   ctx.beginPath();
-  ctx.arc(W / 2, cy - 40, 70, 0, Math.PI * 2);
+  ctx.arc(W / 2, cy - 40, 80, 0, Math.PI * 2);
   ctx.strokeStyle = "#E8314A";
   ctx.lineWidth = 6;
   ctx.stroke();
+  ctx.restore();
   ctx.fillStyle = "#E8314A";
-  ctx.font = "800 60px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText("?", W / 2, cy - 20);
+  ctx.font = "800 70px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText("💀", W / 2, cy - 20);
 
   // Product name
   ctx.fillStyle = "#fff";
-  ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
-  const wn = worst.product_name.length > 35 ? worst.product_name.slice(0, 33) + "…" : worst.product_name;
-  ctx.fillText(wn, W / 2, cy + 60);
+  ctx.font = "800 34px Inter800, Inter, system-ui, sans-serif";
+  const wn = worst.product_name.length > 30 ? worst.product_name.slice(0, 28) + "…" : worst.product_name;
+  ctx.fillText(wn, W / 2, cy + 70);
   if (worst.brand) {
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(worst.brand, W / 2, cy + 88);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.font = "400 20px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(worst.brand, W / 2, cy + 100);
   }
 
   // Score ring
-  drawScoreRing(ctx, W / 2, cy + 170, 60, worst.skaap_score, 52);
+  drawScoreRing(ctx, W / 2, cy + 190, 70, worst.skaap_score, 60);
   ctx.fillStyle = "#E8314A";
-  ctx.font = "600 18px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText("out of 100 😬", W / 2, cy + 250);
+  ctx.font = "600 20px Inter600, Inter, system-ui, sans-serif";
+  ctx.fillText(`out of 100 😬`, W / 2, cy + 280);
 
-  // Nutri + NOVA pills
-  drawPills(ctx, cy + 280, worst.nutriscore_grade, worst.nova_group, worst.additives?.length);
+  // Info pills
+  drawPills(ctx, cy + 310, worst.nutriscore_grade, worst.nova_group, worst.additives?.length);
 
-  // Additive pills (if available)
+  // Additive names
   if (worst.additives && worst.additives.length > 0) {
     const topAdds = worst.additives.slice(0, 3).map(a =>
       a.replace(/^en:/, "").replace(/-.*$/, "").replace(/\b\w/g, c => c.toUpperCase())
     );
-    const addY = cy + 340;
-    const addGap = 12;
-    let totalAddW = 0;
-    const measured = topAdds.map(name => {
-      ctx.font = "600 11px Inter600, Inter, system-ui, sans-serif";
-      const tw = ctx.measureText(name).width + 20;
-      totalAddW += tw;
-      return { name, w: tw };
-    });
-    totalAddW += (measured.length - 1) * addGap;
-    let addX = (W - totalAddW) / 2;
-    measured.forEach(({ name, w }) => {
-      ctx.strokeStyle = "#E8314A";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(addX, addY, w, 28, 14);
-      ctx.stroke();
-      ctx.fillStyle = "#E8314A";
-      ctx.font = "600 11px Inter600, Inter, system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(name, addX + w / 2, addY + 18);
-      addX += w + addGap;
-    });
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.font = "400 16px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, cy + 390);
   }
 
-  drawBottomCard(ctx, "The worst thing in my kitchen 💀", `It scored ${worst.skaap_score}/100 on SKAAP.`);
+  drawBottomCTA(ctx, "My kitchen's worst kept secret 💀", `It scored ${worst.skaap_score}/100`, "What's hiding in YOUR kitchen?");
   drawWatermark(ctx);
 }
 
