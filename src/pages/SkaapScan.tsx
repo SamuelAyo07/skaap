@@ -1084,8 +1084,8 @@ const SkaapScan = () => {
 
                 {/* Headline */}
                 <div className="text-center mt-5 px-5">
-                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>How do you want to share?</p>
-                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick your moment</p>
+                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>Share your results ✨</p>
+                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick a card, make it yours, post it</p>
                 </div>
 
                 {/* Card type selector chips */}
