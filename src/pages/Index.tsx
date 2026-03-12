@@ -409,7 +409,7 @@ const Index = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
               <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
-              <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Free Scan</button>
+              <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Food Intelligence</button>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">

@@ -1177,28 +1177,34 @@ const SkaapScan = () => {
                   </div>
 
                   {/* Share buttons */}
-                  <div className="flex flex-col gap-[10px]">
+                  <div className="grid grid-cols-2 gap-[10px]">
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-btn"
-                      style={{ background: "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(200,30,60,0.95) 100%)", color: "#fff", height: 52, borderRadius: 16, fontSize: 15 }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
-                      Share to Instagram Stories 📸
+                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
+                      style={{ background: "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(200,30,60,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+                      Instagram
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("tiktok")}
+                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
+                      style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(30,30,30,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.51V6.79a4.84 4.84 0 01-1-.1z"/></svg>
+                      TikTok
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-btn"
-                      style={{ background: "linear-gradient(135deg, rgba(37,211,102,0.9) 0%, rgba(30,180,85,0.95) 100%)", color: "#fff", height: 52, borderRadius: 16, fontSize: 15 }}>
-                      <MessageCircle size={18} />
-                      Share to WhatsApp
+                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
+                      style={{ background: "linear-gradient(135deg, rgba(37,211,102,0.9) 0%, rgba(30,180,85,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <MessageCircle size={16} />
+                      WhatsApp
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
-                      className="w-full font-extrabold flex items-center justify-center gap-2 liquid-glass-chip"
-                      style={{ color: "#E8314A", height: 52, borderRadius: 16, fontSize: 15 }}>
-                      <Share2 size={18} style={{ color: "#E8314A" }} />
-                      Share anywhere
+                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-chip"
+                      style={{ color: "#E8314A", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <Share2 size={16} style={{ color: "#E8314A" }} />
+                      More
                     </motion.button>
                   </div>
-                  <p className="text-center mt-3" style={{ fontSize: 12, color: "#9CA3AF" }}>
-                    Tag @useskaap and we'll repost your story 🙌
+                  <p className="text-center mt-3" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                    Tag @useskaap — we repost the best ones 🔥
                   </p>
                   <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
                     {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
