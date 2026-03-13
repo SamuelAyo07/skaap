@@ -12,7 +12,7 @@ import stepScan from "@/assets/step-scan.webp";
 import stepPay from "@/assets/step-pay.webp";
 import stepReceipt from "@/assets/step-receipt.webp";
 
-const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] };
+const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
 
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
