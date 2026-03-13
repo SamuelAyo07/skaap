@@ -967,12 +967,12 @@ const SkaapScan = () => {
   // ─── SCREEN: AI INFO ───
   if (screen === "ai-info") {
     return (
-      <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#0A0F1E" }}>
+      <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
           <button onClick={() => setScreen("result")} aria-label="Back">
-            <ArrowLeft size={20} style={{ color: "rgba(255,255,255,0.7)" }} />
+            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
           </button>
-          <h1 className="font-extrabold text-lg text-white">How SKAAP uses AI</h1>
+          <h1 className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>How SKAAP uses AI</h1>
         </div>
         <div className="px-5 py-6 space-y-6">
           {[
@@ -984,12 +984,12 @@ const SkaapScan = () => {
             <div key={i}>
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={16} style={{ color: "#E8314A" }} />
-                <h2 className="font-bold text-sm text-white">{item.title}</h2>
+                <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>{item.title}</h2>
               </div>
-              <p className="text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{item.desc}</p>
+              <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>{item.desc}</p>
             </div>
           ))}
-          <p className="text-[11px] text-center pt-4" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="text-[11px] text-center pt-4" style={{ color: "#9CA3AF" }}>
             All AI content is marked with ✨ AI. Scores and risk levels are calculated using established nutritional science, not AI.
           </p>
         </div>
