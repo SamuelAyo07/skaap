@@ -38,7 +38,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
