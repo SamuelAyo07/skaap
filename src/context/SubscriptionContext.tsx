@@ -42,19 +42,33 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const { data } = await supabase
+      // Check via edge function which queries Stripe directly
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (!error && data?.subscribed) {
+        const trialEnd = data.trial_end ? new Date(data.trial_end) : null;
+        const trialActive = data.status === "trialing";
+        const trialDays = trialEnd ? Math.max(0, Math.ceil((trialEnd.getTime() - Date.now()) / 86400000)) : 0;
+        setState(s => ({
+          ...s, plan: "plus", isPlus: true, status: data.status || "active",
+          trialActive, trialDaysRemaining: trialDays, loading: false,
+        }));
+        return;
+      }
+
+      // Fallback: check Supabase table
+      const { data: subData } = await supabase
         .from("user_subscriptions")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (data && (data.status === "active" || data.status === "trialing") && data.plan === "plus") {
-        const trialActive = data.status === "trialing";
-        const trialDays = data.trial_ends_at
-          ? Math.max(0, Math.ceil((new Date(data.trial_ends_at).getTime() - Date.now()) / 86400000))
+      if (subData && (subData.status === "active" || subData.status === "trialing") && subData.plan === "plus") {
+        const trialActive = subData.status === "trialing";
+        const trialDays = subData.trial_ends_at
+          ? Math.max(0, Math.ceil((new Date(subData.trial_ends_at).getTime() - Date.now()) / 86400000))
           : 0;
         setState(s => ({
-          ...s, plan: "plus", isPlus: true, status: data.status!,
+          ...s, plan: "plus", isPlus: true, status: subData.status!,
           trialActive, trialDaysRemaining: trialDays, loading: false,
         }));
       } else {
