@@ -152,7 +152,7 @@ export function UpgradeSheet() {
                   boxShadow: "0 8px 32px rgba(232,49,74,0.3)",
                 }}
               >
-                {priceLabel}
+                {loading ? "Starting checkout..." : priceLabel}
               </motion.button>
 
               {/* Fine print */}
@@ -166,6 +166,7 @@ export function UpgradeSheet() {
           </motion.div>
         </motion.div>
       )}
+      <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />
     </AnimatePresence>
   );
 }
