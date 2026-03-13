@@ -945,8 +945,8 @@ const SkaapScan = () => {
           {[
             { icon: <Home size={22} />, label: "Home", active: true },
             { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
-            { icon: <Search size={22} />, label: "Search", active: false },
-            { icon: <Heart size={22} />, label: "Saved", active: false, action: () => { setBasket(getBasket()); setScreen("basket"); } },
+            { icon: <Search size={22} />, label: "Search", active: false, action: () => setScreen("search") },
+            { icon: <User size={22} />, label: "Profile", active: false, action: () => !user ? setAuthSheetOpen(true) : null },
           ].map(item => (
             <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
               <span style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.4)" }}>{item.icon}</span>
@@ -955,6 +955,9 @@ const SkaapScan = () => {
             </button>
           ))}
         </div>
+
+        {/* Auth sheet */}
+        <AuthSheet open={authSheetOpen} onClose={() => setAuthSheetOpen(false)} />
       </div>
     );
   }
