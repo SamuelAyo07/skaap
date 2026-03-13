@@ -370,7 +370,10 @@ function ScoreRing({ score, size = 120, showLabel = true }: { score: number; siz
 // ─── Main Component ───
 const SkaapScan = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("home");
+  const [authSheetOpen, setAuthSheetOpen] = useState(false);
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
