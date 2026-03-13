@@ -888,7 +888,7 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "rgba(255,255,255,0.45)" }}>Know what's in your food.</p>
+        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>Know what's in your food.</p>
 
         {/* CENTER — Glass scanner circle */}
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative z-10" style={{ paddingBottom: 40 }}>
