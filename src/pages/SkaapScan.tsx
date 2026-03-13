@@ -935,9 +935,9 @@ const SkaapScan = () => {
             { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
           ].map(chip => (
             <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-              className="flex flex-col items-center justify-center glass-pill" style={{ width: 100, height: 44, borderRadius: 12 }}>
-              <span className="text-[12px] font-bold text-white">{chip.emoji} {chip.val}</span>
-              <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>{chip.label}</span>
+              className="flex flex-col items-center justify-center" style={{ width: 100, height: 44, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+              <span className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
+              <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
             </button>
           ))}
         </div>
