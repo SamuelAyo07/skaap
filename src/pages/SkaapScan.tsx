@@ -3,8 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
-  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull,
+  ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull, User,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { HistoryScreen } from "@/components/scan/HistoryScreen";
+import { SearchScreen } from "@/components/scan/SearchScreen";
+import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
+import { AuthSheet } from "@/components/scan/AuthSheet";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
