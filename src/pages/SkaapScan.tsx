@@ -867,7 +867,7 @@ const SkaapScan = () => {
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
           <div className="flex items-center gap-2">
             <img src={skaapIcon} alt="Skaap" className="w-7 h-7 rounded-lg" width="28" height="28" />
-            <span className="font-extrabold text-xl tracking-tight text-white" style={{ letterSpacing: "-0.5px" }}>SKAAP</span>
+            <span className="font-extrabold text-xl tracking-tight" style={{ letterSpacing: "-0.5px", color: "#1B2A4A" }}>SKAAP</span>
           </div>
           <div className="flex items-center gap-2">
             {basket.length > 0 && (
