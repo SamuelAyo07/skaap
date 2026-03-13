@@ -1162,7 +1162,7 @@ const SkaapScan = () => {
                   {selectedCardType === "kitchen" && userStats.total_scans < 5 && (
                     <div className="mt-3 text-center">
                       <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
-                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "#F3F4F6" }}>
+                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "rgba(255,255,255,0.1)" }}>
                         <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#E8314A" }} />
                       </div>
                     </div>
