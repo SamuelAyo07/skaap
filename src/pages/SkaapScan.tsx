@@ -1147,11 +1147,11 @@ const SkaapScan = () => {
                             opacity: chip.locked ? 0.45 : 1,
                           }}
                         >
-                          <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
-                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
-                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "#9CA3AF" }}>{chip.sub}</span>
+                          <span style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.icon}</span>
+                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.label}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.4)" }}>{chip.sub}</span>
                           {chip.locked && (
-                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
+                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.3)" }} />
                           )}
                         </motion.button>
                       );
