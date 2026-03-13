@@ -990,50 +990,63 @@ const SkaapScan = () => {
         <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 12px) + 12px)" }}>
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
-            className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)" }} aria-label="Back">
+            className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Back">
             <ArrowLeft size={18} color="#fff" />
           </motion.button>
           <AnimatePresence>
             {hintVisible && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [1, 0.6, 1] }} exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, repeat: Infinity }} className="text-white text-sm font-semibold">
-                Point at any barcode
-              </motion.p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="px-4 py-2 rounded-full glass-pill">
+                <motion.p animate={{ opacity: [1, 0.6, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-white text-[13px] font-semibold">
+                  Point at any barcode
+                </motion.p>
+              </motion.div>
             )}
           </AnimatePresence>
           {torchSupported ? (
             <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
-              className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)" }} aria-label="Toggle flashlight">
+              className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Toggle flashlight">
               {torchOn ? <ZapOff size={18} color="#fff" /> : <Zap size={18} color="#fff" />}
             </motion.button>
           ) : <div className="w-9" />}
         </div>
 
-        {/* Scan reticle */}
+        {/* Scan reticle — red corner brackets */}
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ paddingBottom: "10%" }}>
-          <div className="relative" style={{ width: 260, height: 160 }}>
+          <div className="relative animate-bracket-pulse" style={{ width: 260, height: 160 }}>
             {[
-              { top: 0, left: 0, borderTop: "3px solid #fff", borderLeft: "3px solid #fff" },
-              { top: 0, right: 0, borderTop: "3px solid #fff", borderRight: "3px solid #fff" },
-              { bottom: 0, left: 0, borderBottom: "3px solid #fff", borderLeft: "3px solid #fff" },
-              { bottom: 0, right: 0, borderBottom: "3px solid #fff", borderRight: "3px solid #fff" },
+              { top: 0, left: 0, borderTop: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
+              { top: 0, right: 0, borderTop: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
+              { bottom: 0, left: 0, borderBottom: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
+              { bottom: 0, right: 0, borderBottom: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
             ].map((style, i) => (
               <div key={i} className="absolute" style={{ ...style, width: 24, height: 24, borderRadius: 4 } as any} />
             ))}
             <motion.div animate={{ y: [0, 136, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-3 right-3" style={{ height: 2, background: "#E8314A", opacity: 0.8, borderRadius: 1, top: 12 }} />
+              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #E8314A, transparent)", top: 12 }} />
           </div>
         </div>
 
         <AnimatePresence>
           {bottomHintVisible && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full"
-              style={{ background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)" }}>
-              <p className="text-white text-xs font-normal text-center">Works on all barcodes — grocery, pharmacy, health foods</p>
+              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full glass-pill">
+              <p className="text-white text-xs font-normal text-center">Works on all barcodes</p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Bottom bar */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 glass-nav flex items-center justify-between px-6" style={{ height: 80, paddingBottom: 20 }}>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
+            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Flashlight">
+            {torchOn ? <ZapOff size={20} color="#fff" /> : <Zap size={20} color="#fff" />}
+          </motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
+            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Close">
+            <X size={20} color="#fff" />
+          </motion.button>
+        </div>
       </div>
     );
   }
