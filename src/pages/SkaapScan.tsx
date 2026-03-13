@@ -1982,6 +1982,11 @@ const SkaapScan = () => {
     );
   }
 
+  // ─── SCREEN: PROFILE ───
+  if (screen === "profile") {
+    return <ProfileScreen onBack={() => setScreen("home")} />;
+  }
+
   // ─── SCREEN: BASKET (Saved Products Comparison) ───
   if (screen === "basket") {
     return (
