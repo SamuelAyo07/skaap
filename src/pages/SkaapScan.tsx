@@ -11,6 +11,7 @@ import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
 import { AuthSheet } from "@/components/scan/AuthSheet";
+import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
