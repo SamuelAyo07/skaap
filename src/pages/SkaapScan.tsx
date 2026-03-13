@@ -898,17 +898,17 @@ const SkaapScan = () => {
             className="relative mb-8"
             style={{ width: 220, height: 220 }}
           >
-            {/* Glass circle background */}
-            <div className="absolute inset-0 rounded-full glass-pill" style={{ background: "rgba(255,255,255,0.06)" }} />
+            {/* Circle background */}
+            <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
             {/* Rotating red arc */}
             <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
-              <circle cx="110" cy="110" r="108" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+              <circle cx="110" cy="110" r="108" fill="none" stroke="#E5E7EB" strokeWidth="2" />
               <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#E8314A" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
             {/* Camera icon */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Barcode size={40} style={{ color: "rgba(255,255,255,0.85)" }} />
-              <span className="text-[13px] mt-2" style={{ color: "rgba(255,255,255,0.45)" }}>Tap to scan</span>
+              <Barcode size={40} style={{ color: "#1B2A4A" }} />
+              <span className="text-[13px] mt-2" style={{ color: "#9CA3AF" }}>Tap to scan</span>
             </div>
           </motion.button>
 
