@@ -849,16 +849,20 @@ const SkaapScan = () => {
   // ─── SCREEN: HOME ───
   if (screen === "home") {
     return (
-      <div className="min-h-screen bg-background flex flex-col" style={{ maxWidth: 430, margin: "0 auto" }}>
-        <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
+      <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "radial-gradient(ellipse at 50% 30%, #1a1f3a, #0A0F1E 70%)" }}>
+        {/* Ambient blob */}
+        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(99,102,241,0.12)", filter: "blur(80px)" }} />
+
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
           <div className="flex items-center gap-2">
             <img src={skaapIcon} alt="Skaap" className="w-7 h-7 rounded-lg" width="28" height="28" />
-            <span className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Skaap</span>
+            <span className="font-extrabold text-xl tracking-tight text-white" style={{ letterSpacing: "-0.5px" }}>SKAAP</span>
           </div>
           <div className="flex items-center gap-2">
             {basket.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setBasket(getBasket()); setScreen("basket"); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center relative" aria-label="Saved basket">
+                className="w-10 h-10 rounded-full flex items-center justify-center relative glass-pill" aria-label="Saved basket">
                 <Heart size={22} style={{ color: "#E8314A" }} fill="#E8314A" />
                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#E8314A" }}>
                   {basket.length}
@@ -867,49 +871,79 @@ const SkaapScan = () => {
             )}
             {history.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setHistory(getHistory()); setScreen("history"); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scan history">
-                <Clock size={22} style={{ color: "#1B2A4A" }} />
+                className="w-10 h-10 rounded-full flex items-center justify-center glass-pill" aria-label="Scan history">
+                <Clock size={22} style={{ color: "rgba(255,255,255,0.7)" }} />
               </motion.button>
             )}
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center" style={{ paddingBottom: 40 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative mb-8">
-            <div className="w-28 h-28 rounded-3xl flex items-center justify-center" style={{ background: "#F7F7F7" }}>
-              <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
-                <Barcode size={48} style={{ color: "#1B2A4A" }} />
-              </motion.div>
-              <motion.div animate={{ y: [-20, 20, -20] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-4 right-4 h-0.5 rounded-full" style={{ background: "#E8314A", opacity: 0.7 }} />
+        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "rgba(255,255,255,0.45)" }}>Know what's in your food.</p>
+
+        {/* CENTER — Glass scanner circle */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative z-10" style={{ paddingBottom: 40 }}>
+          <motion.button
+            whileTap={{ scale: 1.04 }}
+            onClick={goToScan}
+            className="relative mb-8"
+            style={{ width: 220, height: 220 }}
+          >
+            {/* Glass circle background */}
+            <div className="absolute inset-0 rounded-full glass-pill" style={{ background: "rgba(255,255,255,0.06)" }} />
+            {/* Rotating red arc */}
+            <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="110" r="108" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#E8314A" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+            {/* Camera icon */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Barcode size={40} style={{ color: "rgba(255,255,255,0.85)" }} />
+              <span className="text-[13px] mt-2" style={{ color: "rgba(255,255,255,0.45)" }}>Tap to scan</span>
             </div>
-          </motion.div>
-
-          <h1 className="font-extrabold text-[28px] leading-tight tracking-tight mb-3" style={{ color: "#1B2A4A" }}>
-            Know what's in<br />your food.
-          </h1>
-          <p className="text-base mb-10" style={{ color: "#6B7280" }}>Scan any barcode. Get the full picture instantly.</p>
-
-          <motion.button whileTap={{ scale: 0.97 }} onClick={goToScan}
-            className="w-full flex items-center justify-center gap-3 rounded-xl font-extrabold text-lg"
-            style={{ background: "#E8314A", color: "#fff", height: 64, maxWidth: 400, borderRadius: 12 }}>
-            <Barcode size={20} /> Scan a Product
           </motion.button>
 
-          <div className="mt-6 flex items-center gap-2 text-sm" style={{ color: "#6B7280" }}>
-            <span>or</span>
-            <button onClick={() => {
+          {/* Search pill */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => {
               const code = prompt("Enter barcode number:");
               if (code?.trim()) handleBarcodeDetected(code.trim());
-            }} className="font-semibold" style={{ color: "#E8314A" }}>Enter a barcode manually</button>
-          </div>
+            }}
+            className="flex items-center justify-center gap-2 glass-pill"
+            style={{ width: 280, height: 48, borderRadius: 24 }}
+          >
+            <Search size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
+            <span className="font-semibold text-[15px] text-white">Search a product</span>
+          </motion.button>
         </div>
 
-        <div className="flex items-center justify-center gap-2 pb-8">
-          {[{ emoji: "🌿", label: "Nutri-Score" }, { emoji: "⚗️", label: "Additives" }, { emoji: "📋", label: "Ingredients" }].map(c => (
-            <span key={c.label} className="text-xs font-semibold px-2.5 py-1.5 rounded-lg" style={{ background: "#F7F7F7", color: "#1B2A4A" }}>
-              {c.emoji} {c.label}
-            </span>
+        {/* Stat chips */}
+        <div className="flex items-center justify-center gap-2 px-5 pb-3 relative z-10">
+          {[
+            { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
+            { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
+            { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
+          ].map(chip => (
+            <div key={chip.label} className="flex flex-col items-center justify-center glass-pill" style={{ width: 100, height: 44, borderRadius: 12 }}>
+              <span className="text-[12px] font-bold text-white">{chip.emoji} {chip.val}</span>
+              <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>{chip.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom nav */}
+        <div className="glass-nav flex items-center justify-around relative z-10" style={{ height: 83, paddingBottom: 20 }}>
+          {[
+            { icon: <Home size={22} />, label: "Home", active: true },
+            { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
+            { icon: <Search size={22} />, label: "Search", active: false },
+            { icon: <Heart size={22} />, label: "Saved", active: false, action: () => { setBasket(getBasket()); setScreen("basket"); } },
+          ].map(item => (
+            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
+              <span style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.4)" }}>{item.icon}</span>
+              <span className="text-[10px] font-medium" style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.35)" }}>{item.label}</span>
+              {item.active && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
+            </button>
           ))}
         </div>
       </div>
@@ -919,51 +953,29 @@ const SkaapScan = () => {
   // ─── SCREEN: AI INFO ───
   if (screen === "ai-info") {
     return (
-      <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
+      <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#0A0F1E" }}>
         <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
           <button onClick={() => setScreen("result")} aria-label="Back">
-            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
+            <ArrowLeft size={20} style={{ color: "rgba(255,255,255,0.7)" }} />
           </button>
-          <h1 className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>How SKAAP uses AI</h1>
+          <h1 className="font-extrabold text-lg text-white">How SKAAP uses AI</h1>
         </div>
         <div className="px-5 py-6 space-y-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Product Summaries</h2>
+          {[
+            { title: "Product Summaries", desc: "AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know." },
+            { title: "Additive Explanations", desc: "When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data." },
+            { title: "Dietary Classifications", desc: "AI analyzes ingredient lists to classify products as Vegan, Vegetarian, Gluten-Free, etc. Hard safety overrides prevent incorrect labels." },
+            { title: "Smart Recommendations", desc: "AI suggests healthier alternatives based on the product's nutritional profile, additive count, and category." },
+          ].map((item, i) => (
+            <div key={i}>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} style={{ color: "#E8314A" }} />
+                <h2 className="font-bold text-sm text-white">{item.title}</h2>
+              </div>
+              <p className="text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{item.desc}</p>
             </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Additive Explanations</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Dietary Classifications</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI analyzes ingredient lists to classify products as Vegan, Vegetarian, Gluten-Free, etc. Hard safety overrides prevent incorrect labels — e.g., products with milk allergens will never be labeled Dairy-Free regardless of AI confidence.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Smart Recommendations</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI suggests healthier alternatives based on the product's nutritional profile, additive count, and category. Recommendations prioritize widely available products with better Nutri-Scores.
-            </p>
-          </div>
-          <p className="text-[11px] text-center pt-4" style={{ color: "#9CA3AF" }}>
+          ))}
+          <p className="text-[11px] text-center pt-4" style={{ color: "rgba(255,255,255,0.3)" }}>
             All AI content is marked with ✨ AI. Scores and risk levels are calculated using established nutritional science, not AI.
           </p>
         </div>
@@ -978,50 +990,63 @@ const SkaapScan = () => {
         <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 12px) + 12px)" }}>
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
-            className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)" }} aria-label="Back">
+            className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Back">
             <ArrowLeft size={18} color="#fff" />
           </motion.button>
           <AnimatePresence>
             {hintVisible && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [1, 0.6, 1] }} exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, repeat: Infinity }} className="text-white text-sm font-semibold">
-                Point at any barcode
-              </motion.p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="px-4 py-2 rounded-full glass-pill">
+                <motion.p animate={{ opacity: [1, 0.6, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-white text-[13px] font-semibold">
+                  Point at any barcode
+                </motion.p>
+              </motion.div>
             )}
           </AnimatePresence>
           {torchSupported ? (
             <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
-              className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)" }} aria-label="Toggle flashlight">
+              className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Toggle flashlight">
               {torchOn ? <ZapOff size={18} color="#fff" /> : <Zap size={18} color="#fff" />}
             </motion.button>
           ) : <div className="w-9" />}
         </div>
 
-        {/* Scan reticle */}
+        {/* Scan reticle — red corner brackets */}
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ paddingBottom: "10%" }}>
-          <div className="relative" style={{ width: 260, height: 160 }}>
+          <div className="relative animate-bracket-pulse" style={{ width: 260, height: 160 }}>
             {[
-              { top: 0, left: 0, borderTop: "3px solid #fff", borderLeft: "3px solid #fff" },
-              { top: 0, right: 0, borderTop: "3px solid #fff", borderRight: "3px solid #fff" },
-              { bottom: 0, left: 0, borderBottom: "3px solid #fff", borderLeft: "3px solid #fff" },
-              { bottom: 0, right: 0, borderBottom: "3px solid #fff", borderRight: "3px solid #fff" },
+              { top: 0, left: 0, borderTop: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
+              { top: 0, right: 0, borderTop: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
+              { bottom: 0, left: 0, borderBottom: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
+              { bottom: 0, right: 0, borderBottom: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
             ].map((style, i) => (
               <div key={i} className="absolute" style={{ ...style, width: 24, height: 24, borderRadius: 4 } as any} />
             ))}
             <motion.div animate={{ y: [0, 136, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-3 right-3" style={{ height: 2, background: "#E8314A", opacity: 0.8, borderRadius: 1, top: 12 }} />
+              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #E8314A, transparent)", top: 12 }} />
           </div>
         </div>
 
         <AnimatePresence>
           {bottomHintVisible && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full"
-              style={{ background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)" }}>
-              <p className="text-white text-xs font-normal text-center">Works on all barcodes — grocery, pharmacy, health foods</p>
+              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full glass-pill">
+              <p className="text-white text-xs font-normal text-center">Works on all barcodes</p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Bottom bar */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 glass-nav flex items-center justify-between px-6" style={{ height: 80, paddingBottom: 20 }}>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
+            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Flashlight">
+            {torchOn ? <ZapOff size={20} color="#fff" /> : <Zap size={20} color="#fff" />}
+          </motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
+            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Close">
+            <X size={20} color="#fff" />
+          </motion.button>
+        </div>
       </div>
     );
   }
@@ -1084,19 +1109,19 @@ const SkaapScan = () => {
               <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,18,32,0.3) 0%, rgba(10,18,32,0.7) 100%)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }} />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 24, stiffness: 200 }}
-                className="relative w-full rounded-t-[24px] z-10 flex flex-col liquid-glass"
-                style={{ height: "92vh", background: "linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.98) 100%)", backdropFilter: "blur(60px) saturate(200%)", WebkitBackdropFilter: "blur(60px) saturate(200%)", borderTop: "1px solid rgba(255,255,255,0.7)", boxShadow: "0 -8px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)" }}
+                className="relative w-full rounded-t-[28px] z-10 flex flex-col"
+                style={{ height: "92vh", background: "rgba(10,15,30,0.92)", backdropFilter: "blur(60px) saturate(200%)", WebkitBackdropFilter: "blur(60px) saturate(200%)", borderTop: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 -8px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(0,0,0,0.12)" }} /></div>
+                <div className="flex justify-center pt-3"><div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.2)" }} /></div>
                 <button onClick={() => { setShareModalOpen(false); if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); } }}
-                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.05)", backdropFilter: "blur(10px)" }} aria-label="Close">
-                  <X size={20} style={{ color: "#6B7280" }} />
+                  className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full glass-pill" aria-label="Close">
+                  <X size={20} style={{ color: "rgba(255,255,255,0.6)" }} />
                 </button>
 
                 {/* Headline */}
                 <div className="text-center mt-5 px-5">
-                  <p className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>Share your results ✨</p>
-                  <p className="text-[13px] mt-1.5" style={{ color: "#9CA3AF" }}>Pick a card, make it yours, post it</p>
+                  <p className="font-extrabold text-xl text-white">Share your results ✨</p>
+                  <p className="text-[13px] mt-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>Pick a card, make it yours, post it</p>
                 </div>
 
                 {/* Card type selector chips */}
@@ -1122,11 +1147,11 @@ const SkaapScan = () => {
                             opacity: chip.locked ? 0.45 : 1,
                           }}
                         >
-                          <span style={{ color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.icon}</span>
-                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "#1B2A4A" }}>{chip.label}</span>
-                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "#9CA3AF" }}>{chip.sub}</span>
+                          <span style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.icon}</span>
+                          <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.label}</span>
+                          <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.4)" }}>{chip.sub}</span>
                           {chip.locked && (
-                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "#9CA3AF" }} />
+                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.3)" }} />
                           )}
                         </motion.button>
                       );
@@ -1137,7 +1162,7 @@ const SkaapScan = () => {
                   {selectedCardType === "kitchen" && userStats.total_scans < 5 && (
                     <div className="mt-3 text-center">
                       <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
-                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "#F3F4F6" }}>
+                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "rgba(255,255,255,0.1)" }}>
                         <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#E8314A" }} />
                       </div>
                     </div>
@@ -1203,10 +1228,10 @@ const SkaapScan = () => {
                       More
                     </motion.button>
                   </div>
-                  <p className="text-center mt-3" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                  <p className="text-center mt-3" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
                     Tag @useskaap — we repost the best ones 🔥
                   </p>
-                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#2D7D46" : "#E8314A" }}>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#E8314A" }}>
                     {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
                   </button>
                 </div>
