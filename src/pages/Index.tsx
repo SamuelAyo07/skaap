@@ -5,18 +5,20 @@ import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
 import {
   Store, ScanLine, Mail, ArrowRight, ChevronDown, Sparkles, Instagram, Linkedin,
-  Heart, Users, Zap, Smartphone, Barcode,
+  Heart, Users, Zap, Smartphone, Barcode, ShieldCheck, Clock, Search,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import stepScan from "@/assets/step-scan.webp";
 import stepPay from "@/assets/step-pay.webp";
 import stepReceipt from "@/assets/step-receipt.webp";
 
+const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] };
+
 const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay, ease: [0.25, 0.46, 0.45, 0.94] }} className={className}>
+    <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ ...spring, delay }} className={className}>
       {children}
     </motion.div>
   );
@@ -63,143 +65,148 @@ const Index = () => {
 
   const heroHeadline = isFromInstagram
     ? <>You saw it on Instagram.<br />Now try it.</>
-    : <>Scan. Know.<br /><span style={{ color: "#B0202F" }}>Skip the line.</span></>;
+    : <>Scan. Pay.<br /><span className="text-gradient">Know your food.</span></>;
 
   const heroSub = isFromInstagram
     ? "No signup. No download. Just point your camera."
-    : "Food intelligence + mobile checkout. One app.";
+    : "Food intelligence + mobile checkout in one app.";
 
   return (
-    <div className="min-h-screen font-sans overflow-x-hidden">
+    <div className="min-h-screen font-sans overflow-x-hidden" style={{ background: "#0A0F1E" }}>
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50" style={{ background: "#070D18", borderBottom: "1px solid rgba(255,255,255,0.05)", height: 64 }}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-full">
+      <nav className="fixed top-0 w-full z-50 glass-nav" style={{ height: 64 }}>
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-5 h-full">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
             <span className="font-extrabold text-xl tracking-tight text-white">SKAAP</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
             <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
             <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" style={{ color: "rgba(255,255,255,0.5)" }}><Instagram size={18} /></a>
-            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" style={{ color: "rgba(255,255,255,0.5)" }}><Linkedin size={18} /></a>
-            <button onClick={() => navigate("/app")} className="hidden md:block text-sm font-medium transition-colors" style={{ color: "rgba(255,255,255,0.5)" }}>Sign In</button>
+            <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" style={{ color: "rgba(255,255,255,0.4)" }}><Instagram size={18} /></a>
+            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" style={{ color: "rgba(255,255,255,0.4)" }}><Linkedin size={18} /></a>
+            <button onClick={() => navigate("/app")} className="hidden md:block text-sm font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>Sign In</button>
           </div>
         </div>
       </nav>
 
       {/* ─── HERO ─── */}
-      <section className="relative flex items-center justify-center" style={{ background: "#070D18", minHeight: "60vh", paddingTop: 64 }}>
-        <div className="w-full max-w-[640px] mx-auto px-6 py-6 text-center">
-          {/* Launch badge */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>
+      <section className="relative flex items-center justify-center" style={{ minHeight: "60vh", paddingTop: 64, background: "radial-gradient(ellipse at 50% 40%, #1a1f3a 0%, #0A0F1E 70%)" }}>
+        {/* Ambient blob */}
+        <div className="absolute top-20 right-10 w-64 h-64 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(99,102,241,0.12)", filter: "blur(80px)" }} />
+
+        <div className="w-full max-w-[640px] mx-auto px-5 py-6 text-center relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
+            <span className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-full glass-pill" style={{ color: "rgba(255,255,255,0.6)" }}>
               ✨ Now launching on the East Coast 🇺🇸
             </span>
           </motion.div>
 
-          {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
             className="font-extrabold tracking-tighter leading-[1.05] text-white mt-6"
             style={{ fontSize: "clamp(38px, 8.5vw, 68px)" }}
           >
             {heroHeadline}
           </motion.h1>
 
-          {/* Subheadline */}
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-4 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.45)" }}>
             {heroSub}
           </motion.p>
 
+          {/* CTA buttons */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate("/scan")}
+              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-base cta-pulse"
+              style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}
+            >
+              <ScanLine size={18} /> Scan a Product
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate("/app")}
+              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-base glass-pill"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+            >
+              <Store size={18} /> Try Scan & Pay
+            </motion.button>
+          </motion.div>
+
           {/* Social proof */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="flex items-center justify-center gap-2 mt-5">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="flex items-center justify-center gap-2 mt-6">
             <div className="flex -space-x-2">
               {["🟢", "🔵", "🟡", "🟣"].map((c, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.12)", border: "2px solid #070D18" }}>{c}</div>
+                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: "rgba(255,255,255,0.1)", border: "2px solid #0A0F1E" }}>{c}</div>
               ))}
             </div>
-            <span className="text-sm" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
               <strong className="text-white">85+ people</strong> tried SKAAP this week
             </span>
           </motion.div>
 
-          {/* I Own a Store */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-5">
-            <a href="#retailers" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)" }}>
-              <Store size={16} /> I Own a Store
-            </a>
-          </motion.div>
-
-          {/* Scroll indicator */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-4">
-            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.2)" }} />
+            <ChevronDown size={20} className="mx-auto animate-bounce" style={{ color: "rgba(255,255,255,0.15)" }} />
           </motion.div>
         </div>
       </section>
 
       {/* ─── TWO FEATURES ─── */}
-      <section className="py-8 bg-background">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="py-12" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#B0202F" }}>What SKAAP Does</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Food intelligence. Mobile checkout.</h2>
-              <p className="text-sm mt-2 max-w-lg mx-auto" style={{ color: "#4B5563" }}>Know what you're eating. Skip the register.</p>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>What SKAAP Does</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight text-white">Two superpowers. One app.</h2>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Feature 1 — Food Intelligence */}
+            {/* Food Intelligence */}
             <FadeIn delay={0.05}>
-              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#F0F0F0", border: "1px solid rgba(0,0,0,0.06)" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "#B0202F" }}>
-                  <Sparkles size={22} color="#fff" />
+              <motion.div whileHover={{ y: -4 }} className="glass-card p-6 h-full flex flex-col">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(232,49,74,0.2)", border: "1px solid rgba(232,49,74,0.3)" }}>
+                  <Sparkles size={22} color="#E8314A" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Food Intelligence</h3>
-                <p className="text-sm leading-relaxed flex-1" style={{ color: "#4B5563" }}>
-                  Scan any barcode. Get a 0-100 health score, additive risks, and nutrition facts — faster than reading the label.
+                <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Food Intelligence</h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  Scan any barcode. Get a 0 to 100 health score, additive risks, nutrition facts. Faster than reading the label.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map((chip) => (
-                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#fff", color: "#0A1220" }}>{chip}</span>
+                  {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA"].map(chip => (
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}>{chip}</span>
                   ))}
                 </div>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate("/scan")}
-                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cta-pulse-mobile"
-                  style={{ background: "#B0202F", color: "#fff" }}
-                >
-                  <ScanLine size={16} /> Scan a Product — It's Free
+                <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/scan")}
+                  className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cta-pulse"
+                  style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}>
+                  <ScanLine size={16} /> Scan a Product
                 </motion.button>
               </motion.div>
             </FadeIn>
 
-            {/* Feature 2 — Scan & Pay */}
+            {/* Scan & Pay */}
             <FadeIn delay={0.1}>
-              <motion.div whileHover={{ y: -4 }} className="rounded-2xl p-6 h-full flex flex-col" style={{ background: "#0A1220" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.15)" }}>
+              <motion.div whileHover={{ y: -4 }} className="glass-card p-6 h-full flex flex-col">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.08)" }}>
                   <Store size={22} color="#fff" />
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Scan & Pay</h3>
-                <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  Walk into any partner store, scan items as you shop, add to cart, pay in the app, and walk out with a QR receipt. No lines. No registers. No waiting.
+                <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  Walk into any partner store, scan items, pay in the app, walk out with a QR receipt. No lines. No registers.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {["📱 Mobile Checkout", "🛒 Smart Cart", "🧾 QR Receipt", "⚡ Skip the Line"].map((chip) => (
-                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>{chip}</span>
+                  {["📱 Mobile Checkout", "🛒 Smart Cart", "🧾 QR Receipt", "⚡ Skip the Line"].map(chip => (
+                    <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}>{chip}</span>
                   ))}
                 </div>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate("/app")}
-                  className="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  style={{ background: "#fff", color: "#0A1220" }}
-                >
+                <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/app")}
+                  className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 glass-pill"
+                  style={{ color: "#fff" }}>
                   <Barcode size={16} /> Try the Demo
                 </motion.button>
               </motion.div>
@@ -209,12 +216,12 @@ const Index = () => {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-6 bg-background">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="how-it-works" className="py-10" style={{ background: "#0D1528" }}>
+        <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-8">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#B0202F" }}>How it Works</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight" style={{ color: "#0A1220" }}>Three steps. That's it.</h2>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>How it Works</span>
+              <h2 className="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight text-white">Three steps. That's it.</h2>
             </div>
           </FadeIn>
           <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
@@ -225,11 +232,11 @@ const Index = () => {
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center">
-                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3 border" style={{ borderColor: "rgba(0,0,0,0.08)", background: "#F0F0F0" }}>
+                  <motion.div whileHover={{ y: -4 }} className="w-full aspect-[9/16] max-w-[180px] rounded-2xl overflow-hidden mb-3" style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)" }}>
                     <img src={item.img} alt={`SKAAP ${item.title} step`} className="w-full h-full object-cover" loading="lazy" width="180" height="320" />
                   </motion.div>
-                  <h3 className="font-bold text-base tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
-                  <p className="text-xs mt-0.5" style={{ color: "#4B5563" }}>{item.desc}</p>
+                  <h3 className="font-bold text-base tracking-tight text-white">{item.title}</h3>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{item.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -237,18 +244,18 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── SMART INFO — NUTRITION CHAMPION ─── */}
-      <section className="py-6" style={{ background: "#EBEBEB" }}>
-        <div className="max-w-5xl mx-auto px-6">
+      {/* ─── SMART INFO ─── */}
+      <section className="py-10" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(176,32,47,0.1)", color: "#B0202F" }}>
-                🌿 Smart Info
-              </div>
-               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(232,49,74,0.15)", color: "#E8314A" }}>
+                🌿 Food Intelligence
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
                 One scan. Full picture.
               </h2>
-              <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#4B5563" }}>
+              <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.4)" }}>
                 Additives decoded. Nutrition scored. No googling required.
               </p>
             </div>
@@ -256,33 +263,33 @@ const Index = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
             {[
-              { emoji: "🎯", title: "SKAAP Score", desc: "0 to 100 health score at a glance" },
+              { emoji: "🎯", title: "SKAAP Score", desc: "0 to 100 health score" },
               { emoji: "🅰️", title: "Nutri-Score", desc: "A to E nutrition grade" },
-              { emoji: "🧪", title: "Additive Risks", desc: "E numbers decoded with risk levels" },
-              { emoji: "🏭", title: "NOVA Processing", desc: "See how processed your food is (1 to 4)" },
-              { emoji: "💄", title: "Cosmetics Safety", desc: "Ingredient analysis for beauty products" },
-              { emoji: "📊", title: "Full Nutrition", desc: "Fat, sugar, salt, protein color coded" },
+              { emoji: "🧪", title: "Additive Risks", desc: "E numbers decoded" },
+              { emoji: "🏭", title: "NOVA Processing", desc: "1 to 4 processing level" },
+              { emoji: "💄", title: "Cosmetics Safety", desc: "Beauty product analysis" },
+              { emoji: "📊", title: "Full Nutrition", desc: "Color coded breakdown" },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.04}>
-                <motion.div whileHover={{ y: -2 }} className="bg-background border rounded-2xl p-3.5 text-center" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
+                <motion.div whileHover={{ y: -2 }} className="glass-card p-3.5 text-center">
                   <span className="text-xl block mb-1.5">{item.emoji}</span>
-                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
-                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "#4B5563" }}>{item.desc}</p>
+                  <h3 className="font-bold text-[13px] tracking-tight text-white">{item.title}</h3>
+                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "rgba(255,255,255,0.4)" }}>{item.desc}</p>
                 </motion.div>
               </FadeIn>
             ))}
           </div>
 
           <FadeIn delay={0.25}>
-            <div className="bg-background border rounded-2xl p-4 flex items-center gap-4 max-w-2xl mx-auto" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "#0A1220" }}>
-                <ScanLine size={20} color="#fff" />
+            <div className="glass-card p-4 flex items-center gap-4 max-w-2xl mx-auto">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "rgba(232,49,74,0.2)" }}>
+                <ScanLine size={20} color="#E8314A" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold tracking-tight" style={{ color: "#0A1220" }}>Walk into any store. Scan anything.</p>
-                <p className="text-[11px] mt-0.5" style={{ color: "#4B5563" }}>Works with 3M+ food products and 1M+ cosmetics worldwide.</p>
+                <p className="text-sm font-bold tracking-tight text-white">3M+ food products. 1M+ cosmetics.</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Works in any store, worldwide.</p>
               </div>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#0A1220", color: "#fff" }}>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/scan")} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#E8314A", color: "#fff" }}>
                 Scan Now
               </motion.button>
             </div>
@@ -291,11 +298,11 @@ const Index = () => {
       </section>
 
       {/* ─── FOR RETAILERS ─── */}
-      <section id="retailers" style={{ background: "#0A1220" }} className="py-8">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="retailers" className="py-12" style={{ background: "#0D1528" }}>
+        <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-5">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#B0202F" }}>For Retailers</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>For Retailers</span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2 tracking-tight">
                 Built for the stores<br className="hidden md:block" /> that built your neighborhood
               </h2>
@@ -303,14 +310,14 @@ const Index = () => {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <div className="rounded-2xl p-6 mb-6 max-w-3xl mx-auto" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <div className="glass-card p-6 mb-6 max-w-3xl mx-auto">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#B0202F" }}>
-                  <Heart size={18} color="#fff" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,49,74,0.2)" }}>
+                  <Heart size={18} color="#E8314A" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg text-white tracking-tight mb-1">Your store matters. We're here to prove it.</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
                     The big chains have entire teams building for the future. SKAAP levels the playing field.
                   </p>
                 </div>
@@ -325,12 +332,12 @@ const Index = () => {
               { icon: Users, title: "Happier customers", desc: "Faster trips, more repeat visits." },
             ].map((card, i) => (
               <FadeIn key={i} delay={0.1 + i * 0.06}>
-                <motion.div whileHover={{ y: -3 }} className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "#B0202F" }}>
-                    <card.icon size={18} color="#fff" />
+                <motion.div whileHover={{ y: -3 }} className="glass-card p-5">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "rgba(232,49,74,0.2)" }}>
+                    <card.icon size={18} color="#E8314A" />
                   </div>
                   <h3 className="font-bold text-white mb-1 tracking-tight text-sm">{card.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>{card.desc}</p>
+                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.35)" }}>{card.desc}</p>
                 </motion.div>
               </FadeIn>
             ))}
@@ -338,7 +345,7 @@ const Index = () => {
 
           <FadeIn delay={0.2}>
             <div className="text-center">
-              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity" style={{ background: "#B0202F", color: "#fff" }}>
+              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm" style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}>
                 Get Started. Free for 90 Days <ArrowRight size={14} />
               </a>
             </div>
@@ -347,20 +354,20 @@ const Index = () => {
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-6 bg-background">
-        <div className="max-w-2xl mx-auto px-6">
-          <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight" style={{ color: "#0A1220" }}>Questions</h2></FadeIn>
+      <section className="py-10" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <FadeIn><h2 className="text-2xl font-extrabold text-center mb-6 tracking-tight text-white">Questions</h2></FadeIn>
           <div className="space-y-1.5">
             {faqs.map((faq, i) => (
               <FadeIn key={i} delay={i * 0.03}>
-                <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#F3F4F6" }}>
-                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-3.5 text-left">
-                    <span className="font-semibold text-sm" style={{ color: "#0A1220" }}>{faq.q}</span>
-                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "#4B5563" }} /></motion.div>
+                <div className="glass-card overflow-hidden" style={{ borderRadius: 16 }}>
+                  <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} aria-expanded={faqOpen === i} className="w-full flex items-center justify-between p-4 text-left">
+                    <span className="font-semibold text-sm text-white">{faq.q}</span>
+                    <motion.div animate={{ rotate: faqOpen === i ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronDown size={14} style={{ color: "rgba(255,255,255,0.4)" }} /></motion.div>
                   </button>
                   {faqOpen === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={{ duration: 0.2 }}>
-                      <div className="px-3.5 pb-3.5"><p className="text-sm leading-relaxed" style={{ color: "#4B5563" }}>{faq.a}</p></div>
+                      <div className="px-4 pb-4"><p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{faq.a}</p></div>
                     </motion.div>
                   )}
                 </div>
@@ -371,22 +378,24 @@ const Index = () => {
       </section>
 
       {/* ─── CONTACT ─── */}
-      <section id="contact" style={{ background: "#EBEBEB" }} className="py-6">
-        <div className="max-w-xl mx-auto px-6 text-center">
+      <section id="contact" className="py-10" style={{ background: "#0D1528" }}>
+        <div className="max-w-xl mx-auto px-5 text-center">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-2 tracking-tight" style={{ color: "#0A1220" }}>Let's talk</h2>
-            <p className="text-sm mb-6" style={{ color: "#4B5563" }}>Shopper or store owner, drop your email.</p>
+            <h2 className="text-2xl font-extrabold mb-2 tracking-tight text-white">Let's talk</h2>
+            <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.4)" }}>Shopper or store owner, drop your email.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
             {submitted ? (
-              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="rounded-2xl p-5 font-semibold" style={{ background: "rgba(45,125,70,0.1)", color: "#2D7D46" }}>✅ Thanks! We'll reach out soon.</motion.div>
+              <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="glass-card p-5 font-semibold" style={{ color: "#22C55E" }}>✅ Thanks! We'll reach out soon.</motion.div>
             ) : (
               <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <div className="relative flex-1">
-                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#4B5563" }} />
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="w-full bg-background border rounded-full py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: "#F3F4F6" }} />
+                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.4)" }} />
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address"
+                    className="w-full rounded-2xl py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 ring-skaap-red/30 transition-shadow glass-pill text-white placeholder:text-white/30"
+                  />
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="px-5 py-3 rounded-full font-semibold text-sm disabled:opacity-60 hover:opacity-90 transition-opacity" style={{ background: "#0A1220", color: "#fff" }}>
+                <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={submitting} className="px-5 py-3 rounded-2xl font-semibold text-sm disabled:opacity-60" style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}>
                   {submitting ? "Sending…" : "Get in Touch"}
                 </motion.button>
               </form>
@@ -396,29 +405,29 @@ const Index = () => {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer style={{ background: "#0A1220" }} className="py-6">
-        <div className="max-w-6xl mx-auto px-6">
+      <footer className="py-6" style={{ background: "#0A0F1E", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="max-w-6xl mx-auto px-5">
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2.5">
               <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
               <div>
                 <span className="font-bold text-white tracking-tight text-sm">SKAAP</span>
-                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>Know what's in your food.</p>
+                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>Know what's in your food.</p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>
               <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
               <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
               <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Food Intelligence</button>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" style={{ color: "rgba(255,255,255,0.5)" }}><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" style={{ color: "rgba(255,255,255,0.5)" }}><Linkedin size={18} /></a>
+              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on Instagram" style={{ color: "rgba(255,255,255,0.4)" }}><Instagram size={18} /></a>
+              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="SKAAP on LinkedIn" style={{ color: "rgba(255,255,255,0.4)" }}><Linkedin size={18} /></a>
             </div>
           </div>
-          <div className="mt-6 pt-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.2)" }}>© 2026 SKAAP Technologies Inc.</p>
+          <div className="mt-6 pt-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.15)" }}>© 2026 SKAAP Technologies Inc.</p>
           </div>
         </div>
       </footer>

@@ -14,11 +14,27 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "SF Pro Text", "Segoe UI", "sans-serif"],
       },
       colors: {
-        navy: "hsl(210 29% 10%)",
-        "skaap-red": "hsl(349 65% 53%)",
+        navy: {
+          DEFAULT: "#0A0F1E",
+          light: "#0D1528",
+          lighter: "#141B2D",
+        },
+        "skaap-red": {
+          DEFAULT: "#E8314A",
+          glow: "rgba(232,49,74,0.3)",
+          dark: "#c42040",
+        },
+        "score-green": {
+          DEFAULT: "#22C55E",
+          glow: "rgba(34,197,94,0.3)",
+        },
+        "score-amber": {
+          DEFAULT: "#F59E0B",
+          glow: "rgba(245,158,11,0.3)",
+        },
         "scanner-accent": "hsl(var(--scanner-accent))",
         "scanner-ink": "hsl(var(--scanner-ink))",
         success: {
@@ -76,20 +92,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
