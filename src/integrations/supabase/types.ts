@@ -225,6 +225,117 @@ export type Database = {
         }
         Relationships: []
       }
+      user_alerts: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          ingredient_code: string | null
+          ingredient_name: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          ingredient_code?: string | null
+          ingredient_name: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          ingredient_code?: string | null
+          ingredient_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_scans: {
+        Row: {
+          barcode: string
+          brand: string | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          nova: number | null
+          nutriscore: string | null
+          product_name: string
+          saved: boolean | null
+          scan_date: string | null
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          barcode: string
+          brand?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          nova?: number | null
+          nutriscore?: string | null
+          product_name: string
+          saved?: boolean | null
+          scan_date?: string | null
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          barcode?: string
+          brand?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          nova?: number | null
+          nutriscore?: string | null
+          product_name?: string
+          saved?: boolean | null
+          scan_date?: string | null
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          id: string
+          plan: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
