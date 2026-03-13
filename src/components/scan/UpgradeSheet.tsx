@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Zap, Check } from "lucide-react";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { useAuth } from "@/context/AuthContext";
+import { AuthSheet } from "./AuthSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const FEATURES = [
   "Unlimited scan history",
