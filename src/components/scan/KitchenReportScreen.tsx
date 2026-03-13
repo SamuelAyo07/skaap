@@ -20,7 +20,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
     return null;
   }
 
-  // Top concerns: count additives across recent scans
+  // Top concerns
   const additiveCounts: Record<string, number> = {};
   userStats.all_scores.slice(0, 50).forEach(s => {
     (s.additives || []).forEach(a => {
@@ -32,7 +32,6 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
 
-  // Wins this week
   const weekAgo = Date.now() - 7 * 86400000;
   const wins = userStats.all_scores
     .filter(s => s.scanned_at > weekAgo && s.skaap_score >= 75)
@@ -40,7 +39,6 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
 
   const weekScans = userStats.all_scores.filter(s => s.scanned_at > weekAgo).length;
 
-  // Get date range
   const now = new Date();
   const weekStart = new Date(now.getTime() - 6 * 86400000);
   const dateRange = `${weekStart.toLocaleDateString(undefined, { month: "short", day: "numeric" })} – ${now.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
@@ -54,7 +52,6 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
     }
   };
 
-  // Score arc
   const size = 160;
   const strokeW = 10;
   const r = (size - strokeW * 2) / 2;
@@ -62,26 +59,25 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
   const offset = circumference - (userStats.kitchen_score / 100) * circumference;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "radial-gradient(ellipse at 50% 20%, #1a1f3a, #0A0F1E 70%)" }}>
+    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-        <button onClick={onBack}><ArrowLeft size={20} style={{ color: "rgba(255,255,255,0.7)" }} /></button>
+        <button onClick={onBack}><ArrowLeft size={20} style={{ color: "#1B2A4A" }} /></button>
         <div>
-          <h1 className="font-extrabold text-xl text-white tracking-tight">Kitchen Report</h1>
-          <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>{dateRange}</p>
+          <h1 className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Kitchen Report</h1>
+          <p className="text-[11px]" style={{ color: "#9CA3AF" }}>{dateRange}</p>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 pb-24">
         {/* Hero score */}
-        <div className="glass-card p-6 mt-4 flex flex-col items-center" style={{ borderRadius: 24 }}>
-          <p className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>Your Kitchen Score</p>
+        <div className="p-6 mt-4 flex flex-col items-center rounded-3xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <p className="text-[13px] font-semibold" style={{ color: "#9CA3AF" }}>Your Kitchen Score</p>
 
           <div className="relative mt-4" style={{ width: size, height: size }}>
-            {/* Glow */}
-            <div className="absolute inset-0 rounded-full" style={{ background: `${color}20`, filter: "blur(20px)" }} />
+            <div className="absolute inset-0 rounded-full" style={{ background: `${color}15`, filter: "blur(20px)" }} />
             <svg width={size} height={size} className="-rotate-90">
-              <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeW} />
+              <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F3F4F6" strokeWidth={strokeW} />
               <circle
                 cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={strokeW}
                 strokeLinecap="round"
@@ -91,14 +87,14 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-extrabold text-white" style={{ fontSize: 56 }}>{userStats.kitchen_score}</span>
+              <span className="font-extrabold" style={{ fontSize: 56, color }}>{userStats.kitchen_score}</span>
             </div>
           </div>
 
-          <p className="text-[13px] mt-2" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <p className="text-[13px] mt-2" style={{ color: "#9CA3AF" }}>
             Based on {userStats.all_scores.length} product{userStats.all_scores.length !== 1 ? "s" : ""} scanned
           </p>
-          <p className="text-[11px] mt-1" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-[11px] mt-1" style={{ color: "#D1D5DB" }}>
             Top {userStats.kitchen_percentile}% of SKAAP users
           </p>
         </div>
@@ -110,24 +106,24 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
             { val: userStats.current_streak, label: "Current Streak" },
             { val: userStats.all_scores.filter(s => s.scanned_at > weekAgo && s.skaap_score < 50).length, label: "Avoided" },
           ].map(m => (
-            <div key={m.label} className="flex-1 glass-card py-3 flex flex-col items-center" style={{ borderRadius: 16 }}>
-              <span className="font-extrabold text-lg text-white">{m.val}</span>
-              <span className="text-[10px] text-center" style={{ color: "rgba(255,255,255,0.4)" }}>{m.label}</span>
+            <div key={m.label} className="flex-1 py-3 flex flex-col items-center rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+              <span className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>{m.val}</span>
+              <span className="text-[10px] text-center" style={{ color: "#9CA3AF" }}>{m.label}</span>
             </div>
           ))}
         </div>
 
         {/* Top Concerns */}
         {topConcerns.length > 0 && (
-          <div className="glass-card p-4 mt-4" style={{ borderRadius: 20 }}>
-            <h3 className="font-bold text-[15px] text-white mb-3">Top Concerns</h3>
+          <div className="p-4 mt-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+            <h3 className="font-bold text-[15px] mb-3" style={{ color: "#1B2A4A" }}>Top Concerns</h3>
             {topConcerns.map(([code, count]) => (
-              <div key={code} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <div key={code} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ background: "#F59E0B" }} />
-                  <span className="text-[13px] font-semibold text-white">{code}</span>
+                  <span className="text-[13px] font-semibold" style={{ color: "#1B2A4A" }}>{code}</span>
                 </div>
-                <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <span className="text-[11px]" style={{ color: "#9CA3AF" }}>
                   in {count} of your scans
                 </span>
               </div>
@@ -137,12 +133,12 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
 
         {/* Wins */}
         {wins.length > 0 && (
-          <div className="glass-card p-4 mt-4" style={{ borderRadius: 20 }}>
-            <h3 className="font-bold text-[15px] text-white mb-3">Wins This Week 🎉</h3>
+          <div className="p-4 mt-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+            <h3 className="font-bold text-[15px] mb-3" style={{ color: "#1B2A4A" }}>Wins This Week 🎉</h3>
             {wins.map((w, i) => (
-              <div key={i} className="flex items-center gap-3 py-2" style={{ borderBottom: i < wins.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+              <div key={i} className="flex items-center gap-3 py-2" style={{ borderBottom: i < wins.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                 <div className="w-2 h-2 rounded-full" style={{ background: "#22C55E" }} />
-                <span className="text-[13px] text-white flex-1 truncate">{w.product_name}</span>
+                <span className="text-[13px] flex-1 truncate" style={{ color: "#1B2A4A" }}>{w.product_name}</span>
                 <span className="text-[12px] font-bold" style={{ color: "#22C55E" }}>{w.skaap_score}</span>
               </div>
             ))}
@@ -165,7 +161,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
       </div>
 
       {/* Bottom nav */}
-      <div className="glass-nav flex items-center justify-around" style={{ height: 83, paddingBottom: 20 }}>
+      <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
         {[
           { icon: <Home size={22} />, label: "Home", key: "home" },
           { icon: <Clock size={22} />, label: "History", key: "history" },
@@ -173,8 +169,8 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
           { icon: <Heart size={22} />, label: "Saved", key: "saved" },
         ].map(item => (
           <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-            <span style={{ color: "rgba(255,255,255,0.4)" }}>{item.icon}</span>
-            <span className="text-[10px] font-medium" style={{ color: "rgba(255,255,255,0.35)" }}>{item.label}</span>
+            <span style={{ color: "#9CA3AF" }}>{item.icon}</span>
+            <span className="text-[10px] font-medium" style={{ color: "#9CA3AF" }}>{item.label}</span>
           </button>
         ))}
       </div>

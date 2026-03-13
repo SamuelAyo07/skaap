@@ -55,11 +55,11 @@ export function HistoryScreen({
   const bestScore = history.reduce((best, h) => Math.max(best, h.skaapScore ?? 0), 0);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "radial-gradient(ellipse at 50% 20%, #1a1f3a, #0A0F1E 70%)" }}>
+    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-        <button onClick={onBack}><ArrowLeft size={20} style={{ color: "rgba(255,255,255,0.7)" }} /></button>
-        <h1 className="font-extrabold text-xl text-white tracking-tight">Your History</h1>
+        <button onClick={onBack}><ArrowLeft size={20} style={{ color: "#1B2A4A" }} /></button>
+        <h1 className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Your History</h1>
         <button onClick={onClearHistory} className="text-[12px] font-semibold" style={{ color: "#E8314A" }}>Clear</button>
       </div>
 
@@ -70,23 +70,24 @@ export function HistoryScreen({
           { val: history.length, label: "total scans" },
           { val: bestScore || "--", label: "best scan" },
         ].map(s => (
-          <div key={s.label} className="flex-1 flex flex-col items-center justify-center glass-card py-3">
-            <span className="font-extrabold text-xl text-white">{s.val}</span>
-            <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>{s.label}</span>
+          <div key={s.label} className="flex-1 flex flex-col items-center justify-center py-3 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+            <span className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>{s.val}</span>
+            <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{s.label}</span>
           </div>
         ))}
       </div>
 
       {/* Search */}
       <div className="px-5 mt-3">
-        <div className="flex items-center gap-2 px-4 h-11 rounded-2xl glass-pill">
-          <Search size={16} style={{ color: "rgba(255,255,255,0.4)" }} />
+        <div className="flex items-center gap-2 px-4 h-11 rounded-2xl" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+          <Search size={16} style={{ color: "#9CA3AF" }} />
           <input
             type="text" placeholder="Search products..."
             value={search} onChange={e => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+            style={{ color: "#1B2A4A" }}
           />
-          {search && <button onClick={() => setSearch("")}><X size={14} style={{ color: "rgba(255,255,255,0.4)" }} /></button>}
+          {search && <button onClick={() => setSearch("")}><X size={14} style={{ color: "#9CA3AF" }} /></button>}
         </div>
       </div>
 
@@ -101,9 +102,9 @@ export function HistoryScreen({
           <button key={f.key} onClick={() => setFilter(f.key)}
             className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all"
             style={{
-              background: filter === f.key ? "#E8314A" : "rgba(255,255,255,0.08)",
-              color: filter === f.key ? "#fff" : "rgba(255,255,255,0.5)",
-              border: `1px solid ${filter === f.key ? "#E8314A" : "rgba(255,255,255,0.1)"}`,
+              background: filter === f.key ? "#E8314A" : "#F3F4F6",
+              color: filter === f.key ? "#fff" : "#6B7280",
+              border: `1px solid ${filter === f.key ? "#E8314A" : "#E5E7EB"}`,
             }}>
             {f.label}
           </button>
@@ -114,8 +115,8 @@ export function HistoryScreen({
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
           <div className="text-center py-16">
-            <Clock size={32} style={{ color: "rgba(255,255,255,0.15)" }} className="mx-auto" />
-            <p className="text-sm mt-3" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <Clock size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
+            <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>
               {history.length === 0 ? "No scans yet" : "No products match"}
             </p>
           </div>
@@ -126,22 +127,22 @@ export function HistoryScreen({
                 key={item.barcode + item.scannedAt}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onScanProduct(item.barcode)}
-                className="w-full flex items-center gap-3 glass-card px-4 py-3 text-left"
-                style={{ borderRadius: 16 }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-2xl"
+                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
               >
-                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
                   {item.image ? (
                     <img src={item.image} alt={item.name} className="w-full h-full object-contain p-0.5" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Barcode size={16} style={{ color: "rgba(255,255,255,0.3)" }} />
+                      <Barcode size={16} style={{ color: "#D1D5DB" }} />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{item.name}</p>
-                  {item.brand && <p className="text-[11px] truncate" style={{ color: "rgba(255,255,255,0.5)" }}>{item.brand}</p>}
-                  <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  <p className="text-sm font-semibold truncate" style={{ color: "#1B2A4A" }}>{item.name}</p>
+                  {item.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{item.brand}</p>}
+                  <p className="text-[10px]" style={{ color: "#D1D5DB" }}>
                     {new Date(item.scannedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                   </p>
                 </div>
@@ -160,12 +161,12 @@ export function HistoryScreen({
         {hasGate && (
           <div className="mt-4 relative">
             <div className="absolute inset-0 rounded-2xl" style={{
-              background: "linear-gradient(180deg, transparent 0%, rgba(10,15,30,0.95) 50%)",
+              background: "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.95) 50%)",
             }} />
-            <div className="relative text-center py-8 glass-card" style={{ borderRadius: 20 }}>
+            <div className="relative text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
               <Lock size={24} style={{ color: "#E8314A" }} className="mx-auto" />
-              <h3 className="font-extrabold text-lg text-white mt-3">Unlock Full History</h3>
-              <p className="text-[13px] mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+              <h3 className="font-extrabold text-lg mt-3" style={{ color: "#1B2A4A" }}>Unlock Full History</h3>
+              <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
                 See every product you've ever scanned
               </p>
               <motion.button whileTap={{ scale: 0.97 }}
@@ -180,7 +181,7 @@ export function HistoryScreen({
       </div>
 
       {/* Bottom nav */}
-      <div className="glass-nav flex items-center justify-around" style={{ height: 83, paddingBottom: 20 }}>
+      <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
         {[
           { icon: <Home size={22} />, label: "Home", key: "home" },
           { icon: <Clock size={22} />, label: "History", key: "history" },
@@ -188,8 +189,8 @@ export function HistoryScreen({
           { icon: <Heart size={22} />, label: "Saved", key: "saved" },
         ].map(item => (
           <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-            <span style={{ color: item.key === "history" ? "#E8314A" : "rgba(255,255,255,0.4)" }}>{item.icon}</span>
-            <span className="text-[10px] font-medium" style={{ color: item.key === "history" ? "#E8314A" : "rgba(255,255,255,0.35)" }}>{item.label}</span>
+            <span style={{ color: item.key === "history" ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
+            <span className="text-[10px] font-medium" style={{ color: item.key === "history" ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
             {item.key === "history" && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
           </button>
         ))}
