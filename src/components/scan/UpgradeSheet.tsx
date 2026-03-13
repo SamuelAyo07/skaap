@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Zap, Check } from "lucide-react";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { useAuth } from "@/context/AuthContext";
+import { AuthSheet } from "./AuthSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const FEATURES = [
   "Unlimited scan history",
@@ -17,13 +20,31 @@ export function UpgradeSheet() {
   const { showUpgradeSheet, closeUpgrade, upgradeFeature } = useSubscription();
   const { user } = useAuth();
   const [billing, setBilling] = useState<"monthly" | "annual">("annual");
+  const [authOpen, setAuthOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const priceLabel = billing === "annual"
     ? "Start SKAAP Plus — $14.99/yr · Save 37%"
     : "Start SKAAP Plus — $1.99/mo";
 
-  const handleCTA = () => {
-    // For now, show a toast — Stripe integration will be connected next
+  const handleCTA = async () => {
+    if (!user) {
+      setAuthOpen(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { billing },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast.error("Could not start checkout");
+    }
+    setLoading(false);
     closeUpgrade();
   };
 
@@ -131,7 +152,7 @@ export function UpgradeSheet() {
                   boxShadow: "0 8px 32px rgba(232,49,74,0.3)",
                 }}
               >
-                {priceLabel}
+                {loading ? "Starting checkout..." : priceLabel}
               </motion.button>
 
               {/* Fine print */}
@@ -145,6 +166,7 @@ export function UpgradeSheet() {
           </motion.div>
         </motion.div>
       )}
+      <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />
     </AnimatePresence>
   );
 }
