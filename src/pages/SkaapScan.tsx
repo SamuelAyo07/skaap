@@ -849,16 +849,20 @@ const SkaapScan = () => {
   // ─── SCREEN: HOME ───
   if (screen === "home") {
     return (
-      <div className="min-h-screen bg-background flex flex-col" style={{ maxWidth: 430, margin: "0 auto" }}>
-        <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
+      <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "radial-gradient(ellipse at 50% 30%, #1a1f3a, #0A0F1E 70%)" }}>
+        {/* Ambient blob */}
+        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(99,102,241,0.12)", filter: "blur(80px)" }} />
+
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
           <div className="flex items-center gap-2">
             <img src={skaapIcon} alt="Skaap" className="w-7 h-7 rounded-lg" width="28" height="28" />
-            <span className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Skaap</span>
+            <span className="font-extrabold text-xl tracking-tight text-white" style={{ letterSpacing: "-0.5px" }}>SKAAP</span>
           </div>
           <div className="flex items-center gap-2">
             {basket.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setBasket(getBasket()); setScreen("basket"); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center relative" aria-label="Saved basket">
+                className="w-10 h-10 rounded-full flex items-center justify-center relative glass-pill" aria-label="Saved basket">
                 <Heart size={22} style={{ color: "#E8314A" }} fill="#E8314A" />
                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#E8314A" }}>
                   {basket.length}
@@ -867,49 +871,79 @@ const SkaapScan = () => {
             )}
             {history.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setHistory(getHistory()); setScreen("history"); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center" aria-label="Scan history">
-                <Clock size={22} style={{ color: "#1B2A4A" }} />
+                className="w-10 h-10 rounded-full flex items-center justify-center glass-pill" aria-label="Scan history">
+                <Clock size={22} style={{ color: "rgba(255,255,255,0.7)" }} />
               </motion.button>
             )}
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center" style={{ paddingBottom: 40 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative mb-8">
-            <div className="w-28 h-28 rounded-3xl flex items-center justify-center" style={{ background: "#F7F7F7" }}>
-              <motion.div animate={{ y: [0, -4, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
-                <Barcode size={48} style={{ color: "#1B2A4A" }} />
-              </motion.div>
-              <motion.div animate={{ y: [-20, 20, -20] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-4 right-4 h-0.5 rounded-full" style={{ background: "#E8314A", opacity: 0.7 }} />
+        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "rgba(255,255,255,0.45)" }}>Know what's in your food.</p>
+
+        {/* CENTER — Glass scanner circle */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative z-10" style={{ paddingBottom: 40 }}>
+          <motion.button
+            whileTap={{ scale: 1.04 }}
+            onClick={goToScan}
+            className="relative mb-8"
+            style={{ width: 220, height: 220 }}
+          >
+            {/* Glass circle background */}
+            <div className="absolute inset-0 rounded-full glass-pill" style={{ background: "rgba(255,255,255,0.06)" }} />
+            {/* Rotating red arc */}
+            <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="110" r="108" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#E8314A" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+            {/* Camera icon */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Barcode size={40} style={{ color: "rgba(255,255,255,0.85)" }} />
+              <span className="text-[13px] mt-2" style={{ color: "rgba(255,255,255,0.45)" }}>Tap to scan</span>
             </div>
-          </motion.div>
-
-          <h1 className="font-extrabold text-[28px] leading-tight tracking-tight mb-3" style={{ color: "#1B2A4A" }}>
-            Know what's in<br />your food.
-          </h1>
-          <p className="text-base mb-10" style={{ color: "#6B7280" }}>Scan any barcode. Get the full picture instantly.</p>
-
-          <motion.button whileTap={{ scale: 0.97 }} onClick={goToScan}
-            className="w-full flex items-center justify-center gap-3 rounded-xl font-extrabold text-lg"
-            style={{ background: "#E8314A", color: "#fff", height: 64, maxWidth: 400, borderRadius: 12 }}>
-            <Barcode size={20} /> Scan a Product
           </motion.button>
 
-          <div className="mt-6 flex items-center gap-2 text-sm" style={{ color: "#6B7280" }}>
-            <span>or</span>
-            <button onClick={() => {
+          {/* Search pill */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => {
               const code = prompt("Enter barcode number:");
               if (code?.trim()) handleBarcodeDetected(code.trim());
-            }} className="font-semibold" style={{ color: "#E8314A" }}>Enter a barcode manually</button>
-          </div>
+            }}
+            className="flex items-center justify-center gap-2 glass-pill"
+            style={{ width: 280, height: 48, borderRadius: 24 }}
+          >
+            <Search size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
+            <span className="font-semibold text-[15px] text-white">Search a product</span>
+          </motion.button>
         </div>
 
-        <div className="flex items-center justify-center gap-2 pb-8">
-          {[{ emoji: "🌿", label: "Nutri-Score" }, { emoji: "⚗️", label: "Additives" }, { emoji: "📋", label: "Ingredients" }].map(c => (
-            <span key={c.label} className="text-xs font-semibold px-2.5 py-1.5 rounded-lg" style={{ background: "#F7F7F7", color: "#1B2A4A" }}>
-              {c.emoji} {c.label}
-            </span>
+        {/* Stat chips */}
+        <div className="flex items-center justify-center gap-2 px-5 pb-3 relative z-10">
+          {[
+            { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
+            { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
+            { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
+          ].map(chip => (
+            <div key={chip.label} className="flex flex-col items-center justify-center glass-pill" style={{ width: 100, height: 44, borderRadius: 12 }}>
+              <span className="text-[12px] font-bold text-white">{chip.emoji} {chip.val}</span>
+              <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>{chip.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom nav */}
+        <div className="glass-nav flex items-center justify-around relative z-10" style={{ height: 83, paddingBottom: 20 }}>
+          {[
+            { icon: <Home size={22} />, label: "Home", active: true },
+            { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
+            { icon: <Search size={22} />, label: "Search", active: false },
+            { icon: <Heart size={22} />, label: "Saved", active: false, action: () => { setBasket(getBasket()); setScreen("basket"); } },
+          ].map(item => (
+            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
+              <span style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.4)" }}>{item.icon}</span>
+              <span className="text-[10px] font-medium" style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.35)" }}>{item.label}</span>
+              {item.active && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
+            </button>
           ))}
         </div>
       </div>
