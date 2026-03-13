@@ -881,8 +881,8 @@ const SkaapScan = () => {
             )}
             {history.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setHistory(getHistory()); setScreen("history"); }}
-                className="w-10 h-10 rounded-full flex items-center justify-center glass-pill" aria-label="Scan history">
-                <Clock size={22} style={{ color: "rgba(255,255,255,0.7)" }} />
+                className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }} aria-label="Scan history">
+                <Clock size={22} style={{ color: "#6B7280" }} />
               </motion.button>
             )}
           </div>
