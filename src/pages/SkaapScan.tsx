@@ -11,6 +11,7 @@ import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
 import { AuthSheet } from "@/components/scan/AuthSheet";
+import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,7 +39,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "profile";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
@@ -947,7 +948,7 @@ const SkaapScan = () => {
             { icon: <Home size={22} />, label: "Home", active: true },
             { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
             { icon: <Search size={22} />, label: "Search", active: false, action: () => setScreen("search") },
-            { icon: <User size={22} />, label: "Profile", active: false, action: () => !user ? setAuthSheetOpen(true) : null },
+            { icon: <User size={22} />, label: "Profile", active: false, action: () => user ? setScreen("profile") : setAuthSheetOpen(true) },
           ].map(item => (
             <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
               <span style={{ color: item.active ? "#E8314A" : "rgba(255,255,255,0.4)" }}>{item.icon}</span>
@@ -1979,6 +1980,11 @@ const SkaapScan = () => {
         }}
       />
     );
+  }
+
+  // ─── SCREEN: PROFILE ───
+  if (screen === "profile") {
+    return <ProfileScreen onBack={() => setScreen("home")} />;
   }
 
   // ─── SCREEN: BASKET (Saved Products Comparison) ───
