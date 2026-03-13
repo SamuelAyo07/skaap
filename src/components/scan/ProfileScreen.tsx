@@ -147,7 +147,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         {!isPlus && (
           <motion.button
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            onClick={openUpgrade}
+            onClick={() => openUpgrade()}
             className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
             style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}
           >
