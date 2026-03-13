@@ -919,11 +919,11 @@ const SkaapScan = () => {
               const code = prompt("Enter barcode number:");
               if (code?.trim()) handleBarcodeDetected(code.trim());
             }}
-            className="flex items-center justify-center gap-2 glass-pill"
-            style={{ width: 280, height: 48, borderRadius: 24 }}
+            className="flex items-center justify-center gap-2"
+            style={{ width: 280, height: 48, borderRadius: 24, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
           >
-            <Search size={16} style={{ color: "rgba(255,255,255,0.5)" }} />
-            <span className="font-semibold text-[15px] text-white">Search a product</span>
+            <Search size={16} style={{ color: "#9CA3AF" }} />
+            <span className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>Search a product</span>
           </motion.button>
         </div>
 
