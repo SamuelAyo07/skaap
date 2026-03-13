@@ -953,51 +953,29 @@ const SkaapScan = () => {
   // ─── SCREEN: AI INFO ───
   if (screen === "ai-info") {
     return (
-      <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
+      <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#0A0F1E" }}>
         <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
           <button onClick={() => setScreen("result")} aria-label="Back">
-            <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
+            <ArrowLeft size={20} style={{ color: "rgba(255,255,255,0.7)" }} />
           </button>
-          <h1 className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>How SKAAP uses AI</h1>
+          <h1 className="font-extrabold text-lg text-white">How SKAAP uses AI</h1>
         </div>
         <div className="px-5 py-6 space-y-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Product Summaries</h2>
+          {[
+            { title: "Product Summaries", desc: "AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know." },
+            { title: "Additive Explanations", desc: "When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data." },
+            { title: "Dietary Classifications", desc: "AI analyzes ingredient lists to classify products as Vegan, Vegetarian, Gluten-Free, etc. Hard safety overrides prevent incorrect labels." },
+            { title: "Smart Recommendations", desc: "AI suggests healthier alternatives based on the product's nutritional profile, additive count, and category." },
+          ].map((item, i) => (
+            <div key={i}>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} style={{ color: "#E8314A" }} />
+                <h2 className="font-bold text-sm text-white">{item.title}</h2>
+              </div>
+              <p className="text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{item.desc}</p>
             </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Additive Explanations</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Dietary Classifications</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI analyzes ingredient lists to classify products as Vegan, Vegetarian, Gluten-Free, etc. Hard safety overrides prevent incorrect labels — e.g., products with milk allergens will never be labeled Dairy-Free regardless of AI confidence.
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} style={{ color: "#E8314A" }} />
-              <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>Smart Recommendations</h2>
-            </div>
-            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-              AI suggests healthier alternatives based on the product's nutritional profile, additive count, and category. Recommendations prioritize widely available products with better Nutri-Scores.
-            </p>
-          </div>
-          <p className="text-[11px] text-center pt-4" style={{ color: "#9CA3AF" }}>
+          ))}
+          <p className="text-[11px] text-center pt-4" style={{ color: "rgba(255,255,255,0.3)" }}>
             All AI content is marked with ✨ AI. Scores and risk levels are calculated using established nutritional science, not AI.
           </p>
         </div>
