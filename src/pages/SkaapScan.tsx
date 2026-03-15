@@ -1579,81 +1579,72 @@ const SkaapScan = () => {
                   </div>
                 )}
 
-                {/* THREE COLLAPSED ACCORDION ROWS — 44px each */}
-                <div style={{ marginTop: 4 }}>
-                  {/* Row 1: Nutrition */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("nutrition")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>🍽</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Nutrition</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {productInfo.nutriScoreGrade && (
-                          <span className="font-bold text-white" style={{
-                            fontSize: 10, padding: "2px 6px", borderRadius: 10,
-                            background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF",
-                          }}>
-                            {productInfo.nutriScoreGrade.toUpperCase()}
-                          </span>
-                        )}
-                        <motion.div animate={{ rotate: expandedSections.has("nutrition") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded nutrition content */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("nutrition") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-3">
-                          {negativeRows.length > 0 && (
-                            <div className="mb-2">
-                              <p className="text-[11px] font-bold mb-1" style={{ color: "#E8314A" }}>Negatives</p>
-                              {negativeRows.map(row => (
-                                <div key={row.label} className="flex items-center justify-between py-1.5" style={{ borderBottom: "1px solid #F9FAFB" }}>
-                                  <div className="flex items-center gap-2">
-                                    <span style={{ fontSize: 14 }}>{row.icon}</span>
-                                    <span className="text-[12px] font-medium" style={{ color: "#1B2A4A" }}>{row.label}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12px] font-semibold" style={{ color: "#1B2A4A" }}>
-                                      {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                                    </span>
-                                    <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {positiveRows.length > 0 && (
-                            <div>
-                              <p className="text-[11px] font-bold mb-1" style={{ color: "#2D7D46" }}>Positives</p>
-                              {positiveRows.map(row => (
-                                <div key={row.label} className="flex items-center justify-between py-1.5" style={{ borderBottom: "1px solid #F9FAFB" }}>
-                                  <div className="flex items-center gap-2">
-                                    <span style={{ fontSize: 14 }}>{row.icon}</span>
-                                    <span className="text-[12px] font-medium" style={{ color: "#1B2A4A" }}>{row.label}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12px] font-semibold" style={{ color: "#1B2A4A" }}>
-                                      {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                                    </span>
-                                    <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                {/* SECTION E — NUTRITION CARD */}
+                <div style={{ marginTop: 20, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("nutrition")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>🍽</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Nutrition</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {productInfo.nutriScoreGrade ? (
+                        <span className="font-bold text-white" style={{
+                          fontSize: 10, padding: "2px 8px", borderRadius: 10,
+                          background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF",
+                        }}>
+                          {productInfo.nutriScoreGrade.toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="font-semibold" style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 8px", borderRadius: 10, background: "#F3F4F6" }}>UNKNOWN</span>
+                      )}
+                      <motion.div animate={{ rotate: expandedSections.has("nutrition") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
                     </div>
+                  </button>
+                  {/* Always visible top nutrients when collapsed, full list when expanded */}
+                  <div style={{ marginTop: 12 }}>
+                    {negativeRows.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-[12px] font-bold mb-1" style={{ color: "#E8314A" }}>Negatives</p>
+                        {negativeRows.map(row => (
+                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                            <div className="flex items-center gap-2">
+                              <span style={{ fontSize: 14 }}>{row.icon}</span>
+                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
+                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                              </span>
+                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {positiveRows.length > 0 && (
+                      <div>
+                        <p className="text-[12px] font-bold mb-1" style={{ color: "#22C55E" }}>Positives</p>
+                        {positiveRows.map(row => (
+                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                            <div className="flex items-center gap-2">
+                              <span style={{ fontSize: 14 }}>{row.icon}</span>
+                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
+                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                              </span>
+                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                </div>
 
                   {/* Row 2: Additives */}
                   <div>
