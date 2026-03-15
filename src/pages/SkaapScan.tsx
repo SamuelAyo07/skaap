@@ -1553,10 +1553,10 @@ const SkaapScan = () => {
                   </motion.div>
                 )}
 
-                {/* SHARE PROMPT ROW — 44px */}
+                {/* SECTION D — SHARE ROW */}
                 {scoreBreakdown && (
-                  <div className="flex items-center gap-[10px] px-5" style={{ height: 44, marginTop: 6 }}>
-                    <p className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>
+                  <div className="flex items-center gap-3 px-5" style={{ marginTop: 20 }}>
+                    <p className="flex-1 text-[14px]" style={{ color: "#4B5563" }}>
                       {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
                         : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
                         : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
@@ -1566,23 +1566,14 @@ const SkaapScan = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleShareTap}
                       disabled={shareGenerating}
-                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold transition-all duration-200"
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
                       style={{
-                        height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
-                        background: shareState === "shared"
-                          ? "linear-gradient(135deg, rgba(45,125,70,0.85), rgba(45,125,70,0.95))"
-                          : "linear-gradient(135deg, rgba(232,49,74,0.85), rgba(200,30,60,0.95))",
+                        height: 44, padding: "0 20px", borderRadius: 22, fontSize: 14,
+                        background: shareState === "shared" ? "#22C55E" : "#E8314A",
                         color: "#fff",
-                        backdropFilter: "blur(12px)",
-                        WebkitBackdropFilter: "blur(12px)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        boxShadow: shareState === "shared"
-                          ? "0 2px 12px rgba(45,125,70,0.3)"
-                          : "0 2px 12px rgba(232,49,74,0.25)",
-                        animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
-                      <Share2 size={14} />
+                      <Share2 size={16} />
                       {shareState === "shared" ? "Shared ✓" : shareGenerating ? "..." : "Share Score"}
                     </motion.button>
                   </div>
