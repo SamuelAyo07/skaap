@@ -193,19 +193,19 @@ const Index = () => {
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(255,255,255,0.1)" }}>
                   <Store size={22} color="#fff" />
                 </div>
-                <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Scan & Pay</h3>
+                <h3 className="font-extrabold text-xl tracking-tight text-white mb-2">Skip the line. Walk right out.</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  Walk into any partner store, scan items as you shop, add to cart, pay in the app, and walk out with a QR receipt. No lines. No registers. No waiting.
+                  Scan your items as you shop. Pay on your phone. Show your QR code at the door. It takes 30 seconds your first time.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {["📱 Mobile Checkout", "🛒 Smart Cart", "🧾 QR Receipt", "⚡ Skip the Line"].map(chip => (
+                  {["🚫 No waiting", "📱 Pay on your phone", "🧾 QR exit pass", "⚡ 30-second setup"].map(chip => (
                     <span key={chip} className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>{chip}</span>
                   ))}
                 </div>
                 <motion.button whileTap={{ scale: 0.97 }} onClick={() => navigate("/app")}
                   className="mt-5 w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
-                  style={{ background: "#fff", color: "#0A1220" }}>
-                  <Barcode size={16} /> Try the Demo
+                  style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}>
+                  Try It Free →
                 </motion.button>
               </motion.div>
             </FadeIn>

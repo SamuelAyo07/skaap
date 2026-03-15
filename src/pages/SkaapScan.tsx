@@ -1103,16 +1103,16 @@ const SkaapScan = () => {
       return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
     };
 
-    const sheetHeight = sheetExpanded ? "88vh" : "420px";
+    const sheetHeight = sheetExpanded ? "96vh" : "80vh";
 
     const productName = productInfo?.productName || "";
     const displayName = productName.toUpperCase() === productName
       ? productName.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       : productName;
-    const nameSize = displayName.length > 28 ? 13 : 15;
+    const nameSize = displayName.length > 28 ? 13 : 16;
 
     return (
-      <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
+      <div className="fixed inset-0 z-50 flex flex-col justify-end" style={{ background: "rgba(0,0,0,0.2)" }}>
         {/* Share preview modal with card type selector */}
         <AnimatePresence>
           {shareModalOpen && (
@@ -1318,25 +1318,28 @@ const SkaapScan = () => {
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="bg-background rounded-t-[20px] flex flex-col relative"
+          className="flex flex-col relative"
           style={{
             height: sheetHeight,
-            maxHeight: "88vh",
-            boxShadow: "0 -4px 32px rgba(0,0,0,0.12)",
+            maxHeight: "96vh",
+            background: "#FFFFFF",
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
             transition: "height 0.3s ease-out",
           }}
         >
           {/* Drag handle */}
           <button
-            className="flex justify-center pt-[10px] pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing w-full"
+            className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing w-full"
             onClick={() => setSheetExpanded(prev => !prev)}
             aria-label={sheetExpanded ? "Collapse sheet" : "Expand sheet"}
           >
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} />
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: "#E5E7EB" }} />
           </button>
 
           {/* Scrollable content area */}
-          <div ref={sheetContentRef} className="flex-1 overflow-y-auto" style={{ overflowY: sheetExpanded ? "auto" : "hidden" }}>
+          <div ref={sheetContentRef} className="flex-1 overflow-y-auto">
             {/* ── SKELETON LOADER ── */}
             {loading && (
               <div className="px-5">
@@ -1394,166 +1397,150 @@ const SkaapScan = () => {
             {/* ── PRODUCT RESULT ── */}
             {productInfo && !loading && (
               <>
-                {/* PRODUCT HEADER ROW — 56px */}
-                <div className="flex items-center gap-3 px-5" style={{ height: 56, marginTop: 14 }}>
-                  {/* Product image 44x44 */}
-                  <div className="flex-shrink-0 overflow-hidden" style={{ width: 44, height: 44, borderRadius: 10, background: "#F3F4F6" }}>
+                {/* SECTION A — PRODUCT HEADER */}
+                <div className="flex items-center gap-3 px-5" style={{ marginTop: 16 }}>
+                  {/* Product image 56x56 */}
+                  <div className="flex-shrink-0 overflow-hidden" style={{ width: 56, height: 56, borderRadius: 12, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
                     {productInfo.imageSmallUrl || productInfo.imageUrl ? (
                       <img
                         src={productInfo.imageSmallUrl || productInfo.imageUrl}
                         alt={productInfo.productName}
-                        width={44} height={44}
-                        className="w-full h-full object-cover"
+                        width={56} height={56}
+                        className="w-full h-full object-contain"
                         loading="eager"
                         // @ts-ignore
                         fetchpriority="high"
                         onError={e => {
                           const t = e.target as HTMLImageElement;
                           t.style.display = "none";
-                          t.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="21" x2="17" y2="3"/></svg></div>';
+                          t.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="21" x2="17" y2="3"/></svg></div>';
                         }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Barcode size={16} style={{ color: "#9CA3AF" }} />
+                        <Barcode size={20} style={{ color: "#9CA3AF" }} />
                       </div>
                     )}
                   </div>
 
                   {/* Name + brand */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-extrabold leading-tight truncate" style={{ fontSize: nameSize, color: "#1B2A4A" }}>
+                    <p className="font-bold leading-tight" style={{ fontSize: nameSize, color: "#1A1A1A", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                       {displayName}
                     </p>
-                    <p className="text-[12px] truncate" style={{ color: "#9CA3AF" }}>
+                    <p className="text-[13px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
                       {[productInfo.brand, productInfo.quantity].filter(Boolean).join(" · ")}
                     </p>
                   </div>
-
-                  {/* Score badge 44px circle */}
-                  {scoreBreakdown && (
-                    <div
-                      className="flex-shrink-0 flex items-center justify-center"
-                      style={{
-                        width: 44, height: 44, borderRadius: 22,
-                        border: `3px solid ${getScoreColor(scoreBreakdown.total)}`,
-                        background: "#fff",
-                      }}
-                    >
-                      <span className="font-extrabold" style={{ fontSize: 18, color: getScoreColor(scoreBreakdown.total) }}>
-                        {scoreBreakdown.total}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
-                {/* DIVIDER */}
-                <div style={{ height: 1, background: "#F3F4F6", marginTop: 14 }} />
-
-                {/* SKAAP SCORE ROW — 80px */}
+                {/* SECTION B — SCORE HERO (CENTERED) */}
                 {scoreBreakdown && (
-                  <div className="flex items-center gap-4 px-5" style={{ height: 80, marginTop: 12 }}>
-                    {/* Score ring 72px — tappable */}
-                    <button onClick={() => setShowScoreModal(true)} className="flex-shrink-0">
-                      <ScoreRing score={scoreBreakdown.total} size={72} />
+                  <div className="flex flex-col items-center" style={{ marginTop: 20 }}>
+                    {/* Score ring 96px — tappable */}
+                    <button onClick={() => setShowScoreModal(true)}>
+                      <ScoreRing score={scoreBreakdown.total} size={96} />
                     </button>
 
-                    {/* Verdict + AI summary */}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-extrabold" style={{ fontSize: 16, color: "#1B2A4A" }}>
-                        {getScoreVerdict(scoreBreakdown.total)}
+                    {/* Verdict word */}
+                    <p className="font-bold text-center" style={{ fontSize: 20, color: getScoreColor(scoreBreakdown.total), marginTop: 12 }}>
+                      {scoreBreakdown.total >= 75 ? "Excellent" : scoreBreakdown.total >= 50 ? "Good" : scoreBreakdown.total >= 25 ? "Poor" : "Bad"}
+                    </p>
+
+                    {/* AI summary */}
+                    <div style={{ marginTop: 6, maxWidth: 300 }} className="text-center mx-auto">
+                      {aiSummaryLoading ? (
+                        <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
+                          <div className="h-3.5 rounded-full mx-auto" style={{
+                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
+                            backgroundSize: "200% 100%",
+                            animation: "shimmer 1.4s infinite",
+                            width: "100%",
+                          }} />
+                          <div className="h-3.5 rounded-full mx-auto" style={{
+                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
+                            backgroundSize: "200% 100%",
+                            animation: "shimmer 1.4s infinite",
+                            width: "75%",
+                          }} />
+                        </div>
+                      ) : aiSummary ? (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                          <p className="text-[14px] leading-relaxed" style={{
+                            color: "#4B5563",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}>{aiSummary}</p>
+                        </motion.div>
+                      ) : (
+                        <p className="text-[14px] leading-relaxed" style={{ color: "#4B5563" }}>
+                          {getStaticSummary(scoreBreakdown, productInfo)}
+                        </p>
+                      )}
+                      <p className="text-[11px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}>
+                        <Sparkles size={8} /> AI
                       </p>
-                      <div style={{ marginTop: 4 }}>
-                        {aiSummaryLoading ? (
-                          <div className="space-y-1">
-                            <div className="h-3 rounded-full" style={{
-                              background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                              backgroundSize: "200% 100%",
-                              animation: "shimmer 1.4s infinite",
-                              width: "100%",
-                            }} />
-                            <div className="h-3 rounded-full" style={{
-                              background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                              backgroundSize: "200% 100%",
-                              animation: "shimmer 1.4s infinite",
-                              width: "75%",
-                            }} />
-                          </div>
-                        ) : aiSummary ? (
-                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                            <p className="text-[12px] leading-snug" style={{
-                              color: "#6B7280",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                            }}>{aiSummary}</p>
-                            <p className="text-[10px] mt-0.5 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                              <Sparkles size={8} /> AI
-                            </p>
-                          </motion.div>
-                        ) : (
-                          <p className="text-[12px] leading-snug" style={{ color: "#6B7280" }}>
-                            {getStaticSummary(scoreBreakdown, productInfo)}
-                          </p>
-                        )}
-                      </div>
-                      <p className="text-[10px] mt-1" style={{ color: "#9CA3AF" }}>Tap score for breakdown</p>
                     </div>
+                    <p className="text-[10px] mt-1" style={{ color: "#9CA3AF" }}>Tap score for breakdown</p>
                   </div>
                 )}
 
-                {/* THREE SIGNAL CHIPS ROW — 34px */}
-                <div className="flex gap-2 px-5 flex-nowrap overflow-x-auto" style={{ height: 34, marginTop: 10, scrollbarWidth: "none" }}>
-                  {productInfo.nutriScoreGrade && (() => {
-                    const nsColor = nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF";
-                    return (
-                      <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                        height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                        background: `${nsColor}1F`, border: `1px solid ${nsColor}66`, color: "#1B2A4A",
-                      }}>
-                        <div className="rounded-full" style={{ width: 8, height: 8, background: nsColor }} />
-                        Nutri-Score {productInfo.nutriScoreGrade.toUpperCase()}
-                      </span>
-                    );
-                  })()}
-
+                {/* SECTION C — THREE SIGNAL CHIPS */}
+                <div className="flex gap-2 px-5" style={{ marginTop: 20 }}>
+                  {/* Chip 1: Nutri-Score */}
                   {(() => {
-                    const adColor = addCount === 0 ? "#2D7D46" : getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none");
-                    const adBg = addCount === 0 ? "#D1FAE5" : adColor;
-                    const adBorder = addCount === 0 ? "#6EE7B7" : adColor;
+                    const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                    const hasNS = ns && nutriColors[ns];
+                    const chipBg = hasNS ? (ns === "a" || ns === "b" ? "#F0FDF4" : ns === "c" ? "#FFFBEB" : "#FFF1F2") : "#F9FAFB";
+                    const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
+                    const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                     return (
-                      <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                        height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                        background: `${adBg}1F`, border: `1px solid ${adBorder}66`, color: "#1B2A4A",
-                      }}>
-                        <div className="rounded-full" style={{ width: 8, height: 8, background: addCount === 0 ? "#2D7D46" : adColor }} />
-                        {addCount === 0 ? "No additives" : `${addCount} additive${addCount > 1 ? "s" : ""}`}
-                      </span>
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>Nutri-Score</span>
+                      </div>
                     );
                   })()}
 
-                  {productInfo.novaGroup && novaColors[productInfo.novaGroup] && (
-                    <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                      height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                      background: `${novaColors[productInfo.novaGroup].bg}1F`,
-                      border: `1px solid ${novaColors[productInfo.novaGroup].bg}66`,
-                      color: "#1B2A4A",
-                    }}>
-                      <div className="rounded-full" style={{ width: 8, height: 8, background: novaColors[productInfo.novaGroup].bg }} />
-                      NOVA {productInfo.novaGroup}
-                    </span>
-                  )}
+                  {/* Chip 2: Additives */}
+                  {(() => {
+                    const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
+                    const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
+                    const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{addCount}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>additives</span>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Chip 3: NOVA */}
+                  {(() => {
+                    const nova = productInfo.novaGroup;
+                    const hasNova = nova && novaColors[nova];
+                    const chipBg = hasNova ? (nova <= 2 ? "#F0FDF4" : "#FFF1F2") : "#F9FAFB";
+                    const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
+                    const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNova ? nova : "?"}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>processing</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
-                {/* DIETARY CHIPS ROW — 34px or hidden */}
+                {/* DIETARY CHIPS ROW */}
                 {dietaryTags && Object.keys(dietaryTags).length > 0 && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="flex gap-2 px-5 flex-wrap"
-                    style={{ height: 34, marginTop: 6 }}
+                    style={{ marginTop: 8 }}
                   >
                     {Object.keys(dietaryTags).map(key => (
                       <span key={key} className="inline-flex items-center font-semibold" style={{
@@ -1566,10 +1553,10 @@ const SkaapScan = () => {
                   </motion.div>
                 )}
 
-                {/* SHARE PROMPT ROW — 44px */}
+                {/* SECTION D — SHARE ROW */}
                 {scoreBreakdown && (
-                  <div className="flex items-center gap-[10px] px-5" style={{ height: 44, marginTop: 6 }}>
-                    <p className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>
+                  <div className="flex items-center gap-3 px-5" style={{ marginTop: 20 }}>
+                    <p className="flex-1 text-[14px]" style={{ color: "#4B5563" }}>
                       {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
                         : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
                         : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
@@ -1579,304 +1566,276 @@ const SkaapScan = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={handleShareTap}
                       disabled={shareGenerating}
-                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold transition-all duration-200"
+                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
                       style={{
-                        height: 32, padding: "0 14px", borderRadius: 20, fontSize: 12,
-                        background: shareState === "shared"
-                          ? "linear-gradient(135deg, rgba(45,125,70,0.85), rgba(45,125,70,0.95))"
-                          : "linear-gradient(135deg, rgba(232,49,74,0.85), rgba(200,30,60,0.95))",
+                        height: 44, padding: "0 20px", borderRadius: 22, fontSize: 14,
+                        background: shareState === "shared" ? "#22C55E" : "#E8314A",
                         color: "#fff",
-                        backdropFilter: "blur(12px)",
-                        WebkitBackdropFilter: "blur(12px)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        boxShadow: shareState === "shared"
-                          ? "0 2px 12px rgba(45,125,70,0.3)"
-                          : "0 2px 12px rgba(232,49,74,0.25)",
-                        animation: shareState === "shared" ? "sharePulse 0.4s ease-out" : "none",
                       }}
                     >
-                      <Share2 size={14} />
+                      <Share2 size={16} />
                       {shareState === "shared" ? "Shared ✓" : shareGenerating ? "..." : "Share Score"}
                     </motion.button>
                   </div>
                 )}
 
-                {/* THREE COLLAPSED ACCORDION ROWS — 44px each */}
-                <div style={{ marginTop: 4 }}>
-                  {/* Row 1: Nutrition */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("nutrition")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>🍽</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Nutrition</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {productInfo.nutriScoreGrade && (
-                          <span className="font-bold text-white" style={{
-                            fontSize: 10, padding: "2px 6px", borderRadius: 10,
-                            background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF",
-                          }}>
-                            {productInfo.nutriScoreGrade.toUpperCase()}
-                          </span>
-                        )}
-                        <motion.div animate={{ rotate: expandedSections.has("nutrition") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded nutrition content */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("nutrition") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-3">
-                          {negativeRows.length > 0 && (
-                            <div className="mb-2">
-                              <p className="text-[11px] font-bold mb-1" style={{ color: "#E8314A" }}>Negatives</p>
-                              {negativeRows.map(row => (
-                                <div key={row.label} className="flex items-center justify-between py-1.5" style={{ borderBottom: "1px solid #F9FAFB" }}>
-                                  <div className="flex items-center gap-2">
-                                    <span style={{ fontSize: 14 }}>{row.icon}</span>
-                                    <span className="text-[12px] font-medium" style={{ color: "#1B2A4A" }}>{row.label}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12px] font-semibold" style={{ color: "#1B2A4A" }}>
-                                      {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                                    </span>
-                                    <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {positiveRows.length > 0 && (
-                            <div>
-                              <p className="text-[11px] font-bold mb-1" style={{ color: "#2D7D46" }}>Positives</p>
-                              {positiveRows.map(row => (
-                                <div key={row.label} className="flex items-center justify-between py-1.5" style={{ borderBottom: "1px solid #F9FAFB" }}>
-                                  <div className="flex items-center gap-2">
-                                    <span style={{ fontSize: 14 }}>{row.icon}</span>
-                                    <span className="text-[12px] font-medium" style={{ color: "#1B2A4A" }}>{row.label}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12px] font-semibold" style={{ color: "#1B2A4A" }}>
-                                      {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                                    </span>
-                                    <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                {/* SECTION E — NUTRITION CARD */}
+                <div style={{ marginTop: 20, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("nutrition")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>🍽</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Nutrition</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {productInfo.nutriScoreGrade ? (
+                        <span className="font-bold text-white" style={{
+                          fontSize: 10, padding: "2px 8px", borderRadius: 10,
+                          background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF",
+                        }}>
+                          {productInfo.nutriScoreGrade.toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="font-semibold" style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 8px", borderRadius: 10, background: "#F3F4F6" }}>UNKNOWN</span>
+                      )}
+                      <motion.div animate={{ rotate: expandedSections.has("nutrition") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
                     </div>
+                  </button>
+                  {/* Always visible top nutrients when collapsed, full list when expanded */}
+                  <div style={{ marginTop: 12 }}>
+                    {negativeRows.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-[12px] font-bold mb-1" style={{ color: "#E8314A" }}>Negatives</p>
+                        {negativeRows.map(row => (
+                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                            <div className="flex items-center gap-2">
+                              <span style={{ fontSize: 14 }}>{row.icon}</span>
+                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
+                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                              </span>
+                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {positiveRows.length > 0 && (
+                      <div>
+                        <p className="text-[12px] font-bold mb-1" style={{ color: "#22C55E" }}>Positives</p>
+                        {positiveRows.map(row => (
+                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
+                            <div className="flex items-center gap-2">
+                              <span style={{ fontSize: 14 }}>{row.icon}</span>
+                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
+                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
+                              </span>
+                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                </div>
 
-                  {/* Row 2: Additives */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("additives")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>⚗️</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Additives</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {addCount === 0 ? (
-                          <Check size={14} style={{ color: "#2D7D46" }} />
+                {/* SECTION F — ADDITIVES ROW */}
+                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("additives")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>⚗️</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Additives</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {addCount === 0 ? (
+                        <Check size={16} style={{ color: "#22C55E" }} />
+                      ) : (
+                        <span className="font-bold" style={{
+                          fontSize: 12, padding: "2px 8px", borderRadius: 10,
+                          background: "#FFF1F2", border: "1px solid #FECDD3", color: "#E8314A",
+                        }}>
+                          {addCount}
+                        </span>
+                      )}
+                      <motion.div animate={{ rotate: expandedSections.has("additives") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
+                    </div>
+                  </button>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateRows: expandedSections.has("additives") ? "1fr" : "0fr",
+                    transition: "grid-template-rows 220ms ease-out",
+                  }}>
+                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                      <div className="pt-3">
+                        {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
+                          productInfo.additivesTags.map((a, i) => {
+                            const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                            const risk = getAdditiveRisk(a);
+                            const riskColor = getAdditiveRiskColor(risk);
+                            const riskLabel = getAdditiveRiskLabel(risk);
+                            const desc = getAdditiveDescription(a);
+                            const isExp = expandedAdditive === a;
+                            return (
+                              <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                                <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-[13px]" style={{ color: "#1A1A1A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
+                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
+                                  </div>
+                                  <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
+                                </button>
+                                <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
+                                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                                    <div className="pb-2 pl-1">
+                                      {additiveExplanationLoading && isExp ? (
+                                        <div className="space-y-1">
+                                          <Skeleton className="h-3 w-full rounded" />
+                                          <Skeleton className="h-3 w-4/5 rounded" />
+                                        </div>
+                                      ) : additiveExplanation && isExp ? (
+                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                          <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                          <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
+                                            <Sparkles size={8} /> AI
+                                          </p>
+                                        </motion.div>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })
                         ) : (
-                          <span className="font-bold text-white" style={{
-                            fontSize: 10, padding: "2px 6px", borderRadius: 10,
-                            background: getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none"),
-                          }}>
-                            {addCount}
-                          </span>
+                          <div className="text-center py-3">
+                            <Check size={18} style={{ color: "#22C55E", margin: "0 auto" }} />
+                            <p className="font-semibold text-[13px] mt-1" style={{ color: "#22C55E" }}>No additives detected</p>
+                          </div>
                         )}
-                        <motion.div animate={{ rotate: expandedSections.has("additives") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded additives content */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("additives") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-3" style={{ background: "#FAFAFA" }}>
-                          {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
-                            productInfo.additivesTags.map((a, i) => {
-                              const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                              const risk = getAdditiveRisk(a);
-                              const riskColor = getAdditiveRiskColor(risk);
-                              const riskLabel = getAdditiveRiskLabel(risk);
-                              const desc = getAdditiveDescription(a);
-                              const isExp = expandedAdditive === a;
-                              return (
-                                <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                                  <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
-                                    <div className="flex items-center justify-between">
-                                      <span className="font-bold text-[12px]" style={{ color: "#1B2A4A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
-                                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
-                                    </div>
-                                    <p className="text-[10px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
-                                  </button>
-                                  <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
-                                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                                      <div className="pb-2 pl-1">
-                                        {additiveExplanationLoading && isExp ? (
-                                          <div className="space-y-1">
-                                            <Skeleton className="h-3 w-full rounded" />
-                                            <Skeleton className="h-3 w-4/5 rounded" />
-                                          </div>
-                                        ) : additiveExplanation && isExp ? (
-                                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                            <p className="text-[11px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
-                                            <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                                              <Sparkles size={8} /> AI
-                                            </p>
-                                          </motion.div>
-                                        ) : null}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })
-                          ) : (
-                            <div className="text-center py-3">
-                              <Check size={16} style={{ color: "#2D7D46", margin: "0 auto" }} />
-                              <p className="font-semibold text-[12px] mt-1" style={{ color: "#2D7D46" }}>No additives detected</p>
-                            </div>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Row 3: Ingredients & Alternatives */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("more")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>•••</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Ingredients & Alternatives</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                {/* SECTION G — INGREDIENTS & ALTERNATIVES ROW */}
+                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, marginBottom: 100, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("more")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>•••</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Ingredients & Alternatives</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <motion.div animate={{ rotate: expandedSections.has("more") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
+                    </div>
+                  </button>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateRows: expandedSections.has("more") ? "1fr" : "0fr",
+                    transition: "grid-template-rows 220ms ease-out",
+                  }}>
+                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                      <div className="pt-3">
+                        {/* Ingredients */}
                         {productInfo.ingredientsText && (
-                          <span className="text-[11px]" style={{ color: "#9CA3AF" }}>
-                            {productInfo.ingredientsText.split(",").length} ingredients
-                          </span>
-                        )}
-                        <motion.div animate={{ rotate: expandedSections.has("more") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded: ingredients + certifications + recommendations */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("more") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-4">
-                          {/* Ingredients */}
-                          {productInfo.ingredientsText && (
-                            <div className="mb-4">
-                              <p className="text-[11px] font-bold mb-1.5" style={{ color: "#1B2A4A" }}>Ingredients</p>
-                              <p className="text-[12px] leading-relaxed" style={{ color: "#6B7280" }}>
-                                {productInfo.allergensTags?.length
-                                  ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
-                                  : productInfo.ingredientsText}
-                              </p>
-                              {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
-                                <div className="mt-2 flex flex-wrap gap-1">
-                                  <span className="text-[10px] font-semibold" style={{ color: "#1B2A4A" }}>Allergens:</span>
-                                  {productInfo.allergensTags.map(a => (
-                                    <span key={a} className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>
-                                      {formatTag(a)}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Certifications */}
-                          {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-[11px] font-bold mb-1.5" style={{ color: "#1B2A4A" }}>Certifications</p>
-                              <div className="flex flex-wrap gap-1">
-                                {productInfo.labelsTags.map(l => (
-                                  <span key={l} className="text-[10px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#1B2A4A", color: "#1B2A4A" }}>
-                                    {formatTag(l)}
+                          <div className="mb-4">
+                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Ingredients</p>
+                            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+                              {productInfo.allergensTags?.length
+                                ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
+                                : productInfo.ingredientsText}
+                            </p>
+                            {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                <span className="text-[11px] font-semibold" style={{ color: "#1A1A1A" }}>Allergens:</span>
+                                {productInfo.allergensTags.map(a => (
+                                  <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#E8314A" }}>
+                                    {formatTag(a)}
                                   </span>
                                 ))}
                               </div>
-                            </div>
-                          )}
-
-                          {/* AI Recommendations */}
-                          <div>
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <p className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>Healthier Alternatives</p>
-                              <Sparkles size={10} style={{ color: "#9CA3AF" }} />
-                            </div>
-                            {aiRecsLoading ? (
-                              <div className="space-y-2">
-                                {[1,2].map(i => (
-                                  <div key={i} className="flex gap-2 p-2 rounded-xl" style={{ background: "#F9FAFB" }}>
-                                    <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
-                                    <div className="flex-1 space-y-1.5 py-0.5">
-                                      <Skeleton className="h-3 w-3/4" />
-                                      <Skeleton className="h-3 w-full" />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : aiRecommendations && aiRecommendations.length > 0 ? (
-                              <div className="space-y-2">
-                                {aiRecommendations.map((rec, i) => {
-                                  const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
-                                  return (
-                                    <motion.div key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: i * 0.1, duration: 0.25 }}
-                                      className="flex gap-2 p-2 rounded-xl items-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                                      <div className="flex-shrink-0 flex items-center justify-center" style={{
-                                        width: 40, height: 40, borderRadius: 20,
-                                        border: `2px solid ${scoreColor}`,
-                                      }}>
-                                        <span className="font-extrabold" style={{ fontSize: 14, color: scoreColor }}>
-                                          {rec.estimatedScore?.toUpperCase() || "A"}
-                                        </span>
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-[12px] leading-tight truncate" style={{ color: "#1B2A4A" }}>{rec.name}</p>
-                                        <p className="text-[10px] leading-snug truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
-                                      </div>
-                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: `${scoreColor}1A`, color: scoreColor }}>Better</span>
-                                    </motion.div>
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                              <p className="text-[11px]" style={{ color: "#9CA3AF" }}>No recommendations available.</p>
                             )}
                           </div>
+                        )}
 
-                          {/* AI info link */}
-                          <button onClick={() => setScreen("ai-info")} className="mt-3 text-[10px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
-                            <Sparkles size={9} /> How SKAAP uses AI
-                          </button>
+                        {/* Certifications */}
+                        {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Certifications</p>
+                            <div className="flex flex-wrap gap-1">
+                              {productInfo.labelsTags.map(l => (
+                                <span key={l} className="text-[11px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#1A1A1A", color: "#1A1A1A" }}>
+                                  {formatTag(l)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* AI Recommendations */}
+                        <div>
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <p className="text-[12px] font-bold" style={{ color: "#1A1A1A" }}>Healthier Alternatives</p>
+                            <Sparkles size={10} style={{ color: "#9CA3AF" }} />
+                          </div>
+                          {aiRecsLoading ? (
+                            <div className="space-y-2">
+                              {[1,2].map(i => (
+                                <div key={i} className="flex gap-2 p-2 rounded-xl" style={{ background: "#F9FAFB" }}>
+                                  <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
+                                  <div className="flex-1 space-y-1.5 py-0.5">
+                                    <Skeleton className="h-3 w-3/4" />
+                                    <Skeleton className="h-3 w-full" />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : aiRecommendations && aiRecommendations.length > 0 ? (
+                            <div className="space-y-2">
+                              {aiRecommendations.map((rec, i) => {
+                                const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
+                                return (
+                                  <motion.div key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1, duration: 0.25 }}
+                                    className="flex gap-2 p-2 rounded-xl items-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                                    <div className="flex-shrink-0 flex items-center justify-center" style={{
+                                      width: 40, height: 40, borderRadius: 20,
+                                      border: `2px solid ${scoreColor}`,
+                                    }}>
+                                      <span className="font-extrabold" style={{ fontSize: 14, color: scoreColor }}>
+                                        {rec.estimatedScore?.toUpperCase() || "A"}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-bold text-[13px] leading-tight truncate" style={{ color: "#1A1A1A" }}>{rec.name}</p>
+                                      <p className="text-[11px] leading-snug truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
+                                    </div>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0" style={{ background: `${scoreColor}1A`, color: scoreColor }}>Better</span>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-[12px]" style={{ color: "#9CA3AF" }}>No recommendations available.</p>
+                          )}
                         </div>
+
+                        {/* AI info link */}
+                        <button onClick={() => setScreen("ai-info")} className="mt-3 text-[11px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
+                          <Sparkles size={9} /> How SKAAP uses AI
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1885,45 +1844,38 @@ const SkaapScan = () => {
             )}
           </div>
 
-          {/* FIXED BOTTOM ACTION ROW — 64px liquid glass */}
+          {/* BOTTOM BUTTONS — FIXED */}
           <div
             className="flex-shrink-0 flex items-center gap-3 px-5"
             style={{
-              height: 64,
-              borderTop: "1px solid rgba(255,255,255,0.4)",
-              background: "linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%)",
-              backdropFilter: "blur(40px) saturate(200%)",
-              WebkitBackdropFilter: "blur(40px) saturate(200%)",
-              boxShadow: "0 -4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6)",
-              paddingBottom: "env(safe-area-inset-bottom, 0px)",
+              borderTop: "1px solid #F3F4F6",
+              background: "#FFFFFF",
+              padding: "12px 20px",
+              paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)",
             }}
           >
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-              className="flex-1 font-semibold flex items-center justify-center liquid-glass-btn"
+              className="flex-1 font-semibold flex items-center justify-center"
               style={{
-                color: "#E8314A", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)",
-                height: 40, borderRadius: 12, fontSize: 13,
+                color: "#374151", background: "#F9FAFB", border: "1px solid #E5E7EB",
+                height: 52, borderRadius: 14, fontSize: 15,
               }}>
               Scan Again
             </motion.button>
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-              className="flex-1 font-semibold flex items-center justify-center gap-1.5 liquid-glass-btn"
+              className="flex-1 font-semibold flex items-center justify-center gap-1.5"
               style={{
-                background: savedState === "saved"
-                  ? "linear-gradient(135deg, rgba(45,125,70,0.15) 0%, rgba(45,125,70,0.05) 100%)"
-                  : isInBasket(currentBarcode)
-                  ? "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)"
-                  : "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(232,49,74,0.95) 100%)",
-                color: savedState === "saved" ? "#2D7D46" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                height: 40, borderRadius: 12, fontSize: 13,
-                boxShadow: savedState === "saved" ? "none" : isInBasket(currentBarcode) ? "none" : "0 4px 16px rgba(232,49,74,0.25)",
+                background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#F9FAFB" : "#E8314A",
+                color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
+                height: 52, borderRadius: 14, fontSize: 15,
+                border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
               }}>
               {savedState === "saved" ? (
                 <>Saved ✓</>
               ) : isInBasket(currentBarcode) ? (
-                <><Heart size={14} fill="#E8314A" /> Saved</>
+                <><Heart size={16} fill="#E8314A" /> Saved</>
               ) : (
-                <><Heart size={14} /> Save</>
+                <><Heart size={16} /> Save</>
               )}
             </motion.button>
           </div>
