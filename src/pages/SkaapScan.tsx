@@ -1885,11 +1885,6 @@ const SkaapScan = () => {
 
   // ─── SCREEN: HISTORY ───
   if (screen === "history") {
-    const navHandler = (nav: string) => {
-      if (nav === "home") setScreen("home");
-      else if (nav === "search") setScreen("search");
-      else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-    };
     return (
       <HistoryScreen
         history={history}
@@ -1897,7 +1892,8 @@ const SkaapScan = () => {
         onScanProduct={handleBarcodeDetected}
         onClearHistory={() => { clearHistory(); setHistory([]); }}
         activeNav="history"
-        onNavChange={navHandler}
+        onNavChange={handleNavChange}
+        savedItems={basket.map(b => ({ barcode: b.barcode, name: b.name, brand: b.brand, image: b.image, skaapScore: b.skaapScore, scannedAt: b.savedAt }))}
       />
     );
   }
@@ -1907,11 +1903,7 @@ const SkaapScan = () => {
     return (
       <SearchScreen
         onScanProduct={handleBarcodeDetected}
-        onNavChange={(nav) => {
-          if (nav === "home") setScreen("home");
-          else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-          else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-        }}
+        onNavChange={handleNavChange}
         onOpenScanner={goToScan}
       />
     );
@@ -1923,12 +1915,7 @@ const SkaapScan = () => {
       <KitchenReportScreen
         userStats={userStats}
         onBack={() => setScreen("home")}
-        onNavChange={(nav) => {
-          if (nav === "home") setScreen("home");
-          else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-          else if (nav === "search") setScreen("search");
-          else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-        }}
+        onNavChange={handleNavChange}
       />
     );
   }
