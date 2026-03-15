@@ -1487,57 +1487,60 @@ const SkaapScan = () => {
                   </div>
                 )}
 
-                {/* THREE SIGNAL CHIPS ROW — 34px */}
-                <div className="flex gap-2 px-5 flex-nowrap overflow-x-auto" style={{ height: 34, marginTop: 10, scrollbarWidth: "none" }}>
-                  {productInfo.nutriScoreGrade && (() => {
-                    const nsColor = nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF";
-                    return (
-                      <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                        height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                        background: `${nsColor}1F`, border: `1px solid ${nsColor}66`, color: "#1B2A4A",
-                      }}>
-                        <div className="rounded-full" style={{ width: 8, height: 8, background: nsColor }} />
-                        Nutri-Score {productInfo.nutriScoreGrade.toUpperCase()}
-                      </span>
-                    );
-                  })()}
-
+                {/* SECTION C — THREE SIGNAL CHIPS */}
+                <div className="flex gap-2 px-5" style={{ marginTop: 20 }}>
+                  {/* Chip 1: Nutri-Score */}
                   {(() => {
-                    const adColor = addCount === 0 ? "#2D7D46" : getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none");
-                    const adBg = addCount === 0 ? "#D1FAE5" : adColor;
-                    const adBorder = addCount === 0 ? "#6EE7B7" : adColor;
+                    const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                    const hasNS = ns && nutriColors[ns];
+                    const chipBg = hasNS ? (ns === "a" || ns === "b" ? "#F0FDF4" : ns === "c" ? "#FFFBEB" : "#FFF1F2") : "#F9FAFB";
+                    const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
+                    const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                     return (
-                      <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                        height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                        background: `${adBg}1F`, border: `1px solid ${adBorder}66`, color: "#1B2A4A",
-                      }}>
-                        <div className="rounded-full" style={{ width: 8, height: 8, background: addCount === 0 ? "#2D7D46" : adColor }} />
-                        {addCount === 0 ? "No additives" : `${addCount} additive${addCount > 1 ? "s" : ""}`}
-                      </span>
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>Nutri-Score</span>
+                      </div>
                     );
                   })()}
 
-                  {productInfo.novaGroup && novaColors[productInfo.novaGroup] && (
-                    <span className="inline-flex items-center gap-1.5 flex-shrink-0 font-semibold" style={{
-                      height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                      background: `${novaColors[productInfo.novaGroup].bg}1F`,
-                      border: `1px solid ${novaColors[productInfo.novaGroup].bg}66`,
-                      color: "#1B2A4A",
-                    }}>
-                      <div className="rounded-full" style={{ width: 8, height: 8, background: novaColors[productInfo.novaGroup].bg }} />
-                      NOVA {productInfo.novaGroup}
-                    </span>
-                  )}
+                  {/* Chip 2: Additives */}
+                  {(() => {
+                    const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
+                    const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
+                    const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{addCount}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>additives</span>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Chip 3: NOVA */}
+                  {(() => {
+                    const nova = productInfo.novaGroup;
+                    const hasNova = nova && novaColors[nova];
+                    const chipBg = hasNova ? (nova <= 2 ? "#F0FDF4" : "#FFF1F2") : "#F9FAFB";
+                    const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
+                    const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNova ? nova : "?"}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>processing</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
-                {/* DIETARY CHIPS ROW — 34px or hidden */}
+                {/* DIETARY CHIPS ROW */}
                 {dietaryTags && Object.keys(dietaryTags).length > 0 && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="flex gap-2 px-5 flex-wrap"
-                    style={{ height: 34, marginTop: 6 }}
+                    style={{ marginTop: 8 }}
                   >
                     {Object.keys(dietaryTags).map(key => (
                       <span key={key} className="inline-flex items-center font-semibold" style={{
