@@ -172,7 +172,7 @@ const Index = () => {
                 </div>
                 <h3 className="font-extrabold text-xl tracking-tight mb-2" style={{ color: "#0A1220" }}>Know Your Food</h3>
                 <p className="text-sm leading-relaxed flex-1" style={{ color: "#6B7280" }}>
-                  Scan any barcode and instantly see Nutri-Score, NOVA processing level, additives with risk ratings, allergens, and a unified SKAAP Score. Works with 3M+ food products and 1M+ cosmetics.
+                  Ever wonder what's really in that granola bar? Scan it. In seconds, you'll know if it's actually healthy — or just marketed that way. Works on 3M+ grocery &amp; beauty products.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {["🎯 SKAAP Score", "🅰️ Nutri-Score", "🧪 Additives", "🏭 NOVA", "📊 Nutrition"].map(chip => (
