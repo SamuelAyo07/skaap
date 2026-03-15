@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Home, Clock, Search, Heart, Share2 } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
+import { BottomNavBar } from "./BottomNavBar";
 import { getScoreColor } from "@/lib/skaapScore";
 import { type UserStats } from "@/lib/skaapUserStats";
 import { useSubscription } from "@/context/SubscriptionContext";
