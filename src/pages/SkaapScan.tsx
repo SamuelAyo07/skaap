@@ -1318,25 +1318,28 @@ const SkaapScan = () => {
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="bg-background rounded-t-[20px] flex flex-col relative"
+          className="flex flex-col relative"
           style={{
             height: sheetHeight,
-            maxHeight: "88vh",
-            boxShadow: "0 -4px 32px rgba(0,0,0,0.12)",
+            maxHeight: "96vh",
+            background: "#FFFFFF",
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
             transition: "height 0.3s ease-out",
           }}
         >
           {/* Drag handle */}
           <button
-            className="flex justify-center pt-[10px] pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing w-full"
+            className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing w-full"
             onClick={() => setSheetExpanded(prev => !prev)}
             aria-label={sheetExpanded ? "Collapse sheet" : "Expand sheet"}
           >
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: "#E5E7EB" }} />
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: "#E5E7EB" }} />
           </button>
 
           {/* Scrollable content area */}
-          <div ref={sheetContentRef} className="flex-1 overflow-y-auto" style={{ overflowY: sheetExpanded ? "auto" : "hidden" }}>
+          <div ref={sheetContentRef} className="flex-1 overflow-y-auto">
             {/* ── SKELETON LOADER ── */}
             {loading && (
               <div className="px-5">
