@@ -1103,16 +1103,16 @@ const SkaapScan = () => {
       return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
     };
 
-    const sheetHeight = sheetExpanded ? "88vh" : "420px";
+    const sheetHeight = sheetExpanded ? "96vh" : "80vh";
 
     const productName = productInfo?.productName || "";
     const displayName = productName.toUpperCase() === productName
       ? productName.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       : productName;
-    const nameSize = displayName.length > 28 ? 13 : 15;
+    const nameSize = displayName.length > 28 ? 13 : 16;
 
     return (
-      <div className="fixed inset-0 bg-black/90 z-50 flex flex-col justify-end">
+      <div className="fixed inset-0 z-50 flex flex-col justify-end" style={{ background: "rgba(0,0,0,0.2)" }}>
         {/* Share preview modal with card type selector */}
         <AnimatePresence>
           {shareModalOpen && (
