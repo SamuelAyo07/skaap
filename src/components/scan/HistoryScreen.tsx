@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Search, X, Barcode, Home, Clock, Heart, Lock } from "lucide-react";
+import { Search, X, Barcode, Clock, Lock, Heart } from "lucide-react";
 import { getScoreColor } from "@/lib/skaapScore";
 import { useSubscription } from "@/context/SubscriptionContext";
+import { BottomNavBar } from "./BottomNavBar";
 
 interface ScanHistoryItem {
   barcode: string;
@@ -21,18 +22,45 @@ interface HistoryScreenProps {
   onClearHistory: () => void;
   activeNav: string;
   onNavChange: (nav: string) => void;
+  savedItems?: { barcode: string; name: string; brand?: string; image?: string; skaapScore?: number; scannedAt?: number }[];
 }
 
 const FREE_SCAN_LIMIT = 5;
 
+function timeAgo(ts: number): string {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  const months = Math.floor(days / 30);
+  return `${months} month${months > 1 ? "s" : ""} ago`;
+}
+
+function getVerdict(score?: number): { label: string; color: string; bg: string } {
+  if (score == null) return { label: "Not rated", color: "#9CA3AF", bg: "#F3F4F6" };
+  if (score >= 75) return { label: "Excellent", color: "#15803D", bg: "#F0FDF4" };
+  if (score >= 50) return { label: "Good", color: "#CA8A04", bg: "#FFFBEB" };
+  if (score >= 25) return { label: "Poor", color: "#EA580C", bg: "#FFF7ED" };
+  return { label: "Bad", color: "#DC2626", bg: "#FEF2F2" };
+}
+
 export function HistoryScreen({
-  history, onBack, onScanProduct, onClearHistory, activeNav, onNavChange,
+  history, onBack, onScanProduct, onClearHistory, activeNav, onNavChange, savedItems = [],
 }: HistoryScreenProps) {
   const { isPlus, openUpgrade } = useSubscription();
+  const [tab, setTab] = useState<"history" | "favorites">("history");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const filtered = history.filter(item => {
+  const items = tab === "favorites"
+    ? savedItems.map(s => ({ barcode: s.barcode, name: s.name, brand: s.brand, image: s.image, skaapScore: s.skaapScore, scannedAt: s.scannedAt || Date.now() }))
+    : history;
+
+  const filtered = items.filter(item => {
     const matchSearch = !search ||
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       (item.brand && item.brand.toLowerCase().includes(search.toLowerCase()));
@@ -46,35 +74,30 @@ export function HistoryScreen({
   const visibleItems = isPlus ? filtered : filtered.slice(0, FREE_SCAN_LIMIT);
   const hasGate = !isPlus && filtered.length > FREE_SCAN_LIMIT;
 
-  // Stats
-  const weekAgo = Date.now() - 7 * 86400000;
-  const weekScans = history.filter(h => h.scannedAt > weekAgo);
-  const avgScore = weekScans.length > 0
-    ? Math.round(weekScans.reduce((a, b) => a + (b.skaapScore ?? 0), 0) / weekScans.length)
-    : 0;
-  const bestScore = history.reduce((best, h) => Math.max(best, h.skaapScore ?? 0), 0);
-
   return (
     <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
-        <button onClick={onBack}><ArrowLeft size={20} style={{ color: "#1B2A4A" }} /></button>
-        <h1 className="font-extrabold text-xl tracking-tight" style={{ color: "#1B2A4A" }}>Your History</h1>
-        <button onClick={onClearHistory} className="text-[12px] font-semibold" style={{ color: "#E8314A" }}>Clear</button>
-      </div>
-
-      {/* Stat cards */}
-      <div className="flex gap-2 px-5 mt-2">
-        {[
-          { val: avgScore || "--", label: "avg this week" },
-          { val: history.length, label: "total scans" },
-          { val: bestScore || "--", label: "best scan" },
-        ].map(s => (
-          <div key={s.label} className="flex-1 flex flex-col items-center justify-center py-3 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
-            <span className="font-extrabold text-xl" style={{ color: "#1B2A4A" }}>{s.val}</span>
-            <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{s.label}</span>
-          </div>
-        ))}
+      {/* Tabs: Favorites / History */}
+      <div className="flex items-center px-5 pt-[env(safe-area-inset-top,12px)] mt-2 gap-0">
+        <button
+          onClick={() => setTab("favorites")}
+          className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
+          style={{
+            color: tab === "favorites" ? "#1B2A4A" : "#9CA3AF",
+            borderBottom: tab === "favorites" ? "2px solid #E8314A" : "2px solid transparent",
+          }}
+        >
+          Favorites
+        </button>
+        <button
+          onClick={() => setTab("history")}
+          className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
+          style={{
+            color: tab === "history" ? "#1B2A4A" : "#9CA3AF",
+            borderBottom: tab === "history" ? "2px solid #E8314A" : "2px solid transparent",
+          }}
+        >
+          History
+        </button>
       </div>
 
       {/* Search */}
@@ -115,45 +138,63 @@ export function HistoryScreen({
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
           <div className="text-center py-16">
-            <Clock size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
-            <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>
-              {history.length === 0 ? "No scans yet" : "No products match"}
-            </p>
+            {tab === "favorites" ? (
+              <>
+                <Heart size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
+                <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>No favorites yet</p>
+                <p className="text-[12px] mt-1" style={{ color: "#D1D5DB" }}>Scan products and tap Save to add them here</p>
+              </>
+            ) : (
+              <>
+                <Clock size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
+                <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>
+                  {items.length === 0 ? "No scans yet" : "No products match"}
+                </p>
+              </>
+            )}
           </div>
         ) : (
           <div className="space-y-2">
-            {visibleItems.map(item => (
-              <motion.button
-                key={item.barcode + item.scannedAt}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onScanProduct(item.barcode)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-2xl"
-                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-              >
-                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-contain p-0.5" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Barcode size={16} style={{ color: "#D1D5DB" }} />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate" style={{ color: "#1B2A4A" }}>{item.name}</p>
-                  {item.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{item.brand}</p>}
-                  <p className="text-[10px]" style={{ color: "#D1D5DB" }}>
-                    {new Date(item.scannedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                  </p>
-                </div>
-                {item.skaapScore != null && (
-                  <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: getScoreColor(item.skaapScore), boxShadow: `0 0 16px ${getScoreColor(item.skaapScore)}40` }}>
-                    <span className="font-extrabold text-sm text-white">{item.skaapScore}</span>
+            {visibleItems.map((item, idx) => {
+              const verdict = getVerdict(item.skaapScore);
+              return (
+                <motion.button
+                  key={item.barcode + (item.scannedAt || idx)}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onScanProduct(item.barcode)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-2xl"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                >
+                  {/* Product image */}
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-contain p-0.5" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Barcode size={16} style={{ color: "#D1D5DB" }} />
+                      </div>
+                    )}
                   </div>
-                )}
-              </motion.button>
-            ))}
+
+                  {/* Name + brand + time */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-semibold truncate" style={{ color: "#1B2A4A" }}>{item.name}</p>
+                    {item.brand && <p className="text-[12px] truncate" style={{ color: "#9CA3AF" }}>{item.brand}</p>}
+                    <p className="text-[10px] mt-0.5" style={{ color: "#D1D5DB" }}>
+                      {timeAgo(item.scannedAt)}
+                    </p>
+                  </div>
+
+                  {/* Verdict badge */}
+                  <span
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                    style={{ background: verdict.bg, color: verdict.color }}
+                  >
+                    {verdict.label}
+                  </span>
+                </motion.button>
+              );
+            })}
           </div>
         )}
 
@@ -181,20 +222,7 @@ export function HistoryScreen({
       </div>
 
       {/* Bottom nav */}
-      <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-        {[
-          { icon: <Home size={22} />, label: "Home", key: "home" },
-          { icon: <Clock size={22} />, label: "History", key: "history" },
-          { icon: <Search size={22} />, label: "Search", key: "search" },
-          { icon: <Heart size={22} />, label: "Saved", key: "saved" },
-        ].map(item => (
-          <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-            <span style={{ color: item.key === "history" ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
-            <span className="text-[10px] font-medium" style={{ color: item.key === "history" ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
-            {item.key === "history" && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
-          </button>
-        ))}
-      </div>
+      <BottomNavBar active="history" onNavigate={onNavChange} />
     </div>
   );
 }

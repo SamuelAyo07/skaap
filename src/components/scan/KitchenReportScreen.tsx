@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Home, Clock, Search, Heart, Share2 } from "lucide-react";
+import { ArrowLeft, Share2 } from "lucide-react";
+import { BottomNavBar } from "./BottomNavBar";
 import { getScoreColor } from "@/lib/skaapScore";
 import { type UserStats } from "@/lib/skaapUserStats";
 import { useSubscription } from "@/context/SubscriptionContext";
@@ -161,19 +162,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
       </div>
 
       {/* Bottom nav */}
-      <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-        {[
-          { icon: <Home size={22} />, label: "Home", key: "home" },
-          { icon: <Clock size={22} />, label: "History", key: "history" },
-          { icon: <Search size={22} />, label: "Search", key: "search" },
-          { icon: <Heart size={22} />, label: "Saved", key: "saved" },
-        ].map(item => (
-          <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-            <span style={{ color: "#9CA3AF" }}>{item.icon}</span>
-            <span className="text-[10px] font-medium" style={{ color: "#9CA3AF" }}>{item.label}</span>
-          </button>
-        ))}
-      </div>
+      <BottomNavBar active="kitchen" onNavigate={onNavChange} />
     </div>
   );
 }

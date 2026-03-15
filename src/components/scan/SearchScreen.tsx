@@ -1,8 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { Search, X, Barcode, Home, Clock, Heart } from "lucide-react";
+import { Search, X, Barcode, Lock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription } from "@/context/SubscriptionContext";
+import { BottomNavBar } from "./BottomNavBar";
 
 interface SearchResult {
   code: string;
@@ -31,13 +32,6 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Gate for free users
-  useEffect(() => {
-    if (!isPlus) {
-      openUpgrade("Product search");
-    }
-  }, [isPlus]);
-
   const doSearch = useCallback(async (q: string) => {
     if (!q.trim()) { setResults([]); setSearched(false); return; }
     setLoading(true);
@@ -60,25 +54,40 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
     debounceRef.current = setTimeout(() => doSearch(val), 300);
   };
 
+  // Member gate for free users
   if (!isPlus) {
     return (
       <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
-        <div className="flex-1" />
-        {/* Bottom nav */}
-        <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-          {[
-            { icon: <Home size={22} />, label: "Home", key: "home" },
-            { icon: <Clock size={22} />, label: "History", key: "history" },
-            { icon: <Search size={22} />, label: "Search", key: "search" },
-            { icon: <Heart size={22} />, label: "Saved", key: "saved" },
-          ].map(item => (
-            <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-              <span style={{ color: item.key === "search" ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
-              <span className="text-[10px] font-medium" style={{ color: item.key === "search" ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
-              {item.key === "search" && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
-            </button>
-          ))}
+        {/* Member access gate — Yuka style */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ background: "#FEF2F2" }}>
+            <Lock size={28} style={{ color: "#E8314A" }} />
+          </div>
+          <p className="text-[12px] font-bold tracking-widest uppercase mb-3" style={{ color: "#E8314A" }}>
+            Member Access
+          </p>
+          <h2 className="font-extrabold text-[22px] leading-tight" style={{ color: "#1B2A4A" }}>
+            Search for any product
+          </h2>
+          <p className="text-[14px] mt-3 leading-relaxed" style={{ color: "#6B7280" }}>
+            3 million+ food and cosmetic products available.
+          </p>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => openUpgrade("Product search")}
+            className="mt-8 w-full font-bold text-[15px] text-white"
+            style={{
+              height: 52,
+              borderRadius: 14,
+              background: "linear-gradient(135deg, #E8314A, #c42040)",
+              maxWidth: 280,
+            }}
+          >
+            Become a Member
+          </motion.button>
         </div>
+
+        <BottomNavBar active="search" onNavigate={onNavChange} />
       </div>
     );
   }
@@ -168,21 +177,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
         )}
       </div>
 
-      {/* Bottom nav */}
-      <div className="flex items-center justify-around" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-        {[
-          { icon: <Home size={22} />, label: "Home", key: "home" },
-          { icon: <Clock size={22} />, label: "History", key: "history" },
-          { icon: <Search size={22} />, label: "Search", key: "search" },
-          { icon: <Heart size={22} />, label: "Saved", key: "saved" },
-        ].map(item => (
-          <button key={item.key} onClick={() => onNavChange(item.key)} className="flex flex-col items-center gap-1">
-            <span style={{ color: item.key === "search" ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
-            <span className="text-[10px] font-medium" style={{ color: item.key === "search" ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
-            {item.key === "search" && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
-          </button>
-        ))}
-      </div>
+      <BottomNavBar active="search" onNavigate={onNavChange} />
     </div>
   );
 }

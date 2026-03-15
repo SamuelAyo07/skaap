@@ -10,6 +10,7 @@ import { useSubscription } from "@/context/SubscriptionContext";
 import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
+import { BottomNavBar } from "@/components/scan/BottomNavBar";
 import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
@@ -856,6 +857,17 @@ const SkaapScan = () => {
     } catch {}
   };
 
+  // ─── Shared nav handler for bottom nav ───
+  const handleNavChange = useCallback((nav: string) => {
+    if (nav === "home") setScreen("home");
+    else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
+    else if (nav === "search") setScreen("search");
+    else if (nav === "kitchen") setScreen("kitchen");
+    else if (nav === "scan") goToScan();
+    else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
+    else if (nav === "profile") user ? setScreen("profile") : setAuthSheetOpen(true);
+  }, [user, goToScan]);
+
   // ─── SCREEN: HOME ───
   if (screen === "home") {
     return (
@@ -943,20 +955,7 @@ const SkaapScan = () => {
         </div>
 
         {/* Bottom nav */}
-        <div className="flex items-center justify-around relative z-10" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-          {[
-            { icon: <Home size={22} />, label: "Home", active: true },
-            { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
-            { icon: <Search size={22} />, label: "Search", active: false, action: () => setScreen("search") },
-            { icon: <User size={22} />, label: "Profile", active: false, action: () => user ? setScreen("profile") : setAuthSheetOpen(true) },
-          ].map(item => (
-            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
-              <span style={{ color: item.active ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
-              <span className="text-[10px] font-medium" style={{ color: item.active ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
-              {item.active && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
-            </button>
-          ))}
-        </div>
+        <BottomNavBar active="home" onNavigate={handleNavChange} />
 
         {/* Auth sheet */}
         <AuthSheet open={authSheetOpen} onClose={() => setAuthSheetOpen(false)} />
@@ -1886,11 +1885,6 @@ const SkaapScan = () => {
 
   // ─── SCREEN: HISTORY ───
   if (screen === "history") {
-    const navHandler = (nav: string) => {
-      if (nav === "home") setScreen("home");
-      else if (nav === "search") setScreen("search");
-      else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-    };
     return (
       <HistoryScreen
         history={history}
@@ -1898,7 +1892,8 @@ const SkaapScan = () => {
         onScanProduct={handleBarcodeDetected}
         onClearHistory={() => { clearHistory(); setHistory([]); }}
         activeNav="history"
-        onNavChange={navHandler}
+        onNavChange={handleNavChange}
+        savedItems={basket.map(b => ({ barcode: b.barcode, name: b.name, brand: b.brand, image: b.image, skaapScore: b.skaapScore, scannedAt: b.savedAt }))}
       />
     );
   }
@@ -1908,11 +1903,7 @@ const SkaapScan = () => {
     return (
       <SearchScreen
         onScanProduct={handleBarcodeDetected}
-        onNavChange={(nav) => {
-          if (nav === "home") setScreen("home");
-          else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-          else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-        }}
+        onNavChange={handleNavChange}
         onOpenScanner={goToScan}
       />
     );
@@ -1924,12 +1915,7 @@ const SkaapScan = () => {
       <KitchenReportScreen
         userStats={userStats}
         onBack={() => setScreen("home")}
-        onNavChange={(nav) => {
-          if (nav === "home") setScreen("home");
-          else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-          else if (nav === "search") setScreen("search");
-          else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-        }}
+        onNavChange={handleNavChange}
       />
     );
   }
