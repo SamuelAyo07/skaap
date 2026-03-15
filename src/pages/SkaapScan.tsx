@@ -1646,206 +1646,196 @@ const SkaapScan = () => {
                   </div>
                 </div>
 
-                  {/* Row 2: Additives */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("additives")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>⚗️</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Additives</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {addCount === 0 ? (
-                          <Check size={14} style={{ color: "#2D7D46" }} />
-                        ) : (
-                          <span className="font-bold text-white" style={{
-                            fontSize: 10, padding: "2px 6px", borderRadius: 10,
-                            background: getAdditiveRiskColor(scoreBreakdown?.worstAdditiveRisk || "none"),
-                          }}>
-                            {addCount}
-                          </span>
-                        )}
-                        <motion.div animate={{ rotate: expandedSections.has("additives") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded additives content */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("additives") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-3" style={{ background: "#FAFAFA" }}>
-                          {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
-                            productInfo.additivesTags.map((a, i) => {
-                              const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                              const risk = getAdditiveRisk(a);
-                              const riskColor = getAdditiveRiskColor(risk);
-                              const riskLabel = getAdditiveRiskLabel(risk);
-                              const desc = getAdditiveDescription(a);
-                              const isExp = expandedAdditive === a;
-                              return (
-                                <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                                  <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
-                                    <div className="flex items-center justify-between">
-                                      <span className="font-bold text-[12px]" style={{ color: "#1B2A4A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
-                                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
-                                    </div>
-                                    <p className="text-[10px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
-                                  </button>
-                                  <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
-                                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                                      <div className="pb-2 pl-1">
-                                        {additiveExplanationLoading && isExp ? (
-                                          <div className="space-y-1">
-                                            <Skeleton className="h-3 w-full rounded" />
-                                            <Skeleton className="h-3 w-4/5 rounded" />
-                                          </div>
-                                        ) : additiveExplanation && isExp ? (
-                                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                            <p className="text-[11px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
-                                            <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                                              <Sparkles size={8} /> AI
-                                            </p>
-                                          </motion.div>
-                                        ) : null}
-                                      </div>
+                {/* SECTION F — ADDITIVES ROW */}
+                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("additives")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>⚗️</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Additives</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {addCount === 0 ? (
+                        <Check size={16} style={{ color: "#22C55E" }} />
+                      ) : (
+                        <span className="font-bold" style={{
+                          fontSize: 12, padding: "2px 8px", borderRadius: 10,
+                          background: "#FFF1F2", border: "1px solid #FECDD3", color: "#E8314A",
+                        }}>
+                          {addCount}
+                        </span>
+                      )}
+                      <motion.div animate={{ rotate: expandedSections.has("additives") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
+                    </div>
+                  </button>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateRows: expandedSections.has("additives") ? "1fr" : "0fr",
+                    transition: "grid-template-rows 220ms ease-out",
+                  }}>
+                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                      <div className="pt-3">
+                        {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
+                          productInfo.additivesTags.map((a, i) => {
+                            const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                            const risk = getAdditiveRisk(a);
+                            const riskColor = getAdditiveRiskColor(risk);
+                            const riskLabel = getAdditiveRiskLabel(risk);
+                            const desc = getAdditiveDescription(a);
+                            const isExp = expandedAdditive === a;
+                            return (
+                              <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                                <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-[13px]" style={{ color: "#1A1A1A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
+                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
+                                  </div>
+                                  <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
+                                </button>
+                                <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
+                                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                                    <div className="pb-2 pl-1">
+                                      {additiveExplanationLoading && isExp ? (
+                                        <div className="space-y-1">
+                                          <Skeleton className="h-3 w-full rounded" />
+                                          <Skeleton className="h-3 w-4/5 rounded" />
+                                        </div>
+                                      ) : additiveExplanation && isExp ? (
+                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                          <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                          <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
+                                            <Sparkles size={8} /> AI
+                                          </p>
+                                        </motion.div>
+                                      ) : null}
                                     </div>
                                   </div>
                                 </div>
-                              );
-                            })
-                          ) : (
-                            <div className="text-center py-3">
-                              <Check size={16} style={{ color: "#2D7D46", margin: "0 auto" }} />
-                              <p className="font-semibold text-[12px] mt-1" style={{ color: "#2D7D46" }}>No additives detected</p>
-                            </div>
-                          )}
-                        </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="text-center py-3">
+                            <Check size={18} style={{ color: "#22C55E", margin: "0 auto" }} />
+                            <p className="font-semibold text-[13px] mt-1" style={{ color: "#22C55E" }}>No additives detected</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Row 3: Ingredients & Alternatives */}
-                  <div>
-                    <button
-                      onClick={() => toggleSection("more")}
-                      className="w-full flex items-center gap-3 px-5 text-left"
-                      style={{ height: 44 }}
-                    >
-                      <span style={{ fontSize: 16, color: "#1B2A4A" }}>•••</span>
-                      <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#1B2A4A" }}>Ingredients & Alternatives</span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                {/* SECTION G — INGREDIENTS & ALTERNATIVES ROW */}
+                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, marginBottom: 100, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                  <button
+                    onClick={() => toggleSection("more")}
+                    className="w-full flex items-center gap-3 text-left"
+                  >
+                    <span style={{ fontSize: 16 }}>•••</span>
+                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Ingredients & Alternatives</span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <motion.div animate={{ rotate: expandedSections.has("more") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                      </motion.div>
+                    </div>
+                  </button>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateRows: expandedSections.has("more") ? "1fr" : "0fr",
+                    transition: "grid-template-rows 220ms ease-out",
+                  }}>
+                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                      <div className="pt-3">
+                        {/* Ingredients */}
                         {productInfo.ingredientsText && (
-                          <span className="text-[11px]" style={{ color: "#9CA3AF" }}>
-                            {productInfo.ingredientsText.split(",").length} ingredients
-                          </span>
-                        )}
-                        <motion.div animate={{ rotate: expandedSections.has("more") ? 90 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown size={14} style={{ color: "#9CA3AF", transform: "rotate(-90deg)" }} />
-                        </motion.div>
-                      </div>
-                    </button>
-                    {/* Expanded: ingredients + certifications + recommendations */}
-                    <div style={{
-                      display: "grid",
-                      gridTemplateRows: expandedSections.has("more") ? "1fr" : "0fr",
-                      transition: "grid-template-rows 220ms ease-out",
-                    }}>
-                      <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                        <div className="px-5 pb-4">
-                          {/* Ingredients */}
-                          {productInfo.ingredientsText && (
-                            <div className="mb-4">
-                              <p className="text-[11px] font-bold mb-1.5" style={{ color: "#1B2A4A" }}>Ingredients</p>
-                              <p className="text-[12px] leading-relaxed" style={{ color: "#6B7280" }}>
-                                {productInfo.allergensTags?.length
-                                  ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
-                                  : productInfo.ingredientsText}
-                              </p>
-                              {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
-                                <div className="mt-2 flex flex-wrap gap-1">
-                                  <span className="text-[10px] font-semibold" style={{ color: "#1B2A4A" }}>Allergens:</span>
-                                  {productInfo.allergensTags.map(a => (
-                                    <span key={a} className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>
-                                      {formatTag(a)}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Certifications */}
-                          {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-[11px] font-bold mb-1.5" style={{ color: "#1B2A4A" }}>Certifications</p>
-                              <div className="flex flex-wrap gap-1">
-                                {productInfo.labelsTags.map(l => (
-                                  <span key={l} className="text-[10px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#1B2A4A", color: "#1B2A4A" }}>
-                                    {formatTag(l)}
+                          <div className="mb-4">
+                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Ingredients</p>
+                            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+                              {productInfo.allergensTags?.length
+                                ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
+                                : productInfo.ingredientsText}
+                            </p>
+                            {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                <span className="text-[11px] font-semibold" style={{ color: "#1A1A1A" }}>Allergens:</span>
+                                {productInfo.allergensTags.map(a => (
+                                  <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#E8314A" }}>
+                                    {formatTag(a)}
                                   </span>
                                 ))}
                               </div>
-                            </div>
-                          )}
-
-                          {/* AI Recommendations */}
-                          <div>
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <p className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>Healthier Alternatives</p>
-                              <Sparkles size={10} style={{ color: "#9CA3AF" }} />
-                            </div>
-                            {aiRecsLoading ? (
-                              <div className="space-y-2">
-                                {[1,2].map(i => (
-                                  <div key={i} className="flex gap-2 p-2 rounded-xl" style={{ background: "#F9FAFB" }}>
-                                    <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
-                                    <div className="flex-1 space-y-1.5 py-0.5">
-                                      <Skeleton className="h-3 w-3/4" />
-                                      <Skeleton className="h-3 w-full" />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : aiRecommendations && aiRecommendations.length > 0 ? (
-                              <div className="space-y-2">
-                                {aiRecommendations.map((rec, i) => {
-                                  const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
-                                  return (
-                                    <motion.div key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: i * 0.1, duration: 0.25 }}
-                                      className="flex gap-2 p-2 rounded-xl items-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                                      <div className="flex-shrink-0 flex items-center justify-center" style={{
-                                        width: 40, height: 40, borderRadius: 20,
-                                        border: `2px solid ${scoreColor}`,
-                                      }}>
-                                        <span className="font-extrabold" style={{ fontSize: 14, color: scoreColor }}>
-                                          {rec.estimatedScore?.toUpperCase() || "A"}
-                                        </span>
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-[12px] leading-tight truncate" style={{ color: "#1B2A4A" }}>{rec.name}</p>
-                                        <p className="text-[10px] leading-snug truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
-                                      </div>
-                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: `${scoreColor}1A`, color: scoreColor }}>Better</span>
-                                    </motion.div>
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                              <p className="text-[11px]" style={{ color: "#9CA3AF" }}>No recommendations available.</p>
                             )}
                           </div>
+                        )}
 
-                          {/* AI info link */}
-                          <button onClick={() => setScreen("ai-info")} className="mt-3 text-[10px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
-                            <Sparkles size={9} /> How SKAAP uses AI
-                          </button>
+                        {/* Certifications */}
+                        {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Certifications</p>
+                            <div className="flex flex-wrap gap-1">
+                              {productInfo.labelsTags.map(l => (
+                                <span key={l} className="text-[11px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#1A1A1A", color: "#1A1A1A" }}>
+                                  {formatTag(l)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* AI Recommendations */}
+                        <div>
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <p className="text-[12px] font-bold" style={{ color: "#1A1A1A" }}>Healthier Alternatives</p>
+                            <Sparkles size={10} style={{ color: "#9CA3AF" }} />
+                          </div>
+                          {aiRecsLoading ? (
+                            <div className="space-y-2">
+                              {[1,2].map(i => (
+                                <div key={i} className="flex gap-2 p-2 rounded-xl" style={{ background: "#F9FAFB" }}>
+                                  <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
+                                  <div className="flex-1 space-y-1.5 py-0.5">
+                                    <Skeleton className="h-3 w-3/4" />
+                                    <Skeleton className="h-3 w-full" />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : aiRecommendations && aiRecommendations.length > 0 ? (
+                            <div className="space-y-2">
+                              {aiRecommendations.map((rec, i) => {
+                                const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
+                                return (
+                                  <motion.div key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1, duration: 0.25 }}
+                                    className="flex gap-2 p-2 rounded-xl items-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                                    <div className="flex-shrink-0 flex items-center justify-center" style={{
+                                      width: 40, height: 40, borderRadius: 20,
+                                      border: `2px solid ${scoreColor}`,
+                                    }}>
+                                      <span className="font-extrabold" style={{ fontSize: 14, color: scoreColor }}>
+                                        {rec.estimatedScore?.toUpperCase() || "A"}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-bold text-[13px] leading-tight truncate" style={{ color: "#1A1A1A" }}>{rec.name}</p>
+                                      <p className="text-[11px] leading-snug truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
+                                    </div>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0" style={{ background: `${scoreColor}1A`, color: scoreColor }}>Better</span>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-[12px]" style={{ color: "#9CA3AF" }}>No recommendations available.</p>
+                          )}
                         </div>
+
+                        {/* AI info link */}
+                        <button onClick={() => setScreen("ai-info")} className="mt-3 text-[11px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
+                          <Sparkles size={9} /> How SKAAP uses AI
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1854,17 +1844,14 @@ const SkaapScan = () => {
             )}
           </div>
 
-          {/* FIXED BOTTOM ACTION ROW — 64px liquid glass */}
+          {/* BOTTOM BUTTONS — FIXED */}
           <div
             className="flex-shrink-0 flex items-center gap-3 px-5"
             style={{
-              height: 64,
-              borderTop: "1px solid rgba(255,255,255,0.4)",
-              background: "linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%)",
-              backdropFilter: "blur(40px) saturate(200%)",
-              WebkitBackdropFilter: "blur(40px) saturate(200%)",
-              boxShadow: "0 -4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.6)",
-              paddingBottom: "env(safe-area-inset-bottom, 0px)",
+              borderTop: "1px solid #F3F4F6",
+              background: "#FFFFFF",
+              padding: "12px 20px",
+              paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)",
             }}
           >
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
