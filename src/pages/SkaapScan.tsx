@@ -943,20 +943,7 @@ const SkaapScan = () => {
         </div>
 
         {/* Bottom nav */}
-        <div className="flex items-center justify-around relative z-10" style={{ height: 83, paddingBottom: 20, borderTop: "1px solid #E5E7EB", background: "#fff" }}>
-          {[
-            { icon: <Home size={22} />, label: "Home", active: true },
-            { icon: <Clock size={22} />, label: "History", active: false, action: () => { setHistory(getHistory()); setScreen("history"); } },
-            { icon: <Search size={22} />, label: "Search", active: false, action: () => setScreen("search") },
-            { icon: <User size={22} />, label: "Profile", active: false, action: () => user ? setScreen("profile") : setAuthSheetOpen(true) },
-          ].map(item => (
-            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-1">
-              <span style={{ color: item.active ? "#E8314A" : "#9CA3AF" }}>{item.icon}</span>
-              <span className="text-[10px] font-medium" style={{ color: item.active ? "#E8314A" : "#9CA3AF" }}>{item.label}</span>
-              {item.active && <div className="w-1 h-1 rounded-full" style={{ background: "#E8314A", marginTop: -2 }} />}
-            </button>
-          ))}
-        </div>
+        <BottomNavBar active="home" onNavigate={handleNavChange} />
 
         {/* Auth sheet */}
         <AuthSheet open={authSheetOpen} onClose={() => setAuthSheetOpen(false)} />
