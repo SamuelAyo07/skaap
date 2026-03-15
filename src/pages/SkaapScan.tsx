@@ -1855,31 +1855,27 @@ const SkaapScan = () => {
             }}
           >
             <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-              className="flex-1 font-semibold flex items-center justify-center liquid-glass-btn"
+              className="flex-1 font-semibold flex items-center justify-center"
               style={{
-                color: "#E8314A", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)",
-                height: 40, borderRadius: 12, fontSize: 13,
+                color: "#374151", background: "#F9FAFB", border: "1px solid #E5E7EB",
+                height: 52, borderRadius: 14, fontSize: 15,
               }}>
               Scan Again
             </motion.button>
             <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-              className="flex-1 font-semibold flex items-center justify-center gap-1.5 liquid-glass-btn"
+              className="flex-1 font-semibold flex items-center justify-center gap-1.5"
               style={{
-                background: savedState === "saved"
-                  ? "linear-gradient(135deg, rgba(45,125,70,0.15) 0%, rgba(45,125,70,0.05) 100%)"
-                  : isInBasket(currentBarcode)
-                  ? "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)"
-                  : "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(232,49,74,0.95) 100%)",
-                color: savedState === "saved" ? "#2D7D46" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                height: 40, borderRadius: 12, fontSize: 13,
-                boxShadow: savedState === "saved" ? "none" : isInBasket(currentBarcode) ? "none" : "0 4px 16px rgba(232,49,74,0.25)",
+                background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#F9FAFB" : "#E8314A",
+                color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
+                height: 52, borderRadius: 14, fontSize: 15,
+                border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
               }}>
               {savedState === "saved" ? (
                 <>Saved ✓</>
               ) : isInBasket(currentBarcode) ? (
-                <><Heart size={14} fill="#E8314A" /> Saved</>
+                <><Heart size={16} fill="#E8314A" /> Saved</>
               ) : (
-                <><Heart size={14} /> Save</>
+                <><Heart size={16} /> Save</>
               )}
             </motion.button>
           </div>
