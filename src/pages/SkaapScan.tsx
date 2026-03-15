@@ -1397,112 +1397,93 @@ const SkaapScan = () => {
             {/* ── PRODUCT RESULT ── */}
             {productInfo && !loading && (
               <>
-                {/* PRODUCT HEADER ROW — 56px */}
-                <div className="flex items-center gap-3 px-5" style={{ height: 56, marginTop: 14 }}>
-                  {/* Product image 44x44 */}
-                  <div className="flex-shrink-0 overflow-hidden" style={{ width: 44, height: 44, borderRadius: 10, background: "#F3F4F6" }}>
+                {/* SECTION A — PRODUCT HEADER */}
+                <div className="flex items-center gap-3 px-5" style={{ marginTop: 16 }}>
+                  {/* Product image 56x56 */}
+                  <div className="flex-shrink-0 overflow-hidden" style={{ width: 56, height: 56, borderRadius: 12, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
                     {productInfo.imageSmallUrl || productInfo.imageUrl ? (
                       <img
                         src={productInfo.imageSmallUrl || productInfo.imageUrl}
                         alt={productInfo.productName}
-                        width={44} height={44}
-                        className="w-full h-full object-cover"
+                        width={56} height={56}
+                        className="w-full h-full object-contain"
                         loading="eager"
                         // @ts-ignore
                         fetchpriority="high"
                         onError={e => {
                           const t = e.target as HTMLImageElement;
                           t.style.display = "none";
-                          t.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="21" x2="17" y2="3"/></svg></div>';
+                          t.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="21" x2="17" y2="3"/></svg></div>';
                         }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Barcode size={16} style={{ color: "#9CA3AF" }} />
+                        <Barcode size={20} style={{ color: "#9CA3AF" }} />
                       </div>
                     )}
                   </div>
 
                   {/* Name + brand */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-extrabold leading-tight truncate" style={{ fontSize: nameSize, color: "#1B2A4A" }}>
+                    <p className="font-bold leading-tight" style={{ fontSize: nameSize, color: "#1A1A1A", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                       {displayName}
                     </p>
-                    <p className="text-[12px] truncate" style={{ color: "#9CA3AF" }}>
+                    <p className="text-[13px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
                       {[productInfo.brand, productInfo.quantity].filter(Boolean).join(" · ")}
                     </p>
                   </div>
-
-                  {/* Score badge 44px circle */}
-                  {scoreBreakdown && (
-                    <div
-                      className="flex-shrink-0 flex items-center justify-center"
-                      style={{
-                        width: 44, height: 44, borderRadius: 22,
-                        border: `3px solid ${getScoreColor(scoreBreakdown.total)}`,
-                        background: "#fff",
-                      }}
-                    >
-                      <span className="font-extrabold" style={{ fontSize: 18, color: getScoreColor(scoreBreakdown.total) }}>
-                        {scoreBreakdown.total}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
-                {/* DIVIDER */}
-                <div style={{ height: 1, background: "#F3F4F6", marginTop: 14 }} />
-
-                {/* SKAAP SCORE ROW — 80px */}
+                {/* SECTION B — SCORE HERO (CENTERED) */}
                 {scoreBreakdown && (
-                  <div className="flex items-center gap-4 px-5" style={{ height: 80, marginTop: 12 }}>
-                    {/* Score ring 72px — tappable */}
-                    <button onClick={() => setShowScoreModal(true)} className="flex-shrink-0">
-                      <ScoreRing score={scoreBreakdown.total} size={72} />
+                  <div className="flex flex-col items-center" style={{ marginTop: 20 }}>
+                    {/* Score ring 96px — tappable */}
+                    <button onClick={() => setShowScoreModal(true)}>
+                      <ScoreRing score={scoreBreakdown.total} size={96} />
                     </button>
 
-                    {/* Verdict + AI summary */}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-extrabold" style={{ fontSize: 16, color: "#1B2A4A" }}>
-                        {getScoreVerdict(scoreBreakdown.total)}
+                    {/* Verdict word */}
+                    <p className="font-bold text-center" style={{ fontSize: 20, color: getScoreColor(scoreBreakdown.total), marginTop: 12 }}>
+                      {scoreBreakdown.total >= 75 ? "Excellent" : scoreBreakdown.total >= 50 ? "Good" : scoreBreakdown.total >= 25 ? "Poor" : "Bad"}
+                    </p>
+
+                    {/* AI summary */}
+                    <div style={{ marginTop: 6, maxWidth: 300 }} className="text-center mx-auto">
+                      {aiSummaryLoading ? (
+                        <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
+                          <div className="h-3.5 rounded-full mx-auto" style={{
+                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
+                            backgroundSize: "200% 100%",
+                            animation: "shimmer 1.4s infinite",
+                            width: "100%",
+                          }} />
+                          <div className="h-3.5 rounded-full mx-auto" style={{
+                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
+                            backgroundSize: "200% 100%",
+                            animation: "shimmer 1.4s infinite",
+                            width: "75%",
+                          }} />
+                        </div>
+                      ) : aiSummary ? (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                          <p className="text-[14px] leading-relaxed" style={{
+                            color: "#4B5563",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}>{aiSummary}</p>
+                        </motion.div>
+                      ) : (
+                        <p className="text-[14px] leading-relaxed" style={{ color: "#4B5563" }}>
+                          {getStaticSummary(scoreBreakdown, productInfo)}
+                        </p>
+                      )}
+                      <p className="text-[11px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}>
+                        <Sparkles size={8} /> AI
                       </p>
-                      <div style={{ marginTop: 4 }}>
-                        {aiSummaryLoading ? (
-                          <div className="space-y-1">
-                            <div className="h-3 rounded-full" style={{
-                              background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                              backgroundSize: "200% 100%",
-                              animation: "shimmer 1.4s infinite",
-                              width: "100%",
-                            }} />
-                            <div className="h-3 rounded-full" style={{
-                              background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                              backgroundSize: "200% 100%",
-                              animation: "shimmer 1.4s infinite",
-                              width: "75%",
-                            }} />
-                          </div>
-                        ) : aiSummary ? (
-                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                            <p className="text-[12px] leading-snug" style={{
-                              color: "#6B7280",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                            }}>{aiSummary}</p>
-                            <p className="text-[10px] mt-0.5 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                              <Sparkles size={8} /> AI
-                            </p>
-                          </motion.div>
-                        ) : (
-                          <p className="text-[12px] leading-snug" style={{ color: "#6B7280" }}>
-                            {getStaticSummary(scoreBreakdown, productInfo)}
-                          </p>
-                        )}
-                      </div>
-                      <p className="text-[10px] mt-1" style={{ color: "#9CA3AF" }}>Tap score for breakdown</p>
                     </div>
+                    <p className="text-[10px] mt-1" style={{ color: "#9CA3AF" }}>Tap score for breakdown</p>
                   </div>
                 )}
 
