@@ -1391,7 +1391,7 @@ const SkaapScan = () => {
                 <button onClick={() => {
                   const code = prompt("Enter barcode manually:");
                   if (code?.trim()) handleBarcodeDetected(code.trim());
-                }} className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#E8314A", color: "#E8314A" }}>
+                }} className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#C41E3A", color: "#C41E3A" }}>
                   Try Manual Search
                 </button>
               </div>
