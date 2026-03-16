@@ -132,7 +132,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
           <div className="flex gap-2 mt-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="w-3 h-3 rounded-full" style={{
-                background: stats.total_scans >= i ? "#E8314A" : "#E5E7EB"
+                background: stats.total_scans >= i ? "#C41E3A" : "#E5E7EB"
               }} />
             ))}
           </div>
