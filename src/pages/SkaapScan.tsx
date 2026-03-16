@@ -1912,13 +1912,13 @@ const SkaapScan = () => {
     );
   }
 
-  // ─── SCREEN: KITCHEN REPORT ───
+  // ─── SCREEN: RECS (AI Personalized Recommendations) ───
   if (screen === "kitchen") {
     return (
-      <KitchenReportScreen
-        userStats={userStats}
-        onBack={() => setScreen("home")}
+      <RecsScreen
+        onScanProduct={handleBarcodeDetected}
         onNavChange={handleNavChange}
+        onOpenScanner={goToScan}
       />
     );
   }
