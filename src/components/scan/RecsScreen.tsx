@@ -204,7 +204,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
               <p className="text-[14px] font-medium" style={{ color: "#DC2626" }}>{error}</p>
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => fetchRecs(true)}
                 className="mt-3 px-5 py-2 rounded-xl font-semibold text-[13px] text-white"
-                style={{ background: "#E8314A" }}>
+                style={{ background: "#C41E3A" }}>
                 Try Again
               </motion.button>
             </div>
