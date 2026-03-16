@@ -213,7 +213,7 @@ export function HistoryScreen({
               <motion.button whileTap={{ scale: 0.97 }}
                 onClick={() => openUpgrade("Unlimited scan history")}
                 className="mt-4 px-6 py-3 rounded-2xl font-bold text-sm text-white"
-                style={{ background: "linear-gradient(135deg, #E8314A, #c42040)" }}>
+                style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
                 Upgrade to SKAAP Plus
               </motion.button>
             </div>
