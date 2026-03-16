@@ -323,7 +323,7 @@ const novaColors: Record<number, { bg: string; text: string; label: string }> = 
 function nutrientLevelColor(level?: string) {
   if (level === "low") return "#2D7D46";
   if (level === "moderate") return "#FFC107";
-  if (level === "high") return "#E8314A";
+  if (level === "high") return "#C41E3A";
   return "#9CA3AF";
 }
 
