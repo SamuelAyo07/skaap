@@ -295,7 +295,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
                 <motion.div key="swaps"
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
                   className="px-5 mt-4 space-y-3">
-                  <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#E8314A" }}>
+                  <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>
                     Recommended swaps
                   </p>
 
