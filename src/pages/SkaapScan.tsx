@@ -30,6 +30,7 @@ import {
   fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
+import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
 
 // ─── Types ───
 interface ScanHistoryItem {
