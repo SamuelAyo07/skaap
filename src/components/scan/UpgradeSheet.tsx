@@ -200,7 +200,7 @@ export function UpgradeSheet() {
                   <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
                     <span className="text-[40px]">🐑</span>
                   </div>
-                  <p className="font-extrabold text-[28px] mt-4" style={{ color: "#E8314A" }}>
+                  <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
                     $1.99/month
                   </p>
                   <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
