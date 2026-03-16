@@ -1032,15 +1032,15 @@ const SkaapScan = () => {
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ paddingBottom: "10%" }}>
           <div className="relative animate-bracket-pulse" style={{ width: 260, height: 160 }}>
             {[
-              { top: 0, left: 0, borderTop: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
-              { top: 0, right: 0, borderTop: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
-              { bottom: 0, left: 0, borderBottom: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
-              { bottom: 0, right: 0, borderBottom: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
+              { top: 0, left: 0, borderTop: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
+              { top: 0, right: 0, borderTop: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
+              { bottom: 0, left: 0, borderBottom: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
+              { bottom: 0, right: 0, borderBottom: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
             ].map((style, i) => (
               <div key={i} className="absolute" style={{ ...style, width: 24, height: 24, borderRadius: 4 } as any} />
             ))}
             <motion.div animate={{ y: [0, 136, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #E8314A, transparent)", top: 12 }} />
+              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #C41E3A, transparent)", top: 12 }} />
           </div>
         </div>
 
