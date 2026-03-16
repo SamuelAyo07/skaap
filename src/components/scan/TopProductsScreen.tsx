@@ -220,7 +220,7 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
                 >
                   {/* Rank number */}
                   <span className="text-[14px] font-extrabold w-6 text-center flex-shrink-0"
-                    style={{ color: idx < 3 ? "#E8314A" : "#D1D5DB" }}>
+                    style={{ color: idx < 3 ? "#C41E3A" : "#D1D5DB" }}>
                     {idx + 1}
                   </span>
 

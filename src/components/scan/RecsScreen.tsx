@@ -222,7 +222,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
                 {recs.summary}
               </p>
               <div className="flex items-center gap-2 mt-3">
-                <div className="px-3 py-1 rounded-full text-[11px] font-bold" style={{ background: "#FFFFFF", color: "#E8314A", border: "1px solid #FECDD3" }}>
+                <div className="px-3 py-1 rounded-full text-[11px] font-bold" style={{ background: "#FFFFFF", color: "#C41E3A", border: "1px solid #FECDD3" }}>
                   🏠 Kitchen Score: {stats.kitchen_score}/100
                 </div>
               </div>

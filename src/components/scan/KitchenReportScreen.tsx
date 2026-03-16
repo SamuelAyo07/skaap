@@ -379,8 +379,8 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
           className="mx-5 mt-6 w-[calc(100%-40px)] font-bold text-[15px] text-white flex items-center justify-center gap-2"
           style={{
             height: 52, borderRadius: 16,
-            background: "linear-gradient(135deg, #E8314A, #c42040)",
-            boxShadow: "0 8px 24px rgba(232,49,74,0.3)",
+            background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+            boxShadow: "0 8px 24px rgba(196,30,58,0.3)",
           }}>
           <Share2 size={16} /> Share My Kitchen Report
         </motion.button>
