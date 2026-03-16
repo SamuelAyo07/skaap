@@ -1919,9 +1919,22 @@ const SkaapScan = () => {
         onScanProduct={handleBarcodeDetected}
         onNavChange={handleNavChange}
         onOpenScanner={goToScan}
+        onOpenKitchenReport={() => setScreen("kitchen-report")}
       />
     );
   }
+
+  // ─── SCREEN: KITCHEN REPORT (Detailed breakdown) ───
+  if (screen === "kitchen-report") {
+    return (
+      <KitchenReportScreen
+        userStats={userStats}
+        onBack={() => setScreen("kitchen")}
+        onNavChange={handleNavChange}
+      />
+    );
+  }
+
 
   // ─── SCREEN: TOP PRODUCTS ───
   if (screen === "top") {
