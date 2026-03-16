@@ -919,7 +919,7 @@ const SkaapScan = () => {
             {/* Rotating red arc */}
             <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
               <circle cx="110" cy="110" r="108" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#E8314A" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
             {/* Camera icon */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
