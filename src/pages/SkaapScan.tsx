@@ -889,8 +889,8 @@ const SkaapScan = () => {
             {basket.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setBasket(getBasket()); setScreen("basket"); }}
                 className="w-10 h-10 rounded-full flex items-center justify-center relative" style={{ background: "#F3F4F6" }} aria-label="Saved basket">
-                <Heart size={22} style={{ color: "#E8314A" }} fill="#E8314A" />
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#E8314A" }}>
+                <Heart size={22} style={{ color: "#C41E3A" }} fill="#C41E3A" />
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#C41E3A" }}>
                   {basket.length}
                 </span>
               </motion.button>
