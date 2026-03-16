@@ -178,8 +178,8 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
 
       {/* Trending section title */}
       <div className="flex items-center gap-1.5 px-5 mt-5 mb-3">
-        <TrendingUp size={14} style={{ color: "#E8314A" }} />
-        <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#E8314A" }}>
+        <TrendingUp size={14} style={{ color: "#C41E3A" }} />
+        <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>
           {CATEGORIES.find(c => c.key === activeCategory)?.label.replace(/^.\s/, "") || "Trending"}
         </span>
       </div>
