@@ -310,7 +310,7 @@ const nutriColors: Record<string, { bg: string; text: string }> = {
   b: { bg: "#4CAF50", text: "#fff" },
   c: { bg: "#FFC107", text: "#1B2A4A" },
   d: { bg: "#FF6D00", text: "#fff" },
-  e: { bg: "#E8314A", text: "#fff" },
+  e: { bg: "#C41E3A", text: "#fff" },
 };
 
 const novaColors: Record<number, { bg: string; text: string; label: string }> = {
