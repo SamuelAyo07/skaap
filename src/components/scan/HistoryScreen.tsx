@@ -125,9 +125,9 @@ export function HistoryScreen({
           <button key={f.key} onClick={() => setFilter(f.key)}
             className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all"
             style={{
-              background: filter === f.key ? "#E8314A" : "#F3F4F6",
+              background: filter === f.key ? "#C41E3A" : "#F3F4F6",
               color: filter === f.key ? "#fff" : "#6B7280",
-              border: `1px solid ${filter === f.key ? "#E8314A" : "#E5E7EB"}`,
+              border: `1px solid ${filter === f.key ? "#C41E3A" : "#E5E7EB"}`,
             }}>
             {f.label}
           </button>
