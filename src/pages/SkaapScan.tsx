@@ -1675,6 +1675,11 @@ const SkaapScan = () => {
                         ))}
                       </div>
                     )}
+                    {productInfo.usdaFallback && (
+                      <p className="text-[11px] mt-2 pt-2" style={{ color: "#9CA3AF", borderTop: "1px solid #F3F4F6" }}>
+                        📊 Data from USDA FoodData Central
+                      </p>
+                    )}
                   </div>
                 </div>
 
