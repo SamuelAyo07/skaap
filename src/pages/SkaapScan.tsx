@@ -377,7 +377,7 @@ const SkaapScan = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { openUpgrade, isPlus } = useSubscription();
-  const [screen, setScreen] = useState<Screen>("home");
+  const [screen, setScreen] = useState<Screen>("history");
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
 
   // Scanner
