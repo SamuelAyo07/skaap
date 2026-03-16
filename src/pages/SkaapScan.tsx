@@ -30,6 +30,7 @@ import {
   fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
+import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
 
 // ─── Types ───
 interface ScanHistoryItem {
@@ -42,7 +43,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "profile" | "top";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "kitchen-report" | "profile" | "top";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
@@ -1555,6 +1556,35 @@ const SkaapScan = () => {
                   </motion.div>
                 )}
 
+                {/* EU BANNED ALERT BANNER */}
+                {(() => {
+                  const bannedInProduct = findBannedAdditives(productInfo.additivesTags);
+                  const euBanned = bannedInProduct.filter(b => b.eu_status === "banned");
+                  if (euBanned.length === 0) return null;
+                  return (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mx-5"
+                      style={{
+                        marginTop: 12,
+                        padding: "12px 16px",
+                        background: "#FFFBEB",
+                        borderTop: "1px solid #FDE68A",
+                        borderBottom: "1px solid #FDE68A",
+                        borderRadius: 12,
+                      }}
+                    >
+                      <p className="font-semibold text-[14px]" style={{ color: "#92400E" }}>
+                        🚩 Contains ingredients banned in Europe
+                      </p>
+                      <p className="text-[13px] mt-1" style={{ color: "#92400E" }}>
+                        This product contains {euBanned.map(b => b.name).join(", ")} which {euBanned.length === 1 ? "is" : "are"} legal in the US but banned in the EU.
+                      </p>
+                    </motion.div>
+                  );
+                })()}
+
                 {/* SECTION D — SHARE ROW */}
                 {scoreBreakdown && (
                   <div className="flex items-center gap-3 px-5" style={{ marginTop: 20 }}>
@@ -1687,6 +1717,8 @@ const SkaapScan = () => {
                             const riskLabel = getAdditiveRiskLabel(risk);
                             const desc = getAdditiveDescription(a);
                             const isExp = expandedAdditive === a;
+                            const bannedMatch = matchBannedAdditive(a);
+                            const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
                             return (
                               <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                                 <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
@@ -1695,6 +1727,23 @@ const SkaapScan = () => {
                                     <span className="text-[10px] font-semibold px-2 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
                                   </div>
                                   <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
+                                  {badges.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-1.5">
+                                      {badges.map((badge, bi) => (
+                                        <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg"
+                                          style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>
+                                          {badge.label}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {bannedMatch && (
+                                    <p className="text-[11px] mt-1 italic" style={{ color: "#6B7280" }}>
+                                      {bannedMatch.us_status === "permitted" ? "Permitted by FDA" : bannedMatch.us_status === "recently_banned" ? "Recently banned by FDA" : "FDA status: " + bannedMatch.us_status}
+                                      {bannedMatch.eu_status === "banned" ? ` · Banned by EFSA${bannedMatch.ban_year_eu ? ` since ${bannedMatch.ban_year_eu}` : ""}` : ""}
+                                      {bannedMatch.risk_reason ? ` · ${bannedMatch.risk_reason}` : ""}
+                                    </p>
+                                  )}
                                 </button>
                                 <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
                                   <div className="overflow-hidden" style={{ minHeight: 0 }}>
@@ -1919,9 +1968,22 @@ const SkaapScan = () => {
         onScanProduct={handleBarcodeDetected}
         onNavChange={handleNavChange}
         onOpenScanner={goToScan}
+        onOpenKitchenReport={() => setScreen("kitchen-report")}
       />
     );
   }
+
+  // ─── SCREEN: KITCHEN REPORT (Detailed breakdown) ───
+  if (screen === "kitchen-report") {
+    return (
+      <KitchenReportScreen
+        userStats={userStats}
+        onBack={() => setScreen("kitchen")}
+        onNavChange={handleNavChange}
+      />
+    );
+  }
+
 
   // ─── SCREEN: TOP PRODUCTS ───
   if (screen === "top") {

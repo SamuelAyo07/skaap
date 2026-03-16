@@ -3,18 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, ArrowRightLeft, TrendingUp, Target, Lightbulb,
   ChevronRight, RefreshCw, Barcode, Lock, Zap, Leaf, AlertTriangle,
-  CheckCircle2, ArrowRight,
+  CheckCircle2, ArrowRight, ClipboardList,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { getUserStats, type ScoreEntry } from "@/lib/skaapUserStats";
 import { supabase } from "@/integrations/supabase/client";
+import { findBannedAdditives } from "@/lib/bannedAdditives";
 
 interface RecsScreenProps {
   onScanProduct: (barcode: string) => void;
   onNavChange: (nav: string) => void;
   onOpenScanner: () => void;
+  onOpenKitchenReport?: () => void;
 }
 
 interface Swap {
@@ -56,7 +58,7 @@ const impactConfig = {
   low: { color: "#22C55E", bg: "#F0FDF4", border: "#BBF7D0", icon: Leaf, label: "Small tweak" },
 };
 
-export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner }: RecsScreenProps) {
+export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKitchenReport }: RecsScreenProps) {
   const { isPlus, openUpgrade } = useSubscription();
   const [recs, setRecs] = useState<PersonalizedRecs | null>(null);
   const [loading, setLoading] = useState(false);
@@ -237,6 +239,28 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner }: RecsSc
                   <p className="text-[13px] font-medium mt-0.5" style={{ color: "#166534" }}>{recs.goalSuggestion}</p>
                 </div>
               </motion.div>
+            )}
+
+            {/* Kitchen Report card */}
+            {onOpenKitchenReport && (
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                onClick={onOpenKitchenReport}
+                className="mx-5 mt-3 w-[calc(100%-40px)] rounded-2xl p-4 flex items-center gap-3 text-left"
+                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#FFFBEB", border: "1px solid #FDE68A" }}>
+                  <ClipboardList size={18} style={{ color: "#F59E0B" }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold" style={{ color: "#1A1A1A" }}>Kitchen Report</p>
+                  <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Score trends · Nutrient breakdown · FDA vs EU</p>
+                </div>
+                <ChevronRight size={16} style={{ color: "#9CA3AF" }} />
+              </motion.button>
             )}
 
             {/* Tab toggle */}
