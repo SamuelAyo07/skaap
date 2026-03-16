@@ -61,7 +61,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           {/* Lock icon in soft red circle */}
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2", border: "1px solid #FECDD3" }}>
-            <Lock size={32} style={{ color: "#E8314A" }} />
+            <Lock size={32} style={{ color: "#C41E3A" }} />
           </div>
 
           <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#E8314A" }}>
