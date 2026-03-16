@@ -85,8 +85,8 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
               width: "100%",
               maxWidth: 280,
               borderRadius: 16,
-              background: "linear-gradient(135deg, #E8314A, #c42040)",
-              boxShadow: "0 4px 16px rgba(232,49,74,0.25)",
+              background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+              boxShadow: "0 4px 16px rgba(196,30,58,0.25)",
             }}
           >
             Become a Member
