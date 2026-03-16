@@ -166,9 +166,9 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
             onClick={() => setActiveCategory(cat.key)}
             className="flex-shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition-all whitespace-nowrap"
             style={{
-              background: activeCategory === cat.key ? "#E8314A" : "#F3F4F6",
+              background: activeCategory === cat.key ? "#C41E3A" : "#F3F4F6",
               color: activeCategory === cat.key ? "#fff" : "#6B7280",
-              border: `1px solid ${activeCategory === cat.key ? "#E8314A" : "#E5E7EB"}`,
+              border: `1px solid ${activeCategory === cat.key ? "#C41E3A" : "#E5E7EB"}`,
             }}
           >
             {cat.label}

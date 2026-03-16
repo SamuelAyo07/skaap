@@ -245,9 +245,9 @@ export function UpgradeSheet() {
                 Payment will be processed securely via Stripe. Your subscription renews {billingMode === "annual" ? "annually" : "monthly"} at the same price, unless canceled 24 hours before renewal.
               </p>
               <div className="flex items-center justify-center gap-3 mt-3 pb-2">
-                <button className="text-[13px] font-medium" style={{ color: "#E8314A" }}>Privacy policy</button>
+                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Privacy policy</button>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <button className="text-[13px] font-medium" style={{ color: "#E8314A" }}>Restore purchase</button>
+                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Restore purchase</button>
               </div>
             </div>
           </motion.div>
