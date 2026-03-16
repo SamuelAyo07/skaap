@@ -986,7 +986,7 @@ const SkaapScan = () => {
           ].map((item, i) => (
             <div key={i}>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={16} style={{ color: "#E8314A" }} />
+                <Sparkles size={16} style={{ color: "#C41E3A" }} />
                 <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>{item.title}</h2>
               </div>
               <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>{item.desc}</p>
