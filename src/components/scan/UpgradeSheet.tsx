@@ -103,7 +103,7 @@ export function UpgradeSheet() {
 
             <div className="px-6 pt-10 pb-8">
               {/* Header */}
-              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#E8314A" }}>
+              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#C41E3A" }}>
                 MEMBER ACCESS
               </p>
               <h2 className="font-extrabold text-[26px] leading-tight mt-2" style={{ color: "#1A1A1A" }}>
@@ -112,7 +112,7 @@ export function UpgradeSheet() {
 
               {upgradeFeature && (
                 <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#FEF2F2" }}>
-                  <span className="text-[12px] font-semibold" style={{ color: "#E8314A" }}>
+                  <span className="text-[12px] font-semibold" style={{ color: "#C41E3A" }}>
                     ✦ {upgradeFeature} requires Plus
                   </span>
                 </div>
@@ -177,7 +177,7 @@ export function UpgradeSheet() {
                       <span className="text-[40px]">🐑</span>
                     </div>
 
-                    <p className="font-extrabold text-[28px] mt-4" style={{ color: "#E8314A" }}>
+                    <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
                       {tier.amount}
                     </p>
                     <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
@@ -191,7 +191,7 @@ export function UpgradeSheet() {
                       onValueChange={setSliderVal}
                       max={100}
                       step={1}
-                      className="w-full [&_[data-radix-slider-track]]:h-[6px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#E8314A] [&_[data-radix-slider-thumb]]:w-7 [&_[data-radix-slider-thumb]]:h-7 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#E8314A] [&_[data-radix-slider-thumb]]:shadow-md"
+                      className="w-full [&_[data-radix-slider-track]]:h-[6px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#C41E3A] [&_[data-radix-slider-thumb]]:w-7 [&_[data-radix-slider-thumb]]:h-7 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#C41E3A] [&_[data-radix-slider-thumb]]:shadow-md"
                     />
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export function UpgradeSheet() {
                   <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
                     <span className="text-[40px]">🐑</span>
                   </div>
-                  <p className="font-extrabold text-[28px] mt-4" style={{ color: "#E8314A" }}>
+                  <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
                     $1.99/month
                   </p>
                   <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
@@ -218,8 +218,8 @@ export function UpgradeSheet() {
                 style={{
                   height: 56,
                   borderRadius: 16,
-                  background: "linear-gradient(135deg, #E8314A, #c42040)",
-                  boxShadow: "0 4px 16px rgba(232,49,74,0.3)",
+                  background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+                  boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
                 }}
               >
                 {loading ? (
@@ -245,9 +245,9 @@ export function UpgradeSheet() {
                 Payment will be processed securely via Stripe. Your subscription renews {billingMode === "annual" ? "annually" : "monthly"} at the same price, unless canceled 24 hours before renewal.
               </p>
               <div className="flex items-center justify-center gap-3 mt-3 pb-2">
-                <button className="text-[13px] font-medium" style={{ color: "#E8314A" }}>Privacy policy</button>
+                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Privacy policy</button>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <button className="text-[13px] font-medium" style={{ color: "#E8314A" }}>Restore purchase</button>
+                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Restore purchase</button>
               </div>
             </div>
           </motion.div>

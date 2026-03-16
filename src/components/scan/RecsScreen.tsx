@@ -132,13 +132,13 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
           <div className="flex gap-2 mt-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="w-3 h-3 rounded-full" style={{
-                background: stats.total_scans >= i ? "#E8314A" : "#E5E7EB"
+                background: stats.total_scans >= i ? "#C41E3A" : "#E5E7EB"
               }} />
             ))}
           </div>
           <motion.button whileTap={{ scale: 0.97 }} onClick={onOpenScanner}
             className="mt-8 font-bold text-[15px] text-white"
-            style={{ height: 52, width: "100%", maxWidth: 260, borderRadius: 16, background: "linear-gradient(135deg, #E8314A, #c42040)", boxShadow: "0 4px 16px rgba(232,49,74,0.25)" }}>
+            style={{ height: 52, width: "100%", maxWidth: 260, borderRadius: 16, background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 16px rgba(196,30,58,0.25)" }}>
             Start Scanning
           </motion.button>
         </div>
@@ -154,7 +154,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles size={18} style={{ color: "#E8314A" }} />
+              <Sparkles size={18} style={{ color: "#C41E3A" }} />
               <h1 className="font-extrabold text-[22px]" style={{ color: "#1A1A1A" }}>For You</h1>
             </div>
             <p className="text-[12px] mt-0.5" style={{ color: "#9CA3AF" }}>
@@ -177,8 +177,8 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
           <div className="px-5 mt-6 space-y-4">
             <div className="rounded-2xl p-5" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles size={14} style={{ color: "#E8314A" }} className="animate-pulse" />
-                <span className="text-[13px] font-semibold" style={{ color: "#E8314A" }}>Analyzing your scan history...</span>
+                <Sparkles size={14} style={{ color: "#C41E3A" }} className="animate-pulse" />
+                <span className="text-[13px] font-semibold" style={{ color: "#C41E3A" }}>Analyzing your scan history...</span>
               </div>
               <Skeleton className="h-4 w-full mb-2" style={{ background: "#E5E7EB" }} />
               <Skeleton className="h-4 w-3/4" style={{ background: "#E5E7EB" }} />
@@ -204,7 +204,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
               <p className="text-[14px] font-medium" style={{ color: "#DC2626" }}>{error}</p>
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => fetchRecs(true)}
                 className="mt-3 px-5 py-2 rounded-xl font-semibold text-[13px] text-white"
-                style={{ background: "#E8314A" }}>
+                style={{ background: "#C41E3A" }}>
                 Try Again
               </motion.button>
             </div>
@@ -222,7 +222,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
                 {recs.summary}
               </p>
               <div className="flex items-center gap-2 mt-3">
-                <div className="px-3 py-1 rounded-full text-[11px] font-bold" style={{ background: "#FFFFFF", color: "#E8314A", border: "1px solid #FECDD3" }}>
+                <div className="px-3 py-1 rounded-full text-[11px] font-bold" style={{ background: "#FFFFFF", color: "#C41E3A", border: "1px solid #FECDD3" }}>
                   🏠 Kitchen Score: {stats.kitchen_score}/100
                 </div>
               </div>
@@ -295,7 +295,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
                 <motion.div key="swaps"
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
                   className="px-5 mt-4 space-y-3">
-                  <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#E8314A" }}>
+                  <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>
                     Recommended swaps
                   </p>
 

@@ -83,7 +83,7 @@ export function HistoryScreen({
           className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
           style={{
             color: tab === "favorites" ? "#1B2A4A" : "#9CA3AF",
-            borderBottom: tab === "favorites" ? "2px solid #E8314A" : "2px solid transparent",
+            borderBottom: tab === "favorites" ? "2px solid #C41E3A" : "2px solid transparent",
           }}
         >
           Favorites
@@ -93,7 +93,7 @@ export function HistoryScreen({
           className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
           style={{
             color: tab === "history" ? "#1B2A4A" : "#9CA3AF",
-            borderBottom: tab === "history" ? "2px solid #E8314A" : "2px solid transparent",
+            borderBottom: tab === "history" ? "2px solid #C41E3A" : "2px solid transparent",
           }}
         >
           History
@@ -125,9 +125,9 @@ export function HistoryScreen({
           <button key={f.key} onClick={() => setFilter(f.key)}
             className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all"
             style={{
-              background: filter === f.key ? "#E8314A" : "#F3F4F6",
+              background: filter === f.key ? "#C41E3A" : "#F3F4F6",
               color: filter === f.key ? "#fff" : "#6B7280",
-              border: `1px solid ${filter === f.key ? "#E8314A" : "#E5E7EB"}`,
+              border: `1px solid ${filter === f.key ? "#C41E3A" : "#E5E7EB"}`,
             }}>
             {f.label}
           </button>
@@ -205,7 +205,7 @@ export function HistoryScreen({
               background: "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.95) 50%)",
             }} />
             <div className="relative text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
-              <Lock size={24} style={{ color: "#E8314A" }} className="mx-auto" />
+              <Lock size={24} style={{ color: "#C41E3A" }} className="mx-auto" />
               <h3 className="font-extrabold text-lg mt-3" style={{ color: "#1B2A4A" }}>Unlock Full History</h3>
               <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
                 See every product you've ever scanned
@@ -213,7 +213,7 @@ export function HistoryScreen({
               <motion.button whileTap={{ scale: 0.97 }}
                 onClick={() => openUpgrade("Unlimited scan history")}
                 className="mt-4 px-6 py-3 rounded-2xl font-bold text-sm text-white"
-                style={{ background: "linear-gradient(135deg, #E8314A, #c42040)" }}>
+                style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
                 Upgrade to SKAAP Plus
               </motion.button>
             </div>

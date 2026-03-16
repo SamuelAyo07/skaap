@@ -249,7 +249,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
             <div className="p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
               <p className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: "#1A1A1A" }}>Your Pattern (Last 30 Scans)</p>
               {[
-                { label: "High Sugar Products", val: nutrients.high_sugar, total: nutrients.total, color: "#E8314A", icon: "🍬" },
+                { label: "High Sugar Products", val: nutrients.high_sugar, total: nutrients.total, color: "#C41E3A", icon: "🍬" },
                 { label: "High Fat Products", val: nutrients.high_fat, total: nutrients.total, color: "#F59E0B", icon: "🧈" },
                 { label: "High Salt Products", val: nutrients.high_salt, total: nutrients.total, color: "#8B5CF6", icon: "🧂" },
                 { label: "Ultra-Processed (NOVA 4)", val: nutrients.ultra_processed, total: nutrients.total, color: "#DC2626", icon: "🏭" },
@@ -379,8 +379,8 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
           className="mx-5 mt-6 w-[calc(100%-40px)] font-bold text-[15px] text-white flex items-center justify-center gap-2"
           style={{
             height: 52, borderRadius: 16,
-            background: "linear-gradient(135deg, #E8314A, #c42040)",
-            boxShadow: "0 8px 24px rgba(232,49,74,0.3)",
+            background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+            boxShadow: "0 8px 24px rgba(196,30,58,0.3)",
           }}>
           <Share2 size={16} /> Share My Kitchen Report
         </motion.button>

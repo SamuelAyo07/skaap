@@ -103,7 +103,7 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
       {/* Header */}
       <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-2">
         <div className="flex items-center gap-2">
-          <Trophy size={20} style={{ color: "#E8314A" }} />
+          <Trophy size={20} style={{ color: "#C41E3A" }} />
           <h1 className="font-extrabold text-[22px]" style={{ color: "#1A1A1A" }}>Top Products</h1>
         </div>
         <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
@@ -166,9 +166,9 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
             onClick={() => setActiveCategory(cat.key)}
             className="flex-shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition-all whitespace-nowrap"
             style={{
-              background: activeCategory === cat.key ? "#E8314A" : "#F3F4F6",
+              background: activeCategory === cat.key ? "#C41E3A" : "#F3F4F6",
               color: activeCategory === cat.key ? "#fff" : "#6B7280",
-              border: `1px solid ${activeCategory === cat.key ? "#E8314A" : "#E5E7EB"}`,
+              border: `1px solid ${activeCategory === cat.key ? "#C41E3A" : "#E5E7EB"}`,
             }}
           >
             {cat.label}
@@ -178,8 +178,8 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
 
       {/* Trending section title */}
       <div className="flex items-center gap-1.5 px-5 mt-5 mb-3">
-        <TrendingUp size={14} style={{ color: "#E8314A" }} />
-        <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#E8314A" }}>
+        <TrendingUp size={14} style={{ color: "#C41E3A" }} />
+        <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>
           {CATEGORIES.find(c => c.key === activeCategory)?.label.replace(/^.\s/, "") || "Trending"}
         </span>
       </div>
@@ -220,7 +220,7 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
                 >
                   {/* Rank number */}
                   <span className="text-[14px] font-extrabold w-6 text-center flex-shrink-0"
-                    style={{ color: idx < 3 ? "#E8314A" : "#D1D5DB" }}>
+                    style={{ color: idx < 3 ? "#C41E3A" : "#D1D5DB" }}>
                     {idx + 1}
                   </span>
 

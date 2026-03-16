@@ -38,15 +38,15 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
                 width: 56,
                 height: 56,
                 borderRadius: 28,
-                background: "#E8314A",
+                background: "#C41E3A",
                 marginTop: -24,
-                boxShadow: "0 4px 16px rgba(232,49,74,0.3)",
+                boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
               }}
             >
               <span style={{ color: "#fff" }}>{item.icon}</span>
             </div>
           ) : (
-            <span style={{ color: active === item.key ? "#E8314A" : "#9CA3AF" }}>
+            <span style={{ color: active === item.key ? "#C41E3A" : "#9CA3AF" }}>
               {item.icon}
             </span>
           )}
@@ -54,9 +54,9 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
             className="text-[10px] font-medium"
             style={{
               color: item.center
-                ? "#E8314A"
+                ? "#C41E3A"
                 : active === item.key
-                ? "#E8314A"
+                ? "#C41E3A"
                 : "#9CA3AF",
               marginTop: item.center ? -2 : 0,
             }}
@@ -66,7 +66,7 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
           {active === item.key && !item.center && (
             <div
               className="w-1 h-1 rounded-full"
-              style={{ background: "#E8314A", marginTop: -2 }}
+              style={{ background: "#C41E3A", marginTop: -2 }}
             />
           )}
         </button>

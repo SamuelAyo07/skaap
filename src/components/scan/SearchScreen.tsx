@@ -20,7 +20,7 @@ interface SearchScreenProps {
 }
 
 const nutriColors: Record<string, string> = {
-  a: "#15803D", b: "#22C55E", c: "#F59E0B", d: "#EA580C", e: "#E8314A",
+  a: "#15803D", b: "#22C55E", c: "#F59E0B", d: "#EA580C", e: "#C41E3A",
 };
 
 export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: SearchScreenProps) {
@@ -61,10 +61,10 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           {/* Lock icon in soft red circle */}
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2", border: "1px solid #FECDD3" }}>
-            <Lock size={32} style={{ color: "#E8314A" }} />
+            <Lock size={32} style={{ color: "#C41E3A" }} />
           </div>
 
-          <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#E8314A" }}>
+          <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#C41E3A" }}>
             Member Access
           </p>
 
@@ -85,8 +85,8 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
               width: "100%",
               maxWidth: 280,
               borderRadius: 16,
-              background: "linear-gradient(135deg, #E8314A, #c42040)",
-              boxShadow: "0 4px 16px rgba(232,49,74,0.25)",
+              background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+              boxShadow: "0 4px 16px rgba(196,30,58,0.25)",
             }}
           >
             Become a Member
@@ -144,7 +144,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
             <motion.button whileTap={{ scale: 0.97 }}
               onClick={onOpenScanner}
               className="mt-4 px-6 py-3 rounded-2xl font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #E8314A, #c42040)" }}>
+              style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
               Open Scanner
             </motion.button>
           </div>

@@ -136,7 +136,7 @@ export function AuthSheet({ open, onClose, onSuccess }: AuthSheetProps) {
                 style={{
                   height: 52,
                   borderRadius: 16,
-                  background: "linear-gradient(135deg, #E8314A, #c42040)",
+                  background: "linear-gradient(135deg, #C41E3A, #9E1830)",
                   opacity: loading ? 0.7 : 1,
                 }}
               >

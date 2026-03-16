@@ -310,7 +310,7 @@ const nutriColors: Record<string, { bg: string; text: string }> = {
   b: { bg: "#4CAF50", text: "#fff" },
   c: { bg: "#FFC107", text: "#1B2A4A" },
   d: { bg: "#FF6D00", text: "#fff" },
-  e: { bg: "#E8314A", text: "#fff" },
+  e: { bg: "#C41E3A", text: "#fff" },
 };
 
 const novaColors: Record<number, { bg: string; text: string; label: string }> = {
@@ -323,7 +323,7 @@ const novaColors: Record<number, { bg: string; text: string; label: string }> = 
 function nutrientLevelColor(level?: string) {
   if (level === "low") return "#2D7D46";
   if (level === "moderate") return "#FFC107";
-  if (level === "high") return "#E8314A";
+  if (level === "high") return "#C41E3A";
   return "#9CA3AF";
 }
 
@@ -377,7 +377,7 @@ const SkaapScan = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { openUpgrade, isPlus } = useSubscription();
-  const [screen, setScreen] = useState<Screen>("home");
+  const [screen, setScreen] = useState<Screen>("history");
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
 
   // Scanner
@@ -877,7 +877,7 @@ const SkaapScan = () => {
     return (
       <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         {/* Ambient blob */}
-        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(232,49,74,0.06)", filter: "blur(80px)" }} />
+        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(196,30,58,0.06)", filter: "blur(80px)" }} />
 
         {/* Top bar */}
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
@@ -889,8 +889,8 @@ const SkaapScan = () => {
             {basket.length > 0 && (
               <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setBasket(getBasket()); setScreen("basket"); }}
                 className="w-10 h-10 rounded-full flex items-center justify-center relative" style={{ background: "#F3F4F6" }} aria-label="Saved basket">
-                <Heart size={22} style={{ color: "#E8314A" }} fill="#E8314A" />
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#E8314A" }}>
+                <Heart size={22} style={{ color: "#C41E3A" }} fill="#C41E3A" />
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#C41E3A" }}>
                   {basket.length}
                 </span>
               </motion.button>
@@ -919,7 +919,7 @@ const SkaapScan = () => {
             {/* Rotating red arc */}
             <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
               <circle cx="110" cy="110" r="108" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#E8314A" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
             {/* Camera icon */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -986,7 +986,7 @@ const SkaapScan = () => {
           ].map((item, i) => (
             <div key={i}>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={16} style={{ color: "#E8314A" }} />
+                <Sparkles size={16} style={{ color: "#C41E3A" }} />
                 <h2 className="font-bold text-sm" style={{ color: "#1B2A4A" }}>{item.title}</h2>
               </div>
               <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>{item.desc}</p>
@@ -1032,15 +1032,15 @@ const SkaapScan = () => {
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ paddingBottom: "10%" }}>
           <div className="relative animate-bracket-pulse" style={{ width: 260, height: 160 }}>
             {[
-              { top: 0, left: 0, borderTop: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
-              { top: 0, right: 0, borderTop: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
-              { bottom: 0, left: 0, borderBottom: "3px solid #E8314A", borderLeft: "3px solid #E8314A" },
-              { bottom: 0, right: 0, borderBottom: "3px solid #E8314A", borderRight: "3px solid #E8314A" },
+              { top: 0, left: 0, borderTop: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
+              { top: 0, right: 0, borderTop: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
+              { bottom: 0, left: 0, borderBottom: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
+              { bottom: 0, right: 0, borderBottom: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
             ].map((style, i) => (
               <div key={i} className="absolute" style={{ ...style, width: 24, height: 24, borderRadius: 4 } as any} />
             ))}
             <motion.div animate={{ y: [0, 136, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #E8314A, transparent)", top: 12 }} />
+              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #C41E3A, transparent)", top: 12 }} />
           </div>
         </div>
 
@@ -1103,7 +1103,7 @@ const SkaapScan = () => {
       if (isPositiveNutrient(label)) {
         return level === "high" ? "#2D7D46" : level === "moderate" ? "#2D7D46" : "#FF6D00";
       }
-      return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
+      return level === "high" ? "#C41E3A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
     };
 
     const sheetHeight = sheetExpanded ? "96vh" : "80vh";
@@ -1180,7 +1180,7 @@ const SkaapScan = () => {
                     <div className="mt-3 text-center">
                       <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
                       <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "rgba(255,255,255,0.1)" }}>
-                        <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#E8314A" }} />
+                        <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#C41E3A" }} />
                       </div>
                     </div>
                   )}
@@ -1240,15 +1240,15 @@ const SkaapScan = () => {
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
                       className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-chip"
-                      style={{ color: "#E8314A", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <Share2 size={16} style={{ color: "#E8314A" }} />
+                      style={{ color: "#C41E3A", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <Share2 size={16} style={{ color: "#C41E3A" }} />
                       More
                     </motion.button>
                   </div>
                   <p className="text-center mt-3" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
                     Tag @useskaap — we repost the best ones 🔥
                   </p>
-                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#E8314A" }}>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#C41E3A" }}>
                     {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
                   </button>
                 </div>
@@ -1391,7 +1391,7 @@ const SkaapScan = () => {
                 <button onClick={() => {
                   const code = prompt("Enter barcode manually:");
                   if (code?.trim()) handleBarcodeDetected(code.trim());
-                }} className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#E8314A", color: "#E8314A" }}>
+                }} className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#C41E3A", color: "#C41E3A" }}>
                   Try Manual Search
                 </button>
               </div>
