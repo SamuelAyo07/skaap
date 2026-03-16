@@ -3,18 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, ArrowRightLeft, TrendingUp, Target, Lightbulb,
   ChevronRight, RefreshCw, Barcode, Lock, Zap, Leaf, AlertTriangle,
-  CheckCircle2, ArrowRight,
+  CheckCircle2, ArrowRight, ClipboardList,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { getUserStats, type ScoreEntry } from "@/lib/skaapUserStats";
 import { supabase } from "@/integrations/supabase/client";
+import { findBannedAdditives } from "@/lib/bannedAdditives";
 
 interface RecsScreenProps {
   onScanProduct: (barcode: string) => void;
   onNavChange: (nav: string) => void;
   onOpenScanner: () => void;
+  onOpenKitchenReport?: () => void;
 }
 
 interface Swap {
