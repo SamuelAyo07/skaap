@@ -1103,7 +1103,7 @@ const SkaapScan = () => {
       if (isPositiveNutrient(label)) {
         return level === "high" ? "#2D7D46" : level === "moderate" ? "#2D7D46" : "#FF6D00";
       }
-      return level === "high" ? "#E8314A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
+      return level === "high" ? "#C41E3A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
     };
 
     const sheetHeight = sheetExpanded ? "96vh" : "80vh";
