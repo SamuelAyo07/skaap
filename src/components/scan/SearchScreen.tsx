@@ -64,7 +64,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
             <Lock size={32} style={{ color: "#C41E3A" }} />
           </div>
 
-          <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#E8314A" }}>
+          <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#C41E3A" }}>
             Member Access
           </p>
 
