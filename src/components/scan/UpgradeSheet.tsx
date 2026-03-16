@@ -177,7 +177,7 @@ export function UpgradeSheet() {
                       <span className="text-[40px]">🐑</span>
                     </div>
 
-                    <p className="font-extrabold text-[28px] mt-4" style={{ color: "#E8314A" }}>
+                    <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
                       {tier.amount}
                     </p>
                     <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
