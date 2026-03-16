@@ -60,26 +60,10 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
   const [activeSection, setActiveSection] = useState<"trends" | "nutrients" | "regulatory">("trends");
   const color = getScoreColor(userStats.kitchen_score);
 
-  if (!isPlus) {
-    openUpgrade("Kitchen Report");
-    return null;
-  }
-
   const weeklyTrend = useMemo(() => getWeeklyTrend(userStats.all_scores), [userStats.all_scores]);
   const nutrients = useMemo(() => getNutrientBreakdown(userStats.all_scores), [userStats.all_scores]);
   const maxDayAvg = Math.max(...weeklyTrend.map(d => d.avg), 1);
 
-  // Additive concerns
-  const additiveCounts: Record<string, number> = {};
-  userStats.all_scores.slice(0, 50).forEach(s => {
-    (s.additives || []).forEach(a => {
-      const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-      additiveCounts[code] = (additiveCounts[code] || 0) + 1;
-    });
-  });
-  const topConcerns = Object.entries(additiveCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-  // Banned additives found in user's scan history
   const allUserAdditives = useMemo(() => {
     const tags = new Set<string>();
     userStats.all_scores.slice(0, 100).forEach(s => {
@@ -89,6 +73,20 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
   }, [userStats.all_scores]);
 
   const bannedFound = useMemo(() => findBannedAdditives(allUserAdditives), [allUserAdditives]);
+
+  if (!isPlus) {
+    openUpgrade("Kitchen Report");
+    return null;
+  }
+
+  // Additive concerns
+  const additiveCounts: Record<string, number> = {};
+  userStats.all_scores.slice(0, 50).forEach(s => {
+    (s.additives || []).forEach(a => {
+      const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+      additiveCounts[code] = (additiveCounts[code] || 0) + 1;
+    });
+  });
 
   const weekAgo = Date.now() - 7 * 86400000;
   const weekScans = userStats.all_scores.filter(s => s.scanned_at > weekAgo).length;
