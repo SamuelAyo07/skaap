@@ -864,6 +864,7 @@ const SkaapScan = () => {
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") setScreen("search");
     else if (nav === "kitchen") setScreen("kitchen");
+    else if (nav === "top") setScreen("top");
     else if (nav === "scan") goToScan();
     else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
     else if (nav === "profile") user ? setScreen("profile") : setAuthSheetOpen(true);

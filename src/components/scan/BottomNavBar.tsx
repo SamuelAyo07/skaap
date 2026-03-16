@@ -10,7 +10,7 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
     { icon: <Clock size={22} />, label: "History", key: "history" },
     { icon: <BarChart3 size={22} />, label: "Recs", key: "kitchen" },
     { icon: <Scan size={28} />, label: "Scan", key: "scan", center: true },
-    { icon: <Trophy size={22} />, label: "Top", key: "home" },
+    { icon: <Trophy size={22} />, label: "Top", key: "top" },
     { icon: <Search size={22} />, label: "Search", key: "search" },
   ];
 
