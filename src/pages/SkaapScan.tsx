@@ -42,7 +42,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "profile" | "top";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "kitchen-report" | "profile" | "top";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
