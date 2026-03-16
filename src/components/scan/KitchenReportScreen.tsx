@@ -249,7 +249,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
             <div className="p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
               <p className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: "#1A1A1A" }}>Your Pattern (Last 30 Scans)</p>
               {[
-                { label: "High Sugar Products", val: nutrients.high_sugar, total: nutrients.total, color: "#E8314A", icon: "🍬" },
+                { label: "High Sugar Products", val: nutrients.high_sugar, total: nutrients.total, color: "#C41E3A", icon: "🍬" },
                 { label: "High Fat Products", val: nutrients.high_fat, total: nutrients.total, color: "#F59E0B", icon: "🧈" },
                 { label: "High Salt Products", val: nutrients.high_salt, total: nutrients.total, color: "#8B5CF6", icon: "🧂" },
                 { label: "Ultra-Processed (NOVA 4)", val: nutrients.ultra_processed, total: nutrients.total, color: "#DC2626", icon: "🏭" },
