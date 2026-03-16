@@ -19,11 +19,11 @@ interface TrendingProduct {
 }
 
 const CATEGORIES = [
-  { key: "popular", label: "🔥 Popular", query: "popular" },
-  { key: "healthy", label: "🥗 Healthiest", query: "nutriscore_grade:a" },
-  { key: "snacks", label: "🍿 Snacks", query: "snacks" },
-  { key: "drinks", label: "🥤 Drinks", query: "beverages" },
-  { key: "organic", label: "🌿 Organic", query: "organic" },
+  { key: "popular", label: "🔥 Popular", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "healthy", label: "🥗 Healthiest", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=nutrition_grades&tag_contains_0=contains&tag_0=a&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "snacks", label: "🍿 Snacks", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=snacks&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "drinks", label: "🥤 Drinks", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=beverages&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "organic", label: "🌿 Organic", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=labels&tag_contains_0=contains&tag_0=organic&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
 ];
 
 const CURATED_BARCODES = [
