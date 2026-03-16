@@ -20,7 +20,7 @@ interface SearchScreenProps {
 }
 
 const nutriColors: Record<string, string> = {
-  a: "#2D7D46", b: "#4CAF50", c: "#FFC107", d: "#FF6D00", e: "#E8314A",
+  a: "#15803D", b: "#22C55E", c: "#F59E0B", d: "#EA580C", e: "#E8314A",
 };
 
 export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: SearchScreenProps) {
@@ -58,29 +58,35 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
   if (!isPlus) {
     return (
       <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
-        {/* Member access gate — Yuka style */}
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ background: "#FEF2F2" }}>
-            <Lock size={28} style={{ color: "#E8314A" }} />
+          {/* Lock icon in soft red circle */}
+          <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2", border: "1px solid #FECDD3" }}>
+            <Lock size={32} style={{ color: "#E8314A" }} />
           </div>
-          <p className="text-[12px] font-bold tracking-widest uppercase mb-3" style={{ color: "#E8314A" }}>
+
+          <p className="text-[12px] font-bold tracking-[0.15em] uppercase mt-6" style={{ color: "#E8314A" }}>
             Member Access
           </p>
-          <h2 className="font-extrabold text-[22px] leading-tight" style={{ color: "#1B2A4A" }}>
+
+          <h2 className="font-extrabold text-[24px] leading-tight mt-3" style={{ color: "#1A1A1A" }}>
             Search for any product
           </h2>
+
           <p className="text-[14px] mt-3 leading-relaxed" style={{ color: "#6B7280" }}>
             3 million+ food and cosmetic products available.
           </p>
+
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => openUpgrade("Product search")}
-            className="mt-8 w-full font-bold text-[15px] text-white"
+            className="mt-8 font-bold text-[15px] text-white"
             style={{
               height: 52,
-              borderRadius: 14,
-              background: "linear-gradient(135deg, #E8314A, #c42040)",
+              width: "100%",
               maxWidth: 280,
+              borderRadius: 16,
+              background: "linear-gradient(135deg, #E8314A, #c42040)",
+              boxShadow: "0 4px 16px rgba(232,49,74,0.25)",
             }}
           >
             Become a Member
@@ -96,7 +102,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
     <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Search bar */}
       <div className="px-5 mt-[env(safe-area-inset-top,12px)] pt-4">
-        <div className="flex items-center gap-3 px-4 h-[52px] rounded-2xl" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB", borderRadius: 16 }}>
+        <div className="flex items-center gap-3 px-4 h-[52px] rounded-2xl" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
           <Search size={18} style={{ color: "#9CA3AF" }} />
           <input
             ref={inputRef}
@@ -105,7 +111,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
             value={query}
             onChange={e => handleInput(e.target.value)}
             className="flex-1 bg-transparent text-[15px] outline-none placeholder:text-gray-400"
-            style={{ color: "#1B2A4A" }}
+            style={{ color: "#1A1A1A" }}
             autoFocus
           />
           {query && (
@@ -121,7 +127,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="flex gap-3 p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+              <div key={i} className="flex gap-3 p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
                 <Skeleton className="w-12 h-12 rounded-xl flex-shrink-0" style={{ background: "#E5E7EB" }} />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
@@ -131,9 +137,9 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
             ))}
           </div>
         ) : searched && results.length === 0 ? (
-          <div className="text-center py-16 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 20 }}>
+          <div className="text-center py-16 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
             <Search size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
-            <p className="text-sm mt-3 font-semibold" style={{ color: "#1B2A4A" }}>No products found</p>
+            <p className="text-sm mt-3 font-semibold" style={{ color: "#1A1A1A" }}>No products found</p>
             <p className="text-[12px] mt-1" style={{ color: "#9CA3AF" }}>Try scanning the barcode directly</p>
             <motion.button whileTap={{ scale: 0.97 }}
               onClick={onOpenScanner}
@@ -142,6 +148,13 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
               Open Scanner
             </motion.button>
           </div>
+        ) : !searched ? (
+          <div className="text-center py-16">
+            <Search size={40} style={{ color: "#E5E7EB" }} className="mx-auto" />
+            <p className="text-[14px] mt-4 font-medium" style={{ color: "#9CA3AF" }}>
+              Search by product name or brand
+            </p>
+          </div>
         ) : (
           <div className="space-y-2">
             {results.map(r => (
@@ -149,8 +162,8 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
                 key={r.code}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onScanProduct(r.code)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-2xl"
-                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-2xl transition-colors"
+                style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
               >
                 <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
                   {r.image_front_small_url ? (
@@ -162,7 +175,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate" style={{ color: "#1B2A4A" }}>{r.product_name}</p>
+                  <p className="text-sm font-semibold truncate" style={{ color: "#1A1A1A" }}>{r.product_name}</p>
                   {r.brands && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{r.brands}</p>}
                 </div>
                 {r.nutriscore_grade && (

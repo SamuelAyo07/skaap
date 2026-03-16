@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
+import { TopProductsScreen } from "@/components/scan/TopProductsScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
 import { BottomNavBar } from "@/components/scan/BottomNavBar";
 import { AuthSheet } from "@/components/scan/AuthSheet";
@@ -40,7 +41,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "profile";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "profile" | "top";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
@@ -863,6 +864,7 @@ const SkaapScan = () => {
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") setScreen("search");
     else if (nav === "kitchen") setScreen("kitchen");
+    else if (nav === "top") setScreen("top");
     else if (nav === "scan") goToScan();
     else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
     else if (nav === "profile") user ? setScreen("profile") : setAuthSheetOpen(true);
@@ -1915,6 +1917,16 @@ const SkaapScan = () => {
       <KitchenReportScreen
         userStats={userStats}
         onBack={() => setScreen("home")}
+        onNavChange={handleNavChange}
+      />
+    );
+  }
+
+  // ─── SCREEN: TOP PRODUCTS ───
+  if (screen === "top") {
+    return (
+      <TopProductsScreen
+        onScanProduct={handleBarcodeDetected}
         onNavChange={handleNavChange}
       />
     );
