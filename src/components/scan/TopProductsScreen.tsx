@@ -103,7 +103,7 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
       {/* Header */}
       <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-2">
         <div className="flex items-center gap-2">
-          <Trophy size={20} style={{ color: "#E8314A" }} />
+          <Trophy size={20} style={{ color: "#C41E3A" }} />
           <h1 className="font-extrabold text-[22px]" style={{ color: "#1A1A1A" }}>Top Products</h1>
         </div>
         <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
