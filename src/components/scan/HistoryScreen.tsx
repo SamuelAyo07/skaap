@@ -205,7 +205,7 @@ export function HistoryScreen({
               background: "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.95) 50%)",
             }} />
             <div className="relative text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
-              <Lock size={24} style={{ color: "#E8314A" }} className="mx-auto" />
+              <Lock size={24} style={{ color: "#C41E3A" }} className="mx-auto" />
               <h3 className="font-extrabold text-lg mt-3" style={{ color: "#1B2A4A" }}>Unlock Full History</h3>
               <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
                 See every product you've ever scanned
