@@ -1248,7 +1248,7 @@ const SkaapScan = () => {
                   <p className="text-center mt-3" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
                     Tag @useskaap — we repost the best ones 🔥
                   </p>
-                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#E8314A" }}>
+                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#C41E3A" }}>
                     {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
                   </button>
                 </div>
