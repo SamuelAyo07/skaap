@@ -877,7 +877,7 @@ const SkaapScan = () => {
     return (
       <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         {/* Ambient blob */}
-        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(232,49,74,0.06)", filter: "blur(80px)" }} />
+        <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(196,30,58,0.06)", filter: "blur(80px)" }} />
 
         {/* Top bar */}
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
