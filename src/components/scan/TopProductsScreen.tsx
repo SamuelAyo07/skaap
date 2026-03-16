@@ -19,11 +19,11 @@ interface TrendingProduct {
 }
 
 const CATEGORIES = [
-  { key: "popular", label: "🔥 Popular", query: "popular" },
-  { key: "healthy", label: "🥗 Healthiest", query: "nutriscore_grade:a" },
-  { key: "snacks", label: "🍿 Snacks", query: "snacks" },
-  { key: "drinks", label: "🥤 Drinks", query: "beverages" },
-  { key: "organic", label: "🌿 Organic", query: "organic" },
+  { key: "popular", label: "🔥 Popular", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "healthy", label: "🥗 Healthiest", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=nutrition_grades&tag_contains_0=contains&tag_0=a&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "snacks", label: "🍿 Snacks", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=snacks&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "drinks", label: "🥤 Drinks", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=beverages&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
+  { key: "organic", label: "🌿 Organic", url: "https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=labels&tag_contains_0=contains&tag_0=organic&sort_by=unique_scans_n&page_size=20&json=1&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade" },
 ];
 
 const CURATED_BARCODES = [
@@ -57,11 +57,12 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
     setLoading(true);
     try {
       const cat = CATEGORIES.find(c => c.key === category);
-      const searchTerm = cat?.query || "popular";
+      const url = cat?.url || CATEGORIES[0].url;
 
-      const res = await fetch(
-        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchTerm)}&json=1&page_size=15&sort_by=unique_scans_n&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade`
-      );
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       const items = (data.products || []).filter((p: any) => p.product_name && p.image_front_small_url);
       setProducts(items);
@@ -74,16 +75,17 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
   // Fetch curated featured products
   useEffect(() => {
     const fetchFeatured = async () => {
-      const results: TrendingProduct[] = [];
       const shuffled = [...CURATED_BARCODES].sort(() => 0.5 - Math.random()).slice(0, 3);
-      for (const barcode of shuffled) {
-        try {
+      const results = await Promise.allSettled(
+        shuffled.map(async (barcode) => {
           const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json?fields=code,product_name,brands,image_front_small_url,nutriscore_grade`);
           const data = await res.json();
-          if (data.product?.product_name) results.push(data.product);
-        } catch {}
-      }
-      setFeaturedProducts(results);
+          return data.product?.product_name ? data.product : null;
+        })
+      );
+      setFeaturedProducts(
+        results.filter((r): r is PromiseFulfilledResult<TrendingProduct> => r.status === "fulfilled" && r.value !== null).map(r => r.value)
+      );
     };
     fetchFeatured();
   }, []);
