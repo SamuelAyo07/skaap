@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, forwardRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
@@ -14,7 +14,7 @@ import stepReceipt from "@/assets/step-receipt.webp";
 
 const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
 
-const FadeIn = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
+const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; delay?: number }>(({ children, className = "", delay = 0 }, _fwdRef) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
   return (
@@ -22,7 +22,8 @@ const FadeIn = ({ children, className = "", delay = 0 }: { children: React.React
       {children}
     </motion.div>
   );
-};
+});
+FadeIn.displayName = "FadeIn";
 
 const Index = () => {
   const navigate = useNavigate();
