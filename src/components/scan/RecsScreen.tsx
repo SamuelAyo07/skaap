@@ -177,8 +177,8 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
           <div className="px-5 mt-6 space-y-4">
             <div className="rounded-2xl p-5" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles size={14} style={{ color: "#E8314A" }} className="animate-pulse" />
-                <span className="text-[13px] font-semibold" style={{ color: "#E8314A" }}>Analyzing your scan history...</span>
+                <Sparkles size={14} style={{ color: "#C41E3A" }} className="animate-pulse" />
+                <span className="text-[13px] font-semibold" style={{ color: "#C41E3A" }}>Analyzing your scan history...</span>
               </div>
               <Skeleton className="h-4 w-full mb-2" style={{ background: "#E5E7EB" }} />
               <Skeleton className="h-4 w-3/4" style={{ background: "#E5E7EB" }} />
