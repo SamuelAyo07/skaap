@@ -112,7 +112,7 @@ export function UpgradeSheet() {
 
               {upgradeFeature && (
                 <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#FEF2F2" }}>
-                  <span className="text-[12px] font-semibold" style={{ color: "#E8314A" }}>
+                  <span className="text-[12px] font-semibold" style={{ color: "#C41E3A" }}>
                     ✦ {upgradeFeature} requires Plus
                   </span>
                 </div>
