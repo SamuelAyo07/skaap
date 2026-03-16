@@ -55,12 +55,38 @@ Return a JSON array of exactly 3 objects:
 Focus on widely available products with better nutritional profiles. Keep reasons under 12 words.`;
         break;
       }
+      case "personalized-recs": {
+        const { scanHistory, kitchenScore } = params;
+        systemPrompt = `You are a personalized nutrition coach for the SKAAP food scanning app. You analyze a user's scan history to give actionable, warm, friendly advice. Never use words like "dangerous", "toxic", "terrible". Be encouraging and positive. Return ONLY valid JSON, no other text.`;
+        userPrompt = `Based on this user's recent scan history and kitchen score of ${kitchenScore}/100, provide personalized food recommendations.
+
+Recent scans (newest first):
+${scanHistory}
+
+Return a JSON object with this exact structure:
+{
+  "summary": "A warm 1-sentence overview of their eating habits (max 20 words)",
+  "strengths": ["1 strength they have", "another strength"],
+  "improvements": ["1 area to improve", "another area"],
+  "swaps": [
+    {"current": "Product they scanned", "suggestion": "Healthier alternative", "reason": "Why in 8 words max", "impact": "high"},
+    {"current": "Another product", "suggestion": "Better option", "reason": "Short reason", "impact": "medium"}
+  ],
+  "weeklyTip": "A specific actionable tip for their next grocery trip (max 25 words)",
+  "goalSuggestion": "A personal challenge like 'Try 3 Nutri-Score A products this week' (max 15 words)"
+}
+
+Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their worst-scoring products. Set impact to "high" for ultra-processed/high-additive products, "medium" for moderate issues, "low" for minor tweaks.`;
+        break;
+      }
       default:
         return new Response(JSON.stringify({ error: "Unknown type" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
+
+    const model = type === "personalized-recs" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -69,7 +95,7 @@ Focus on widely available products with better nutritional profiles. Keep reason
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
