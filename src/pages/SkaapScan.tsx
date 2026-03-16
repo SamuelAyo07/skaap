@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
+import { TopProductsScreen } from "@/components/scan/TopProductsScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
 import { BottomNavBar } from "@/components/scan/BottomNavBar";
 import { AuthSheet } from "@/components/scan/AuthSheet";
