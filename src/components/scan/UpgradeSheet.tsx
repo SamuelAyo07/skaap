@@ -191,7 +191,7 @@ export function UpgradeSheet() {
                       onValueChange={setSliderVal}
                       max={100}
                       step={1}
-                      className="w-full [&_[data-radix-slider-track]]:h-[6px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#E8314A] [&_[data-radix-slider-thumb]]:w-7 [&_[data-radix-slider-thumb]]:h-7 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#E8314A] [&_[data-radix-slider-thumb]]:shadow-md"
+                      className="w-full [&_[data-radix-slider-track]]:h-[6px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#C41E3A] [&_[data-radix-slider-thumb]]:w-7 [&_[data-radix-slider-thumb]]:h-7 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#C41E3A] [&_[data-radix-slider-thumb]]:shadow-md"
                     />
                   </div>
                 </div>
