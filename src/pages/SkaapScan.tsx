@@ -11,6 +11,7 @@ import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
 import { TopProductsScreen } from "@/components/scan/TopProductsScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
+import { RecsScreen } from "@/components/scan/RecsScreen";
 import { BottomNavBar } from "@/components/scan/BottomNavBar";
 import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
