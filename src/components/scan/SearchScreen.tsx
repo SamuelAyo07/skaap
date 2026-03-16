@@ -20,7 +20,7 @@ interface SearchScreenProps {
 }
 
 const nutriColors: Record<string, string> = {
-  a: "#15803D", b: "#22C55E", c: "#F59E0B", d: "#EA580C", e: "#E8314A",
+  a: "#15803D", b: "#22C55E", c: "#F59E0B", d: "#EA580C", e: "#C41E3A",
 };
 
 export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: SearchScreenProps) {
