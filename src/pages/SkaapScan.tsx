@@ -1240,8 +1240,8 @@ const SkaapScan = () => {
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
                       className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-chip"
-                      style={{ color: "#E8314A", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <Share2 size={16} style={{ color: "#E8314A" }} />
+                      style={{ color: "#C41E3A", height: 48, borderRadius: 14, fontSize: 13 }}>
+                      <Share2 size={16} style={{ color: "#C41E3A" }} />
                       More
                     </motion.button>
                   </div>
