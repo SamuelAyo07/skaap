@@ -154,7 +154,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles size={18} style={{ color: "#E8314A" }} />
+              <Sparkles size={18} style={{ color: "#C41E3A" }} />
               <h1 className="font-extrabold text-[22px]" style={{ color: "#1A1A1A" }}>For You</h1>
             </div>
             <p className="text-[12px] mt-0.5" style={{ color: "#9CA3AF" }}>
