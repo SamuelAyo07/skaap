@@ -103,7 +103,7 @@ export function UpgradeSheet() {
 
             <div className="px-6 pt-10 pb-8">
               {/* Header */}
-              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#E8314A" }}>
+              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#C41E3A" }}>
                 MEMBER ACCESS
               </p>
               <h2 className="font-extrabold text-[26px] leading-tight mt-2" style={{ color: "#1A1A1A" }}>
