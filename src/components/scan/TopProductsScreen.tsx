@@ -57,11 +57,12 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
     setLoading(true);
     try {
       const cat = CATEGORIES.find(c => c.key === category);
-      const searchTerm = cat?.query || "popular";
+      const url = cat?.url || CATEGORIES[0].url;
 
-      const res = await fetch(
-        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchTerm)}&json=1&page_size=15&sort_by=unique_scans_n&fields=code,product_name,brands,image_front_small_url,nutriscore_grade,ecoscore_grade`
-      );
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       const items = (data.products || []).filter((p: any) => p.product_name && p.image_front_small_url);
       setProducts(items);
