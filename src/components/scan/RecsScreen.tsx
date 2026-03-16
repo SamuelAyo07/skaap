@@ -138,7 +138,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
           </div>
           <motion.button whileTap={{ scale: 0.97 }} onClick={onOpenScanner}
             className="mt-8 font-bold text-[15px] text-white"
-            style={{ height: 52, width: "100%", maxWidth: 260, borderRadius: 16, background: "linear-gradient(135deg, #E8314A, #c42040)", boxShadow: "0 4px 16px rgba(232,49,74,0.25)" }}>
+            style={{ height: 52, width: "100%", maxWidth: 260, borderRadius: 16, background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 16px rgba(196,30,58,0.25)" }}>
             Start Scanning
           </motion.button>
         </div>
