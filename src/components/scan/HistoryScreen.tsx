@@ -93,7 +93,7 @@ export function HistoryScreen({
           className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
           style={{
             color: tab === "history" ? "#1B2A4A" : "#9CA3AF",
-            borderBottom: tab === "history" ? "2px solid #E8314A" : "2px solid transparent",
+            borderBottom: tab === "history" ? "2px solid #C41E3A" : "2px solid transparent",
           }}
         >
           History
