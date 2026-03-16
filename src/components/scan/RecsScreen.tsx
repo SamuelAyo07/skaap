@@ -58,7 +58,7 @@ const impactConfig = {
   low: { color: "#22C55E", bg: "#F0FDF4", border: "#BBF7D0", icon: Leaf, label: "Small tweak" },
 };
 
-export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner }: RecsScreenProps) {
+export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKitchenReport }: RecsScreenProps) {
   const { isPlus, openUpgrade } = useSubscription();
   const [recs, setRecs] = useState<PersonalizedRecs | null>(null);
   const [loading, setLoading] = useState(false);
