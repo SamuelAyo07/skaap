@@ -87,6 +87,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
       additiveCounts[code] = (additiveCounts[code] || 0) + 1;
     });
   });
+  const topConcerns = Object.entries(additiveCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   const weekAgo = Date.now() - 7 * 86400000;
   const weekScans = userStats.all_scores.filter(s => s.scanned_at > weekAgo).length;
