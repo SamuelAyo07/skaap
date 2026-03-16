@@ -75,16 +75,17 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
   // Fetch curated featured products
   useEffect(() => {
     const fetchFeatured = async () => {
-      const results: TrendingProduct[] = [];
       const shuffled = [...CURATED_BARCODES].sort(() => 0.5 - Math.random()).slice(0, 3);
-      for (const barcode of shuffled) {
-        try {
+      const results = await Promise.allSettled(
+        shuffled.map(async (barcode) => {
           const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json?fields=code,product_name,brands,image_front_small_url,nutriscore_grade`);
           const data = await res.json();
-          if (data.product?.product_name) results.push(data.product);
-        } catch {}
-      }
-      setFeaturedProducts(results);
+          return data.product?.product_name ? data.product : null;
+        })
+      );
+      setFeaturedProducts(
+        results.filter((r): r is PromiseFulfilledResult<TrendingProduct> => r.status === "fulfilled" && r.value !== null).map(r => r.value)
+      );
     };
     fetchFeatured();
   }, []);
