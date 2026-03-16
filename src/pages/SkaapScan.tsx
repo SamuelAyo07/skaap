@@ -1922,6 +1922,16 @@ const SkaapScan = () => {
     );
   }
 
+  // ─── SCREEN: TOP PRODUCTS ───
+  if (screen === "top") {
+    return (
+      <TopProductsScreen
+        onScanProduct={handleBarcodeDetected}
+        onNavChange={handleNavChange}
+      />
+    );
+  }
+
   // ─── SCREEN: PROFILE ───
   if (screen === "profile") {
     return <ProfileScreen onBack={() => setScreen("home")} />;
