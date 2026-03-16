@@ -1556,6 +1556,35 @@ const SkaapScan = () => {
                   </motion.div>
                 )}
 
+                {/* EU BANNED ALERT BANNER */}
+                {(() => {
+                  const bannedInProduct = findBannedAdditives(productInfo.additivesTags);
+                  const euBanned = bannedInProduct.filter(b => b.eu_status === "banned");
+                  if (euBanned.length === 0) return null;
+                  return (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mx-5"
+                      style={{
+                        marginTop: 12,
+                        padding: "12px 16px",
+                        background: "#FFFBEB",
+                        borderTop: "1px solid #FDE68A",
+                        borderBottom: "1px solid #FDE68A",
+                        borderRadius: 12,
+                      }}
+                    >
+                      <p className="font-semibold text-[14px]" style={{ color: "#92400E" }}>
+                        🚩 Contains ingredients banned in Europe
+                      </p>
+                      <p className="text-[13px] mt-1" style={{ color: "#92400E" }}>
+                        This product contains {euBanned.map(b => b.name).join(", ")} which {euBanned.length === 1 ? "is" : "are"} legal in the US but banned in the EU.
+                      </p>
+                    </motion.div>
+                  );
+                })()}
+
                 {/* SECTION D — SHARE ROW */}
                 {scoreBreakdown && (
                   <div className="flex items-center gap-3 px-5" style={{ marginTop: 20 }}>
