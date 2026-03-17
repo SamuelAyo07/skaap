@@ -621,6 +621,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
+      writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
