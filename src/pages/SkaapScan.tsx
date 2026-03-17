@@ -1968,6 +1968,16 @@ const SkaapScan = () => {
     );
   }
 
+  // ─── SCREEN: COMMUNITY INTELLIGENCE ───
+  if (screen === "community") {
+    return (
+      <CommunityScreen
+        onNavChange={handleNavChange}
+        onScanProduct={handleBarcodeDetected}
+      />
+    );
+  }
+
   // ─── SCREEN: RECS (AI Personalized Recommendations) ───
   if (screen === "kitchen") {
     return (
