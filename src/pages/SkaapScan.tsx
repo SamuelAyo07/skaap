@@ -6,6 +6,7 @@ import {
   ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull, User,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
