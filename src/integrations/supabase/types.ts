@@ -47,6 +47,62 @@ export type Database = {
         }
         Relationships: []
       }
+      community_scans: {
+        Row: {
+          additives_flagged: Json | null
+          barcode: string
+          brand: string | null
+          city: string | null
+          id: string
+          image_url: string | null
+          product_name: string
+          saved: boolean | null
+          scan_timestamp: string
+          score: number | null
+          state: string | null
+          store_id: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          additives_flagged?: Json | null
+          barcode: string
+          brand?: string | null
+          city?: string | null
+          id?: string
+          image_url?: string | null
+          product_name: string
+          saved?: boolean | null
+          scan_timestamp?: string
+          score?: number | null
+          state?: string | null
+          store_id?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          additives_flagged?: Json | null
+          barcode?: string
+          brand?: string | null
+          city?: string | null
+          id?: string
+          image_url?: string | null
+          product_name?: string
+          saved?: boolean | null
+          scan_timestamp?: string
+          score?: number | null
+          state?: string | null
+          store_id?: string | null
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_scans_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
           created_at: string

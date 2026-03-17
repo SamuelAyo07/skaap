@@ -6,12 +6,14 @@ import {
   ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull, User,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { HistoryScreen } from "@/components/scan/HistoryScreen";
 import { SearchScreen } from "@/components/scan/SearchScreen";
 import { TopProductsScreen } from "@/components/scan/TopProductsScreen";
 import { KitchenReportScreen } from "@/components/scan/KitchenReportScreen";
 import { RecsScreen } from "@/components/scan/RecsScreen";
+import { CommunityScreen } from "@/components/scan/CommunityScreen";
 import { BottomNavBar } from "@/components/scan/BottomNavBar";
 import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
@@ -43,7 +45,7 @@ interface ScanHistoryItem {
   scannedAt: number;
 }
 
-type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "kitchen-report" | "profile" | "top";
+type Screen = "home" | "scanning" | "result" | "history" | "ai-info" | "basket" | "search" | "kitchen" | "kitchen-report" | "profile" | "top" | "community";
 
 // ─── Saved basket helpers ───
 const BASKET_KEY = "skaap_basket";
@@ -486,6 +488,31 @@ const SkaapScan = () => {
     }).then(r => { setAiRecommendations(r); setAiRecsLoading(false); }).catch(() => setAiRecsLoading(false));
   }, []);
 
+  // ─── Write anonymous community scan data ───
+  const writeCommunityData = useCallback(async (barcode: string, productName: string, brand?: string, score?: number, imageUrl?: string, additives?: string[]) => {
+    if (!user) return; // only logged-in users contribute
+    try {
+      const savedLoc = localStorage.getItem("skaap_community_location");
+      let city = "Unknown", state = "";
+      if (savedLoc) {
+        const parsed = JSON.parse(savedLoc);
+        city = parsed.city || "Unknown";
+        state = parsed.state || "";
+      }
+      await supabase.from("community_scans").insert({
+        barcode,
+        product_name: productName,
+        brand: brand || null,
+        score: score || null,
+        image_url: imageUrl || null,
+        city,
+        state,
+        saved: false, // default; updated when user saves
+        additives_flagged: (additives || []).slice(0, 20),
+      });
+    } catch {}
+  }, [user]);
+
   // ─── Camera ───
   const stopCamera = useCallback(() => {
     try { readerRef.current?.reset?.(); } catch {}
@@ -594,6 +621,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
+      writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
@@ -621,12 +649,14 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
+      // Write anonymous community scan data
+      writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
     }
     setLoading(false);
-  }, [stopCamera, fireAICalls]);
+  }, [stopCamera, fireAICalls, writeCommunityData]);
 
   const toggleSection = (key: string) => {
     setExpandedSections(prev => {
@@ -866,6 +896,7 @@ const SkaapScan = () => {
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") setScreen("search");
     else if (nav === "kitchen") setScreen("kitchen");
+    else if (nav === "community") setScreen("community");
     else if (nav === "top") setScreen("top");
     else if (nav === "scan") goToScan();
     else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
@@ -1962,6 +1993,16 @@ const SkaapScan = () => {
         onScanProduct={handleBarcodeDetected}
         onNavChange={handleNavChange}
         onOpenScanner={goToScan}
+      />
+    );
+  }
+
+  // ─── SCREEN: COMMUNITY INTELLIGENCE ───
+  if (screen === "community") {
+    return (
+      <CommunityScreen
+        onNavChange={handleNavChange}
+        onScanProduct={handleBarcodeDetected}
       />
     );
   }
