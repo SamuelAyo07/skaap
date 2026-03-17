@@ -656,7 +656,7 @@ const SkaapScan = () => {
       setNotFound(true);
     }
     setLoading(false);
-  }, [stopCamera, fireAICalls]);
+  }, [stopCamera, fireAICalls, writeCommunityData]);
 
   const toggleSection = (key: string) => {
     setExpandedSections(prev => {
