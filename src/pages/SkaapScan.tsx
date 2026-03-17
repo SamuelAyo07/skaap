@@ -487,6 +487,31 @@ const SkaapScan = () => {
     }).then(r => { setAiRecommendations(r); setAiRecsLoading(false); }).catch(() => setAiRecsLoading(false));
   }, []);
 
+  // ─── Write anonymous community scan data ───
+  const writeCommunityData = useCallback(async (barcode: string, productName: string, brand?: string, score?: number, imageUrl?: string, additives?: string[]) => {
+    if (!user) return; // only logged-in users contribute
+    try {
+      const savedLoc = localStorage.getItem("skaap_community_location");
+      let city = "Unknown", state = "";
+      if (savedLoc) {
+        const parsed = JSON.parse(savedLoc);
+        city = parsed.city || "Unknown";
+        state = parsed.state || "";
+      }
+      await supabase.from("community_scans").insert({
+        barcode,
+        product_name: productName,
+        brand: brand || null,
+        score: score || null,
+        image_url: imageUrl || null,
+        city,
+        state,
+        saved: false, // default; updated when user saves
+        additives_flagged: (additives || []).slice(0, 20),
+      });
+    } catch {}
+  }, [user]);
+
   // ─── Camera ───
   const stopCamera = useCallback(() => {
     try { readerRef.current?.reset?.(); } catch {}
