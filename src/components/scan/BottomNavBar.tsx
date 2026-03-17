@@ -1,4 +1,4 @@
-import { Clock, BarChart3, Scan, Trophy, Search } from "lucide-react";
+import { Clock, BarChart3, Scan, Trophy, Search, Globe } from "lucide-react";
 
 interface BottomNavBarProps {
   active: string;
