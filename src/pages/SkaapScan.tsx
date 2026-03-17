@@ -622,6 +622,8 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
+      // Write anonymous community scan data
+      writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
