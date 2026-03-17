@@ -1565,6 +1565,23 @@ const SkaapScan = () => {
                       </div>
                     );
                   })()}
+
+                  {/* Chip 4: Protein */}
+                  {(() => {
+                    const proteinVal = n?.protein100g;
+                    const hasProtein = proteinVal != null;
+                    const isHigh = hasProtein && proteinVal >= 10;
+                    const isMed = hasProtein && proteinVal >= 5 && proteinVal < 10;
+                    const chipBg = !hasProtein ? "#F9FAFB" : isHigh ? "#F0FDF4" : isMed ? "#FFFBEB" : "#FFF1F2";
+                    const chipBorder = !hasProtein ? "#E5E7EB" : isHigh ? "#BBF7D0" : isMed ? "#FDE68A" : "#FECDD3";
+                    const chipColor = !hasProtein ? "#9CA3AF" : isHigh ? "#15803D" : isMed ? "#D97706" : "#C41E3A";
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasProtein ? `${Math.round(proteinVal)}g` : "?"}</span>
+                        <span style={{ fontSize: 11, color: "#6B7280" }}>protein</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* DIETARY CHIPS ROW */}
