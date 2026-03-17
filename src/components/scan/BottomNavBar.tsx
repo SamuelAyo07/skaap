@@ -8,7 +8,7 @@ interface BottomNavBarProps {
 export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
   const items = [
     { icon: <Clock size={22} />, label: "History", key: "history" },
-    { icon: <BarChart3 size={22} />, label: "Recs", key: "kitchen" },
+    { icon: <Globe size={22} />, label: "Community", key: "community" },
     { icon: <Scan size={28} />, label: "Scan", key: "scan", center: true },
     { icon: <Trophy size={22} />, label: "Top", key: "top" },
     { icon: <Search size={22} />, label: "Search", key: "search" },
