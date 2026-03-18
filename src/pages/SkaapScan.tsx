@@ -707,8 +707,23 @@ const SkaapScan = () => {
     setAiSummary(null);
     setDietaryTags(null);
     setAiRecommendations(null);
+    setFeedbackGiven(false);
     setScreen("scanning");
     setTimeout(() => startCamera(), 100);
+  };
+
+  const handleFeedback = (emoji: string) => {
+    setFeedbackGiven(true);
+    const count = parseInt(localStorage.getItem(FEEDBACK_KEY) || "0", 10) + 1;
+    localStorage.setItem(FEEDBACK_KEY, String(count));
+    // Log to Supabase anonymously
+    supabase.from("analytics_events").insert({
+      event_type: "scan_feedback",
+      session_id: localStorage.getItem("skaap_session_id") || "anon",
+      event_data: { emoji, barcode: currentBarcode, score: scoreBreakdown?.total },
+      page: "/scan",
+    }).then(() => {});
+    toast.success("Thanks for the feedback! 🙏", { duration: 1500 });
   };
 
   const goToScan = () => {
