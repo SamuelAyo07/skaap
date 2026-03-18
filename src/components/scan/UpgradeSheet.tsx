@@ -7,6 +7,7 @@ import { AuthSheet } from "./AuthSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Slider } from "@/components/ui/slider";
+import skaapLogo from "@/assets/skaap-logo.png";
 
 const FEATURES = [
   { icon: Search, title: "Search", desc: "Search any product by name, without having to scan it." },
