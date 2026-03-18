@@ -100,35 +100,30 @@ export function UpgradeSheet() {
               <div style={{ width: 36, height: 4, borderRadius: 99, background: "#E5E7EB" }} />
             </div>
 
-            <div className="px-6 pt-10 pb-8">
+            <div className="px-5 pt-8 pb-6">
               {/* Header */}
-              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#C41E3A" }}>
-                MEMBER ACCESS
-              </p>
-              <h2 className="font-extrabold text-[26px] leading-tight mt-2" style={{ color: "#1A1A1A" }}>
-                Become a member,{"\n"}support SKAAP
+              <div className="flex items-center gap-3">
+                <img src={skaapLogo} alt="SKAAP" className="h-7 object-contain" />
+                {upgradeFeature && (
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
+                    ✦ {upgradeFeature}
+                  </span>
+                )}
+              </div>
+              <h2 className="font-extrabold text-[22px] leading-tight mt-3" style={{ color: "#1A1A1A" }}>
+                Become a member
               </h2>
 
-              {upgradeFeature && (
-                <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#FEF2F2" }}>
-                  <span className="text-[12px] font-semibold" style={{ color: "#C41E3A" }}>
-                    ✦ {upgradeFeature} requires Plus
-                  </span>
-                </div>
-              )}
-
-              {/* Features */}
-              <div className="mt-8 space-y-5">
+              {/* Features — compact grid */}
+              <div className="mt-4 grid grid-cols-2 gap-2">
                 {FEATURES.map((f, i) => {
                   const Icon = f.icon;
                   return (
-                    <div key={i} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                        <Icon size={22} color="#1A1A1A" strokeWidth={1.5} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-[15px]" style={{ color: "#1A1A1A" }}>{f.title}</h3>
-                        <p className="text-[13px] mt-0.5 leading-relaxed" style={{ color: "#6B7280" }}>{f.desc}</p>
+                    <div key={i} className="flex items-center gap-2.5 p-2.5 rounded-xl" style={{ background: "#F9FAFB" }}>
+                      <Icon size={16} color="#1A1A1A" strokeWidth={1.5} className="flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-[12px] truncate" style={{ color: "#1A1A1A" }}>{f.title}</p>
+                        <p className="text-[10px] truncate" style={{ color: "#9CA3AF" }}>{f.desc}</p>
                       </div>
                     </div>
                   );
