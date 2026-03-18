@@ -10,12 +10,10 @@ import { Slider } from "@/components/ui/slider";
 import skaapLogo from "@/assets/skaap-logo.png";
 
 const FEATURES = [
-  { icon: Search, title: "Search", desc: "Search any product by name, without having to scan it." },
-  { icon: WifiOff, title: "Offline mode", desc: "Scan your items even when your phone has no signal." },
-  { icon: SlidersHorizontal, title: "Ingredient alerts", desc: "Get warned about palm oil, gluten, lactose, and more." },
-  { icon: BarChart3, title: "Weekly Kitchen Report", desc: "See how your eating habits change week over week." },
-  { icon: Flame, title: "Streak tracking", desc: "Build healthy scanning streaks and stay motivated." },
-  { icon: Share2, title: "Share cards", desc: "Share beautiful product cards with friends and family." },
+  { icon: Search, title: "Search", desc: "Search any product by name." },
+  { icon: SlidersHorizontal, title: "Ingredient alerts", desc: "Get warned about additives." },
+  { icon: BarChart3, title: "Kitchen Report", desc: "Weekly eating insights." },
+  { icon: Flame, title: "Streaks & Sharing", desc: "Track habits, share cards." },
 ];
 
 const PRICE_TIERS = [
