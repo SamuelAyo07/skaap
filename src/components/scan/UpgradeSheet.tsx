@@ -7,14 +7,13 @@ import { AuthSheet } from "./AuthSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Slider } from "@/components/ui/slider";
+import skaapLogo from "@/assets/skaap-logo.png";
 
 const FEATURES = [
-  { icon: Search, title: "Search", desc: "Search any product by name, without having to scan it." },
-  { icon: WifiOff, title: "Offline mode", desc: "Scan your items even when your phone has no signal." },
-  { icon: SlidersHorizontal, title: "Ingredient alerts", desc: "Get warned about palm oil, gluten, lactose, and more." },
-  { icon: BarChart3, title: "Weekly Kitchen Report", desc: "See how your eating habits change week over week." },
-  { icon: Flame, title: "Streak tracking", desc: "Build healthy scanning streaks and stay motivated." },
-  { icon: Share2, title: "Share cards", desc: "Share beautiful product cards with friends and family." },
+  { icon: Search, title: "Search", desc: "Search any product by name." },
+  { icon: SlidersHorizontal, title: "Ingredient alerts", desc: "Get warned about additives." },
+  { icon: BarChart3, title: "Kitchen Report", desc: "Weekly eating insights." },
+  { icon: Flame, title: "Streaks & Sharing", desc: "Track habits, share cards." },
 ];
 
 const PRICE_TIERS = [
@@ -101,35 +100,30 @@ export function UpgradeSheet() {
               <div style={{ width: 36, height: 4, borderRadius: 99, background: "#E5E7EB" }} />
             </div>
 
-            <div className="px-6 pt-10 pb-8">
+            <div className="px-5 pt-8 pb-6">
               {/* Header */}
-              <p className="text-[12px] font-bold tracking-[0.15em] uppercase" style={{ color: "#C41E3A" }}>
-                MEMBER ACCESS
-              </p>
-              <h2 className="font-extrabold text-[26px] leading-tight mt-2" style={{ color: "#1A1A1A" }}>
-                Become a member,{"\n"}support SKAAP
+              <div className="flex items-center gap-3">
+                <img src={skaapLogo} alt="SKAAP" className="h-7 object-contain" />
+                {upgradeFeature && (
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
+                    ✦ {upgradeFeature}
+                  </span>
+                )}
+              </div>
+              <h2 className="font-extrabold text-[22px] leading-tight mt-3" style={{ color: "#1A1A1A" }}>
+                Become a member
               </h2>
 
-              {upgradeFeature && (
-                <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: "#FEF2F2" }}>
-                  <span className="text-[12px] font-semibold" style={{ color: "#C41E3A" }}>
-                    ✦ {upgradeFeature} requires Plus
-                  </span>
-                </div>
-              )}
-
-              {/* Features */}
-              <div className="mt-8 space-y-5">
+              {/* Features — compact grid */}
+              <div className="mt-4 grid grid-cols-2 gap-2">
                 {FEATURES.map((f, i) => {
                   const Icon = f.icon;
                   return (
-                    <div key={i} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                        <Icon size={22} color="#1A1A1A" strokeWidth={1.5} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-[15px]" style={{ color: "#1A1A1A" }}>{f.title}</h3>
-                        <p className="text-[13px] mt-0.5 leading-relaxed" style={{ color: "#6B7280" }}>{f.desc}</p>
+                    <div key={i} className="flex items-center gap-2.5 p-2.5 rounded-xl" style={{ background: "#F9FAFB" }}>
+                      <Icon size={16} color="#1A1A1A" strokeWidth={1.5} className="flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-[12px] truncate" style={{ color: "#1A1A1A" }}>{f.title}</p>
+                        <p className="text-[10px] truncate" style={{ color: "#9CA3AF" }}>{f.desc}</p>
                       </div>
                     </div>
                   );
@@ -137,10 +131,10 @@ export function UpgradeSheet() {
               </div>
 
               {/* Billing toggle */}
-              <div className="mt-10 flex items-center gap-2 p-1 rounded-2xl" style={{ background: "#F3F4F6" }}>
+              <div className="mt-5 flex items-center gap-1.5 p-1 rounded-xl" style={{ background: "#F3F4F6" }}>
                 <button
                   onClick={() => setBillingMode("annual")}
-                  className="flex-1 text-center py-2.5 rounded-xl text-[13px] font-bold transition-all"
+                  className="flex-1 text-center py-2 rounded-lg text-[12px] font-bold transition-all"
                   style={{
                     background: billingMode === "annual" ? "#FFFFFF" : "transparent",
                     color: billingMode === "annual" ? "#1A1A1A" : "#9CA3AF",
@@ -151,7 +145,7 @@ export function UpgradeSheet() {
                 </button>
                 <button
                   onClick={() => setBillingMode("monthly")}
-                  className="flex-1 text-center py-2.5 rounded-xl text-[13px] font-bold transition-all"
+                  className="flex-1 text-center py-2 rounded-lg text-[12px] font-bold transition-all"
                   style={{
                     background: billingMode === "monthly" ? "#FFFFFF" : "transparent",
                     color: billingMode === "monthly" ? "#1A1A1A" : "#9CA3AF",
@@ -162,62 +156,49 @@ export function UpgradeSheet() {
                 </button>
               </div>
 
-              {/* Pay what you want (annual only) */}
-              {billingMode === "annual" ? (
-                <div className="mt-6">
-                  <h3 className="font-extrabold text-[22px]" style={{ color: "#1A1A1A" }}>
-                    Pay what you want
-                  </h3>
-                  <p className="text-[11px] font-bold tracking-[0.1em] uppercase mt-1" style={{ color: "#9CA3AF" }}>
-                    NO COMMITMENT
-                  </p>
+              {/* Pricing section */}
+              <div className="mt-4 flex flex-col items-center">
+                <img src={skaapLogo} alt="SKAAP" className="h-10 object-contain" />
 
-                  <div className="flex flex-col items-center mt-6">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                      <span className="text-[40px]">🐑</span>
-                    </div>
-
-                    <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
+                {billingMode === "annual" ? (
+                  <>
+                    <p className="font-extrabold text-[26px] mt-3" style={{ color: "#C41E3A" }}>
                       {tier.amount}
                     </p>
-                    <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-                      Your participation helps the project to grow.
+                    <p className="text-[12px]" style={{ color: "#6B7280" }}>
+                      Pay what you want · No commitment
                     </p>
-                  </div>
-
-                  <div className="mt-6 px-2">
-                    <Slider
-                      value={sliderVal}
-                      onValueChange={setSliderVal}
-                      max={100}
-                      step={1}
-                      className="w-full [&_[data-radix-slider-track]]:h-[6px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#C41E3A] [&_[data-radix-slider-thumb]]:w-7 [&_[data-radix-slider-thumb]]:h-7 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#C41E3A] [&_[data-radix-slider-thumb]]:shadow-md"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-6 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                    <span className="text-[40px]">🐑</span>
-                  </div>
-                  <p className="font-extrabold text-[28px] mt-4" style={{ color: "#C41E3A" }}>
-                    $1.99/month
-                  </p>
-                  <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-                    Cancel anytime. No commitment.
-                  </p>
-                </div>
-              )}
+                    <div className="mt-3 w-full px-1">
+                      <Slider
+                        value={sliderVal}
+                        onValueChange={setSliderVal}
+                        max={100}
+                        step={1}
+                        className="w-full [&_[data-radix-slider-track]]:h-[5px] [&_[data-radix-slider-track]]:bg-[#E5E7EB] [&_[data-radix-slider-range]]:bg-[#C41E3A] [&_[data-radix-slider-thumb]]:w-6 [&_[data-radix-slider-thumb]]:h-6 [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-2 [&_[data-radix-slider-thumb]]:border-[#C41E3A] [&_[data-radix-slider-thumb]]:shadow-md"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-extrabold text-[26px] mt-3" style={{ color: "#C41E3A" }}>
+                      $1.99/month
+                    </p>
+                    <p className="text-[12px]" style={{ color: "#6B7280" }}>
+                      Cancel anytime
+                    </p>
+                  </>
+                )}
+              </div>
 
               {/* CTA */}
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleCTA}
                 disabled={loading}
-                className="w-full mt-8 font-bold text-[17px] text-white flex items-center justify-center disabled:opacity-60"
+                className="w-full mt-5 font-bold text-[16px] text-white flex items-center justify-center disabled:opacity-60"
                 style={{
-                  height: 56,
-                  borderRadius: 16,
+                  height: 52,
+                  borderRadius: 14,
                   background: "linear-gradient(135deg, #C41E3A, #9E1830)",
                   boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
                 }}
@@ -225,7 +206,7 @@ export function UpgradeSheet() {
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full inline-block" />
+                      className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full inline-block" />
                     Starting checkout...
                   </span>
                 ) : (
@@ -233,21 +214,19 @@ export function UpgradeSheet() {
                 )}
               </motion.button>
 
-              {/* 7-day trial badge */}
-              <div className="flex justify-center mt-3">
-                <span className="text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: "#F0FDF4", color: "#15803D" }}>
+              {/* 7-day trial + fine print */}
+              <div className="flex justify-center mt-2.5">
+                <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#F0FDF4", color: "#15803D" }}>
                   ✓ 7-day free trial included
                 </span>
               </div>
-
-              {/* Fine print */}
-              <p className="text-center mt-4 text-[11px] leading-relaxed" style={{ color: "#9CA3AF" }}>
-                Payment will be processed securely via Stripe. Your subscription renews {billingMode === "annual" ? "annually" : "monthly"} at the same price, unless canceled 24 hours before renewal.
+              <p className="text-center mt-2 text-[10px] leading-relaxed" style={{ color: "#9CA3AF" }}>
+                Secure payment via Stripe. Renews {billingMode === "annual" ? "annually" : "monthly"}, cancel anytime.
               </p>
-              <div className="flex items-center justify-center gap-3 mt-3 pb-2">
-                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Privacy policy</button>
+              <div className="flex items-center justify-center gap-3 mt-1.5 pb-1">
+                <button className="text-[11px] font-medium" style={{ color: "#C41E3A" }}>Privacy</button>
                 <span style={{ color: "#D1D5DB" }}>·</span>
-                <button className="text-[13px] font-medium" style={{ color: "#C41E3A" }}>Restore purchase</button>
+                <button className="text-[11px] font-medium" style={{ color: "#C41E3A" }}>Restore</button>
               </div>
             </div>
           </motion.div>
