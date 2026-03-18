@@ -425,6 +425,10 @@ const SkaapScan = () => {
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveExplanationLoading, setAdditiveExplanationLoading] = useState(false);
 
+  // Feedback state
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
+  const FEEDBACK_KEY = "skaap_feedback_count";
+
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
