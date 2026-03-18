@@ -1967,6 +1967,26 @@ const SkaapScan = () => {
             )}
           </div>
 
+          {/* FEEDBACK ROW */}
+          {!feedbackGiven && productInfo && !loading && (
+            <div className="flex-shrink-0 flex items-center justify-center gap-3 py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
+              <span className="text-[11px] font-medium" style={{ color: "#9CA3AF" }}>How was this?</span>
+              {["😍", "👍", "😐", "👎"].map(emoji => (
+                <motion.button key={emoji} whileTap={{ scale: 0.85 }}
+                  onClick={() => handleFeedback(emoji)}
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-muted/60 transition-colors"
+                >
+                  {emoji}
+                </motion.button>
+              ))}
+            </div>
+          )}
+          {feedbackGiven && (
+            <div className="flex-shrink-0 flex items-center justify-center py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
+              <span className="text-[11px] font-semibold" style={{ color: "#15803D" }}>Thanks for the feedback! 🙏</span>
+            </div>
+          )}
+
           {/* BOTTOM BUTTONS — FIXED */}
           <div
             className="flex-shrink-0 flex items-center gap-3 px-5"
@@ -1981,7 +2001,7 @@ const SkaapScan = () => {
               className="flex-1 font-semibold flex items-center justify-center"
               style={{
                 color: "#374151", background: "#F9FAFB", border: "1px solid #E5E7EB",
-                height: 52, borderRadius: 14, fontSize: 15,
+                height: 48, borderRadius: 14, fontSize: 14,
               }}>
               Scan Again
             </motion.button>
@@ -1990,7 +2010,7 @@ const SkaapScan = () => {
               style={{
                 background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#F9FAFB" : "#E8314A",
                 color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                height: 52, borderRadius: 14, fontSize: 15,
+                height: 48, borderRadius: 14, fontSize: 14,
                 border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
               }}>
               {savedState === "saved" ? (
