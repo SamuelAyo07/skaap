@@ -25,10 +25,16 @@ import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShare
 import { generateShareCard as generateCard, type ShareCardType, type ShareProductData } from "@/lib/shareCardGenerator";
 import skaapIcon from "@/assets/skaap-icon.png";
 import {
-  calculateSkaapScore, getScoreColor, getScoreVerdict,
+  calculateSkaapScore, getScoreColor, getScoreVerdict, getVerdictBanner,
   getAdditiveRisk, getAdditiveRiskColor, getAdditiveRiskLabel,
   getAdditiveDescription, SkaapScoreBreakdown,
 } from "@/lib/skaapScore";
+import {
+  fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
+  fetchRecommendations, DIETARY_LABELS, AIRecommendation,
+} from "@/lib/aiProductInsights";
+import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
+import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 import {
   fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
