@@ -429,9 +429,16 @@ const SkaapScan = () => {
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveExplanationLoading, setAdditiveExplanationLoading] = useState(false);
 
+  // OFF-based healthier alternatives
+  const [offRecs, setOffRecs] = useState<OFFRecommendation[]>([]);
+  const [offRecsLoading, setOffRecsLoading] = useState(false);
+
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const FEEDBACK_KEY = "skaap_feedback_count";
+
+  // Heart particle animation
+  const [heartParticle, setHeartParticle] = useState(false);
 
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
