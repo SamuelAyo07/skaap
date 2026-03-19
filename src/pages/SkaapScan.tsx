@@ -337,15 +337,38 @@ function formatTag(tag: string) {
   return tag.replace(/^en:/, "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// ─── Score Ring SVG Component ───
+// ─── Score Ring SVG Component with spring bounce ───
 function ScoreRing({ score, size = 120, showLabel = true }: { score: number; size?: number; showLabel?: boolean }) {
   const color = getScoreColor(score);
-  const strokeW = size <= 72 ? 4 : 6;
+  const strokeW = size <= 72 ? 4 : size >= 110 ? 10 : 6;
   const r = (size - strokeW * 2) / 2;
   const circumference = 2 * Math.PI * r;
-  const offset = circumference - (score / 100) * circumference;
+  // Overshoot by 5 points then settle
+  const overshootScore = Math.min(100, score + 5);
+  const overshootOffset = circumference - (overshootScore / 100) * circumference;
+  const finalOffset = circumference - (score / 100) * circumference;
   const reducedMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const fontSize = size <= 72 ? 28 : 40;
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    if (reducedMotion) { setDisplayScore(score); return; }
+    setDisplayScore(0);
+    const duration = 600;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Spring-like: overshoot then settle
+      const eased = progress < 0.7
+        ? (progress / 0.7) * (score + 5)
+        : score + 5 - ((progress - 0.7) / 0.3) * 5;
+      setDisplayScore(Math.round(Math.min(100, Math.max(0, eased))));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    const timer = setTimeout(() => requestAnimationFrame(animate), 300);
+    return () => clearTimeout(timer);
+  }, [score, reducedMotion]);
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
@@ -355,23 +378,25 @@ function ScoreRing({ score, size = 120, showLabel = true }: { score: number; siz
           cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={strokeW}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={reducedMotion ? offset : circumference}
-          style={reducedMotion ? {} : {
-            transition: "stroke-dashoffset 0.5s ease-out 0.3s",
-          }}
+          strokeDashoffset={reducedMotion ? finalOffset : circumference}
           ref={(el) => {
             if (el && !reducedMotion) {
               requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  el.style.strokeDashoffset = String(offset);
-                });
+                // First overshoot
+                el.style.transition = "stroke-dashoffset 0.4s ease-out 0.3s";
+                el.style.strokeDashoffset = String(overshootOffset);
+                // Then settle back
+                setTimeout(() => {
+                  el.style.transition = "stroke-dashoffset 0.2s ease-in-out";
+                  el.style.strokeDashoffset = String(finalOffset);
+                }, 700);
               });
             }
           }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-extrabold leading-none" style={{ fontSize, color }}>{score}</span>
+        <span className="font-extrabold leading-none" style={{ fontSize, color }}>{displayScore}</span>
         {showLabel && <span className="font-semibold uppercase tracking-wider mt-0.5" style={{ fontSize: 8, color: "#9CA3AF" }}>/ 100</span>}
       </div>
     </div>
