@@ -35,11 +35,8 @@ import {
 } from "@/lib/aiProductInsights";
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
-import {
-  fetchAISummary, fetchAdditiveExplanation, fetchDietaryClassification,
-  fetchRecommendations, DIETARY_LABELS, AIRecommendation,
-} from "@/lib/aiProductInsights";
-import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
+
+
 
 // ─── Types ───
 interface ScanHistoryItem {
