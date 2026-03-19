@@ -770,6 +770,9 @@ const SkaapScan = () => {
           additiveCount: productInfo.additivesTags?.length || 0, savedAt: Date.now(),
         });
         setBasket(updated);
+        // Heart particle animation
+        setHeartParticle(true);
+        setTimeout(() => setHeartParticle(false), 600);
         setSavedState("saved");
         setTimeout(() => setSavedState("idle"), 1500);
       }
