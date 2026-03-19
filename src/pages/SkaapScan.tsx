@@ -616,6 +616,9 @@ const SkaapScan = () => {
     setAiRecsLoading(false);
     setExpandedAdditive(null);
     setAdditiveExplanation(null);
+    setOffRecs([]);
+    setOffRecsLoading(false);
+    setHeartParticle(false);
 
     const slowTimer = setTimeout(() => setSlowLoad(true), 3000);
 
