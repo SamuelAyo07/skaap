@@ -501,6 +501,12 @@ const SkaapScan = () => {
       nutriScore: info.nutriScoreGrade,
       additiveCount: info.additivesTags?.length || 0,
     }).then(r => { setAiRecommendations(r); setAiRecsLoading(false); }).catch(() => setAiRecsLoading(false));
+
+    // OFF-based healthier alternatives (real products from same category)
+    setOffRecsLoading(true);
+    fetchHealthierAlternatives(info.categoriesTags, info.nutriScoreGrade, barcode)
+      .then(r => { setOffRecs(r); setOffRecsLoading(false); })
+      .catch(() => setOffRecsLoading(false));
   }, []);
 
   // ─── Write anonymous community scan data ───
