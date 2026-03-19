@@ -31,7 +31,12 @@ export interface ProductFullInfo {
   allergensTags?: string[];
   additivesTags?: string[];
   labelsTags?: string[];
-  usdaFallback?: boolean; // true when USDA data was used to fill gaps
+  usdaFallback?: boolean;
+  // New fields for Yuka-style result screen
+  ecoscoreGrade?: string;
+  ecoscoreScore?: number;
+  categoriesTags?: string[];
+  servingSize?: string;
 }
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
@@ -76,6 +81,10 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
       allergensTags: p.allergens_tags?.length ? p.allergens_tags : undefined,
       additivesTags: p.additives_tags?.length ? p.additives_tags : undefined,
       labelsTags: p.labels_tags?.length ? p.labels_tags : undefined,
+      ecoscoreGrade: p.ecoscore_grade || undefined,
+      ecoscoreScore: p.ecoscore_score != null ? Number(p.ecoscore_score) : undefined,
+      categoriesTags: p.categories_tags?.length ? p.categories_tags : undefined,
+      servingSize: p.serving_size || undefined,
     };
   } catch {
     return null;

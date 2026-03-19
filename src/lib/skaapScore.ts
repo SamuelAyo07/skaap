@@ -308,17 +308,24 @@ export function calculateSkaapScore(
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 75) return "#2D7D46";
-  if (score >= 50) return "#FFC107";
+  if (score >= 75) return "#22C55E";
+  if (score >= 50) return "#F59E0B";
   if (score >= 25) return "#FF6D00";
   return "#E8314A";
 }
 
 export function getScoreVerdict(score: number): string {
-  if (score >= 75) return "Great choice 🌿";
-  if (score >= 50) return "Decent — a few things to note";
-  if (score >= 25) return "Use with caution";
-  return "Poor nutritional quality";
+  if (score >= 75) return "Excellent";
+  if (score >= 50) return "Good";
+  if (score >= 25) return "Mediocre";
+  return "Poor";
+}
+
+export function getVerdictBanner(score: number): string {
+  if (score >= 75) return "This product has a positive health impact";
+  if (score >= 50) return "This product has a limited health impact";
+  if (score >= 25) return "This product has a moderate health impact";
+  return "This product has a significant health impact";
 }
 
 // ─── Pre-computed Nutella demo data ───

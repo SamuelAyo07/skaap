@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, Leaf, X, Check, Sparkles,
+  ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, ChevronRight, Leaf, X, Check, Sparkles,
   ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull, User,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +25,7 @@ import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShare
 import { generateShareCard as generateCard, type ShareCardType, type ShareProductData } from "@/lib/shareCardGenerator";
 import skaapIcon from "@/assets/skaap-icon.png";
 import {
-  calculateSkaapScore, getScoreColor, getScoreVerdict,
+  calculateSkaapScore, getScoreColor, getScoreVerdict, getVerdictBanner,
   getAdditiveRisk, getAdditiveRiskColor, getAdditiveRiskLabel,
   getAdditiveDescription, SkaapScoreBreakdown,
 } from "@/lib/skaapScore";
@@ -33,6 +34,9 @@ import {
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
+import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
+
+
 
 // ─── Types ───
 interface ScanHistoryItem {
@@ -333,15 +337,38 @@ function formatTag(tag: string) {
   return tag.replace(/^en:/, "").replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// ─── Score Ring SVG Component ───
+// ─── Score Ring SVG Component with spring bounce ───
 function ScoreRing({ score, size = 120, showLabel = true }: { score: number; size?: number; showLabel?: boolean }) {
   const color = getScoreColor(score);
-  const strokeW = size <= 72 ? 4 : 6;
+  const strokeW = size <= 72 ? 4 : size >= 110 ? 10 : 6;
   const r = (size - strokeW * 2) / 2;
   const circumference = 2 * Math.PI * r;
-  const offset = circumference - (score / 100) * circumference;
+  // Overshoot by 5 points then settle
+  const overshootScore = Math.min(100, score + 5);
+  const overshootOffset = circumference - (overshootScore / 100) * circumference;
+  const finalOffset = circumference - (score / 100) * circumference;
   const reducedMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const fontSize = size <= 72 ? 28 : 40;
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    if (reducedMotion) { setDisplayScore(score); return; }
+    setDisplayScore(0);
+    const duration = 600;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Spring-like: overshoot then settle
+      const eased = progress < 0.7
+        ? (progress / 0.7) * (score + 5)
+        : score + 5 - ((progress - 0.7) / 0.3) * 5;
+      setDisplayScore(Math.round(Math.min(100, Math.max(0, eased))));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    const timer = setTimeout(() => requestAnimationFrame(animate), 300);
+    return () => clearTimeout(timer);
+  }, [score, reducedMotion]);
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
@@ -351,23 +378,25 @@ function ScoreRing({ score, size = 120, showLabel = true }: { score: number; siz
           cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={strokeW}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={reducedMotion ? offset : circumference}
-          style={reducedMotion ? {} : {
-            transition: "stroke-dashoffset 0.5s ease-out 0.3s",
-          }}
+          strokeDashoffset={reducedMotion ? finalOffset : circumference}
           ref={(el) => {
             if (el && !reducedMotion) {
               requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  el.style.strokeDashoffset = String(offset);
-                });
+                // First overshoot
+                el.style.transition = "stroke-dashoffset 0.4s ease-out 0.3s";
+                el.style.strokeDashoffset = String(overshootOffset);
+                // Then settle back
+                setTimeout(() => {
+                  el.style.transition = "stroke-dashoffset 0.2s ease-in-out";
+                  el.style.strokeDashoffset = String(finalOffset);
+                }, 700);
               });
             }
           }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-extrabold leading-none" style={{ fontSize, color }}>{score}</span>
+        <span className="font-extrabold leading-none" style={{ fontSize, color }}>{displayScore}</span>
         {showLabel && <span className="font-semibold uppercase tracking-wider mt-0.5" style={{ fontSize: 8, color: "#9CA3AF" }}>/ 100</span>}
       </div>
     </div>
@@ -425,9 +454,16 @@ const SkaapScan = () => {
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveExplanationLoading, setAdditiveExplanationLoading] = useState(false);
 
+  // OFF-based healthier alternatives
+  const [offRecs, setOffRecs] = useState<OFFRecommendation[]>([]);
+  const [offRecsLoading, setOffRecsLoading] = useState(false);
+
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const FEEDBACK_KEY = "skaap_feedback_count";
+
+  // Heart particle animation
+  const [heartParticle, setHeartParticle] = useState(false);
 
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
@@ -490,6 +526,12 @@ const SkaapScan = () => {
       nutriScore: info.nutriScoreGrade,
       additiveCount: info.additivesTags?.length || 0,
     }).then(r => { setAiRecommendations(r); setAiRecsLoading(false); }).catch(() => setAiRecsLoading(false));
+
+    // OFF-based healthier alternatives (real products from same category)
+    setOffRecsLoading(true);
+    fetchHealthierAlternatives(info.categoriesTags, info.nutriScoreGrade, barcode)
+      .then(r => { setOffRecs(r); setOffRecsLoading(false); })
+      .catch(() => setOffRecsLoading(false));
   }, []);
 
   // ─── Write anonymous community scan data ───
@@ -599,6 +641,9 @@ const SkaapScan = () => {
     setAiRecsLoading(false);
     setExpandedAdditive(null);
     setAdditiveExplanation(null);
+    setOffRecs([]);
+    setOffRecsLoading(false);
+    setHeartParticle(false);
 
     const slowTimer = setTimeout(() => setSlowLoad(true), 3000);
 
@@ -750,6 +795,9 @@ const SkaapScan = () => {
           additiveCount: productInfo.additivesTags?.length || 0, savedAt: Date.now(),
         });
         setBasket(updated);
+        // Heart particle animation
+        setHeartParticle(true);
+        setTimeout(() => setHeartParticle(false), 600);
         setSavedState("saved");
         setTimeout(() => setSavedState("idle"), 1500);
       }
@@ -1124,49 +1172,81 @@ const SkaapScan = () => {
     const nl = productInfo?.nutrientLevels;
     const addCount = productInfo?.additivesTags?.length || 0;
 
-    const getNutrientVerdict = (label: string, val: number | undefined, level?: string) => {
-      if (level === "high") return label === "Protein" || label === "Fiber" ? "High amount" : `High ${label.toLowerCase()}`;
-      if (level === "moderate") return `Some ${label.toLowerCase()}`;
-      if (level === "low") return `Low ${label.toLowerCase()}`;
-      if (val == null) return "—";
-      return "";
+    // ─── Data quality indicator ───
+    const dataFieldsTotal = 6;
+    const dataFieldsFilled = n ? [n.energyKcal100g, n.fat100g, n.sugars100g, n.protein100g, n.fiber100g, n.salt100g].filter(v => v != null).length : 0;
+    const dataComplete = dataFieldsFilled >= dataFieldsTotal;
+
+    // ─── Positives & Negatives (Yuka-style) ───
+    interface NutrientRow {
+      label: string;
+      val: number | undefined;
+      unit: string;
+      icon: string;
+      isPositive: boolean;
+      level: "high" | "moderate" | "low" | undefined;
+      descriptor: string;
+      dotColor: string;
+    }
+
+    const buildPositives = (): NutrientRow[] => {
+      if (!n) return [];
+      const rows: NutrientRow[] = [];
+      if (n.fiber100g != null && n.fiber100g > 3)
+        rows.push({ label: "Fiber", val: n.fiber100g, unit: "g", icon: "🌾", isPositive: true, level: "high", descriptor: "Excellent source of fiber.", dotColor: "#22C55E" });
+      if (n.protein100g != null && n.protein100g > 5)
+        rows.push({ label: "Protein", val: n.protein100g, unit: "g", icon: "🥩", isPositive: true, level: "high", descriptor: "Good source of protein.", dotColor: "#22C55E" });
+      if (n.saturatedFat100g != null && n.saturatedFat100g < 1)
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: true, level: "low", descriptor: "Very low in saturated fat.", dotColor: "#22C55E" });
+      if (n.sugars100g != null && n.sugars100g < 5)
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: true, level: "low", descriptor: "Low in sugar. Great!", dotColor: "#22C55E" });
+      if (n.salt100g != null && n.salt100g < 0.3)
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: true, level: "low", descriptor: "Very low sodium content.", dotColor: "#22C55E" });
+      if (addCount === 0)
+        rows.push({ label: "No additives", val: undefined, unit: "", icon: "✅", isPositive: true, level: undefined, descriptor: "Clean ingredient list.", dotColor: "#22C55E" });
+      if (productInfo?.labelsTags?.some(l => l.toLowerCase().includes("organic")))
+        rows.push({ label: "Organic", val: undefined, unit: "", icon: "🌿", isPositive: true, level: undefined, descriptor: "Certified organic product.", dotColor: "#22C55E" });
+      return rows;
     };
 
-    const isPositiveNutrient = (label: string) => ["Protein", "Fiber"].includes(label);
-
-    const nutrientRows = n ? [
-      { label: "Calories", val: n.energyKcal100g, unit: "Cal", level: n.energyKcal100g != null ? (n.energyKcal100g > 300 ? "high" : n.energyKcal100g > 150 ? "moderate" : "low") : undefined, icon: "🔥" },
-      { label: "Fat", val: n.fat100g, unit: "g", level: nl?.fat, icon: "💧" },
-      { label: "Saturated fat", val: n.saturatedFat100g, unit: "g", level: nl?.saturatedFat, icon: "💧" },
-      { label: "Sugars", val: n.sugars100g, unit: "g", level: nl?.sugars, icon: "🍬" },
-      { label: "Salt", val: n.salt100g, unit: "g", level: nl?.salt, icon: "🧂" },
-      { label: "Protein", val: n.protein100g, unit: "g", level: n.protein100g != null ? (n.protein100g > 10 ? "high" : n.protein100g > 5 ? "moderate" : "low") : undefined, icon: "🥩" },
-      { label: "Fiber", val: n.fiber100g, unit: "g", level: n.fiber100g != null ? (n.fiber100g > 5 ? "high" : n.fiber100g > 2 ? "moderate" : "low") : undefined, icon: "🌾" },
-      { label: "Carbohydrates", val: n.carbs100g, unit: "g", level: n.carbs100g != null ? (n.carbs100g > 50 ? "high" : n.carbs100g > 25 ? "moderate" : "low") : undefined, icon: "🍞" },
-    ] : [];
-
-    const negativeRows = nutrientRows.filter(r => !isPositiveNutrient(r.label));
-    const positiveRows = nutrientRows.filter(r => isPositiveNutrient(r.label));
-
-    const getNutrientDotColor = (label: string, level?: string) => {
-      if (!level) return "#9CA3AF";
-      if (isPositiveNutrient(label)) {
-        return level === "high" ? "#2D7D46" : level === "moderate" ? "#2D7D46" : "#FF6D00";
-      }
-      return level === "high" ? "#C41E3A" : level === "moderate" ? "#FF6D00" : "#2D7D46";
+    const buildNegatives = (): NutrientRow[] => {
+      if (!n) return [];
+      const rows: NutrientRow[] = [];
+      if (n.energyKcal100g != null && n.energyKcal100g > 250)
+        rows.push({ label: "Calories", val: n.energyKcal100g, unit: "kcal", icon: "🔥", isPositive: false, level: "high", descriptor: "A bit too caloric.", dotColor: "#E8314A" });
+      if (n.saturatedFat100g != null && n.saturatedFat100g > 4)
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "High in saturated fat.", dotColor: "#E8314A" });
+      if (n.sugars100g != null && n.sugars100g > 15)
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "High in sugar.", dotColor: "#E8314A" });
+      else if (n.sugars100g != null && n.sugars100g >= 5 && n.sugars100g <= 15)
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Moderate sugar content.", dotColor: "#F59E0B" });
+      if (n.salt100g != null && n.salt100g > 0.6)
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: false, level: "high", descriptor: "High sodium content.", dotColor: "#E8314A" });
+      if (addCount > 0)
+        rows.push({ label: "Additives", val: addCount, unit: "", icon: "⚗️", isPositive: false, level: addCount > 3 ? "high" : "moderate", descriptor: `Contains ${addCount} additive${addCount > 1 ? "s" : ""}.`, dotColor: addCount > 3 ? "#E8314A" : "#F59E0B" });
+      return rows;
     };
 
-    const sheetHeight = sheetExpanded ? "96vh" : "80vh";
+    const positives = buildPositives();
+    const negatives = buildNegatives();
 
     const productName = productInfo?.productName || "";
     const displayName = productName.toUpperCase() === productName
       ? productName.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       : productName;
-    const nameSize = displayName.length > 28 ? 13 : 16;
+
+    // Eco-score chip colors
+    const ecoColors: Record<string, { bg: string; border: string; color: string }> = {
+      a: { bg: "#F0FDF4", border: "#BBF7D0", color: "#15803D" },
+      b: { bg: "#F0FDF4", border: "#BBF7D0", color: "#22C55E" },
+      c: { bg: "#FFFBEB", border: "#FDE68A", color: "#D97706" },
+      d: { bg: "#FFF1F2", border: "#FECDD3", color: "#E8314A" },
+      e: { bg: "#FFF1F2", border: "#FECDD3", color: "#B91C1C" },
+    };
 
     return (
-      <div className="fixed inset-0 z-50 flex flex-col justify-end" style={{ background: "rgba(0,0,0,0.2)" }}>
-        {/* Share preview modal with card type selector */}
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "#FFFFFF" }}>
+        {/* Share preview modal */}
         <AnimatePresence>
           {shareModalOpen && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -1184,14 +1264,10 @@ const SkaapScan = () => {
                   className="absolute top-3 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full glass-pill" aria-label="Close">
                   <X size={20} style={{ color: "rgba(255,255,255,0.6)" }} />
                 </button>
-
-                {/* Headline */}
                 <div className="text-center mt-5 px-5">
                   <p className="font-extrabold text-xl text-white">Share your results ✨</p>
                   <p className="text-[13px] mt-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>Pick a card, make it yours, post it</p>
                 </div>
-
-                {/* Card type selector chips */}
                 <div className="mt-5 px-5 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: "none" }}>
                   <div className="flex gap-[10px]" style={{ scrollSnapType: "x mandatory", minWidth: "max-content" }}>
                     {([
@@ -1203,104 +1279,58 @@ const SkaapScan = () => {
                     ] as const).map(chip => {
                       const isSelected = selectedCardType === chip.type;
                       return (
-                        <motion.button
-                          key={chip.type}
-                          whileTap={{ scale: 0.95 }}
+                        <motion.button key={chip.type} whileTap={{ scale: 0.95 }}
                           onClick={() => !chip.locked && handleCardTypeChange(chip.type)}
                           className={`flex flex-col items-center justify-center gap-1 flex-shrink-0 relative transition-all duration-200 ${isSelected ? "liquid-glass-chip-active" : "liquid-glass-chip"}`}
-                          style={{
-                            width: 120, height: 80, borderRadius: 18,
-                            scrollSnapAlign: "center",
-                            opacity: chip.locked ? 0.45 : 1,
-                          }}
-                        >
+                          style={{ width: 120, height: 80, borderRadius: 18, scrollSnapAlign: "center", opacity: chip.locked ? 0.45 : 1 }}>
                           <span style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.icon}</span>
                           <span className="font-semibold" style={{ fontSize: 11, color: isSelected ? "#fff" : "rgba(255,255,255,0.8)" }}>{chip.label}</span>
                           <span style={{ fontSize: 10, color: isSelected ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.4)" }}>{chip.sub}</span>
-                          {chip.locked && (
-                            <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.3)" }} />
-                          )}
+                          {chip.locked && <Lock size={12} className="absolute top-2 right-2" style={{ color: isSelected ? "#fff" : "rgba(255,255,255,0.3)" }} />}
                         </motion.button>
                       );
                     })}
                   </div>
-
-                  {/* Locked state messages */}
-                  {selectedCardType === "kitchen" && userStats.total_scans < 5 && (
-                    <div className="mt-3 text-center">
-                      <p className="text-[12px]" style={{ color: "#9CA3AF" }}>Scan {5 - userStats.total_scans} more product{5 - userStats.total_scans !== 1 ? "s" : ""} to unlock your Kitchen Report</p>
-                      <div className="mt-1.5 mx-auto rounded-full overflow-hidden" style={{ width: 120, height: 4, background: "rgba(255,255,255,0.1)" }}>
-                        <div className="h-full rounded-full" style={{ width: `${(userStats.total_scans / 5) * 100}%`, background: "#C41E3A" }} />
-                      </div>
-                    </div>
-                  )}
-                  {selectedCardType === "streak" && userStats.current_streak < 1 && (
-                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan a product scoring 70+ to start your streak</p>
-                  )}
-                  {selectedCardType === "swap" && (!aiRecommendations || aiRecommendations.length === 0) && (
-                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>
-                      {aiRecsLoading ? "Loading recommendations..." : "No swap found for this product"}
-                    </p>
-                  )}
-                  {selectedCardType === "worst" && userStats.total_scans < 3 && (
-                    <p className="mt-3 text-center text-[12px]" style={{ color: "#9CA3AF" }}>Scan 3 products to unlock your Worst Ever card</p>
-                  )}
                 </div>
-
-                {/* Card preview + buttons */}
                 <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 flex flex-col">
-                  {/* Preview area */}
                   <div className="flex-1 flex items-center justify-center mb-4">
                     {shareImageUrl ? (
                       <div className="liquid-glass-preview rounded-[20px] p-2">
-                        <img src={shareImageUrl} alt="Share card preview"
-                          className="max-w-full max-h-full object-contain rounded-2xl"
+                        <img src={shareImageUrl} alt="Share card preview" className="max-w-full max-h-full object-contain rounded-2xl"
                           style={{ maxHeight: "calc(92vh - 440px)", aspectRatio: "9/16", boxShadow: "0 12px 48px rgba(0,0,0,0.12)" }} />
                       </div>
                     ) : (
                       <div className="flex items-center justify-center liquid-glass-preview rounded-[20px]" style={{ width: "100%", aspectRatio: "9/16", maxHeight: "calc(92vh - 440px)" }}>
-                        <div className="space-y-2 w-3/4">
-                          <Skeleton className="h-4 w-full" />
-                          <Skeleton className="h-4 w-3/4" />
-                          <Skeleton className="h-40 w-40 rounded-full mx-auto" />
-                        </div>
+                        <div className="space-y-2 w-3/4"><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-3/4" /><Skeleton className="h-40 w-40 rounded-full mx-auto" /></div>
                       </div>
                     )}
                   </div>
-
-                  {/* Share buttons */}
                   <div className="grid grid-cols-2 gap-[10px]">
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("instagram")}
-                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
-                      style={{ background: "linear-gradient(135deg, rgba(232,49,74,0.9) 0%, rgba(200,30,60,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
-                      Instagram
-                    </motion.button>
-                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("tiktok")}
-                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
-                      style={{ background: "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(30,30,30,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.51V6.79a4.84 4.84 0 01-1-.1z"/></svg>
-                      TikTok
+                      className="flex items-center justify-center gap-2 font-semibold" style={{ height: 52, borderRadius: 14, fontSize: 14, background: "linear-gradient(135deg, #833AB4, #FD1D1D, #FCB045)", color: "#fff" }}>
+                      📸 Instagram
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("whatsapp")}
-                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-btn"
-                      style={{ background: "linear-gradient(135deg, rgba(37,211,102,0.9) 0%, rgba(30,180,85,0.95) 100%)", color: "#fff", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <MessageCircle size={16} />
-                      WhatsApp
+                      className="flex items-center justify-center gap-2 font-semibold" style={{ height: 52, borderRadius: 14, fontSize: 14, background: "#25D366", color: "#fff" }}>
+                      💬 WhatsApp
+                    </motion.button>
+                    <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("tiktok")}
+                      className="flex items-center justify-center gap-2 font-semibold" style={{ height: 52, borderRadius: 14, fontSize: 14, background: "#000", color: "#fff" }}>
+                      🎵 TikTok
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleShareAction("anywhere")}
-                      className="w-full font-bold flex items-center justify-center gap-2 liquid-glass-chip"
-                      style={{ color: "#C41E3A", height: 48, borderRadius: 14, fontSize: 13 }}>
-                      <Share2 size={16} style={{ color: "#C41E3A" }} />
-                      More
+                      className="flex items-center justify-center gap-2 font-semibold" style={{ height: 52, borderRadius: 14, fontSize: 14, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff" }}>
+                      📤 More
                     </motion.button>
                   </div>
-                  <p className="text-center mt-3" style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    Tag @useskaap — we repost the best ones 🔥
-                  </p>
-                  <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#C41E3A" }}>
-                    {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
-                  </button>
+                  {selectedCardType === "kitchen" && (
+                    <div className="mt-4 text-center">
+                      <p className="text-[12px]" style={{ color: "rgba(255,255,255,0.5)" }}>Kitchen Score: {userStats.kitchen_score}/100</p>
+                      <button onClick={handleChallengeCopy} className="text-center mt-2 font-semibold transition-colors" style={{ fontSize: 13, color: challengeCopied ? "#22C55E" : "#C41E3A" }}>
+                        {challengeCopied ? "Challenge link copied ✓" : "🏆 Think your kitchen can beat mine? →"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             </motion.div>
@@ -1315,48 +1345,32 @@ const SkaapScan = () => {
               <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
               <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 28, stiffness: 300 }}
-                className="relative liquid-glass w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh", background: "linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.55) 100%)", borderTop: "1px solid rgba(255,255,255,0.6)" }}
+                className="relative w-full rounded-t-[20px] z-10" style={{ maxHeight: "60vh", background: "#FFFFFF" }}
                 onClick={e => e.stopPropagation()}>
-                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full" style={{ background: "rgba(27,42,74,0.15)" }} /></div>
+                <div className="flex justify-center pt-3"><div className="w-10 h-1 rounded-full bg-gray-200" /></div>
                 <button onClick={() => setShowScoreModal(false)} className="absolute top-3 right-4" aria-label="Close">
-                  <X size={24} style={{ color: "#1B2A4A" }} />
+                  <X size={24} style={{ color: "#111827" }} />
                 </button>
                 <div className="px-5 pb-6 pt-4 overflow-y-auto" style={{ maxHeight: "calc(60vh - 32px)" }}>
-                  <h3 className="font-extrabold text-xl mb-5" style={{ color: "#1B2A4A" }}>How we scored this</h3>
-                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Nutritional Quality</span>
-                      <span className="font-semibold text-sm" style={{ color: nutriColors[scoreBreakdown.nutriScoreGrade?.toLowerCase() || ""]?.bg || "#6B7280" }}>
-                        {scoreBreakdown.nutritionContribution} / 60 pts
-                      </span>
+                  <h3 className="font-extrabold text-xl mb-5" style={{ color: "#111827" }}>How we scored this</h3>
+                  {[
+                    { label: "Nutritional Quality", val: `${scoreBreakdown.nutritionContribution} / 60 pts`, sub: `Based on Nutri-Score ${scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"}`, color: nutriColors[scoreBreakdown.nutriScoreGrade?.toLowerCase() || ""]?.bg || "#6B7280" },
+                    { label: "Additives", val: `${scoreBreakdown.additiveContribution} / 30 pts`, sub: `${scoreBreakdown.additiveCount} additives · ${scoreBreakdown.worstAdditiveRisk} risk`, color: getAdditiveRiskColor(scoreBreakdown.worstAdditiveRisk) },
+                    { label: "Organic", val: `${scoreBreakdown.organicContribution} / 10 pts`, sub: scoreBreakdown.isOrganic ? "Organic certified" : "No organic certification", color: scoreBreakdown.isOrganic ? "#22C55E" : "#9CA3AF" },
+                  ].map((item, i) => (
+                    <div key={i} className="py-4 px-4 rounded-xl mb-2" style={{ background: "#F9FAFB" }}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-sm" style={{ color: "#111827" }}>{item.label}</span>
+                        <span className="font-semibold text-sm" style={{ color: item.color }}>{item.val}</span>
+                      </div>
+                      <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>{item.sub}</p>
                     </div>
-                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>Based on Nutri-Score {scoreBreakdown.nutriScoreGrade?.toUpperCase() || "N/A"}</p>
-                  </div>
-                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Additives</span>
-                      <span className="font-semibold text-sm" style={{ color: getAdditiveRiskColor(scoreBreakdown.worstAdditiveRisk) }}>
-                        {scoreBreakdown.additiveContribution} / 30 pts
-                      </span>
-                    </div>
-                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>{scoreBreakdown.additiveCount} additives · {scoreBreakdown.worstAdditiveRisk} risk</p>
-                    {scoreBreakdown.hasHighRiskAdditive && (
-                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "rgba(254,243,199,0.7)", color: "#92400E", backdropFilter: "blur(8px)" }}>
-                        ⚠ Score capped at 49
-                      </span>
-                    )}
-                  </div>
-                  <div className="py-4 liquid-glass-chip rounded-xl px-4 mb-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-sm" style={{ color: "#1B2A4A" }}>Organic</span>
-                      <span className="font-semibold text-sm" style={{ color: scoreBreakdown.isOrganic ? "#2D7D46" : "#9CA3AF" }}>
-                        {scoreBreakdown.organicContribution} / 10 pts
-                      </span>
-                    </div>
-                    <p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>
-                      {scoreBreakdown.isOrganic ? "Organic certified" : "No organic certification"}
-                    </p>
-                  </div>
+                  ))}
+                  {scoreBreakdown.hasHighRiskAdditive && (
+                    <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1 rounded-md" style={{ background: "#FEF3C7", color: "#92400E" }}>
+                      ⚠ Score capped at 49 due to high-risk additive
+                    </span>
+                  )}
                   <p className="text-[11px] text-center mt-4" style={{ color: "#9CA3AF" }}>
                     Based on Nutri-Score, EFSA research, and IARC guidelines.
                   </p>
@@ -1366,668 +1380,481 @@ const SkaapScan = () => {
           )}
         </AnimatePresence>
 
-        {/* Compact bottom sheet */}
-        <motion.div
-          initial={{ y: "100%" }}
-          animate={{ y: 0 }}
-          transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="flex flex-col relative"
-          style={{
-            height: sheetHeight,
-            maxHeight: "96vh",
-            background: "#FFFFFF",
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-            boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
-            transition: "height 0.3s ease-out",
-          }}
-        >
-          {/* Drag handle */}
-          <button
-            className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing w-full"
-            onClick={() => setSheetExpanded(prev => !prev)}
-            aria-label={sheetExpanded ? "Collapse sheet" : "Expand sheet"}
-          >
-            <div style={{ width: 40, height: 4, borderRadius: 2, background: "#E5E7EB" }} />
-          </button>
-
-          {/* Scrollable content area */}
-          <div ref={sheetContentRef} className="flex-1 overflow-y-auto">
-            {/* ── SKELETON LOADER ── */}
-            {loading && (
-              <div className="px-5">
-                {/* Product header skeleton */}
-                <div className="flex items-center gap-3 mt-[14px]" style={{ height: 56 }}>
-                  <Skeleton className="w-[44px] h-[44px] rounded-[10px] flex-shrink-0" />
-                  <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                  <Skeleton className="w-[44px] h-[44px] rounded-full flex-shrink-0" />
+        {/* ─── SCROLLABLE RESULT CONTENT ─── */}
+        <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 100 }}>
+          {/* SKELETON LOADER */}
+          {loading && (
+            <div className="px-5 pt-6">
+              <div className="flex items-center gap-3" style={{ height: 80 }}>
+                <Skeleton className="w-[80px] h-[80px] rounded-[16px] flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
                 </div>
-                {/* Divider */}
-                <div className="mt-[14px]" style={{ height: 1, background: "#F3F4F6" }} />
-                {/* Score row skeleton */}
-                <div className="flex items-center gap-4 mt-3" style={{ height: 80 }}>
-                  <Skeleton className="w-[72px] h-[72px] rounded-full flex-shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-3/4" />
-                  </div>
-                </div>
-                {/* Chips skeleton */}
-                <div className="flex gap-2 mt-[10px]" style={{ height: 34 }}>
-                  <Skeleton className="h-7 w-24 rounded-full" />
-                  <Skeleton className="h-7 w-24 rounded-full" />
-                  <Skeleton className="h-7 w-20 rounded-full" />
-                </div>
-                {/* Accordion rows skeleton */}
-                {[1,2,3].map(i => (
-                  <Skeleton key={i} className="h-[44px] w-full rounded-lg mt-1" />
-                ))}
-                {slowLoad && <p className="text-center text-sm mt-3" style={{ color: "#6B7280" }}>Taking longer than usual...</p>}
               </div>
-            )}
-
-            {/* ── NOT FOUND ── */}
-            {notFound && !loading && (
-              <div className="py-12 text-center px-5">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#F7F7F7" }}>
-                  <Barcode size={24} style={{ color: "#9CA3AF" }} />
-                </div>
-                <h3 className="font-semibold text-base" style={{ color: "#1B2A4A" }}>Product not found</h3>
-                <p className="text-sm mt-2 max-w-[260px] mx-auto" style={{ color: "#6B7280" }}>This product may not be in our database yet.</p>
-                <button onClick={() => {
-                  const code = prompt("Enter barcode manually:");
-                  if (code?.trim()) handleBarcodeDetected(code.trim());
-                }} className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#C41E3A", color: "#C41E3A" }}>
-                  Try Manual Search
-                </button>
+              <div className="flex justify-center mt-6">
+                <Skeleton className="w-[110px] h-[110px] rounded-full" />
               </div>
-            )}
+              <Skeleton className="h-9 w-full rounded-full mt-4" />
+              <div className="mt-6 space-y-3">
+                {[1,2,3].map(i => <Skeleton key={i} className="h-[52px] w-full rounded-xl" />)}
+              </div>
+              {slowLoad && <p className="text-center text-sm mt-4" style={{ color: "#6B7280" }}>Taking longer than usual...</p>}
+            </div>
+          )}
 
-            {/* ── PRODUCT RESULT ── */}
-            {productInfo && !loading && (
-              <>
-                {/* SECTION A — PRODUCT HEADER */}
-                <div className="flex items-center gap-3 px-5" style={{ marginTop: 16 }}>
-                  {/* Product image 56x56 */}
-                  <div className="flex-shrink-0 overflow-hidden" style={{ width: 56, height: 56, borderRadius: 12, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                    {productInfo.imageSmallUrl || productInfo.imageUrl ? (
-                      <img
-                        src={productInfo.imageSmallUrl || productInfo.imageUrl}
-                        alt={productInfo.productName}
-                        width={56} height={56}
-                        className="w-full h-full object-contain"
-                        loading="eager"
-                        // @ts-ignore
-                        fetchpriority="high"
-                        onError={e => {
-                          const t = e.target as HTMLImageElement;
-                          t.style.display = "none";
-                          t.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="21" x2="17" y2="3"/></svg></div>';
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Barcode size={20} style={{ color: "#9CA3AF" }} />
-                      </div>
-                    )}
-                  </div>
+          {/* NOT FOUND */}
+          {notFound && !loading && (
+            <div className="py-16 text-center px-5">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#F3F4F6" }}>
+                <Barcode size={28} style={{ color: "#9CA3AF" }} />
+              </div>
+              <h3 className="font-bold text-lg" style={{ color: "#111827" }}>Product not found</h3>
+              <p className="text-sm mt-2 max-w-[260px] mx-auto" style={{ color: "#6B7280" }}>This product may not be in our database yet.</p>
+              <button onClick={() => { const code = prompt("Enter barcode manually:"); if (code?.trim()) handleBarcodeDetected(code.trim()); }}
+                className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#E8314A", color: "#E8314A" }}>
+                Try Manual Search
+              </button>
+            </div>
+          )}
 
-                  {/* Name + brand */}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold leading-tight" style={{ fontSize: nameSize, color: "#1A1A1A", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {displayName}
-                    </p>
-                    <p className="text-[13px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
-                      {[productInfo.brand, productInfo.quantity].filter(Boolean).join(" · ")}
-                    </p>
-                  </div>
+          {/* ─── PRODUCT RESULT ─── */}
+          {productInfo && !loading && (
+            <>
+              {/* HEADER — Product image + name + share */}
+              <div className="flex items-start gap-3 px-5 pt-5">
+                <div className="flex-shrink-0 overflow-hidden" style={{ width: 80, height: 80, borderRadius: 16, background: "#F3F4F6" }}>
+                  {productInfo.imageSmallUrl || productInfo.imageUrl ? (
+                    <img src={productInfo.imageSmallUrl || productInfo.imageUrl} alt={productInfo.productName}
+                      width={80} height={80} className="w-full h-full object-contain" loading="eager"
+                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center"><Barcode size={24} style={{ color: "#D1D5DB" }} /></div>
+                  )}
                 </div>
-
-                {/* SECTION B — SCORE HERO (CENTERED) */}
-                {scoreBreakdown && (
-                  <div className="flex flex-col items-center" style={{ marginTop: 20 }}>
-                    {/* Score ring 96px — tappable */}
-                    <button onClick={() => setShowScoreModal(true)}>
-                      <ScoreRing score={scoreBreakdown.total} size={96} />
-                    </button>
-
-                    {/* Verdict word */}
-                    <p className="font-bold text-center" style={{ fontSize: 20, color: getScoreColor(scoreBreakdown.total), marginTop: 12 }}>
-                      {scoreBreakdown.total >= 75 ? "Excellent" : scoreBreakdown.total >= 50 ? "Good" : scoreBreakdown.total >= 25 ? "Poor" : "Bad"}
-                    </p>
-
-                    {/* AI summary */}
-                    <div style={{ marginTop: 6, maxWidth: 300 }} className="text-center mx-auto">
-                      {aiSummaryLoading ? (
-                        <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
-                          <div className="h-3.5 rounded-full mx-auto" style={{
-                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                            backgroundSize: "200% 100%",
-                            animation: "shimmer 1.4s infinite",
-                            width: "100%",
-                          }} />
-                          <div className="h-3.5 rounded-full mx-auto" style={{
-                            background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)",
-                            backgroundSize: "200% 100%",
-                            animation: "shimmer 1.4s infinite",
-                            width: "75%",
-                          }} />
-                        </div>
-                      ) : aiSummary ? (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                          <p className="text-[14px] leading-relaxed" style={{
-                            color: "#4B5563",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                          }}>{aiSummary}</p>
-                        </motion.div>
-                      ) : (
-                        <p className="text-[14px] leading-relaxed" style={{ color: "#4B5563" }}>
-                          {getStaticSummary(scoreBreakdown, productInfo)}
-                        </p>
-                      )}
-                      <p className="text-[11px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}>
-                        <Sparkles size={8} /> AI
-                      </p>
-                    </div>
-                    <p className="text-[10px] mt-1" style={{ color: "#9CA3AF" }}>Tap score for breakdown</p>
-                  </div>
-                )}
-
-                {/* SECTION C — THREE SIGNAL CHIPS */}
-                <div className="flex gap-2 px-5" style={{ marginTop: 20 }}>
-                  {/* Chip 1: Nutri-Score */}
-                  {(() => {
-                    const ns = productInfo.nutriScoreGrade?.toLowerCase();
-                    const hasNS = ns && nutriColors[ns];
-                    const chipBg = hasNS ? (ns === "a" || ns === "b" ? "#F0FDF4" : ns === "c" ? "#FFFBEB" : "#FFF1F2") : "#F9FAFB";
-                    const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
-                    const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
-                    return (
-                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
-                        <span style={{ fontSize: 11, color: "#6B7280" }}>Nutri-Score</span>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Chip 2: Additives */}
-                  {(() => {
-                    const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
-                    const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
-                    const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
-                    return (
-                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{addCount}</span>
-                        <span style={{ fontSize: 11, color: "#6B7280" }}>additives</span>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Chip 3: NOVA */}
-                  {(() => {
-                    const nova = productInfo.novaGroup;
-                    const hasNova = nova && novaColors[nova];
-                    const chipBg = hasNova ? (nova <= 2 ? "#F0FDF4" : "#FFF1F2") : "#F9FAFB";
-                    const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
-                    const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
-                    return (
-                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasNova ? nova : "?"}</span>
-                        <span style={{ fontSize: 11, color: "#6B7280" }}>processing</span>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Chip 4: Protein */}
-                  {(() => {
-                    const proteinVal = n?.protein100g;
-                    const hasProtein = proteinVal != null;
-                    const isHigh = hasProtein && proteinVal >= 10;
-                    const isMed = hasProtein && proteinVal >= 5 && proteinVal < 10;
-                    const chipBg = !hasProtein ? "#F9FAFB" : isHigh ? "#F0FDF4" : isMed ? "#FFFBEB" : "#FFF1F2";
-                    const chipBorder = !hasProtein ? "#E5E7EB" : isHigh ? "#BBF7D0" : isMed ? "#FDE68A" : "#FECDD3";
-                    const chipColor = !hasProtein ? "#9CA3AF" : isHigh ? "#15803D" : isMed ? "#D97706" : "#C41E3A";
-                    return (
-                      <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 64, borderRadius: 16, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                        <span className="font-bold" style={{ fontSize: 20, color: chipColor }}>{hasProtein ? `${Math.round(proteinVal)}g` : "?"}</span>
-                        <span style={{ fontSize: 11, color: "#6B7280" }}>protein</span>
-                      </div>
-                    );
-                  })()}
+                <div className="flex-1 min-w-0 pt-1">
+                  <p className="font-bold leading-tight" style={{ fontSize: 18, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {displayName}
+                  </p>
+                  <p className="text-[14px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
+                    {productInfo.brand || "Unknown brand"}
+                  </p>
                 </div>
+                <motion.button whileTap={{ scale: 0.9 }} onClick={handleShareTap} disabled={shareGenerating}
+                  className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                  <Share2 size={18} style={{ color: "#374151" }} />
+                </motion.button>
+              </div>
 
-                {/* DIETARY CHIPS ROW */}
-                {dietaryTags && Object.keys(dietaryTags).length > 0 && (
+              {/* SCORE HERO — centered, animated */}
+              {scoreBreakdown && (
+                <div className="flex flex-col items-center" style={{ marginTop: 24 }}>
+                  <button onClick={() => setShowScoreModal(true)}>
+                    <ScoreRing score={scoreBreakdown.total} size={110} />
+                  </button>
+                  <motion.p
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3, duration: 0.3 }}
+                    className="font-bold text-center" style={{ fontSize: 18, color: getScoreColor(scoreBreakdown.total), marginTop: 8 }}>
+                    {getScoreVerdict(scoreBreakdown.total)}
+                  </motion.p>
+
+                  {/* Verdict banner — full width pill */}
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex gap-2 px-5 flex-wrap"
-                    style={{ marginTop: 8 }}
-                  >
-                    {Object.keys(dietaryTags).map(key => (
-                      <span key={key} className="inline-flex items-center font-semibold" style={{
-                        height: 28, padding: "0 10px", borderRadius: 20, fontSize: 11,
-                        background: "#F0FFF4", border: "1px solid #6EE7B7", color: "#065F46",
-                      }}>
-                        {DIETARY_LABELS[key] || key}
-                      </span>
-                    ))}
+                    initial={{ opacity: 0, scale: 1 }}
+                    animate={{ opacity: 1, scale: [1, 1.04, 1] }}
+                    transition={{ delay: 0.5, duration: 0.4 }}
+                    className="mx-5 mt-3 flex items-center justify-center"
+                    style={{ height: 36, borderRadius: 18, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
+                    <p className="font-semibold text-center text-white" style={{ fontSize: 13 }}>
+                      {getVerdictBanner(scoreBreakdown.total)}
+                    </p>
                   </motion.div>
-                )}
 
-                {/* EU BANNED ALERT BANNER */}
+                  {/* AI summary */}
+                  <div style={{ marginTop: 8, maxWidth: 300 }} className="text-center mx-auto">
+                    {aiSummaryLoading ? (
+                      <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
+                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "100%" }} />
+                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "75%" }} />
+                      </div>
+                    ) : aiSummary ? (
+                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{aiSummary}</motion.p>
+                    ) : (
+                      <p className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{getStaticSummary(scoreBreakdown, productInfo)}</p>
+                    )}
+                    <p className="text-[10px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
+                  </div>
+
+                  {/* Data quality indicator */}
+                  <div className="mt-2 flex items-center gap-1.5" style={{ fontSize: 11 }}>
+                    <div className="rounded-full" style={{ width: 6, height: 6, background: dataComplete ? "#22C55E" : "#F59E0B" }} />
+                    <span style={{ color: "#9CA3AF" }}>Data: {dataComplete ? "Complete" : "Partial"}</span>
+                    {productInfo.usdaFallback && <span style={{ color: "#9CA3AF" }}>· USDA</span>}
+                  </div>
+                  <p className="text-[10px] mt-1" style={{ color: "#D1D5DB" }}>Tap score for breakdown</p>
+                </div>
+              )}
+
+              {/* SIGNAL CHIPS ROW */}
+              <div className="flex gap-2 px-5" style={{ marginTop: 16 }}>
+                {/* Nutri-Score */}
                 {(() => {
-                  const bannedInProduct = findBannedAdditives(productInfo.additivesTags);
-                  const euBanned = bannedInProduct.filter(b => b.eu_status === "banned");
-                  if (euBanned.length === 0) return null;
+                  const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                  const hasNS = ns && nutriColors[ns];
+                  const chipBg = hasNS ? (ns === "a" || ns === "b" ? "#F0FDF4" : ns === "c" ? "#FFFBEB" : "#FFF1F2") : "#F9FAFB";
+                  const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
+                  const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                   return (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mx-5"
-                      style={{
-                        marginTop: 12,
-                        padding: "12px 16px",
-                        background: "#FFFBEB",
-                        borderTop: "1px solid #FDE68A",
-                        borderBottom: "1px solid #FDE68A",
-                        borderRadius: 12,
-                      }}
-                    >
-                      <p className="font-semibold text-[14px]" style={{ color: "#92400E" }}>
-                        🚩 Contains ingredients banned in Europe
-                      </p>
-                      <p className="text-[13px] mt-1" style={{ color: "#92400E" }}>
-                        This product contains {euBanned.map(b => b.name).join(", ")} which {euBanned.length === 1 ? "is" : "are"} legal in the US but banned in the EU.
-                      </p>
-                    </motion.div>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
+                      <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
+                    </div>
                   );
                 })()}
+                {/* Additives */}
+                {(() => {
+                  const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
+                  const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
+                  const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
+                  return (
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{addCount}</span>
+                      <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
+                    </div>
+                  );
+                })()}
+                {/* NOVA */}
+                {(() => {
+                  const nova = productInfo.novaGroup;
+                  const hasNova = nova && novaColors[nova];
+                  const chipBg = hasNova ? (nova <= 2 ? "#F0FDF4" : "#FFF1F2") : "#F9FAFB";
+                  const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
+                  const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
+                  return (
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNova ? nova : "?"}</span>
+                      <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
+                    </div>
+                  );
+                })()}
+                {/* Eco-Score */}
+                {(() => {
+                  const eco = productInfo.ecoscoreGrade?.toLowerCase();
+                  const hasEco = eco && ecoColors[eco];
+                  const c = hasEco ? ecoColors[eco] : { bg: "#F9FAFB", border: "#E5E7EB", color: "#9CA3AF" };
+                  return (
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: c.bg, border: `1px solid ${c.border}` }}>
+                      <div className="flex items-center gap-0.5">
+                        <Leaf size={12} style={{ color: c.color }} />
+                        <span className="font-bold" style={{ fontSize: 18, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
+                      </div>
+                      <span style={{ fontSize: 10, color: "#6B7280" }}>Eco</span>
+                    </div>
+                  );
+                })()}
+              </div>
 
-                {/* SECTION D — SHARE ROW */}
-                {scoreBreakdown && (
-                  <div className="flex items-center gap-3 px-5" style={{ marginTop: 20 }}>
-                    <p className="flex-1 text-[14px]" style={{ color: "#4B5563" }}>
-                      {scoreBreakdown.total >= 75 ? "You eat well 🌿 Show your friends."
-                        : scoreBreakdown.total >= 50 ? "Not bad. Could be better. Share it."
-                        : scoreBreakdown.total >= 25 ? "You might want to rethink this one 👀"
-                        : "This one's rough. Share the warning. 🚨"}
+              {/* DIETARY CHIPS */}
+              {dietaryTags && Object.keys(dietaryTags).length > 0 && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2 px-5 flex-wrap" style={{ marginTop: 8 }}>
+                  {Object.keys(dietaryTags).map(key => (
+                    <span key={key} className="inline-flex items-center font-semibold" style={{ height: 26, padding: "0 10px", borderRadius: 20, fontSize: 11, background: "#F0FFF4", border: "1px solid #6EE7B7", color: "#065F46" }}>
+                      {DIETARY_LABELS[key] || key}
+                    </span>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* EU BANNED ALERT */}
+              {(() => {
+                const bannedInProduct = findBannedAdditives(productInfo.additivesTags);
+                const euBanned = bannedInProduct.filter(b => b.eu_status === "banned");
+                if (euBanned.length === 0) return null;
+                return (
+                  <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mx-5" style={{ marginTop: 12, padding: "12px 16px", background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 12 }}>
+                    <p className="font-semibold text-[14px]" style={{ color: "#92400E" }}>🚩 Contains ingredients banned in Europe</p>
+                    <p className="text-[13px] mt-1" style={{ color: "#92400E" }}>
+                      {euBanned.map(b => b.name).join(", ")} — legal in the US but banned in the EU.
                     </p>
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleShareTap}
-                      disabled={shareGenerating}
-                      className="flex items-center gap-1.5 flex-shrink-0 font-semibold"
-                      style={{
-                        height: 44, padding: "0 20px", borderRadius: 22, fontSize: 14,
-                        background: shareState === "shared" ? "#22C55E" : "#E8314A",
-                        color: "#fff",
-                      }}
-                    >
-                      <Share2 size={16} />
-                      {shareState === "shared" ? "Shared ✓" : shareGenerating ? "..." : "Share Score"}
-                    </motion.button>
-                  </div>
-                )}
+                  </motion.div>
+                );
+              })()}
 
-                {/* SECTION E — NUTRITION CARD */}
-                <div style={{ marginTop: 20, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
-                  <button
-                    onClick={() => toggleSection("nutrition")}
-                    className="w-full flex items-center gap-3 text-left"
-                  >
-                    <span style={{ fontSize: 16 }}>🍽</span>
-                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Nutrition</span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {productInfo.nutriScoreGrade ? (
-                        <span className="font-bold text-white" style={{
-                          fontSize: 10, padding: "2px 8px", borderRadius: 10,
-                          background: nutriColors[productInfo.nutriScoreGrade.toLowerCase()]?.bg || "#9CA3AF",
-                        }}>
-                          {productInfo.nutriScoreGrade.toUpperCase()}
-                        </span>
-                      ) : (
-                        <span className="font-semibold" style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 8px", borderRadius: 10, background: "#F3F4F6" }}>UNKNOWN</span>
-                      )}
-                      <motion.div animate={{ rotate: expandedSections.has("nutrition") ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
-                      </motion.div>
-                    </div>
-                  </button>
-                  {/* Always visible top nutrients when collapsed, full list when expanded */}
-                  <div style={{ marginTop: 12 }}>
-                    {negativeRows.length > 0 && (
-                      <div className="mb-2">
-                        <p className="text-[12px] font-bold mb-1" style={{ color: "#E8314A" }}>Negatives</p>
-                        {negativeRows.map(row => (
-                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
-                            <div className="flex items-center gap-2">
-                              <span style={{ fontSize: 14 }}>{row.icon}</span>
-                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
-                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                              </span>
-                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {positiveRows.length > 0 && (
-                      <div>
-                        <p className="text-[12px] font-bold mb-1" style={{ color: "#22C55E" }}>Positives</p>
-                        {positiveRows.map(row => (
-                          <div key={row.label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid #F3F4F6" }}>
-                            <div className="flex items-center gap-2">
-                              <span style={{ fontSize: 14 }}>{row.icon}</span>
-                              <span className="text-[14px]" style={{ color: "#374151" }}>{row.label}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>
-                                {row.val != null ? `${Math.round(Number(row.val))}${row.unit}` : "—"}
-                              </span>
-                              <div className="rounded-full" style={{ width: 8, height: 8, background: getNutrientDotColor(row.label, row.level) }} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {productInfo.usdaFallback && (
-                      <p className="text-[11px] mt-2 pt-2" style={{ color: "#9CA3AF", borderTop: "1px solid #F3F4F6" }}>
-                        📊 Data from USDA FoodData Central
-                      </p>
+              {/* ─── POSITIVES SECTION ─── */}
+              {positives.length > 0 && (
+                <div className="mx-5" style={{ marginTop: 20 }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Positives</p>
+                    {productInfo.servingSize && (
+                      <p style={{ fontSize: 12, color: "#9CA3AF" }}>per 100g</p>
                     )}
                   </div>
-                </div>
-
-                {/* SECTION F — ADDITIVES ROW */}
-                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
-                  <button
-                    onClick={() => toggleSection("additives")}
-                    className="w-full flex items-center gap-3 text-left"
-                  >
-                    <span style={{ fontSize: 16 }}>⚗️</span>
-                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Additives</span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {addCount === 0 ? (
-                        <Check size={16} style={{ color: "#22C55E" }} />
-                      ) : (
-                        <span className="font-bold" style={{
-                          fontSize: 12, padding: "2px 8px", borderRadius: 10,
-                          background: "#FFF1F2", border: "1px solid #FECDD3", color: "#E8314A",
-                        }}>
-                          {addCount}
-                        </span>
-                      )}
-                      <motion.div animate={{ rotate: expandedSections.has("additives") ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
-                      </motion.div>
-                    </div>
-                  </button>
-                  <div style={{
-                    display: "grid",
-                    gridTemplateRows: expandedSections.has("additives") ? "1fr" : "0fr",
-                    transition: "grid-template-rows 220ms ease-out",
-                  }}>
-                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                      <div className="pt-3">
-                        {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
-                          productInfo.additivesTags.map((a, i) => {
-                            const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                            const risk = getAdditiveRisk(a);
-                            const riskColor = getAdditiveRiskColor(risk);
-                            const riskLabel = getAdditiveRiskLabel(risk);
-                            const desc = getAdditiveDescription(a);
-                            const isExp = expandedAdditive === a;
-                            const bannedMatch = matchBannedAdditive(a);
-                            const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
-                            return (
-                              <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                                <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-bold text-[13px]" style={{ color: "#1A1A1A" }}>{code} · <span className="font-normal">{formatTag(a)}</span></span>
-                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded text-white flex-shrink-0 ml-2" style={{ background: riskColor }}>{riskLabel}</span>
-                                  </div>
-                                  <p className="text-[11px] mt-0.5" style={{ color: "#6B7280" }}>{desc}</p>
-                                  {badges.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 mt-1.5">
-                                      {badges.map((badge, bi) => (
-                                        <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg"
-                                          style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>
-                                          {badge.label}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {bannedMatch && (
-                                    <p className="text-[11px] mt-1 italic" style={{ color: "#6B7280" }}>
-                                      {bannedMatch.us_status === "permitted" ? "Permitted by FDA" : bannedMatch.us_status === "recently_banned" ? "Recently banned by FDA" : "FDA status: " + bannedMatch.us_status}
-                                      {bannedMatch.eu_status === "banned" ? ` · Banned by EFSA${bannedMatch.ban_year_eu ? ` since ${bannedMatch.ban_year_eu}` : ""}` : ""}
-                                      {bannedMatch.risk_reason ? ` · ${bannedMatch.risk_reason}` : ""}
-                                    </p>
-                                  )}
-                                </button>
-                                <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
-                                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                                    <div className="pb-2 pl-1">
-                                      {additiveExplanationLoading && isExp ? (
-                                        <div className="space-y-1">
-                                          <Skeleton className="h-3 w-full rounded" />
-                                          <Skeleton className="h-3 w-4/5 rounded" />
-                                        </div>
-                                      ) : additiveExplanation && isExp ? (
-                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                          <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
-                                          <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                                            <Sparkles size={8} /> AI
-                                          </p>
-                                        </motion.div>
-                                      ) : null}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <div className="text-center py-3">
-                            <Check size={18} style={{ color: "#22C55E", margin: "0 auto" }} />
-                            <p className="font-semibold text-[13px] mt-1" style={{ color: "#22C55E" }}>No additives detected</p>
-                          </div>
+                  {positives.map((row, i) => (
+                    <motion.div key={row.label + i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
+                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#F0FDF4" }}>
+                        <span style={{ fontSize: 14 }}>{row.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[14px]" style={{ color: "#111827" }}>{row.label}</p>
+                        <p className="text-[12px]" style={{ color: "#6B7280" }}>{row.descriptor}</p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {row.val != null && (
+                          <span className="font-semibold text-[14px]" style={{ color: "#111827" }}>{typeof row.val === "number" ? (row.val < 1 ? row.val.toFixed(1) : Math.round(row.val)) : row.val}{row.unit}</span>
                         )}
+                        <div className="rounded-full" style={{ width: 8, height: 8, background: row.dotColor }} />
                       </div>
-                    </div>
-                  </div>
+                    </motion.div>
+                  ))}
                 </div>
+              )}
 
-                {/* SECTION G — INGREDIENTS & ALTERNATIVES ROW */}
-                <div style={{ marginTop: 8, marginLeft: 20, marginRight: 20, marginBottom: 100, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
-                  <button
-                    onClick={() => toggleSection("more")}
-                    className="w-full flex items-center gap-3 text-left"
-                  >
-                    <span style={{ fontSize: 16 }}>•••</span>
-                    <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#1A1A1A" }}>Ingredients & Alternatives</span>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <motion.div animate={{ rotate: expandedSections.has("more") ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                        <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
-                      </motion.div>
+              {/* ─── NEGATIVES SECTION ─── */}
+              {negatives.length > 0 && (
+                <div className="mx-5" style={{ marginTop: 16 }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Negatives</p>
+                    <p style={{ fontSize: 12, color: "#9CA3AF" }}>per 100g</p>
+                  </div>
+                  {negatives.map((row, i) => (
+                    <motion.div key={row.label + i}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
+                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#FFF1F2" }}>
+                        <span style={{ fontSize: 14 }}>{row.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-[14px]" style={{ color: "#111827" }}>{row.label}</p>
+                        <p className="text-[12px]" style={{ color: "#6B7280" }}>{row.descriptor}</p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {row.val != null && (
+                          <span className="font-semibold text-[14px]" style={{ color: "#111827" }}>{typeof row.val === "number" ? (row.val < 1 ? row.val.toFixed(1) : Math.round(row.val)) : row.val}{row.unit}</span>
+                        )}
+                        <div className="rounded-full" style={{ width: 8, height: 8, background: row.dotColor }} />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {/* ─── ADDITIVES CARD ─── */}
+              {(addCount > 0 || true) && (
+                <div className="mx-5" style={{ marginTop: 16, borderRadius: 16, border: addCount > 0 ? "1px solid #FFF1F2" : "1px solid #F0FDF4", padding: 16 }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 14, background: addCount > 0 ? "#FFF1F2" : "#F0FDF4" }}>
+                      {addCount > 0 ? <AlertTriangle size={14} style={{ color: "#E8314A" }} /> : <Check size={14} style={{ color: "#22C55E" }} />}
                     </div>
-                  </button>
-                  <div style={{
-                    display: "grid",
-                    gridTemplateRows: expandedSections.has("more") ? "1fr" : "0fr",
-                    transition: "grid-template-rows 220ms ease-out",
-                  }}>
-                    <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                      <div className="pt-3">
-                        {/* Ingredients */}
-                        {productInfo.ingredientsText && (
-                          <div className="mb-4">
-                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Ingredients</p>
-                            <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
-                              {productInfo.allergensTags?.length
-                                ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags)
-                                : productInfo.ingredientsText}
-                            </p>
-                            {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-1">
-                                <span className="text-[11px] font-semibold" style={{ color: "#1A1A1A" }}>Allergens:</span>
-                                {productInfo.allergensTags.map(a => (
-                                  <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#E8314A" }}>
-                                    {formatTag(a)}
-                                  </span>
-                                ))}
+                    <span className="font-bold flex-1" style={{ fontSize: 15, color: "#111827" }}>Additives</span>
+                    {addCount > 0 && (
+                      <span className="font-bold text-white" style={{ fontSize: 12, padding: "2px 10px", borderRadius: 10, background: "#E8314A" }}>{addCount}</span>
+                    )}
+                  </div>
+                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
+                    productInfo.additivesTags.map((a, i) => {
+                      const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                      const risk = getAdditiveRisk(a);
+                      const riskColor = getAdditiveRiskColor(risk);
+                      const desc = getAdditiveDescription(a);
+                      const isExp = expandedAdditive === a;
+                      const bannedMatch = matchBannedAdditive(a);
+                      const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
+                      return (
+                        <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                          <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2.5 text-left flex items-center gap-3">
+                            <span className="font-semibold" style={{ fontSize: 13, color: riskColor, minWidth: 40 }}>{code}</span>
+                            <span className="flex-1 text-[13px]" style={{ color: "#374151" }}>{formatTag(a)}</span>
+                            <div className="rounded-full flex-shrink-0" style={{ width: 8, height: 8, background: riskColor }} />
+                            <ChevronRight size={14} style={{ color: "#D1D5DB", transform: isExp ? "rotate(90deg)" : "none", transition: "transform 200ms" }} />
+                          </button>
+                          {badges.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pb-1.5 pl-[52px]">
+                              {badges.map((badge, bi) => (
+                                <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg" style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>{badge.label}</span>
+                              ))}
+                            </div>
+                          )}
+                          <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 250ms ease-out" }}>
+                            <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                              <div className="pb-2 pl-[52px]">
+                                {additiveExplanationLoading && isExp ? (
+                                  <div className="space-y-1"><Skeleton className="h-3 w-full rounded" /><Skeleton className="h-3 w-4/5 rounded" /></div>
+                                ) : additiveExplanation && isExp ? (
+                                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                    <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                    <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
+                                  </motion.div>
+                                ) : null}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-2">
+                      <p className="font-semibold text-[13px]" style={{ color: "#22C55E" }}>No additives detected ✓</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── HEALTHIER ALTERNATIVES (OFF real products) ─── */}
+              {(offRecs.length > 0 || offRecsLoading) && (
+                <div className="mx-5" style={{ marginTop: 20 }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Healthier Alternatives</p>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                    {offRecsLoading ? (
+                      [1,2,3].map(i => (
+                        <div key={i} className="flex-shrink-0" style={{ width: 160, height: 120, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12 }}>
+                          <Skeleton className="w-10 h-10 rounded-[10px]" />
+                          <Skeleton className="h-3 w-3/4 mt-2" />
+                          <Skeleton className="h-3 w-1/2 mt-1" />
+                        </div>
+                      ))
+                    ) : (
+                      offRecs.map((rec, i) => (
+                        <motion.button key={rec.barcode}
+                          initial={{ opacity: 0, x: 30 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.08, duration: 0.3 }}
+                          onClick={() => handleBarcodeDetected(rec.barcode)}
+                          className="flex-shrink-0 text-left relative"
+                          style={{ width: 160, height: 120, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12, background: "#FFFFFF" }}>
+                          <div className="flex items-start justify-between">
+                            {rec.imageSmallUrl ? (
+                              <img src={rec.imageSmallUrl} alt={rec.productName} className="object-contain" style={{ width: 40, height: 40, borderRadius: 10 }} />
+                            ) : (
+                              <div style={{ width: 40, height: 40, borderRadius: 10, background: "#F3F4F6" }} className="flex items-center justify-center">
+                                <Barcode size={14} style={{ color: "#D1D5DB" }} />
                               </div>
                             )}
+                            <span className="font-bold text-white" style={{ fontSize: 12, padding: "2px 8px", borderRadius: 10, background: getScoreColor(rec.skaapScoreEstimate) }}>
+                              {rec.skaapScoreEstimate}
+                            </span>
                           </div>
-                        )}
+                          <p className="font-semibold mt-1.5" style={{ fontSize: 12, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", lineHeight: "1.3" }}>
+                            {rec.productName}
+                          </p>
+                          {rec.brand && <p style={{ fontSize: 11, color: "#6B7280" }} className="truncate">{rec.brand}</p>}
+                        </motion.button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
 
-                        {/* Certifications */}
-                        {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
-                          <div className="mb-4">
-                            <p className="text-[12px] font-bold mb-1.5" style={{ color: "#1A1A1A" }}>Certifications</p>
-                            <div className="flex flex-wrap gap-1">
-                              {productInfo.labelsTags.map(l => (
-                                <span key={l} className="text-[11px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#1A1A1A", color: "#1A1A1A" }}>
-                                  {formatTag(l)}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* AI Recommendations */}
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-2">
-                            <p className="text-[12px] font-bold" style={{ color: "#1A1A1A" }}>Healthier Alternatives</p>
-                            <Sparkles size={10} style={{ color: "#9CA3AF" }} />
-                          </div>
-                          {aiRecsLoading ? (
-                            <div className="space-y-2">
-                              {[1,2].map(i => (
-                                <div key={i} className="flex gap-2 p-2 rounded-xl" style={{ background: "#F9FAFB" }}>
-                                  <Skeleton className="w-12 h-12 rounded-lg flex-shrink-0" />
-                                  <div className="flex-1 space-y-1.5 py-0.5">
-                                    <Skeleton className="h-3 w-3/4" />
-                                    <Skeleton className="h-3 w-full" />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ) : aiRecommendations && aiRecommendations.length > 0 ? (
-                            <div className="space-y-2">
-                              {aiRecommendations.map((rec, i) => {
-                                const scoreColor = nutriColors[rec.estimatedScore?.toLowerCase()]?.bg || "#2D7D46";
-                                return (
-                                  <motion.div key={i} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.1, duration: 0.25 }}
-                                    className="flex gap-2 p-2 rounded-xl items-center" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                                    <div className="flex-shrink-0 flex items-center justify-center" style={{
-                                      width: 40, height: 40, borderRadius: 20,
-                                      border: `2px solid ${scoreColor}`,
-                                    }}>
-                                      <span className="font-extrabold" style={{ fontSize: 14, color: scoreColor }}>
-                                        {rec.estimatedScore?.toUpperCase() || "A"}
-                                      </span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <p className="font-bold text-[13px] leading-tight truncate" style={{ color: "#1A1A1A" }}>{rec.name}</p>
-                                      <p className="text-[11px] leading-snug truncate" style={{ color: "#6B7280" }}>{rec.reason}</p>
-                                    </div>
-                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0" style={{ background: `${scoreColor}1A`, color: scoreColor }}>Better</span>
-                                  </motion.div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <p className="text-[12px]" style={{ color: "#9CA3AF" }}>No recommendations available.</p>
-                          )}
+              {/* ─── INGREDIENTS ACCORDION ─── */}
+              <div style={{ marginTop: 16, marginLeft: 20, marginRight: 20, marginBottom: 8, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+                <button onClick={() => toggleSection("ingredients")} className="w-full flex items-center gap-3 text-left">
+                  <span style={{ fontSize: 16 }}>📋</span>
+                  <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#111827" }}>Ingredients</span>
+                  <motion.div animate={{ rotate: expandedSections.has("ingredients") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown size={16} style={{ color: "#9CA3AF" }} />
+                  </motion.div>
+                </button>
+                <div style={{ display: "grid", gridTemplateRows: expandedSections.has("ingredients") ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
+                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                    <div className="pt-3">
+                      {productInfo.ingredientsText ? (
+                        <p className="text-[13px] leading-relaxed" style={{ color: "#6B7280" }}>
+                          {productInfo.allergensTags?.length ? highlightAllergens(productInfo.ingredientsText, productInfo.allergensTags) : productInfo.ingredientsText}
+                        </p>
+                      ) : (
+                        <p className="text-[13px]" style={{ color: "#9CA3AF" }}>No ingredients data available.</p>
+                      )}
+                      {productInfo.allergensTags && productInfo.allergensTags.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1">
+                          <span className="text-[11px] font-semibold" style={{ color: "#111827" }}>Allergens:</span>
+                          {productInfo.allergensTags.map(a => (
+                            <span key={a} className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#E8314A" }}>{formatTag(a)}</span>
+                          ))}
                         </div>
-
-                        {/* AI info link */}
-                        <button onClick={() => setScreen("ai-info")} className="mt-3 text-[11px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
-                          <Sparkles size={9} /> How SKAAP uses AI
-                        </button>
-                      </div>
+                      )}
+                      {productInfo.labelsTags && productInfo.labelsTags.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-[12px] font-bold mb-1" style={{ color: "#111827" }}>Certifications</p>
+                          <div className="flex flex-wrap gap-1">
+                            {productInfo.labelsTags.map(l => (
+                              <span key={l} className="text-[11px] font-semibold px-2 py-0.5 rounded border" style={{ borderColor: "#111827", color: "#111827" }}>{formatTag(l)}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <button onClick={() => setScreen("ai-info")} className="mt-3 text-[11px] flex items-center gap-1 mx-auto" style={{ color: "#9CA3AF" }}>
+                        <Sparkles size={9} /> How SKAAP uses AI
+                      </button>
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* FEEDBACK ROW */}
+        {!feedbackGiven && productInfo && !loading && (
+          <div className="flex-shrink-0 flex items-center justify-center gap-3 py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
+            <span className="text-[11px] font-medium" style={{ color: "#9CA3AF" }}>How was this?</span>
+            {["😍", "👍", "😐", "👎"].map(emoji => (
+              <motion.button key={emoji} whileTap={{ scale: 0.85 }} onClick={() => handleFeedback(emoji)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 transition-colors">
+                {emoji}
+              </motion.button>
+            ))}
+          </div>
+        )}
+        {feedbackGiven && (
+          <div className="flex-shrink-0 flex items-center justify-center py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
+            <span className="text-[11px] font-semibold" style={{ color: "#15803D" }}>Thanks for the feedback! 🙏</span>
+          </div>
+        )}
+
+        {/* BOTTOM ACTIONS — FIXED */}
+        <div className="flex-shrink-0 flex items-center gap-3 px-5 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "12px 20px", paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)" }}>
+          {/* Heart particle animation */}
+          <AnimatePresence>
+            {heartParticle && (
+              <motion.span
+                initial={{ opacity: 1, y: 0, x: "50%" }}
+                animate={{ opacity: 0, y: -40 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="absolute text-lg pointer-events-none"
+                style={{ right: "30%", bottom: 52 }}>
+                🤍
+              </motion.span>
             )}
-          </div>
-
-          {/* FEEDBACK ROW */}
-          {!feedbackGiven && productInfo && !loading && (
-            <div className="flex-shrink-0 flex items-center justify-center gap-3 py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
-              <span className="text-[11px] font-medium" style={{ color: "#9CA3AF" }}>How was this?</span>
-              {["😍", "👍", "😐", "👎"].map(emoji => (
-                <motion.button key={emoji} whileTap={{ scale: 0.85 }}
-                  onClick={() => handleFeedback(emoji)}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-muted/60 transition-colors"
-                >
-                  {emoji}
-                </motion.button>
-              ))}
-            </div>
-          )}
-          {feedbackGiven && (
-            <div className="flex-shrink-0 flex items-center justify-center py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
-              <span className="text-[11px] font-semibold" style={{ color: "#15803D" }}>Thanks for the feedback! 🙏</span>
-            </div>
-          )}
-
-          {/* BOTTOM BUTTONS — FIXED */}
-          <div
-            className="flex-shrink-0 flex items-center gap-3 px-5"
+          </AnimatePresence>
+          <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
+            className="flex-1 font-semibold flex items-center justify-center"
+            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 52, borderRadius: 14, fontSize: 15 }}>
+            Scan Again
+          </motion.button>
+          <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
+            className="flex-1 font-semibold flex items-center justify-center gap-1.5"
             style={{
-              borderTop: "1px solid #F3F4F6",
-              background: "#FFFFFF",
-              padding: "12px 20px",
-              paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)",
-            }}
-          >
-            <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-              className="flex-1 font-semibold flex items-center justify-center"
-              style={{
-                color: "#374151", background: "#F9FAFB", border: "1px solid #E5E7EB",
-                height: 48, borderRadius: 14, fontSize: 14,
-              }}>
-              Scan Again
-            </motion.button>
-            <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-              className="flex-1 font-semibold flex items-center justify-center gap-1.5"
-              style={{
-                background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#F9FAFB" : "#E8314A",
-                color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-                height: 48, borderRadius: 14, fontSize: 14,
-                border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
-              }}>
-              {savedState === "saved" ? (
-                <>Saved ✓</>
-              ) : isInBasket(currentBarcode) ? (
-                <><Heart size={16} fill="#E8314A" /> Saved</>
-              ) : (
-                <><Heart size={16} /> Save</>
-              )}
-            </motion.button>
-          </div>
-        </motion.div>
+              background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#FFFFFF" : "#E8314A",
+              color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
+              height: 52, borderRadius: 14, fontSize: 15,
+              border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
+            }}>
+            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={16} fill="#E8314A" /> Saved</> : <><Heart size={16} /> Save ♥</>}
+          </motion.button>
+        </div>
       </div>
     );
   }
-
-  // ─── SCREEN: HISTORY ───
   if (screen === "history") {
     return (
       <HistoryScreen
