@@ -31,7 +31,12 @@ export interface ProductFullInfo {
   allergensTags?: string[];
   additivesTags?: string[];
   labelsTags?: string[];
-  usdaFallback?: boolean; // true when USDA data was used to fill gaps
+  usdaFallback?: boolean;
+  // New fields for Yuka-style result screen
+  ecoscoreGrade?: string;
+  ecoscoreScore?: number;
+  categoriesTags?: string[];
+  servingSize?: string;
 }
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
