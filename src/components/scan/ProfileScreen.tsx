@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown } from "lucide-react";
+import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";

@@ -19,26 +19,45 @@ export function AuthSheet({ open, onClose, onSuccess }: AuthSheetProps) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!email || !password) return;
+    if (!email || !password) {
+      toast.error("Please enter your email and password");
+      return;
+    }
+    if (mode === "signup" && password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
     setLoading(true);
-    if (mode === "signup") {
-      const { error } = await signUp(email, password, name);
-      if (error) {
-        toast.error(error.message);
+    try {
+      if (mode === "signup") {
+        const { error } = await signUp(email, password, name);
+        if (error) {
+          if (error.message?.includes("already registered")) {
+            toast.error("This email is already registered. Try signing in instead.");
+          } else {
+            toast.error(error.message || "Signup failed. Please try again.");
+          }
+        } else {
+          toast.success("Account created! You're signed in.");
+          onClose();
+          onSuccess?.();
+        }
       } else {
-        toast.success("Check your email to verify your account");
-        onClose();
-        onSuccess?.();
+        const { error } = await signIn(email, password);
+        if (error) {
+          if (error.message?.includes("Invalid login")) {
+            toast.error("Wrong email or password. Please try again.");
+          } else {
+            toast.error(error.message || "Login failed. Please try again.");
+          }
+        } else {
+          toast.success("Welcome back!");
+          onClose();
+          onSuccess?.();
+        }
       }
-    } else {
-      const { error } = await signIn(email, password);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Welcome back!");
-        onClose();
-        onSuccess?.();
-      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     }
     setLoading(false);
   };
