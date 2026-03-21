@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown } from "lucide-react";
+import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -238,8 +238,38 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </AnimatePresence>
         </motion.div>
 
+        {/* ─── Connected Health Apps ─── */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Activity size={16} style={{ color: "#B0202F" }} />
+            <h3 className="font-bold text-[14px]" style={{ color: "#0A1220" }}>Health Connections</h3>
+          </div>
+          <p className="text-[11px] mb-3" style={{ color: "#9CA3AF" }}>Sync your nutrition data with health platforms.</p>
+
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
+            {[
+              { name: "Apple Health", icon: "🍎", desc: "Sync nutrients & calories", available: false },
+              { name: "Google Fit", icon: "💚", desc: "Track food intake", available: false },
+              { name: "MyFitnessPal", icon: "🔥", desc: "Log scanned products", available: false },
+              { name: "Samsung Health", icon: "💙", desc: "Nutrition tracking", available: false },
+            ].map((app, i) => (
+              <button key={app.name}
+                onClick={() => toast.info(`${app.name} integration coming soon!`)}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 transition-colors"
+                style={{ borderBottom: i < 3 ? "1px solid #F3F4F6" : "none" }}>
+                <span className="text-[18px]">{app.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[13px] font-semibold block" style={{ color: "#0A1220" }}>{app.name}</span>
+                  <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{app.desc}</span>
+                </div>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#F3F4F6", color: "#9CA3AF" }}>Soon</span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
         {/* ─── Settings ─── */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
           {[
             { icon: Bell, label: "Notifications", action: () => toast.info("Coming soon") },
