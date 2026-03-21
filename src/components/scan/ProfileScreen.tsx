@@ -5,9 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useSubscription } from "@/context/SubscriptionContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 interface ProfileScreenProps {
   onBack: () => void;
