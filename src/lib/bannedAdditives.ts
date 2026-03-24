@@ -139,6 +139,60 @@ export function getBadgeInfo(additive: BannedAdditive): Array<{
     });
   }
 
+  if (additive.japan_status === "banned") {
+    badges.push({
+      label: "🇯🇵 Banned in Japan",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
+  if (additive.china_status === "banned") {
+    badges.push({
+      label: "🇨🇳 Banned in China",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
+  if (additive.india_status === "banned") {
+    badges.push({
+      label: "🇮🇳 Banned in India",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
+  if (additive.nigeria_status === "banned") {
+    badges.push({
+      label: "🇳🇬 Banned in Nigeria",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
+  if (additive.australia_status === "banned") {
+    badges.push({
+      label: "🇦🇺 Banned in AU",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
+  if (additive.brazil_status === "banned") {
+    badges.push({
+      label: "🇧🇷 Banned in Brazil",
+      bg: "#FEF3C7",
+      border: "#FDE68A",
+      color: "#92400E",
+    });
+  }
+
   return badges;
 }
 
