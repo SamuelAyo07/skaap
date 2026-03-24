@@ -86,7 +86,21 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
         });
     }
 
-    const model = type === "personalized-recs" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+    const model = type === "personalized-recs" || type === "image_recognition" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+
+    // Build messages - for image recognition, include the image
+    const messages: any[] = [{ role: "system", content: systemPrompt }];
+    if (type === "image_recognition" && params.imageBase64) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: userPrompt },
+          { type: "image_url", image_url: { url: params.imageBase64 } },
+        ],
+      });
+    } else {
+      messages.push({ role: "user", content: userPrompt });
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -96,10 +110,7 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
       },
       body: JSON.stringify({
         model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
+        messages,
         stream: false,
       }),
     });
