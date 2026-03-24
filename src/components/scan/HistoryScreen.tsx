@@ -4,6 +4,8 @@ import { Search, X, Barcode, Clock, Lock, Heart } from "lucide-react";
 import { getScoreColor } from "@/lib/skaapScore";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
+import { HealthSnapshot } from "./HealthSnapshot";
+import { getUserStats } from "@/lib/skaapUserStats";
 
 interface ScanHistoryItem {
   barcode: string;
@@ -133,6 +135,9 @@ export function HistoryScreen({
           </button>
         ))}
       </div>
+
+      {/* Health Snapshot */}
+      <HealthSnapshot stats={getUserStats()} />
 
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
