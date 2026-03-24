@@ -1556,6 +1556,37 @@ const SkaapScan = () => {
                 })()}
               </div>
 
+              {/* LEARN WHY — Educational explainer cards */}
+              <div className="mx-5" style={{ marginTop: 12 }}>
+                <button onClick={() => toggleSection("learn-why")} className="w-full flex items-center gap-2 text-left">
+                  <span style={{ fontSize: 14 }}>📖</span>
+                  <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#6B7280" }}>What do these scores mean?</span>
+                  <motion.div animate={{ rotate: expandedSections.has("learn-why") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown size={14} style={{ color: "#9CA3AF" }} />
+                  </motion.div>
+                </button>
+                <div style={{ display: "grid", gridTemplateRows: expandedSections.has("learn-why") ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
+                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                    <div className="pt-3 space-y-3">
+                      {[
+                        { icon: "🅰️", title: "Nutri-Score", body: "A grade from A (best) to E (worst) based on calories, sugar, salt, saturated fat, fiber, and protein. A = eat freely. E = limit this." },
+                        { icon: "⚗️", title: "Additives", body: "Chemicals added to food for color, flavor, or shelf life. Some are safe, some are banned in other countries. Fewer = better." },
+                        { icon: "🏭", title: "NOVA Group", body: "How processed is this food? 1 = fresh/natural. 4 = ultra-processed (made in factories with lots of chemicals). Stick to 1-2 when you can." },
+                        { icon: "🌍", title: "Eco-Score", body: "How much this product impacts the planet — from farming to packaging. A = planet-friendly. E = heavy environmental cost." },
+                      ].map(item => (
+                        <div key={item.title} className="flex gap-3 items-start">
+                          <span style={{ fontSize: 16, lineHeight: "20px" }}>{item.icon}</span>
+                          <div>
+                            <p className="font-bold text-[13px]" style={{ color: "#111827" }}>{item.title}</p>
+                            <p className="text-[12px] leading-relaxed" style={{ color: "#6B7280" }}>{item.body}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* DIETARY CHIPS */}
               {dietaryTags && Object.keys(dietaryTags).length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2 px-5 flex-wrap" style={{ marginTop: 8 }}>
