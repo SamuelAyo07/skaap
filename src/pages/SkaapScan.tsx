@@ -1193,19 +1193,19 @@ const SkaapScan = () => {
       if (!n) return [];
       const rows: NutrientRow[] = [];
       if (n.fiber100g != null && n.fiber100g > 3)
-        rows.push({ label: "Fiber", val: n.fiber100g, unit: "g", icon: "🌾", isPositive: true, level: "high", descriptor: "Excellent source of fiber.", dotColor: "#22C55E" });
+        rows.push({ label: "Fiber", val: n.fiber100g, unit: "g", icon: "🌾", isPositive: true, level: "high", descriptor: "Helps your tummy digest food and keeps you full longer.", dotColor: "#22C55E" });
       if (n.protein100g != null && n.protein100g > 5)
-        rows.push({ label: "Protein", val: n.protein100g, unit: "g", icon: "🥩", isPositive: true, level: "high", descriptor: "Good source of protein.", dotColor: "#22C55E" });
+        rows.push({ label: "Protein", val: n.protein100g, unit: "g", icon: "💪", isPositive: true, level: "high", descriptor: "Builds muscles and keeps your body strong. Great for gym days!", dotColor: "#22C55E" });
       if (n.saturatedFat100g != null && n.saturatedFat100g < 1)
-        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: true, level: "low", descriptor: "Very low in saturated fat.", dotColor: "#22C55E" });
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: true, level: "low", descriptor: "Low in the type of fat that can clog your arteries.", dotColor: "#22C55E" });
       if (n.sugars100g != null && n.sugars100g < 5)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: true, level: "low", descriptor: "Low in sugar. Great!", dotColor: "#22C55E" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: true, level: "low", descriptor: "Won't spike your blood sugar. Your body will thank you.", dotColor: "#22C55E" });
       if (n.salt100g != null && n.salt100g < 0.3)
-        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: true, level: "low", descriptor: "Very low sodium content.", dotColor: "#22C55E" });
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: true, level: "low", descriptor: "Easy on your heart. Too much salt raises blood pressure.", dotColor: "#22C55E" });
       if (addCount === 0)
-        rows.push({ label: "No additives", val: undefined, unit: "", icon: "✅", isPositive: true, level: undefined, descriptor: "Clean ingredient list.", dotColor: "#22C55E" });
+        rows.push({ label: "No additives", val: undefined, unit: "", icon: "✅", isPositive: true, level: undefined, descriptor: "Nothing artificial added. Just real ingredients.", dotColor: "#22C55E" });
       if (productInfo?.labelsTags?.some(l => l.toLowerCase().includes("organic")))
-        rows.push({ label: "Organic", val: undefined, unit: "", icon: "🌿", isPositive: true, level: undefined, descriptor: "Certified organic product.", dotColor: "#22C55E" });
+        rows.push({ label: "Organic", val: undefined, unit: "", icon: "🌿", isPositive: true, level: undefined, descriptor: "Grown without synthetic pesticides or fertilizers.", dotColor: "#22C55E" });
       return rows;
     };
 
@@ -1213,17 +1213,17 @@ const SkaapScan = () => {
       if (!n) return [];
       const rows: NutrientRow[] = [];
       if (n.energyKcal100g != null && n.energyKcal100g > 250)
-        rows.push({ label: "Calories", val: n.energyKcal100g, unit: "kcal", icon: "🔥", isPositive: false, level: "high", descriptor: "A bit too caloric.", dotColor: "#E8314A" });
+        rows.push({ label: "Calories", val: n.energyKcal100g, unit: "kcal", icon: "🔥", isPositive: false, level: "high", descriptor: "Very energy-dense. Your body stores extra calories as fat.", dotColor: "#E8314A" });
       if (n.saturatedFat100g != null && n.saturatedFat100g > 4)
-        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "High in saturated fat.", dotColor: "#E8314A" });
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "Can build up in your arteries and affect your heart over time.", dotColor: "#E8314A" });
       if (n.sugars100g != null && n.sugars100g > 15)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "High in sugar.", dotColor: "#E8314A" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "That's a lot of sugar — causes energy crashes and tooth decay.", dotColor: "#E8314A" });
       else if (n.sugars100g != null && n.sugars100g >= 5 && n.sugars100g <= 15)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Moderate sugar content.", dotColor: "#F59E0B" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Some sugar here. Not terrible, but not great either.", dotColor: "#F59E0B" });
       if (n.salt100g != null && n.salt100g > 0.6)
-        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: false, level: "high", descriptor: "High sodium content.", dotColor: "#E8314A" });
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: false, level: "high", descriptor: "Too much salt can raise your blood pressure over time.", dotColor: "#E8314A" });
       if (addCount > 0)
-        rows.push({ label: "Additives", val: addCount, unit: "", icon: "⚗️", isPositive: false, level: addCount > 3 ? "high" : "moderate", descriptor: `Contains ${addCount} additive${addCount > 1 ? "s" : ""}.`, dotColor: addCount > 3 ? "#E8314A" : "#F59E0B" });
+        rows.push({ label: "Additives", val: addCount, unit: "", icon: "⚗️", isPositive: false, level: addCount > 3 ? "high" : "moderate", descriptor: addCount > 3 ? "Many chemicals added. Some may not be safe long-term." : `Contains ${addCount} additive${addCount > 1 ? "s" : ""}. Tap to learn more.`, dotColor: addCount > 3 ? "#E8314A" : "#F59E0B" });
       return rows;
     };
 
