@@ -34,6 +34,9 @@ import {
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
+import { FoodFactCard } from "@/components/scan/FoodFactCard";
+import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
+import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 
 
@@ -465,6 +468,8 @@ const SkaapScan = () => {
   // Heart particle animation
   const [heartParticle, setHeartParticle] = useState(false);
 
+  // Image recognition
+  const [showImageRecognition, setShowImageRecognition] = useState(false);
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
@@ -1004,56 +1009,74 @@ const SkaapScan = () => {
 
         <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>Know what's in your food.</p>
 
-        {/* CENTER — Glass scanner circle */}
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative z-10" style={{ paddingBottom: 40 }}>
-          <motion.button
-            whileTap={{ scale: 1.04 }}
-            onClick={goToScan}
-            className="relative mb-8"
-            style={{ width: 220, height: 220 }}
-          >
-            {/* Circle background */}
-            <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
-            {/* Rotating red arc */}
-            <svg className="absolute inset-0 animate-rotate-arc" width="220" height="220" viewBox="0 0 220 220">
-              <circle cx="110" cy="110" r="108" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-              <path d="M 110 2 A 108 108 0 0 1 214.4 82" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
-            {/* Camera icon */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Barcode size={40} style={{ color: "#1B2A4A" }} />
-              <span className="text-[13px] mt-2" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto relative z-10 pb-4">
+          {/* CENTER — Compact scanner circle */}
+          <div className="flex flex-col items-center px-8 text-center pt-4" style={{ paddingBottom: 8 }}>
+            <motion.button
+              whileTap={{ scale: 1.04 }}
+              onClick={goToScan}
+              className="relative mb-5"
+              style={{ width: 160, height: 160 }}
+            >
+              <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
+              <svg className="absolute inset-0 animate-rotate-arc" width="160" height="160" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" r="78" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M 80 2 A 78 78 0 0 1 155 60" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Barcode size={32} style={{ color: "#1B2A4A" }} />
+                <span className="text-[12px] mt-1.5" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+              </div>
+            </motion.button>
+
+            {/* Action row — Search + Photo */}
+            <div className="flex items-center gap-2 w-full max-w-xs">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  const code = prompt("Enter barcode number:");
+                  if (code?.trim()) handleBarcodeDetected(code.trim());
+                }}
+                className="flex-1 flex items-center justify-center gap-2"
+                style={{ height: 44, borderRadius: 22, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
+              >
+                <Search size={15} style={{ color: "#9CA3AF" }} />
+                <span className="font-semibold text-[13px]" style={{ color: "#1B2A4A" }}>Search product</span>
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowImageRecognition(true)}
+                className="flex items-center justify-center gap-1.5"
+                style={{ height: 44, paddingLeft: 14, paddingRight: 14, borderRadius: 22, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
+                aria-label="Photo scan"
+              >
+                <span className="text-white text-[15px]">📸</span>
+                <span className="font-semibold text-[12px] text-white">Photo</span>
+              </motion.button>
             </div>
-          </motion.button>
+          </div>
 
-          {/* Search pill */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => {
-              const code = prompt("Enter barcode number:");
-              if (code?.trim()) handleBarcodeDetected(code.trim());
-            }}
-            className="flex items-center justify-center gap-2"
-            style={{ width: 280, height: 48, borderRadius: 24, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
-          >
-            <Search size={16} style={{ color: "#9CA3AF" }} />
-            <span className="font-semibold text-[15px]" style={{ color: "#1B2A4A" }}>Search a product</span>
-          </motion.button>
-        </div>
+          {/* Stat chips */}
+          <div className="flex items-center justify-center gap-2 px-5 py-3">
+            {[
+              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
+              { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
+              { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
+            ].map(chip => (
+              <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
+                className="flex flex-col items-center justify-center" style={{ width: 100, height: 44, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+                <span className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
+                <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
+              </button>
+            ))}
+          </div>
 
-        {/* Stat chips */}
-        <div className="flex items-center justify-center gap-2 px-5 pb-3 relative z-10">
-          {[
-            { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
-            { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
-            { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
-          ].map(chip => (
-            <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-              className="flex flex-col items-center justify-center" style={{ width: 100, height: 44, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-              <span className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
-              <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
-            </button>
-          ))}
+          {/* Food Fact of the Day */}
+          <FoodFactCard />
+
+          {/* Health Snapshot */}
+          <HealthSnapshot stats={userStats} />
         </div>
 
         {/* Bottom nav */}
@@ -1061,6 +1084,11 @@ const SkaapScan = () => {
 
         {/* Auth sheet */}
         <AuthSheet open={authSheetOpen} onClose={() => setAuthSheetOpen(false)} />
+
+        {/* Image Recognition */}
+        <AnimatePresence>
+          {showImageRecognition && <ImageRecognition onClose={() => setShowImageRecognition(false)} />}
+        </AnimatePresence>
       </div>
     );
   }

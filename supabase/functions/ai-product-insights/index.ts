@@ -55,6 +55,14 @@ Return a JSON array of exactly 3 objects:
 Focus on widely available products with better nutritional profiles. Keep reasons under 12 words.`;
         break;
       }
+      case "image_recognition": {
+        const { imageBase64 } = params;
+        systemPrompt = "You are a food nutrition AI that identifies foods from photos. Return ONLY valid JSON, no other text.";
+        userPrompt = `Identify this food item from the image and estimate its nutritional content per 100g. Return a JSON object:
+{"name": "Food name", "category": "Fruit/Vegetable/Grain/etc", "calories_per_100g": 50, "protein_per_100g": 1.0, "fiber_per_100g": 2.5, "sugar_per_100g": 10.0, "fat_per_100g": 0.3, "health_tip": "One helpful tip about this food (max 20 words)", "score": 78, "emoji": "🍎"}
+Score should be 0-100 based on nutritional value (high fiber/protein = good, high sugar/fat = bad). Be accurate with standard USDA nutritional data.`;
+        break;
+      }
       case "personalized-recs": {
         const { scanHistory, kitchenScore } = params;
         systemPrompt = `You are a personalized nutrition coach for the SKAAP food scanning app. You analyze a user's scan history to give actionable, warm, friendly advice. Never use words like "dangerous", "toxic", "terrible". Be encouraging and positive. Return ONLY valid JSON, no other text.`;
@@ -86,7 +94,21 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
         });
     }
 
-    const model = type === "personalized-recs" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+    const model = type === "personalized-recs" || type === "image_recognition" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+
+    // Build messages - for image recognition, include the image
+    const messages: any[] = [{ role: "system", content: systemPrompt }];
+    if (type === "image_recognition" && params.imageBase64) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: userPrompt },
+          { type: "image_url", image_url: { url: params.imageBase64 } },
+        ],
+      });
+    } else {
+      messages.push({ role: "user", content: userPrompt });
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -96,10 +118,7 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
       },
       body: JSON.stringify({
         model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
+        messages,
         stream: false,
       }),
     });
