@@ -34,6 +34,9 @@ import {
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
+import { FoodFactCard } from "@/components/scan/FoodFactCard";
+import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
+import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 
 
