@@ -1193,19 +1193,19 @@ const SkaapScan = () => {
       if (!n) return [];
       const rows: NutrientRow[] = [];
       if (n.fiber100g != null && n.fiber100g > 3)
-        rows.push({ label: "Fiber", val: n.fiber100g, unit: "g", icon: "🌾", isPositive: true, level: "high", descriptor: "Excellent source of fiber.", dotColor: "#22C55E" });
+        rows.push({ label: "Fiber", val: n.fiber100g, unit: "g", icon: "🌾", isPositive: true, level: "high", descriptor: "Helps your tummy digest food and keeps you full longer.", dotColor: "#22C55E" });
       if (n.protein100g != null && n.protein100g > 5)
-        rows.push({ label: "Protein", val: n.protein100g, unit: "g", icon: "🥩", isPositive: true, level: "high", descriptor: "Good source of protein.", dotColor: "#22C55E" });
+        rows.push({ label: "Protein", val: n.protein100g, unit: "g", icon: "💪", isPositive: true, level: "high", descriptor: "Builds muscles and keeps your body strong. Great for gym days!", dotColor: "#22C55E" });
       if (n.saturatedFat100g != null && n.saturatedFat100g < 1)
-        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: true, level: "low", descriptor: "Very low in saturated fat.", dotColor: "#22C55E" });
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: true, level: "low", descriptor: "Low in the type of fat that can clog your arteries.", dotColor: "#22C55E" });
       if (n.sugars100g != null && n.sugars100g < 5)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: true, level: "low", descriptor: "Low in sugar. Great!", dotColor: "#22C55E" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: true, level: "low", descriptor: "Won't spike your blood sugar. Your body will thank you.", dotColor: "#22C55E" });
       if (n.salt100g != null && n.salt100g < 0.3)
-        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: true, level: "low", descriptor: "Very low sodium content.", dotColor: "#22C55E" });
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: true, level: "low", descriptor: "Easy on your heart. Too much salt raises blood pressure.", dotColor: "#22C55E" });
       if (addCount === 0)
-        rows.push({ label: "No additives", val: undefined, unit: "", icon: "✅", isPositive: true, level: undefined, descriptor: "Clean ingredient list.", dotColor: "#22C55E" });
+        rows.push({ label: "No additives", val: undefined, unit: "", icon: "✅", isPositive: true, level: undefined, descriptor: "Nothing artificial added. Just real ingredients.", dotColor: "#22C55E" });
       if (productInfo?.labelsTags?.some(l => l.toLowerCase().includes("organic")))
-        rows.push({ label: "Organic", val: undefined, unit: "", icon: "🌿", isPositive: true, level: undefined, descriptor: "Certified organic product.", dotColor: "#22C55E" });
+        rows.push({ label: "Organic", val: undefined, unit: "", icon: "🌿", isPositive: true, level: undefined, descriptor: "Grown without synthetic pesticides or fertilizers.", dotColor: "#22C55E" });
       return rows;
     };
 
@@ -1213,17 +1213,17 @@ const SkaapScan = () => {
       if (!n) return [];
       const rows: NutrientRow[] = [];
       if (n.energyKcal100g != null && n.energyKcal100g > 250)
-        rows.push({ label: "Calories", val: n.energyKcal100g, unit: "kcal", icon: "🔥", isPositive: false, level: "high", descriptor: "A bit too caloric.", dotColor: "#E8314A" });
+        rows.push({ label: "Calories", val: n.energyKcal100g, unit: "kcal", icon: "🔥", isPositive: false, level: "high", descriptor: "Very energy-dense. Your body stores extra calories as fat.", dotColor: "#E8314A" });
       if (n.saturatedFat100g != null && n.saturatedFat100g > 4)
-        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "High in saturated fat.", dotColor: "#E8314A" });
+        rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "Can build up in your arteries and affect your heart over time.", dotColor: "#E8314A" });
       if (n.sugars100g != null && n.sugars100g > 15)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "High in sugar.", dotColor: "#E8314A" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "That's a lot of sugar — causes energy crashes and tooth decay.", dotColor: "#E8314A" });
       else if (n.sugars100g != null && n.sugars100g >= 5 && n.sugars100g <= 15)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Moderate sugar content.", dotColor: "#F59E0B" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Some sugar here. Not terrible, but not great either.", dotColor: "#F59E0B" });
       if (n.salt100g != null && n.salt100g > 0.6)
-        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: false, level: "high", descriptor: "High sodium content.", dotColor: "#E8314A" });
+        rows.push({ label: "Salt", val: n.salt100g, unit: "g", icon: "🧂", isPositive: false, level: "high", descriptor: "Too much salt can raise your blood pressure over time.", dotColor: "#E8314A" });
       if (addCount > 0)
-        rows.push({ label: "Additives", val: addCount, unit: "", icon: "⚗️", isPositive: false, level: addCount > 3 ? "high" : "moderate", descriptor: `Contains ${addCount} additive${addCount > 1 ? "s" : ""}.`, dotColor: addCount > 3 ? "#E8314A" : "#F59E0B" });
+        rows.push({ label: "Additives", val: addCount, unit: "", icon: "⚗️", isPositive: false, level: addCount > 3 ? "high" : "moderate", descriptor: addCount > 3 ? "Many chemicals added. Some may not be safe long-term." : `Contains ${addCount} additive${addCount > 1 ? "s" : ""}. Tap to learn more.`, dotColor: addCount > 3 ? "#E8314A" : "#F59E0B" });
       return rows;
     };
 
@@ -1554,6 +1554,37 @@ const SkaapScan = () => {
                     </div>
                   );
                 })()}
+              </div>
+
+              {/* LEARN WHY — Educational explainer cards */}
+              <div className="mx-5" style={{ marginTop: 12 }}>
+                <button onClick={() => toggleSection("learn-why")} className="w-full flex items-center gap-2 text-left">
+                  <span style={{ fontSize: 14 }}>📖</span>
+                  <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#6B7280" }}>What do these scores mean?</span>
+                  <motion.div animate={{ rotate: expandedSections.has("learn-why") ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown size={14} style={{ color: "#9CA3AF" }} />
+                  </motion.div>
+                </button>
+                <div style={{ display: "grid", gridTemplateRows: expandedSections.has("learn-why") ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease-out" }}>
+                  <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                    <div className="pt-3 space-y-3">
+                      {[
+                        { icon: "🅰️", title: "Nutri-Score", body: "A grade from A (best) to E (worst) based on calories, sugar, salt, saturated fat, fiber, and protein. A = eat freely. E = limit this." },
+                        { icon: "⚗️", title: "Additives", body: "Chemicals added to food for color, flavor, or shelf life. Some are safe, some are banned in other countries. Fewer = better." },
+                        { icon: "🏭", title: "NOVA Group", body: "How processed is this food? 1 = fresh/natural. 4 = ultra-processed (made in factories with lots of chemicals). Stick to 1-2 when you can." },
+                        { icon: "🌍", title: "Eco-Score", body: "How much this product impacts the planet — from farming to packaging. A = planet-friendly. E = heavy environmental cost." },
+                      ].map(item => (
+                        <div key={item.title} className="flex gap-3 items-start">
+                          <span style={{ fontSize: 16, lineHeight: "20px" }}>{item.icon}</span>
+                          <div>
+                            <p className="font-bold text-[13px]" style={{ color: "#111827" }}>{item.title}</p>
+                            <p className="text-[12px] leading-relaxed" style={{ color: "#6B7280" }}>{item.body}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* DIETARY CHIPS */}
