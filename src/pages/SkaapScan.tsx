@@ -468,6 +468,8 @@ const SkaapScan = () => {
   // Heart particle animation
   const [heartParticle, setHeartParticle] = useState(false);
 
+  // Image recognition
+  const [showImageRecognition, setShowImageRecognition] = useState(false);
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
