@@ -367,16 +367,16 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     });
   });
 
-  // Fun copy
+  // Fun viral copy
   let l1: string;
-  if (stats.current_streak > 6 && ks > 70) l1 = `${stats.current_streak} days of eating clean 🌿`;
-  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "My fridge has secrets 💀";
-  else if (stats.total_scans > 50) l1 = "50+ products scanned 🔍";
-  else if (ks > 80) l1 = "My kitchen passed the test 🏆";
-  else if (ks < 40) l1 = "My kitchen needs work 😅";
-  else l1 = `My kitchen scores ${ks}/100`;
+  if (stats.current_streak > 6 && ks > 70) l1 = `${stats.current_streak} days clean and counting 🌿`;
+  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "POV: your fridge has a criminal record 💀";
+  else if (stats.total_scans > 50) l1 = "I've scanned 50+ products and I have regrets 🔍";
+  else if (ks > 80) l1 = "My kitchen ate and left no crumbs 🏆";
+  else if (ks < 40) l1 = "My kitchen is in its villain era 😅";
+  else l1 = `My kitchen is a ${ks}/100 — what's yours?`;
 
-  drawBottomCTA(ctx, l1, `Better than ${stats.kitchen_percentile}% of SKAAP users`, "Think YOUR kitchen can beat this? 🏆");
+  drawBottomCTA(ctx, l1, `Top ${stats.kitchen_percentile}% of all SKAAP kitchens`, "Rate YOUR kitchen → useskaap.com 🏆");
   drawWatermark(ctx);
 }
 
