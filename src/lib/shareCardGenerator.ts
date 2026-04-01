@@ -289,13 +289,13 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, addY);
   }
 
-  // Bottom CTA
+  // Bottom CTA — more viral, fun copy
   let l1: string, l2: string;
-  if (score >= 75) { l1 = "Just SKAAPed this 🌿"; l2 = "Clean ingredients. Would you eat it?"; }
-  else if (score >= 50) { l1 = "Just SKAAPed this 👀"; l2 = "Not terrible, but check the additives."; }
-  else if (score >= 25) { l1 = "Just SKAAPed this 😬"; l2 = "You should probably check yours too."; }
-  else { l1 = "Just SKAAPed this 🚨"; l2 = "This scored rough. What about YOUR food?"; }
-  drawBottomCTA(ctx, l1, l2);
+  if (score >= 75) { l1 = "This one passed the vibe check 🌿"; l2 = "Clean ingredients confirmed. Would you eat it?"; }
+  else if (score >= 50) { l1 = "Hmm… it's giving mid 👀"; l2 = "Not the worst, but those additives tho."; }
+  else if (score >= 25) { l1 = "Nah this is crazy 😬"; l2 = "Check what's in YOUR food before you judge me."; }
+  else { l1 = "This should be illegal 🚨"; l2 = "Banned in Europe btw. Still on US shelves."; }
+  drawBottomCTA(ctx, l1, l2, "Drop a 💀 if yours is worse → @useskaap");
   drawWatermark(ctx);
 }
 
