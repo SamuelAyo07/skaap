@@ -572,12 +572,12 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
   // Bottom CTA
   const s = stats.current_streak;
   let l1: string;
-  if (s >= 30) l1 = "30 days of clean eating 🌿";
-  else if (s >= 14) l1 = "Two weeks strong 🏆";
-  else if (s >= 7) l1 = "One week clean 💪";
-  else if (s >= 3) l1 = "On a streak 🔥";
-  else l1 = "Just getting started 🌱";
-  drawBottomCTA(ctx, l1, "Can you keep up?", "Start your streak → useskaap.com");
+  if (s >= 30) l1 = "30 days of knowing what I eat 🧠";
+  else if (s >= 14) l1 = "2 weeks of eating with purpose 🏆";
+  else if (s >= 7) l1 = "1 week streak — I'm locked in 💪";
+  else if (s >= 3) l1 = "Streak mode activated 🔥";
+  else l1 = "Day 1 energy — watch me 🌱";
+  drawBottomCTA(ctx, l1, "How long can YOU go?", "Start your streak → useskaap.com 🔥");
   drawWatermark(ctx);
 }
 
