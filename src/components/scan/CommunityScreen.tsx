@@ -286,17 +286,23 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   useEffect(() => {
     if (!geoLocation?.city || !canAccess) return;
 
+    const cityFilter = `city=eq.${geoLocation.city}`;
+    const channelName = `community-live:${geoLocation.city
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")}`;
+
     const channel = supabase
-      .channel("community-live")
+      .channel(channelName)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "community_scans" },
+        { event: "INSERT", schema: "public", table: "community_scans", filter: cityFilter },
         (payload: any) => {
-          if (payload.new?.city === geoLocation.city) {
-            setScansToday(prev => prev + 1);
-            if (!payload.new.saved && payload.new.score < 50) {
-              setProductsAvoided(prev => prev + 1);
-            }
+          if (payload.new?.city !== geoLocation.city) return;
+
+          setScansToday(prev => prev + 1);
+          if (!payload.new.saved && payload.new.score < 50) {
+            setProductsAvoided(prev => prev + 1);
           }
         }
       )
