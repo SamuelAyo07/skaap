@@ -58,7 +58,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       // Fallback: check Supabase table
       const { data: subData } = await supabase
         .from("user_subscriptions")
-        .select("*")
+        .select("plan, status, trial_ends_at, current_period_end")
         .eq("user_id", user.id)
         .maybeSingle();
 
