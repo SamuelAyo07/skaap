@@ -289,13 +289,13 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, addY);
   }
 
-  // Bottom CTA
+  // Bottom CTA — more viral, fun copy
   let l1: string, l2: string;
-  if (score >= 75) { l1 = "Just SKAAPed this 🌿"; l2 = "Clean ingredients. Would you eat it?"; }
-  else if (score >= 50) { l1 = "Just SKAAPed this 👀"; l2 = "Not terrible, but check the additives."; }
-  else if (score >= 25) { l1 = "Just SKAAPed this 😬"; l2 = "You should probably check yours too."; }
-  else { l1 = "Just SKAAPed this 🚨"; l2 = "This scored rough. What about YOUR food?"; }
-  drawBottomCTA(ctx, l1, l2);
+  if (score >= 75) { l1 = "This one passed the vibe check 🌿"; l2 = "Clean ingredients confirmed. Would you eat it?"; }
+  else if (score >= 50) { l1 = "Hmm… it's giving mid 👀"; l2 = "Not the worst, but those additives tho."; }
+  else if (score >= 25) { l1 = "Nah this is crazy 😬"; l2 = "Check what's in YOUR food before you judge me."; }
+  else { l1 = "This should be illegal 🚨"; l2 = "Banned in Europe btw. Still on US shelves."; }
+  drawBottomCTA(ctx, l1, l2, "Drop a 💀 if yours is worse → @useskaap");
   drawWatermark(ctx);
 }
 
@@ -367,16 +367,16 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     });
   });
 
-  // Fun copy
+  // Fun viral copy
   let l1: string;
-  if (stats.current_streak > 6 && ks > 70) l1 = `${stats.current_streak} days of eating clean 🌿`;
-  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "My fridge has secrets 💀";
-  else if (stats.total_scans > 50) l1 = "50+ products scanned 🔍";
-  else if (ks > 80) l1 = "My kitchen passed the test 🏆";
-  else if (ks < 40) l1 = "My kitchen needs work 😅";
-  else l1 = `My kitchen scores ${ks}/100`;
+  if (stats.current_streak > 6 && ks > 70) l1 = `${stats.current_streak} days clean and counting 🌿`;
+  else if (stats.worst_score_ever && stats.worst_score_ever.skaap_score < 20) l1 = "POV: your fridge has a criminal record 💀";
+  else if (stats.total_scans > 50) l1 = "I've scanned 50+ products and I have regrets 🔍";
+  else if (ks > 80) l1 = "My kitchen ate and left no crumbs 🏆";
+  else if (ks < 40) l1 = "My kitchen is in its villain era 😅";
+  else l1 = `My kitchen is a ${ks}/100 — what's yours?`;
 
-  drawBottomCTA(ctx, l1, `Better than ${stats.kitchen_percentile}% of SKAAP users`, "Think YOUR kitchen can beat this? 🏆");
+  drawBottomCTA(ctx, l1, `Top ${stats.kitchen_percentile}% of all SKAAP kitchens`, "Rate YOUR kitchen → useskaap.com 🏆");
   drawWatermark(ctx);
 }
 
@@ -572,12 +572,12 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
   // Bottom CTA
   const s = stats.current_streak;
   let l1: string;
-  if (s >= 30) l1 = "30 days of clean eating 🌿";
-  else if (s >= 14) l1 = "Two weeks strong 🏆";
-  else if (s >= 7) l1 = "One week clean 💪";
-  else if (s >= 3) l1 = "On a streak 🔥";
-  else l1 = "Just getting started 🌱";
-  drawBottomCTA(ctx, l1, "Can you keep up?", "Start your streak → useskaap.com");
+  if (s >= 30) l1 = "30 days of knowing what I eat 🧠";
+  else if (s >= 14) l1 = "2 weeks of eating with purpose 🏆";
+  else if (s >= 7) l1 = "1 week streak — I'm locked in 💪";
+  else if (s >= 3) l1 = "Streak mode activated 🔥";
+  else l1 = "Day 1 energy — watch me 🌱";
+  drawBottomCTA(ctx, l1, "How long can YOU go?", "Start your streak → useskaap.com 🔥");
   drawWatermark(ctx);
 }
 
@@ -660,7 +660,7 @@ function drawWorstCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | n
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, cy + 390);
   }
 
-  drawBottomCTA(ctx, "My kitchen's worst kept secret 💀", `It scored ${worst.skaap_score}/100`, "What's hiding in YOUR kitchen?");
+  drawBottomCTA(ctx, "Exposing my kitchen's worst kept secret 💀", `It scored ${worst.skaap_score}/100 and I still ate it`, "Find YOUR hall of shame → @useskaap");
   drawWatermark(ctx);
 }
 
