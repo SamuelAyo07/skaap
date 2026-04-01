@@ -660,7 +660,7 @@ function drawWorstCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | n
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, cy + 390);
   }
 
-  drawBottomCTA(ctx, "My kitchen's worst kept secret 💀", `It scored ${worst.skaap_score}/100`, "What's hiding in YOUR kitchen?");
+  drawBottomCTA(ctx, "Exposing my kitchen's worst kept secret 💀", `It scored ${worst.skaap_score}/100 and I still ate it`, "Find YOUR hall of shame → @useskaap");
   drawWatermark(ctx);
 }
 
