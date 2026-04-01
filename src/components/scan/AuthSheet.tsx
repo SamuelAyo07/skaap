@@ -50,7 +50,8 @@ export function AuthSheet({ open, onClose, onSuccess }: AuthSheetProps) {
         const { error } = await signUp(email, password, name);
         if (error) {
           if (error.message?.includes("already registered")) {
-            toast.error("This email is already registered. Try signing in instead.");
+            toast.error("This email is already registered. Switching to sign in...");
+            setMode("signin");
           } else {
             toast.error(error.message || "Signup failed. Please try again.");
           }
