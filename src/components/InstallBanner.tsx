@@ -66,6 +66,7 @@ const InstallBanner = () => {
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 25 }}
           className="fixed bottom-4 left-3 right-3 z-[9999] rounded-2xl p-4 shadow-xl"
+          data-install-banner
           style={{ background: "#0A1220", border: "1px solid rgba(255,255,255,0.08)" }}
         >
           <button onClick={handleDismiss} className="absolute top-3 right-3 p-1 rounded-full" style={{ color: "rgba(255,255,255,0.4)" }}>
