@@ -436,6 +436,8 @@ const SkaapScan = () => {
   const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("history");
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
+  const { currentStore } = useNearbyStore();
+  const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
