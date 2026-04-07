@@ -1963,24 +1963,24 @@ const SkaapScan = () => {
 
         {/* FEEDBACK ROW */}
         {!feedbackGiven && productInfo && !loading && (
-          <div className="flex-shrink-0 flex items-center justify-center gap-3 py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
-            <span className="text-[11px] font-medium" style={{ color: "#9CA3AF" }}>How was this?</span>
+          <div className="flex-shrink-0 flex items-center justify-center gap-2 py-1.5" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
+            <span className="text-[10px] font-medium" style={{ color: "#9CA3AF" }}>Rate this</span>
             {["😍", "👍", "😐", "👎"].map(emoji => (
               <motion.button key={emoji} whileTap={{ scale: 0.85 }} onClick={() => handleFeedback(emoji)}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 transition-colors">
+                className="w-8 h-8 rounded-full flex items-center justify-center text-base hover:bg-gray-100 transition-colors">
                 {emoji}
               </motion.button>
             ))}
           </div>
         )}
         {feedbackGiven && (
-          <div className="flex-shrink-0 flex items-center justify-center py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
-            <span className="text-[11px] font-semibold" style={{ color: "#15803D" }}>Thanks for the feedback! 🙏</span>
+          <div className="flex-shrink-0 flex items-center justify-center py-1.5" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
+            <span className="text-[10px] font-semibold" style={{ color: "#15803D" }}>Thanks! 🙏</span>
           </div>
         )}
 
         {/* BOTTOM ACTIONS — FIXED */}
-        <div className="flex-shrink-0 flex items-center gap-3 px-5 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "12px 20px", paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)" }}>
+        <div className="flex-shrink-0 flex items-center gap-2.5 px-4 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "10px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 8px) + 10px)" }}>
           {/* Heart particle animation */}
           <AnimatePresence>
             {heartParticle && (
@@ -1990,14 +1990,14 @@ const SkaapScan = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="absolute text-lg pointer-events-none"
-                style={{ right: "30%", bottom: 52 }}>
+                style={{ right: "30%", bottom: 48 }}>
                 🤍
               </motion.span>
             )}
           </AnimatePresence>
           <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
             className="flex-1 font-semibold flex items-center justify-center"
-            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 52, borderRadius: 14, fontSize: 15 }}>
+            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 46, borderRadius: 12, fontSize: 14 }}>
             Scan Again
           </motion.button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
@@ -2005,10 +2005,10 @@ const SkaapScan = () => {
             style={{
               background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#FFFFFF" : "#E8314A",
               color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-              height: 52, borderRadius: 14, fontSize: 15,
+              height: 46, borderRadius: 12, fontSize: 14,
               border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
             }}>
-            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={16} fill="#E8314A" /> Saved</> : <><Heart size={16} /> Save ♥</>}
+            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={14} fill="#E8314A" /> Saved</> : <><Heart size={14} /> Save ♥</>}
           </motion.button>
         </div>
       </div>
