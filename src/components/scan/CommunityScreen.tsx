@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
-import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
@@ -42,6 +42,17 @@ interface CommunityAdditive {
   trending_up: boolean;
 }
 
+interface LiveScanItem {
+  id: string;
+  product_name: string;
+  brand: string | null;
+  image_url: string | null;
+  score: number | null;
+  city: string | null;
+  scan_timestamp: string;
+  barcode: string;
+}
+
 // Reverse geocode using free API
 async function reverseGeocode(lat: number, lng: number): Promise<{ city: string; state: string } | null> {
   try {
@@ -57,6 +68,16 @@ async function reverseGeocode(lat: number, lng: number): Promise<{ city: string;
   } catch {
     return null;
   }
+}
+
+function getTimeAgo(timestamp: string): string {
+  const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
 export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenProps) {
@@ -96,6 +117,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // User comparison
   const [userAvgScore, setUserAvgScore] = useState<number | null>(null);
   const [cityAvgScore, setCityAvgScore] = useState<number | null>(null);
+
+  // Live feed
+  const [recentScans, setRecentScans] = useState<LiveScanItem[]>([]);
 
   const channelRef = useRef<any>(null);
 
@@ -272,6 +296,18 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           setUserAvgScore(Math.round(scores.reduce((a, b) => a + b, 0) / scores.length));
         }
       }
+
+      // Recent scans (live feed) — last 20 scans in city
+      const { data: recentData } = await supabase
+        .from("community_scans")
+        .select("id, product_name, brand, image_url, score, city, scan_timestamp, barcode")
+        .eq("city", city)
+        .order("scan_timestamp", { ascending: false })
+        .limit(20);
+
+      if (recentData) {
+        setRecentScans(recentData);
+      }
     } catch (err) {
       console.error("Community fetch error:", err);
     }
@@ -304,6 +340,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           if (!payload.new.saved && payload.new.score < 50) {
             setProductsAvoided(prev => prev + 1);
           }
+
+          // Add to live feed
+          const newScan: LiveScanItem = {
+            id: payload.new.id,
+            product_name: payload.new.product_name,
+            brand: payload.new.brand,
+            image_url: payload.new.image_url,
+            score: payload.new.score,
+            city: payload.new.city,
+            scan_timestamp: payload.new.scan_timestamp,
+            barcode: payload.new.barcode,
+          };
+          setRecentScans(prev => [newScan, ...prev].slice(0, 20));
         }
       )
       .subscribe();
@@ -578,7 +627,90 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           ))}
         </div>
 
-        {/* SECTION 2 — Worst in City */}
+        {/* SECTION 1.5 — Live Scan Feed */}
+        <div className="px-5 mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="relative flex items-center justify-center">
+              <Activity size={16} style={{ color: "#C41E3A" }} />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse" style={{ background: "#22C55E" }} />
+            </div>
+            <h2 className="font-extrabold text-[18px]" style={{ color: "#1A1A1A" }}>Live Feed</h2>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full" style={{ background: "#F0FDF4", color: "#22C55E" }}>
+              Real-time
+            </span>
+          </div>
+
+          <div className="space-y-2 max-h-[280px] overflow-y-auto rounded-2xl" style={{ scrollbarWidth: "none" }}>
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#F9FAFB" }}>
+                  <Skeleton className="w-10 h-10 rounded-lg" style={{ background: "#E5E7EB" }} />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
+                    <Skeleton className="h-2 w-1/2" style={{ background: "#E5E7EB" }} />
+                  </div>
+                </div>
+              ))
+            ) : recentScans.length === 0 ? (
+              <div className="text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                <Sparkles size={24} style={{ color: "#D1D5DB" }} className="mx-auto" />
+                <p className="text-[13px] font-medium mt-2" style={{ color: "#9CA3AF" }}>
+                  No scans yet today — be the first in {cityName}!
+                </p>
+              </div>
+            ) : (
+              <AnimatePresence initial={false}>
+                {recentScans.slice(0, 10).map((scan, i) => {
+                  const timeAgo = getTimeAgo(scan.scan_timestamp);
+                  const scoreColor = scan.score != null ? getScoreColor(scan.score) : "#D1D5DB";
+                  return (
+                    <motion.button
+                      key={scan.id}
+                      initial={{ opacity: 0, x: -20, height: 0 }}
+                      animate={{ opacity: 1, x: 0, height: "auto" }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      onClick={() => onScanProduct(scan.barcode)}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl text-left"
+                      style={{ background: i === 0 ? "#FFFBEB" : "#FFFFFF", border: `1px solid ${i === 0 ? "#FEF3C7" : "#F3F4F6"}` }}
+                    >
+                      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                        {scan.image_url ? (
+                          <img src={scan.image_url} alt={scan.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Scan size={14} style={{ color: "#D1D5DB" }} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>
+                          {scan.product_name}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {scan.brand && (
+                            <span className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{scan.brand}</span>
+                          )}
+                          <span className="text-[10px]" style={{ color: "#D1D5DB" }}>•</span>
+                          <span className="text-[10px] flex-shrink-0" style={{ color: "#9CA3AF" }}>{timeAgo}</span>
+                        </div>
+                      </div>
+                      {scan.score != null && (
+                        <div
+                          className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{ background: scoreColor }}
+                        >
+                          <span className="font-bold text-[14px] text-white">{scan.score}</span>
+                        </div>
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </AnimatePresence>
+            )}
+          </div>
+        </div>
+
         <div className="px-5 mt-8">
           <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
             Worst in {cityName} Right Now 🚨
