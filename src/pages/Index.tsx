@@ -4,8 +4,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
 import {
-  Store, ScanLine, Mail, ArrowRight, ChevronDown, Sparkles, Instagram, Linkedin,
-  Heart, Users, Zap, Smartphone, Barcode, ShieldCheck, Clock, Search,
+  Store, ScanLine, Mail, ChevronDown, Sparkles, Instagram, Linkedin,
+  Smartphone, Barcode, ShieldCheck, Clock, Search,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import stepScan from "@/assets/step-scan.webp";
@@ -288,61 +288,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── FOR RETAILERS (dark) ─── */}
-      <section id="retailers" className="py-12" style={{ background: "#0D1528" }}>
-        <div className="max-w-5xl mx-auto px-5">
-          <FadeIn>
-            <div className="text-center mb-5">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E8314A" }}>For Retailers</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2 tracking-tight">
-                Built for the stores<br className="hidden md:block" /> that built your neighborhood
-              </h2>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.1}>
-            <div className="glass-card p-6 mb-6 max-w-3xl mx-auto">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,49,74,0.2)" }}>
-                  <Heart size={18} color="#E8314A" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-white tracking-tight mb-1">Your store matters. We're here to prove it.</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    The big chains have entire teams building for the future. SKAAP levels the playing field.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-            {[
-              { icon: Smartphone, title: "Zero hardware", desc: "Customers use their own phones." },
-              { icon: Zap, title: "Live in 48 hours", desc: "Upload inventory, start accepting scan to pay." },
-              { icon: Users, title: "Happier customers", desc: "Faster trips, more repeat visits." },
-            ].map((card, i) => (
-              <FadeIn key={i} delay={0.1 + i * 0.06}>
-                <motion.div whileHover={{ y: -3 }} className="glass-card p-5">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: "rgba(232,49,74,0.2)" }}>
-                    <card.icon size={18} color="#E8314A" />
-                  </div>
-                  <h3 className="font-bold text-white mb-1 tracking-tight text-sm">{card.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.35)" }}>{card.desc}</p>
-                </motion.div>
-              </FadeIn>
-            ))}
-          </div>
-
-          <FadeIn delay={0.2}>
-            <div className="text-center">
-              <a href="#contact" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm" style={{ background: "linear-gradient(135deg, #E8314A, #c42040)", color: "#fff" }}>
-                Get Started. Free for 90 Days <ArrowRight size={14} />
-              </a>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
 
       {/* ─── FAQ (WHITE) ─── */}
       <section className="py-10 bg-white">
@@ -469,7 +414,6 @@ const Index = () => {
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>
               <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-              <a href="#retailers" className="hover:text-white transition-colors">Retailers</a>
               <button onClick={() => navigate("/scan")} className="hover:text-white transition-colors">Food Intelligence</button>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
