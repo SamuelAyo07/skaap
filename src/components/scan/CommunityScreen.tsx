@@ -286,6 +286,18 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           setUserAvgScore(Math.round(scores.reduce((a, b) => a + b, 0) / scores.length));
         }
       }
+
+      // Recent scans (live feed) — last 20 scans in city
+      const { data: recentData } = await supabase
+        .from("community_scans")
+        .select("id, product_name, brand, image_url, score, city, scan_timestamp, barcode")
+        .eq("city", city)
+        .order("scan_timestamp", { ascending: false })
+        .limit(20);
+
+      if (recentData) {
+        setRecentScans(recentData);
+      }
     } catch (err) {
       console.error("Community fetch error:", err);
     }
