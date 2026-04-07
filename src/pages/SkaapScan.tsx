@@ -923,6 +923,7 @@ const SkaapScan = () => {
   }, [buildProductData, userStats, shareImageUrl]);
 
   const handleShareTap = useCallback(async () => {
+    hapticLight();
     if (shareGenerating) return;
     setShareGenerating(true);
     setChallengeCopied(false);
