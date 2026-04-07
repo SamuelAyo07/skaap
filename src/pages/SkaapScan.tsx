@@ -752,6 +752,7 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
+      if (updatedStats.total_scans === 1) setShowCelebration(true);
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       // Persist to database for logged-in users
