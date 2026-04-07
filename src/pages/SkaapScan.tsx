@@ -1040,26 +1040,36 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>Know what's in your food.</p>
+        {/* Store location banner */}
+        {currentStore && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-2 px-3 py-2 rounded-xl relative z-10" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
+            <span style={{ fontSize: 14 }}>📍</span>
+            <span className="text-[12px] font-semibold truncate" style={{ color: "#065F46" }}>You're at {currentStore.name}</span>
+          </motion.div>
+        )}
+
+        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>
+          {currentStore ? `Scanning at ${currentStore.name}` : "Know what's in your food."}
+        </p>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
           {/* CENTER — Compact scanner circle */}
-          <div className="flex flex-col items-center px-8 text-center pt-4" style={{ paddingBottom: 8 }}>
+          <div className="flex flex-col items-center px-8 text-center pt-3" style={{ paddingBottom: 6 }}>
             <motion.button
               whileTap={{ scale: 1.04 }}
               onClick={goToScan}
-              className="relative mb-5"
-              style={{ width: 160, height: 160 }}
+              className="relative mb-4"
+              style={{ width: 140, height: 140 }}
             >
               <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
-              <svg className="absolute inset-0 animate-rotate-arc" width="160" height="160" viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="78" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-                <path d="M 80 2 A 78 78 0 0 1 155 60" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
+              <svg className="absolute inset-0 animate-rotate-arc" width="140" height="140" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="68" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M 70 2 A 68 68 0 0 1 135 52" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Barcode size={32} style={{ color: "#1B2A4A" }} />
-                <span className="text-[12px] mt-1.5" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+                <Barcode size={28} style={{ color: "#1B2A4A" }} />
+                <span className="text-[11px] mt-1" style={{ color: "#9CA3AF" }}>Tap to scan</span>
               </div>
             </motion.button>
 
@@ -1072,35 +1082,67 @@ const SkaapScan = () => {
                   if (code?.trim()) handleBarcodeDetected(code.trim());
                 }}
                 className="flex-1 flex items-center justify-center gap-2"
-                style={{ height: 44, borderRadius: 22, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
+                style={{ height: 40, borderRadius: 20, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
               >
-                <Search size={15} style={{ color: "#9CA3AF" }} />
-                <span className="font-semibold text-[13px]" style={{ color: "#1B2A4A" }}>Search product</span>
+                <Search size={14} style={{ color: "#9CA3AF" }} />
+                <span className="font-semibold text-[12px]" style={{ color: "#1B2A4A" }}>Search product</span>
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowImageRecognition(true)}
                 className="flex items-center justify-center gap-1.5"
-                style={{ height: 44, paddingLeft: 14, paddingRight: 14, borderRadius: 22, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
+                style={{ height: 40, paddingLeft: 12, paddingRight: 12, borderRadius: 20, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
                 aria-label="Photo scan"
               >
-                <span className="text-white text-[15px]">📸</span>
-                <span className="font-semibold text-[12px] text-white">Photo</span>
+                <span className="text-white text-[14px]">📸</span>
+                <span className="font-semibold text-[11px] text-white">Photo</span>
               </motion.button>
             </div>
           </div>
 
+          {/* Last Scan — Quick re-access */}
+          {lastScan && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleBarcodeDetected(lastScan.barcode)}
+              className="mx-5 mt-2 flex items-center gap-3 px-4 py-3 rounded-2xl text-left"
+              style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
+            >
+              <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                {lastScan.image ? (
+                  <img src={lastScan.image} alt={lastScan.name} className="w-full h-full object-contain p-0.5" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><Barcode size={16} style={{ color: "#D1D5DB" }} /></div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>Last scanned</p>
+                <p className="font-semibold text-[13px] truncate" style={{ color: "#111827" }}>{lastScan.name}</p>
+                {lastScan.brand && <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{lastScan.brand}</p>}
+              </div>
+              {lastScan.score != null && (
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-extrabold text-[13px]"
+                  style={{ background: getScoreColor(lastScan.score) }}>
+                  {lastScan.score}
+                </div>
+              )}
+              <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
+            </motion.button>
+          )}
+
           {/* Stat chips */}
-          <div className="flex items-center justify-center gap-2 px-5 py-3">
+          <div className="flex items-center justify-center gap-2 px-5 py-2">
             {[
               { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
               { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
               { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
             ].map(chip => (
               <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-                className="flex flex-col items-center justify-center" style={{ width: 100, height: 44, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-                <span className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
-                <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
+                className="flex flex-col items-center justify-center" style={{ width: 96, height: 40, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+                <span className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
+                <span className="text-[9px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
               </button>
             ))}
           </div>
