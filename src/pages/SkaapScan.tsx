@@ -41,6 +41,7 @@ import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommen
 import { useNearbyStore } from "@/hooks/useNearbyStore";
 import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection } from "@/lib/haptics";
 import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
+import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
@@ -498,6 +499,8 @@ const SkaapScan = () => {
 
   // Image recognition
   const [showImageRecognition, setShowImageRecognition] = useState(false);
+  // First-scan celebration
+  const [showCelebration, setShowCelebration] = useState(false);
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
@@ -708,6 +711,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
+      if (updatedStats.total_scans === 1) setShowCelebration(true);
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       if (user) {
         supabase.from("user_scans").insert({
@@ -748,6 +752,7 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
+      if (updatedStats.total_scans === 1) setShowCelebration(true);
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       // Persist to database for logged-in users
@@ -1040,6 +1045,9 @@ const SkaapScan = () => {
       <>
       {showOnboarding && (
         <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
+      )}
+      {showCelebration && (
+        <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
       <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         {/* Ambient blob */}
