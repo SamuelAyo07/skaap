@@ -38,7 +38,30 @@ import { FoodFactCard } from "@/components/scan/FoodFactCard";
 import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
 import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
+import { useNearbyStore } from "@/hooks/useNearbyStore";
 
+const LAST_SCAN_KEY = "skaap_last_scan";
+
+interface LastScan {
+  barcode: string;
+  name: string;
+  brand?: string;
+  image?: string;
+  score?: number;
+  nutriScore?: string;
+  scannedAt: number;
+}
+
+function saveLastScan(scan: LastScan) {
+  try { localStorage.setItem(LAST_SCAN_KEY, JSON.stringify(scan)); } catch {}
+}
+
+function getLastScan(): LastScan | null {
+  try {
+    const raw = localStorage.getItem(LAST_SCAN_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
 
 
 // ─── Types ───
@@ -413,6 +436,8 @@ const SkaapScan = () => {
   const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("history");
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
+  const { currentStore } = useNearbyStore();
+  const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -667,6 +692,10 @@ const SkaapScan = () => {
         skaapScore: cachedScore.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Save as last scan for quick re-access
+      const ls: LastScan = { barcode, name: cached.productName, brand: cached.brand, image: cached.imageUrl, score: cachedScore.total, nutriScore: cached.nutriScoreGrade, scannedAt: Date.now() };
+      saveLastScan(ls);
+      setLastScan(ls);
       // Record user stats
       const updatedStats = recordScan({
         barcode, product_name: cached.productName, brand: cached.brand,
@@ -676,6 +705,14 @@ const SkaapScan = () => {
       });
       setUserStats(updatedStats);
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
+      if (user) {
+        supabase.from("user_scans").insert({
+          user_id: user.id, barcode, product_name: cached.productName,
+          brand: cached.brand || null, score: cachedScore.total,
+          nutriscore: cached.nutriScoreGrade || null, nova: cached.novaGroup || null,
+          image_url: cached.imageUrl || null,
+        }).then(() => {});
+      }
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
@@ -695,6 +732,10 @@ const SkaapScan = () => {
         skaapScore: score.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Save as last scan
+      const ls2: LastScan = { barcode, name: info.productName, brand: info.brand, image: info.imageUrl, score: score.total, nutriScore: info.nutriScoreGrade, scannedAt: Date.now() };
+      saveLastScan(ls2);
+      setLastScan(ls2);
       // Record user stats
       const updatedStats = recordScan({
         barcode, product_name: info.productName, brand: info.brand,
@@ -705,6 +746,15 @@ const SkaapScan = () => {
       setUserStats(updatedStats);
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
+      // Persist to database for logged-in users
+      if (user) {
+        supabase.from("user_scans").insert({
+          user_id: user.id, barcode, product_name: info.productName,
+          brand: info.brand || null, score: score.total,
+          nutriscore: info.nutriScoreGrade || null, nova: info.novaGroup || null,
+          image_url: info.imageUrl || null,
+        }).then(() => {});
+      }
       fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
@@ -1007,26 +1057,36 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>Know what's in your food.</p>
+        {/* Store location banner */}
+        {currentStore && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-2 px-3 py-2 rounded-xl relative z-10" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
+            <span style={{ fontSize: 14 }}>📍</span>
+            <span className="text-[12px] font-semibold truncate" style={{ color: "#065F46" }}>You're at {currentStore.name}</span>
+          </motion.div>
+        )}
+
+        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>
+          {currentStore ? `Scanning at ${currentStore.name}` : "Know what's in your food."}
+        </p>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
           {/* CENTER — Compact scanner circle */}
-          <div className="flex flex-col items-center px-8 text-center pt-4" style={{ paddingBottom: 8 }}>
+          <div className="flex flex-col items-center px-8 text-center pt-3" style={{ paddingBottom: 6 }}>
             <motion.button
               whileTap={{ scale: 1.04 }}
               onClick={goToScan}
-              className="relative mb-5"
-              style={{ width: 160, height: 160 }}
+              className="relative mb-4"
+              style={{ width: 140, height: 140 }}
             >
               <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
-              <svg className="absolute inset-0 animate-rotate-arc" width="160" height="160" viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="78" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-                <path d="M 80 2 A 78 78 0 0 1 155 60" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
+              <svg className="absolute inset-0 animate-rotate-arc" width="140" height="140" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="68" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M 70 2 A 68 68 0 0 1 135 52" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Barcode size={32} style={{ color: "#1B2A4A" }} />
-                <span className="text-[12px] mt-1.5" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+                <Barcode size={28} style={{ color: "#1B2A4A" }} />
+                <span className="text-[11px] mt-1" style={{ color: "#9CA3AF" }}>Tap to scan</span>
               </div>
             </motion.button>
 
@@ -1039,35 +1099,67 @@ const SkaapScan = () => {
                   if (code?.trim()) handleBarcodeDetected(code.trim());
                 }}
                 className="flex-1 flex items-center justify-center gap-2"
-                style={{ height: 44, borderRadius: 22, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
+                style={{ height: 40, borderRadius: 20, background: "#F3F4F6", border: "1px solid #E5E7EB" }}
               >
-                <Search size={15} style={{ color: "#9CA3AF" }} />
-                <span className="font-semibold text-[13px]" style={{ color: "#1B2A4A" }}>Search product</span>
+                <Search size={14} style={{ color: "#9CA3AF" }} />
+                <span className="font-semibold text-[12px]" style={{ color: "#1B2A4A" }}>Search product</span>
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowImageRecognition(true)}
                 className="flex items-center justify-center gap-1.5"
-                style={{ height: 44, paddingLeft: 14, paddingRight: 14, borderRadius: 22, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
+                style={{ height: 40, paddingLeft: 12, paddingRight: 12, borderRadius: 20, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
                 aria-label="Photo scan"
               >
-                <span className="text-white text-[15px]">📸</span>
-                <span className="font-semibold text-[12px] text-white">Photo</span>
+                <span className="text-white text-[14px]">📸</span>
+                <span className="font-semibold text-[11px] text-white">Photo</span>
               </motion.button>
             </div>
           </div>
 
+          {/* Last Scan — Quick re-access */}
+          {lastScan && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleBarcodeDetected(lastScan.barcode)}
+              className="mx-5 mt-2 flex items-center gap-3 px-4 py-3 rounded-2xl text-left"
+              style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
+            >
+              <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                {lastScan.image ? (
+                  <img src={lastScan.image} alt={lastScan.name} className="w-full h-full object-contain p-0.5" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><Barcode size={16} style={{ color: "#D1D5DB" }} /></div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>Last scanned</p>
+                <p className="font-semibold text-[13px] truncate" style={{ color: "#111827" }}>{lastScan.name}</p>
+                {lastScan.brand && <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{lastScan.brand}</p>}
+              </div>
+              {lastScan.score != null && (
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-extrabold text-[13px]"
+                  style={{ background: getScoreColor(lastScan.score) }}>
+                  {lastScan.score}
+                </div>
+              )}
+              <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
+            </motion.button>
+          )}
+
           {/* Stat chips */}
-          <div className="flex items-center justify-center gap-2 px-5 py-3">
+          <div className="flex items-center justify-center gap-2 px-5 py-2">
             {[
               { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
               { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
               { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
             ].map(chip => (
               <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-                className="flex flex-col items-center justify-center" style={{ width: 100, height: 44, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-                <span className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
-                <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
+                className="flex flex-col items-center justify-center" style={{ width: 96, height: 40, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+                <span className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
+                <span className="text-[9px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
               </button>
             ))}
           </div>
@@ -1449,42 +1541,53 @@ const SkaapScan = () => {
           {/* ─── PRODUCT RESULT ─── */}
           {productInfo && !loading && (
             <>
+              {/* Store location pill */}
+              {currentStore && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 px-5 pt-3 pb-1">
+                  <span style={{ fontSize: 12 }}>📍</span>
+                  <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>Scanned at {currentStore.name}</span>
+                  {currentStore.address && <span className="text-[10px]" style={{ color: "#9CA3AF" }}>· {currentStore.address}</span>}
+                </motion.div>
+              )}
+
               {/* HEADER — Product image + name + share */}
-              <div className="flex items-start gap-3 px-5 pt-5">
-                <div className="flex-shrink-0 overflow-hidden" style={{ width: 80, height: 80, borderRadius: 16, background: "#F3F4F6" }}>
+              <div className="flex items-start gap-3 px-5 pt-3">
+                <div className="flex-shrink-0 overflow-hidden" style={{ width: 72, height: 72, borderRadius: 14, background: "#F3F4F6" }}>
                   {productInfo.imageSmallUrl || productInfo.imageUrl ? (
                     <img src={productInfo.imageSmallUrl || productInfo.imageUrl} alt={productInfo.productName}
-                      width={80} height={80} className="w-full h-full object-contain" loading="eager"
+                      width={72} height={72} className="w-full h-full object-contain" loading="eager"
                       onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center"><Barcode size={24} style={{ color: "#D1D5DB" }} /></div>
+                    <div className="w-full h-full flex items-center justify-center"><Barcode size={22} style={{ color: "#D1D5DB" }} /></div>
                   )}
                 </div>
-                <div className="flex-1 min-w-0 pt-1">
-                  <p className="font-bold leading-tight" style={{ fontSize: 18, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <p className="font-bold leading-tight" style={{ fontSize: 17, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     {displayName}
                   </p>
-                  <p className="text-[14px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
+                  <p className="text-[13px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
                     {productInfo.brand || "Unknown brand"}
                   </p>
                 </div>
-                <motion.button whileTap={{ scale: 0.9 }} onClick={handleShareTap} disabled={shareGenerating}
-                  className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                  <Share2 size={18} style={{ color: "#374151" }} />
-                </motion.button>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <motion.button whileTap={{ scale: 0.9 }} onClick={handleShareTap} disabled={shareGenerating}
+                    className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                    <Share2 size={16} style={{ color: "#374151" }} />
+                  </motion.button>
+                </div>
               </div>
 
               {/* SCORE HERO — centered, animated */}
               {scoreBreakdown && (
-                <div className="flex flex-col items-center" style={{ marginTop: 24 }}>
+                <div className="flex flex-col items-center" style={{ marginTop: 16 }}>
                   <button onClick={() => setShowScoreModal(true)}>
-                    <ScoreRing score={scoreBreakdown.total} size={110} />
+                    <ScoreRing score={scoreBreakdown.total} size={96} />
                   </button>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3, duration: 0.3 }}
-                    className="font-bold text-center" style={{ fontSize: 18, color: getScoreColor(scoreBreakdown.total), marginTop: 8 }}>
+                    className="font-bold text-center" style={{ fontSize: 16, color: getScoreColor(scoreBreakdown.total), marginTop: 6 }}>
                     {getScoreVerdict(scoreBreakdown.total)}
                   </motion.p>
 
@@ -1493,35 +1596,49 @@ const SkaapScan = () => {
                     initial={{ opacity: 0, scale: 1 }}
                     animate={{ opacity: 1, scale: [1, 1.04, 1] }}
                     transition={{ delay: 0.5, duration: 0.4 }}
-                    className="mx-5 mt-3 flex items-center justify-center"
-                    style={{ height: 36, borderRadius: 18, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
-                    <p className="font-semibold text-center text-white" style={{ fontSize: 13 }}>
+                    className="mx-5 mt-2 flex items-center justify-center"
+                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
+                    <p className="font-semibold text-center text-white" style={{ fontSize: 12 }}>
                       {getVerdictBanner(scoreBreakdown.total)}
                     </p>
                   </motion.div>
 
-                  {/* AI summary */}
-                  <div style={{ marginTop: 8, maxWidth: 300 }} className="text-center mx-auto">
-                    {aiSummaryLoading ? (
-                      <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
-                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "100%" }} />
-                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "75%" }} />
+                  {/* AI Assistant Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.3 }}
+                    className="mx-5 mt-3 px-4 py-3 rounded-2xl w-full"
+                    style={{ background: "#F9FAFB", border: "1px solid #F3F4F6", maxWidth: 350, margin: "12px auto 0" }}>
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
+                        <Sparkles size={14} style={{ color: "#fff" }} />
                       </div>
-                    ) : aiSummary ? (
-                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{aiSummary}</motion.p>
-                    ) : (
-                      <p className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{getStaticSummary(scoreBreakdown, productInfo)}</p>
-                    )}
-                    <p className="text-[10px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>SKAAP AI Assistant</p>
+                        {aiSummaryLoading ? (
+                          <div className="space-y-1.5 mt-1">
+                            <div className="h-3 rounded-full" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "100%" }} />
+                            <div className="h-3 rounded-full" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "70%" }} />
+                          </div>
+                        ) : aiSummary ? (
+                          <p className="text-[12px] leading-relaxed mt-0.5" style={{ color: "#374151" }}>{aiSummary}</p>
+                        ) : (
+                          <p className="text-[12px] leading-relaxed mt-0.5" style={{ color: "#374151" }}>{getStaticSummary(scoreBreakdown, productInfo)}</p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
 
-                  {/* Data quality indicator */}
-                  <div className="mt-2 flex items-center gap-1.5" style={{ fontSize: 11 }}>
-                    <div className="rounded-full" style={{ width: 6, height: 6, background: dataComplete ? "#22C55E" : "#F59E0B" }} />
-                    <span style={{ color: "#9CA3AF" }}>Data: {dataComplete ? "Complete" : "Partial"}</span>
+                  {/* Data quality + tap hint */}
+                  <div className="mt-1.5 flex items-center gap-2" style={{ fontSize: 10 }}>
+                    <div className="flex items-center gap-1">
+                      <div className="rounded-full" style={{ width: 5, height: 5, background: dataComplete ? "#22C55E" : "#F59E0B" }} />
+                      <span style={{ color: "#9CA3AF" }}>{dataComplete ? "Complete data" : "Partial data"}</span>
+                    </div>
                     {productInfo.usdaFallback && <span style={{ color: "#9CA3AF" }}>· USDA</span>}
+                    <span style={{ color: "#D1D5DB" }}>· Tap score for details</span>
                   </div>
-                  <p className="text-[10px] mt-1" style={{ color: "#D1D5DB" }}>Tap score for breakdown</p>
                 </div>
               )}
 
@@ -1863,24 +1980,24 @@ const SkaapScan = () => {
 
         {/* FEEDBACK ROW */}
         {!feedbackGiven && productInfo && !loading && (
-          <div className="flex-shrink-0 flex items-center justify-center gap-3 py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
-            <span className="text-[11px] font-medium" style={{ color: "#9CA3AF" }}>How was this?</span>
+          <div className="flex-shrink-0 flex items-center justify-center gap-2 py-1.5" style={{ borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
+            <span className="text-[10px] font-medium" style={{ color: "#9CA3AF" }}>Rate this</span>
             {["😍", "👍", "😐", "👎"].map(emoji => (
               <motion.button key={emoji} whileTap={{ scale: 0.85 }} onClick={() => handleFeedback(emoji)}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 transition-colors">
+                className="w-8 h-8 rounded-full flex items-center justify-center text-base hover:bg-gray-100 transition-colors">
                 {emoji}
               </motion.button>
             ))}
           </div>
         )}
         {feedbackGiven && (
-          <div className="flex-shrink-0 flex items-center justify-center py-2" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
-            <span className="text-[11px] font-semibold" style={{ color: "#15803D" }}>Thanks for the feedback! 🙏</span>
+          <div className="flex-shrink-0 flex items-center justify-center py-1.5" style={{ borderTop: "1px solid #F3F4F6", background: "#F0FDF4" }}>
+            <span className="text-[10px] font-semibold" style={{ color: "#15803D" }}>Thanks! 🙏</span>
           </div>
         )}
 
         {/* BOTTOM ACTIONS — FIXED */}
-        <div className="flex-shrink-0 flex items-center gap-3 px-5 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "12px 20px", paddingBottom: "calc(env(safe-area-inset-bottom, 12px) + 12px)" }}>
+        <div className="flex-shrink-0 flex items-center gap-2.5 px-4 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "10px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 8px) + 10px)" }}>
           {/* Heart particle animation */}
           <AnimatePresence>
             {heartParticle && (
@@ -1890,14 +2007,14 @@ const SkaapScan = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="absolute text-lg pointer-events-none"
-                style={{ right: "30%", bottom: 52 }}>
+                style={{ right: "30%", bottom: 48 }}>
                 🤍
               </motion.span>
             )}
           </AnimatePresence>
           <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
             className="flex-1 font-semibold flex items-center justify-center"
-            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 52, borderRadius: 14, fontSize: 15 }}>
+            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 46, borderRadius: 12, fontSize: 14 }}>
             Scan Again
           </motion.button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
@@ -1905,10 +2022,10 @@ const SkaapScan = () => {
             style={{
               background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#FFFFFF" : "#E8314A",
               color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-              height: 52, borderRadius: 14, fontSize: 15,
+              height: 46, borderRadius: 12, fontSize: 14,
               border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
             }}>
-            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={16} fill="#E8314A" /> Saved</> : <><Heart size={16} /> Save ♥</>}
+            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={14} fill="#E8314A" /> Saved</> : <><Heart size={14} /> Save ♥</>}
           </motion.button>
         </div>
       </div>
