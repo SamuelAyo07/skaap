@@ -1562,15 +1562,15 @@ const SkaapScan = () => {
 
               {/* SCORE HERO — centered, animated */}
               {scoreBreakdown && (
-                <div className="flex flex-col items-center" style={{ marginTop: 24 }}>
+                <div className="flex flex-col items-center" style={{ marginTop: 16 }}>
                   <button onClick={() => setShowScoreModal(true)}>
-                    <ScoreRing score={scoreBreakdown.total} size={110} />
+                    <ScoreRing score={scoreBreakdown.total} size={96} />
                   </button>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3, duration: 0.3 }}
-                    className="font-bold text-center" style={{ fontSize: 18, color: getScoreColor(scoreBreakdown.total), marginTop: 8 }}>
+                    className="font-bold text-center" style={{ fontSize: 16, color: getScoreColor(scoreBreakdown.total), marginTop: 6 }}>
                     {getScoreVerdict(scoreBreakdown.total)}
                   </motion.p>
 
@@ -1579,35 +1579,49 @@ const SkaapScan = () => {
                     initial={{ opacity: 0, scale: 1 }}
                     animate={{ opacity: 1, scale: [1, 1.04, 1] }}
                     transition={{ delay: 0.5, duration: 0.4 }}
-                    className="mx-5 mt-3 flex items-center justify-center"
-                    style={{ height: 36, borderRadius: 18, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
-                    <p className="font-semibold text-center text-white" style={{ fontSize: 13 }}>
+                    className="mx-5 mt-2 flex items-center justify-center"
+                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
+                    <p className="font-semibold text-center text-white" style={{ fontSize: 12 }}>
                       {getVerdictBanner(scoreBreakdown.total)}
                     </p>
                   </motion.div>
 
-                  {/* AI summary */}
-                  <div style={{ marginTop: 8, maxWidth: 300 }} className="text-center mx-auto">
-                    {aiSummaryLoading ? (
-                      <div className="space-y-1.5 mx-auto" style={{ maxWidth: 260 }}>
-                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "100%" }} />
-                        <div className="h-3.5 rounded-full mx-auto" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "75%" }} />
+                  {/* AI Assistant Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.3 }}
+                    className="mx-5 mt-3 px-4 py-3 rounded-2xl w-full"
+                    style={{ background: "#F9FAFB", border: "1px solid #F3F4F6", maxWidth: 350, margin: "12px auto 0" }}>
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
+                        <Sparkles size={14} style={{ color: "#fff" }} />
                       </div>
-                    ) : aiSummary ? (
-                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{aiSummary}</motion.p>
-                    ) : (
-                      <p className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>{getStaticSummary(scoreBreakdown, productInfo)}</p>
-                    )}
-                    <p className="text-[10px] mt-1 flex items-center justify-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "#C41E3A" }}>SKAAP AI Assistant</p>
+                        {aiSummaryLoading ? (
+                          <div className="space-y-1.5 mt-1">
+                            <div className="h-3 rounded-full" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "100%" }} />
+                            <div className="h-3 rounded-full" style={{ background: "linear-gradient(90deg, #F3F4F6 25%, #E9EAEC 50%, #F3F4F6 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", width: "70%" }} />
+                          </div>
+                        ) : aiSummary ? (
+                          <p className="text-[12px] leading-relaxed mt-0.5" style={{ color: "#374151" }}>{aiSummary}</p>
+                        ) : (
+                          <p className="text-[12px] leading-relaxed mt-0.5" style={{ color: "#374151" }}>{getStaticSummary(scoreBreakdown, productInfo)}</p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
 
-                  {/* Data quality indicator */}
-                  <div className="mt-2 flex items-center gap-1.5" style={{ fontSize: 11 }}>
-                    <div className="rounded-full" style={{ width: 6, height: 6, background: dataComplete ? "#22C55E" : "#F59E0B" }} />
-                    <span style={{ color: "#9CA3AF" }}>Data: {dataComplete ? "Complete" : "Partial"}</span>
+                  {/* Data quality + tap hint */}
+                  <div className="mt-1.5 flex items-center gap-2" style={{ fontSize: 10 }}>
+                    <div className="flex items-center gap-1">
+                      <div className="rounded-full" style={{ width: 5, height: 5, background: dataComplete ? "#22C55E" : "#F59E0B" }} />
+                      <span style={{ color: "#9CA3AF" }}>{dataComplete ? "Complete data" : "Partial data"}</span>
+                    </div>
                     {productInfo.usdaFallback && <span style={{ color: "#9CA3AF" }}>· USDA</span>}
+                    <span style={{ color: "#D1D5DB" }}>· Tap score for details</span>
                   </div>
-                  <p className="text-[10px] mt-1" style={{ color: "#D1D5DB" }}>Tap score for breakdown</p>
                 </div>
               )}
 
