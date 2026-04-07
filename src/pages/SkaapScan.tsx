@@ -1192,6 +1192,7 @@ const SkaapScan = () => {
           {showImageRecognition && <ImageRecognition onClose={() => setShowImageRecognition(false)} />}
         </AnimatePresence>
       </div>
+      </>
     );
   }
 
