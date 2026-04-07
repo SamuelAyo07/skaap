@@ -693,7 +693,7 @@ const SkaapScan = () => {
       });
       setHistory(getHistory());
       // Save as last scan for quick re-access
-      const ls: LastScan = { barcode, name: info.productName, brand: info.brand, image: info.imageUrl, score: score.total, nutriScore: info.nutriScoreGrade, scannedAt: Date.now() };
+      const ls: LastScan = { barcode, name: cached.productName, brand: cached.brand, image: cached.imageUrl, score: cachedScore.total, nutriScore: cached.nutriScoreGrade, scannedAt: Date.now() };
       saveLastScan(ls);
       setLastScan(ls);
       // Record user stats
