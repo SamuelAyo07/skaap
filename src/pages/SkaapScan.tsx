@@ -711,6 +711,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
+      if (updatedStats.total_scans === 1) setShowCelebration(true);
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       if (user) {
         supabase.from("user_scans").insert({
