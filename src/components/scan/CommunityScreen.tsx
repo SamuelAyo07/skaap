@@ -108,6 +108,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const [userAvgScore, setUserAvgScore] = useState<number | null>(null);
   const [cityAvgScore, setCityAvgScore] = useState<number | null>(null);
 
+  // Live feed
+  const [recentScans, setRecentScans] = useState<LiveScanItem[]>([]);
+
   const channelRef = useRef<any>(null);
 
   const cityName = geoLocation?.city || "Your City";
