@@ -440,6 +440,7 @@ const SkaapScan = () => {
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
   const { currentStore } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
+  const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
