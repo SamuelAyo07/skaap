@@ -832,6 +832,7 @@ const SkaapScan = () => {
   };
 
   const goToScan = () => {
+    hapticMedium();
     setScreen("scanning");
     setScanDetected(false);
     setHintVisible(true);
