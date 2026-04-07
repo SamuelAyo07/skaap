@@ -330,6 +330,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           if (!payload.new.saved && payload.new.score < 50) {
             setProductsAvoided(prev => prev + 1);
           }
+
+          // Add to live feed
+          const newScan: LiveScanItem = {
+            id: payload.new.id,
+            product_name: payload.new.product_name,
+            brand: payload.new.brand,
+            image_url: payload.new.image_url,
+            score: payload.new.score,
+            city: payload.new.city,
+            scan_timestamp: payload.new.scan_timestamp,
+            barcode: payload.new.barcode,
+          };
+          setRecentScans(prev => [newScan, ...prev].slice(0, 20));
         }
       )
       .subscribe();
