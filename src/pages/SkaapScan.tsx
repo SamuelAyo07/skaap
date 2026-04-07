@@ -692,6 +692,10 @@ const SkaapScan = () => {
         skaapScore: cachedScore.total, scannedAt: Date.now(),
       });
       setHistory(getHistory());
+      // Save as last scan for quick re-access
+      const ls: LastScan = { barcode, name: info.productName, brand: info.brand, image: info.imageUrl, score: score.total, nutriScore: info.nutriScoreGrade, scannedAt: Date.now() };
+      saveLastScan(ls);
+      setLastScan(ls);
       // Record user stats
       const updatedStats = recordScan({
         barcode, product_name: cached.productName, brand: cached.brand,
