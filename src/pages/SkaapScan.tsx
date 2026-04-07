@@ -798,6 +798,7 @@ const SkaapScan = () => {
   }, [expandedAdditive]);
 
   const scanAnother = () => {
+    hapticLight();
     setProductInfo(null);
     setNotFound(false);
     setScanDetected(false);
