@@ -41,6 +41,7 @@ import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommen
 import { useNearbyStore } from "@/hooks/useNearbyStore";
 import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection } from "@/lib/haptics";
 import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
+import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
