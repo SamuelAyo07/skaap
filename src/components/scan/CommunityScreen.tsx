@@ -8,12 +8,6 @@ import { BottomNavBar } from "./BottomNavBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getScoreColor } from "@/lib/skaapScore";
 import skaapIcon from "@/assets/skaap-icon.png";
-import { useAuth } from "@/context/AuthContext";
-import { useSubscription } from "@/context/SubscriptionContext";
-import { BottomNavBar } from "./BottomNavBar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getScoreColor } from "@/lib/skaapScore";
-import skaapIcon from "@/assets/skaap-icon.png";
 
 interface CommunityScreenProps {
   onNavChange: (nav: string) => void;
