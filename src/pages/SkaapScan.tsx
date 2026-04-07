@@ -705,6 +705,14 @@ const SkaapScan = () => {
       });
       setUserStats(updatedStats);
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
+      if (user) {
+        supabase.from("user_scans").insert({
+          user_id: user.id, barcode, product_name: cached.productName,
+          brand: cached.brand || null, score: cachedScore.total,
+          nutriscore: cached.nutriScoreGrade || null, nova: cached.novaGroup || null,
+          image_url: cached.imageUrl || null,
+        }).then(() => {});
+      }
       fireAICalls(cached, barcode, cachedScore);
       return;
     }
