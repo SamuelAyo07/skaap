@@ -738,6 +738,15 @@ const SkaapScan = () => {
       setUserStats(updatedStats);
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
+      // Persist to database for logged-in users
+      if (user) {
+        supabase.from("user_scans").insert({
+          user_id: user.id, barcode, product_name: info.productName,
+          brand: info.brand || null, score: score.total,
+          nutriscore: info.nutriScoreGrade || null, nova: info.novaGroup || null,
+          image_url: info.imageUrl || null,
+        }).then(() => {});
+      }
       fireAICalls(info, barcode, score);
     } else {
       setNotFound(true);
