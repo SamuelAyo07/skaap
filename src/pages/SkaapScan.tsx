@@ -1524,29 +1524,40 @@ const SkaapScan = () => {
           {/* ─── PRODUCT RESULT ─── */}
           {productInfo && !loading && (
             <>
+              {/* Store location pill */}
+              {currentStore && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 px-5 pt-3 pb-1">
+                  <span style={{ fontSize: 12 }}>📍</span>
+                  <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>Scanned at {currentStore.name}</span>
+                  {currentStore.address && <span className="text-[10px]" style={{ color: "#9CA3AF" }}>· {currentStore.address}</span>}
+                </motion.div>
+              )}
+
               {/* HEADER — Product image + name + share */}
-              <div className="flex items-start gap-3 px-5 pt-5">
-                <div className="flex-shrink-0 overflow-hidden" style={{ width: 80, height: 80, borderRadius: 16, background: "#F3F4F6" }}>
+              <div className="flex items-start gap-3 px-5 pt-3">
+                <div className="flex-shrink-0 overflow-hidden" style={{ width: 72, height: 72, borderRadius: 14, background: "#F3F4F6" }}>
                   {productInfo.imageSmallUrl || productInfo.imageUrl ? (
                     <img src={productInfo.imageSmallUrl || productInfo.imageUrl} alt={productInfo.productName}
-                      width={80} height={80} className="w-full h-full object-contain" loading="eager"
+                      width={72} height={72} className="w-full h-full object-contain" loading="eager"
                       onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center"><Barcode size={24} style={{ color: "#D1D5DB" }} /></div>
+                    <div className="w-full h-full flex items-center justify-center"><Barcode size={22} style={{ color: "#D1D5DB" }} /></div>
                   )}
                 </div>
-                <div className="flex-1 min-w-0 pt-1">
-                  <p className="font-bold leading-tight" style={{ fontSize: 18, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <p className="font-bold leading-tight" style={{ fontSize: 17, color: "#111827", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     {displayName}
                   </p>
-                  <p className="text-[14px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
+                  <p className="text-[13px] mt-0.5 truncate" style={{ color: "#6B7280" }}>
                     {productInfo.brand || "Unknown brand"}
                   </p>
                 </div>
-                <motion.button whileTap={{ scale: 0.9 }} onClick={handleShareTap} disabled={shareGenerating}
-                  className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                  <Share2 size={18} style={{ color: "#374151" }} />
-                </motion.button>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <motion.button whileTap={{ scale: 0.9 }} onClick={handleShareTap} disabled={shareGenerating}
+                    className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                    <Share2 size={16} style={{ color: "#374151" }} />
+                  </motion.button>
+                </div>
               </div>
 
               {/* SCORE HERO — centered, animated */}
