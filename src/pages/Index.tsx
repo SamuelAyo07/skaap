@@ -4,8 +4,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
 import {
-  Store, ScanLine, Mail, ArrowRight, ChevronDown, Sparkles, Instagram, Linkedin,
-  Heart, Users, Zap, Smartphone, Barcode, ShieldCheck, Clock, Search,
+  Store, ScanLine, Mail, ChevronDown, Sparkles, Instagram, Linkedin,
+  Smartphone, Barcode, ShieldCheck, Clock, Search,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import stepScan from "@/assets/step-scan.webp";
