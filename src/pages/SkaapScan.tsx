@@ -39,6 +39,8 @@ import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
 import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 import { useNearbyStore } from "@/hooks/useNearbyStore";
+import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection } from "@/lib/haptics";
+import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
@@ -438,6 +440,7 @@ const SkaapScan = () => {
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
   const { currentStore } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
+  const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -649,6 +652,7 @@ const SkaapScan = () => {
     setScanDetected(true);
     setHintVisible(false);
     playBeep();
+    hapticSuccess();
     stopCamera();
 
     setCurrentBarcode(barcode);
@@ -794,6 +798,7 @@ const SkaapScan = () => {
   }, [expandedAdditive]);
 
   const scanAnother = () => {
+    hapticLight();
     setProductInfo(null);
     setNotFound(false);
     setScanDetected(false);
@@ -827,6 +832,7 @@ const SkaapScan = () => {
   };
 
   const goToScan = () => {
+    hapticMedium();
     setScreen("scanning");
     setScanDetected(false);
     setHintVisible(true);
@@ -835,6 +841,7 @@ const SkaapScan = () => {
   };
 
   const handleSave = () => {
+    hapticMedium();
     if (productInfo && currentBarcode) {
       if (isInBasket(currentBarcode)) {
         // Already saved — remove from basket
@@ -916,6 +923,7 @@ const SkaapScan = () => {
   }, [buildProductData, userStats, shareImageUrl]);
 
   const handleShareTap = useCallback(async () => {
+    hapticLight();
     if (shareGenerating) return;
     setShareGenerating(true);
     setChallengeCopied(false);
@@ -1014,6 +1022,7 @@ const SkaapScan = () => {
 
   // ─── Shared nav handler for bottom nav ───
   const handleNavChange = useCallback((nav: string) => {
+    hapticSelection();
     if (nav === "home") setScreen("home");
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") setScreen("search");
@@ -1028,6 +1037,10 @@ const SkaapScan = () => {
   // ─── SCREEN: HOME ───
   if (screen === "home") {
     return (
+      <>
+      {showOnboarding && (
+        <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
+      )}
       <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         {/* Ambient blob */}
         <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(196,30,58,0.06)", filter: "blur(80px)" }} />
@@ -1182,6 +1195,7 @@ const SkaapScan = () => {
           {showImageRecognition && <ImageRecognition onClose={() => setShowImageRecognition(false)} />}
         </AnimatePresence>
       </div>
+      </>
     );
   }
 
