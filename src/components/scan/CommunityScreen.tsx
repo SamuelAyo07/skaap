@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
-import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
