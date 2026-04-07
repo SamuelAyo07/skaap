@@ -241,6 +241,13 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         setWorstProducts([...products].sort((a, b) => a.avg_score - b.avg_score).slice(0, 5));
         // Most scanned 8
         setMostScanned([...products].sort((a, b) => b.scan_count - a.scan_count).slice(0, 8));
+        // Healthiest 5 (score >= 60, sorted desc by score, min 2 scans)
+        setHealthiestProducts(
+          [...products]
+            .filter(p => p.avg_score >= 60 && p.scan_count >= 2)
+            .sort((a, b) => b.avg_score - a.avg_score)
+            .slice(0, 5)
+        );
 
         // City average score
         const allScores = weekScans.filter(s => s.score != null).map(s => s.score!);
