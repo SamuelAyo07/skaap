@@ -1019,6 +1019,7 @@ const SkaapScan = () => {
 
   // ─── Shared nav handler for bottom nav ───
   const handleNavChange = useCallback((nav: string) => {
+    hapticSelection();
     if (nav === "home") setScreen("home");
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") setScreen("search");
