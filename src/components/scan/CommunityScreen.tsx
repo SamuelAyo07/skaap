@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles } from "lucide-react";
+import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles, Heart, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
@@ -113,6 +113,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const [expandedAdditive, setExpandedAdditive] = useState<string | null>(null);
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveLoading, setAdditiveLoading] = useState(false);
+  const [healthiestProducts, setHealthiestProducts] = useState<CommunityProduct[]>([]);
 
   // User comparison
   const [userAvgScore, setUserAvgScore] = useState<number | null>(null);
@@ -240,6 +241,13 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         setWorstProducts([...products].sort((a, b) => a.avg_score - b.avg_score).slice(0, 5));
         // Most scanned 8
         setMostScanned([...products].sort((a, b) => b.scan_count - a.scan_count).slice(0, 8));
+        // Healthiest 5 (score >= 60, sorted desc by score, min 2 scans)
+        setHealthiestProducts(
+          [...products]
+            .filter(p => p.avg_score >= 60 && p.scan_count >= 2)
+            .sort((a, b) => b.avg_score - a.avg_score)
+            .slice(0, 5)
+        );
 
         // City average score
         const allScores = weekScans.filter(s => s.score != null).map(s => s.score!);
@@ -842,6 +850,102 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             )}
           </div>
         </div>
+
+        {/* SECTION 3.5 — Healthiest Products */}
+        <div className="px-5 mt-8">
+          <div className="flex items-center gap-2 mb-1">
+            <Heart size={18} style={{ color: "#22C55E" }} />
+            <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
+              Healthiest in {cityName} 🌿
+            </h2>
+          </div>
+          <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
+            Top-scored products people are actually buying
+          </p>
+
+          <div className="mt-4 space-y-2">
+            {loading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex gap-3 p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                  <Skeleton className="w-[52px] h-[52px] rounded-xl" style={{ background: "#E5E7EB" }} />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
+                    <Skeleton className="h-3 w-1/2" style={{ background: "#E5E7EB" }} />
+                  </div>
+                </div>
+              ))
+            ) : healthiestProducts.length === 0 ? (
+              <div className="text-center py-8 rounded-2xl" style={{ background: "#F0FDF4", border: "1px solid #DCFCE7" }}>
+                <Heart size={24} style={{ color: "#86EFAC" }} className="mx-auto" />
+                <p className="text-[13px] font-medium mt-2" style={{ color: "#6B7280" }}>
+                  Not enough data yet — keep scanning!
+                </p>
+              </div>
+            ) : (
+              healthiestProducts.map((p, i) => (
+                <motion.button
+                  key={p.barcode}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => onScanProduct(p.barcode)}
+                  className="w-full flex items-center gap-3 p-4 text-left rounded-2xl"
+                  style={{ background: i === 0 ? "#F0FDF4" : "#FFFFFF", border: `1px solid ${i === 0 ? "#DCFCE7" : "#F3F4F6"}` }}
+                >
+                  <div className="relative">
+                    {i === 0 && (
+                      <span className="absolute -top-1 -left-1 text-[12px] z-10">👑</span>
+                    )}
+                    <div className="w-[52px] h-[52px] rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-1" loading="lazy" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Scan size={16} style={{ color: "#D1D5DB" }} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                    {p.brand && <p className="text-[13px] truncate" style={{ color: "#6B7280" }}>{p.brand}</p>}
+                    <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Bought {p.scan_count} times this week</p>
+                  </div>
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: getScoreColor(p.avg_score) }}
+                  >
+                    <span className="font-bold text-[18px] text-white">{p.avg_score}</span>
+                  </div>
+                </motion.button>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Subtle PWA Install Nudge */}
+        {!window.matchMedia("(display-mode: standalone)").matches && (
+          <div className="mx-5 mt-6">
+            <button
+              onClick={() => {
+                const banner = document.querySelector('[data-install-banner]') as HTMLElement;
+                if (banner) banner.click();
+                else window.open("https://useskaap.com/scan", "_self");
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left"
+              style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}
+            >
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#DBEAFE" }}>
+                <Download size={16} style={{ color: "#3B82F6" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold" style={{ color: "#1E40AF" }}>Add SKAAP to Home Screen</p>
+                <p className="text-[11px]" style={{ color: "#60A5FA" }}>Instant access — no app store needed</p>
+              </div>
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: "#3B82F6", color: "#fff" }}>
+                Free
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* SECTION 4 — Top Additives */}
         <div className="px-5 mt-8">
