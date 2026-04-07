@@ -313,65 +313,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── INSTALL APP (WHITE) ─── */}
-      <section className="py-10 bg-white">
-        <div className="max-w-2xl mx-auto px-5">
-          <FadeIn><h2 className="text-2xl font-extrabold text-center mb-2 tracking-tight" style={{ color: "#0A1220" }}>Install SKAAP</h2></FadeIn>
-          <FadeIn delay={0.05}><p className="text-sm text-center mb-8" style={{ color: "#6B7280" }}>Add SKAAP to your home screen for a native app experience — no app store needed.</p></FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* iPhone */}
-            <FadeIn delay={0.1}>
-              <div className="rounded-2xl p-5" style={{ border: "1px solid #E5E7EB" }}>
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                    <Smartphone size={18} style={{ color: "#0A1220" }} />
-                  </div>
-                  <h3 className="font-bold text-sm" style={{ color: "#0A1220" }}>iPhone (Safari)</h3>
-                </div>
-                <ol className="space-y-3">
-                  {[
-                    { step: "1", icon: "🌐", text: "Open useskaap.com in Safari" },
-                    { step: "2", icon: "📤", text: "Tap the Share button (square with arrow)" },
-                    { step: "3", icon: "➕", text: 'Scroll down & tap "Add to Home Screen"' },
-                    { step: "4", icon: "✅", text: 'Tap "Add" — done!' },
-                  ].map((item) => (
-                    <li key={item.step} className="flex items-start gap-3">
-                      <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>{item.step}</span>
-                      <span className="text-sm" style={{ color: "#374151" }}><span className="mr-1.5">{item.icon}</span>{item.text}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </FadeIn>
-
-            {/* Android */}
-            <FadeIn delay={0.15}>
-              <div className="rounded-2xl p-5" style={{ border: "1px solid #E5E7EB" }}>
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                    <Smartphone size={18} style={{ color: "#0A1220" }} />
-                  </div>
-                  <h3 className="font-bold text-sm" style={{ color: "#0A1220" }}>Android (Chrome)</h3>
-                </div>
-                <ol className="space-y-3">
-                  {[
-                    { step: "1", icon: "🌐", text: "Open useskaap.com in Chrome" },
-                    { step: "2", icon: "⋮", text: "Tap the three-dot menu (top right)" },
-                    { step: "3", icon: "📲", text: 'Tap "Install app" or "Add to Home Screen"' },
-                    { step: "4", icon: "✅", text: "Confirm — SKAAP is on your home screen!" },
-                  ].map((item) => (
-                    <li key={item.step} className="flex items-start gap-3">
-                      <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style={{ background: "rgba(232,49,74,0.1)", color: "#E8314A" }}>{item.step}</span>
-                      <span className="text-sm" style={{ color: "#374151" }}><span className="mr-1.5">{item.icon}</span>{item.text}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
 
       {/* ─── CONTACT (LIGHT GRAY) ─── */}
       <section id="contact" className="py-10" style={{ background: "#F3F4F6" }}>
