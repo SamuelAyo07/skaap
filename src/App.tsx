@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { UpgradeSheet } from "@/components/scan/UpgradeSheet";
+import InstallBanner from "@/components/InstallBanner";
 import Index from "./pages/Index";
 import AppPage from "./pages/AppPage";
 import SkaapScan from "./pages/SkaapScan";
@@ -21,6 +22,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <UpgradeSheet />
+          <InstallBanner />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
