@@ -113,6 +113,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const [expandedAdditive, setExpandedAdditive] = useState<string | null>(null);
   const [additiveExplanation, setAdditiveExplanation] = useState<string | null>(null);
   const [additiveLoading, setAdditiveLoading] = useState(false);
+  const [healthiestProducts, setHealthiestProducts] = useState<CommunityProduct[]>([]);
 
   // User comparison
   const [userAvgScore, setUserAvgScore] = useState<number | null>(null);
