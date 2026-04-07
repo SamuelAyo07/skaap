@@ -38,7 +38,30 @@ import { FoodFactCard } from "@/components/scan/FoodFactCard";
 import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
 import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
+import { useNearbyStore } from "@/hooks/useNearbyStore";
 
+const LAST_SCAN_KEY = "skaap_last_scan";
+
+interface LastScan {
+  barcode: string;
+  name: string;
+  brand?: string;
+  image?: string;
+  score?: number;
+  nutriScore?: string;
+  scannedAt: number;
+}
+
+function saveLastScan(scan: LastScan) {
+  try { localStorage.setItem(LAST_SCAN_KEY, JSON.stringify(scan)); } catch {}
+}
+
+function getLastScan(): LastScan | null {
+  try {
+    const raw = localStorage.getItem(LAST_SCAN_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
 
 
 // ─── Types ───
