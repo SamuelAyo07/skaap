@@ -839,6 +839,7 @@ const SkaapScan = () => {
   };
 
   const handleSave = () => {
+    hapticMedium();
     if (productInfo && currentBarcode) {
       if (isInBasket(currentBarcode)) {
         // Already saved — remove from basket
