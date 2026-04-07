@@ -652,6 +652,7 @@ const SkaapScan = () => {
     setScanDetected(true);
     setHintVisible(false);
     playBeep();
+    hapticSuccess();
     stopCamera();
 
     setCurrentBarcode(barcode);
