@@ -42,6 +42,17 @@ interface CommunityAdditive {
   trending_up: boolean;
 }
 
+interface LiveScanItem {
+  id: string;
+  product_name: string;
+  brand: string | null;
+  image_url: string | null;
+  score: number | null;
+  city: string | null;
+  scan_timestamp: string;
+  barcode: string;
+}
+
 // Reverse geocode using free API
 async function reverseGeocode(lat: number, lng: number): Promise<{ city: string; state: string } | null> {
   try {
