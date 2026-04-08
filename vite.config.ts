@@ -24,14 +24,14 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,jpg,svg,woff2}"],
       },
       manifest: {
-        name: "SKAAP — Scan & Go Checkout",
-        short_name: "SKAAP",
-        description: "Scan items, pay in-app, skip the line.",
+        name: "SKAAP — Food Intelligence",
+        short_name: "Food Intelligence",
+        description: "Scan any product. Know what's really inside.",
         theme_color: "#b42318",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/app",
+        start_url: "/scan",
         scope: "/",
         icons: [
           { src: "/skaap-icon-192.png", sizes: "192x192", type: "image/png" },
