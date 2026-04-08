@@ -443,6 +443,7 @@ const SkaapScan = () => {
   const { currentStore } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
   const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
+  const [showSplash, setShowSplash] = useState(() => window.matchMedia("(display-mode: standalone)").matches);
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
