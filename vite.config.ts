@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => ({
       },
       manifest: {
         name: "SKAAP — Food Intelligence",
-        short_name: "Food Intelligence",
+        short_name: "SKAAP",
         description: "Scan any product. Know what's really inside.",
         theme_color: "#b42318",
         background_color: "#ffffff",
