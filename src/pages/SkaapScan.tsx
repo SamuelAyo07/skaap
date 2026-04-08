@@ -42,6 +42,7 @@ import { useNearbyStore } from "@/hooks/useNearbyStore";
 import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection } from "@/lib/haptics";
 import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
 import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
+import SplashScreen from "@/components/scan/SplashScreen";
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
