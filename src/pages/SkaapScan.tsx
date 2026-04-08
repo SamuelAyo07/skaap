@@ -42,6 +42,7 @@ import { useNearbyStore } from "@/hooks/useNearbyStore";
 import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection } from "@/lib/haptics";
 import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
 import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
+import SplashScreen from "@/components/scan/SplashScreen";
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
@@ -442,6 +443,7 @@ const SkaapScan = () => {
   const { currentStore } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
   const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
+  const [showSplash, setShowSplash] = useState(() => window.matchMedia("(display-mode: standalone)").matches);
 
   // Scanner
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -1043,6 +1045,9 @@ const SkaapScan = () => {
   if (screen === "home") {
     return (
       <>
+      <AnimatePresence>
+        {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      </AnimatePresence>
       {showOnboarding && (
         <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
       )}
