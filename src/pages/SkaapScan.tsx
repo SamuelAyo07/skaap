@@ -1045,6 +1045,10 @@ const SkaapScan = () => {
   if (screen === "home") {
     return (
       <>
+      <AnimatePresence>
+        {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      </AnimatePresence>
+      <>
       {showOnboarding && (
         <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
       )}
