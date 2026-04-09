@@ -609,7 +609,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             </div>
             <p className="text-sm font-semibold text-foreground">Ready to scan</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
-              Tap "Scan with Camera" and hold the barcode over the red line
+              Tap "Scan product barcode" or enter the full barcode number below
             </p>
           </div>
         )}

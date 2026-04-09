@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { UpgradeSheet } from "@/components/scan/UpgradeSheet";
@@ -14,6 +14,36 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function isStandaloneApp() {
+  if (typeof window === "undefined") return false;
+
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+  );
+}
+
+const StandaloneLaunchRedirect = () => {
+  const location = useLocation();
+  const shouldOpenFoodIntelligence =
+    isStandaloneApp() && ["/", "/index", "/app"].includes(location.pathname);
+
+  return shouldOpenFoodIntelligence ? <Navigate to="/scan" replace /> : null;
+};
+
+const AppRoutes = () => (
+  <>
+    <StandaloneLaunchRedirect />
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/index" element={<Index />} />
+      <Route path="/app" element={<AppPage />} />
+      <Route path="/scan" element={<SkaapScan />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  </>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -24,12 +54,7 @@ const App = () => (
           <UpgradeSheet />
           <InstallBanner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/app" element={<AppPage />} />
-              <Route path="/scan" element={<SkaapScan />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppRoutes />
           </BrowserRouter>
         </SubscriptionProvider>
       </AuthProvider>
