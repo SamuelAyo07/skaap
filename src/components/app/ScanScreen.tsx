@@ -419,7 +419,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               onClick={startCamera}
               className="bg-scanner-accent text-primary-foreground rounded-full px-6 py-3 flex items-center gap-2 font-semibold text-[13px] shadow-elevated"
             >
-              <Camera size={16} /> Scan with Camera
+              <Camera size={16} /> Scan product barcode
             </motion.button>
             {cameraError && (
               <p className="text-[11px] text-destructive text-center max-w-[240px]">{cameraError}</p>
