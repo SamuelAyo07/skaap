@@ -196,7 +196,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     const product = await lookupBarcode(barcode);
 
     if (!product) {
-      setLookupError("Product not found — please scan again.");
+      setLookupError("We couldn’t match that barcode yet. Try a steadier scan or enter the full number.");
       setIsLookingUp(false);
       return;
     }
