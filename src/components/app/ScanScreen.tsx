@@ -471,7 +471,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-30"
           >
             <Loader2 size={26} className="text-scanner-accent animate-spin" />
-            <p className="text-sm text-foreground font-medium mt-2">Looking up product…</p>
+            <p className="text-sm text-foreground font-medium mt-2">Finding product details…</p>
           </motion.div>
         )}
       </div>
