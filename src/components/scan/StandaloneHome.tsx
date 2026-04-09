@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ScanLine, Search, Flame, BarChart3, TrendingUp,
-  ChevronRight, Barcode, Heart, Clock, Sparkles,
+  ScanLine, Search, Flame, TrendingUp,
+  ChevronRight, Barcode, Heart, Sparkles, Lightbulb,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
@@ -11,6 +11,30 @@ import { getScoreColor } from "@/lib/skaapScore";
 const HISTORY_KEY = "skaap_scan_history";
 const BASKET_KEY = "skaap_basket";
 const LAST_SCAN_KEY = "skaap_last_scan";
+
+// ─── Daily tips database ───
+const DAILY_TIPS = [
+  { emoji: "🧪", title: "Additives to watch", body: "E171 (titanium dioxide) is banned in the EU but still allowed in the US. SKAAP flags these for you." },
+  { emoji: "🥦", title: "NOVA matters", body: "NOVA 4 (ultra-processed) foods are linked to higher inflammation. Look for NOVA 1-2 alternatives." },
+  { emoji: "🅰️", title: "Nutri-Score decoded", body: "Nutri-Score A doesn't always mean healthy — it compares within categories. A cookie can score B." },
+  { emoji: "🧂", title: "Hidden sodium", body: "Bread, cereal, and sauces can contain more sodium than chips. Check the per-serving numbers." },
+  { emoji: "🍬", title: "Sugar aliases", body: "Dextrose, maltose, and corn syrup are all sugar. Products can have 5+ types to look smaller on labels." },
+  { emoji: "🌿", title: "Organic ≠ additive-free", body: "Organic products can still contain approved additives. Always check the full ingredient list." },
+  { emoji: "🏭", title: "Processing matters", body: "The same ingredient can be healthy raw but harmful when ultra-processed. Context is everything." },
+  { emoji: "🔬", title: "Emulsifiers alert", body: "E433 and E466 may affect gut bacteria. They're common in ice cream and plant milks." },
+  { emoji: "🥛", title: "Calcium check", body: "Many plant milks have added calcium but poor absorption. Shake well — it settles at the bottom." },
+  { emoji: "🍎", title: "Fiber is king", body: "Most adults get only 15g of the recommended 25-30g daily fiber. Whole foods are the best source." },
+  { emoji: "🧈", title: "Trans fats hide", body: "Products can say '0g trans fat' with up to 0.5g per serving. Check for 'partially hydrogenated' oils." },
+  { emoji: "🥤", title: "Drink smart", body: "A single soda can contain 39g of sugar — nearly your entire daily limit in one drink." },
+  { emoji: "🐟", title: "Omega balance", body: "Most diets have too much omega-6 vs omega-3. Aim for fatty fish, flaxseed, or walnuts twice a week." },
+  { emoji: "🫙", title: "Preservatives 101", body: "Sodium benzoate (E211) + vitamin C can form benzene. Check if both are in your flavored drinks." },
+  { emoji: "🌾", title: "'Whole grain' tricks", body: "If 'whole wheat' isn't the FIRST ingredient, the product may be mostly refined flour." },
+];
+
+function getDailyTip() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
+}
 
 interface HistoryItem {
   barcode: string;
@@ -83,29 +107,29 @@ interface StandaloneHomeProps {
 }
 
 export function StandaloneHome({
-  onScan,
-  onSearch,
-  onHistory,
-  onSaved,
-  onRecs,
-  onCommunity,
-  onScanProduct,
-  onImageScan,
+  onScan, onSearch, onHistory, onSaved, onRecs, onCommunity, onScanProduct, onImageScan,
 }: StandaloneHomeProps) {
   const [stats, setStats] = useState<UserStats>(refreshStreak());
   const [lastScan] = useState<LastScan | null>(getLastScan);
   const [recentHistory] = useState<HistoryItem[]>(() => getHistory().slice(0, 4));
   const [savedCount] = useState(() => getBasket().length);
+  const [tipExpanded, setTipExpanded] = useState(false);
 
-  useEffect(() => {
-    setStats(refreshStreak());
-  }, []);
+  useEffect(() => { setStats(refreshStreak()); }, []);
 
   const greeting = getTimeGreeting();
   const motivation = getMotivation(stats);
+  const tip = getDailyTip();
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ duration: 0.25 }}
+      className="min-h-screen flex flex-col"
+      style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}
+    >
       {/* Ambient glow */}
       <div className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(196,30,58,0.06) 0%, transparent 70%)", filter: "blur(60px)" }} />
 
@@ -121,25 +145,16 @@ export function StandaloneHome({
               <motion.button whileTap={{ scale: 0.9 }} onClick={onSaved}
                 className="w-10 h-10 rounded-full flex items-center justify-center relative" style={{ background: "#F3F4F6" }}>
                 <Heart size={20} style={{ color: "#C41E3A" }} fill="#C41E3A" />
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style={{ background: "#C41E3A", width: 18, height: 18 }}>{savedCount}</span>
+                <span className="absolute -top-0.5 -right-0.5 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style={{ background: "#C41E3A", width: 18, height: 18 }}>{savedCount}</span>
               </motion.button>
             )}
           </div>
         </div>
 
         {/* Greeting */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mt-2"
-        >
-          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#1B2A4A" }}>
-            {greeting}
-          </h1>
-          <p className="text-[14px] mt-1" style={{ color: "#9CA3AF" }}>
-            {motivation}
-          </p>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-2">
+          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#1B2A4A" }}>{greeting}</h1>
+          <p className="text-[14px] mt-1" style={{ color: "#9CA3AF" }}>{motivation}</p>
         </motion.div>
       </div>
 
@@ -156,7 +171,6 @@ export function StandaloneHome({
           className="w-full mt-5 rounded-2xl overflow-hidden relative"
           style={{ height: 120, background: "linear-gradient(135deg, #C41E3A, #8a1825)" }}
         >
-          {/* Decorative ring */}
           <div className="absolute right-6 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full" style={{ border: "2px solid rgba(255,255,255,0.12)" }} />
           <div className="absolute right-9 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full" style={{ border: "1.5px solid rgba(255,255,255,0.08)" }} />
           <div className="absolute inset-0 flex items-center px-6">
@@ -165,21 +179,14 @@ export function StandaloneHome({
                 <ScanLine size={20} color="white" />
                 <span className="font-extrabold text-[18px] text-white tracking-tight">Scan a product</span>
               </div>
-              <p className="text-[12px] font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>
-                Barcode or photo • 3M+ products
-              </p>
+              <p className="text-[12px] font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>Barcode or photo • 3M+ products</p>
             </div>
             <ChevronRight size={20} style={{ color: "rgba(255,255,255,0.4)" }} />
           </div>
         </motion.button>
 
         {/* Quick actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-3 gap-2 mt-4"
-        >
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-3 gap-2 mt-4">
           <button onClick={onSearch} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
             <Search size={18} style={{ color: "#6B7280" }} />
             <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Search</span>
@@ -194,17 +201,57 @@ export function StandaloneHome({
           </button>
         </motion.div>
 
-        {/* Stats strip — only if user has scanned */}
-        {stats.total_scans > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="mt-4"
+        {/* ── Daily Tip Card ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.33 }}
+          className="mt-4"
+        >
+          <button
+            onClick={() => setTipExpanded(!tipExpanded)}
+            className="w-full rounded-2xl px-4 py-3.5 text-left transition-all"
+            style={{ background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)", border: "1px solid #FDE68A" }}
           >
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(245,158,11,0.15)" }}>
+                <Lightbulb size={18} style={{ color: "#D97706" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "#D97706" }}>Daily tip</span>
+                  <span className="text-[13px]">{tip.emoji}</span>
+                </div>
+                <p className="font-bold text-[13px] mt-0.5" style={{ color: "#92400E" }}>{tip.title}</p>
+                <AnimatePresence>
+                  {tipExpanded && (
+                    <motion.p
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-[12px] mt-1 leading-relaxed overflow-hidden"
+                      style={{ color: "#78350F" }}
+                    >
+                      {tip.body}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+              <ChevronRight
+                size={14}
+                className="flex-shrink-0 mt-1 transition-transform"
+                style={{ color: "#D97706", transform: tipExpanded ? "rotate(90deg)" : "rotate(0deg)" }}
+              />
+            </div>
+          </button>
+        </motion.div>
+
+        {/* Stats strip */}
+        {stats.total_scans > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.37 }} className="mt-4">
             <button onClick={onRecs} className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
               <div className="flex items-center gap-4 flex-1">
-                {/* Kitchen score */}
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[14px] text-white"
                     style={{ background: stats.kitchen_score > 0 ? getScoreColor(stats.kitchen_score) : "#D1D5DB" }}>
@@ -217,11 +264,7 @@ export function StandaloneHome({
                     </p>
                   </div>
                 </div>
-
-                {/* Divider */}
                 <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-
-                {/* Streak */}
                 <div className="flex items-center gap-1.5">
                   <Flame size={16} style={{ color: stats.current_streak > 0 ? "#F59E0B" : "#D1D5DB" }} />
                   <div>
@@ -229,11 +272,7 @@ export function StandaloneHome({
                     <p className="text-[10px]" style={{ color: "#9CA3AF" }}>streak</p>
                   </div>
                 </div>
-
-                {/* Divider */}
                 <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-
-                {/* Total */}
                 <div>
                   <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{stats.total_scans}</p>
                   <p className="text-[10px]" style={{ color: "#9CA3AF" }}>scanned</p>
@@ -246,12 +285,7 @@ export function StandaloneHome({
 
         {/* Last scan quick card */}
         {lastScan && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>Last scanned</p>
             </div>
@@ -285,12 +319,7 @@ export function StandaloneHome({
 
         {/* Recent history */}
         {recentHistory.length > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45 }}
-            className="mt-5"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="mt-5">
             <div className="flex items-center justify-between mb-2">
               <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "#9CA3AF" }}>Recent</p>
               <button onClick={onHistory} className="text-[11px] font-semibold flex items-center gap-0.5" style={{ color: "#C41E3A" }}>
@@ -333,18 +362,11 @@ export function StandaloneHome({
 
         {/* Empty state for brand new users */}
         {stats.total_scans === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-8 text-center px-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-8 text-center px-4">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#FEF2F2" }}>
               <Sparkles size={28} style={{ color: "#C41E3A" }} />
             </div>
-            <h3 className="font-extrabold text-[18px]" style={{ color: "#1B2A4A" }}>
-              Your food intelligence starts here
-            </h3>
+            <h3 className="font-extrabold text-[18px]" style={{ color: "#1B2A4A" }}>Your food intelligence starts here</h3>
             <p className="text-[13px] mt-2 max-w-[280px] mx-auto leading-relaxed" style={{ color: "#9CA3AF" }}>
               Scan any grocery or beauty product to instantly decode ingredients, additives, and nutrition scores.
             </p>
@@ -356,6 +378,6 @@ export function StandaloneHome({
           </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
