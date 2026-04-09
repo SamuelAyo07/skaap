@@ -196,7 +196,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     const product = await lookupBarcode(barcode);
 
     if (!product) {
-      setLookupError("Product not found — please scan again.");
+      setLookupError("We couldn’t match that barcode yet. Try a steadier scan or enter the full number.");
       setIsLookingUp(false);
       return;
     }
@@ -289,7 +289,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       // After 12 seconds with no detection, stop camera and nudge user to manual entry
       cameraTimeoutRef.current = setTimeout(() => {
         void stopCamera();
-        setCameraError("Couldn't detect a barcode — try typing it manually below.");
+        setCameraError("We couldn't read the barcode. Try better lighting or enter the full number below.");
         setTimeout(() => manualInputRef.current?.focus(), 300);
       }, 12000);
 
@@ -315,9 +315,9 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     } catch (error: any) {
       const message = String(error?.message || "").toLowerCase();
       if (message.includes("notallowed") || message.includes("permission") || message.includes("denied")) {
-        setCameraError("Please allow camera access in your browser settings.");
+        setCameraError("Please allow camera access to scan product barcodes.");
       } else {
-        setCameraError("Camera unavailable. Please try again or use manual barcode entry.");
+        setCameraError("Camera unavailable. Try again or enter the barcode number manually.");
       }
       await stopCamera();
     } finally {
@@ -342,6 +342,11 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const handleManualLookup = useCallback(async () => {
     const barcode = manualBarcode.replace(/\s+/g, "").trim();
     if (!barcode) return;
+
+    if (barcode.length < 8) {
+      setLookupError("Enter the full barcode number to find the exact product.");
+      return;
+    }
 
     setDetectedFormat(inferFormat(barcode));
     await lookupAndShowProduct(barcode);
@@ -370,7 +375,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     <div className="flex flex-col h-full bg-background">
       <div className="px-4 pt-10 pb-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan your<br/>product</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan a real<br/>product</h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onOpenBag}
@@ -414,7 +419,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               onClick={startCamera}
               className="bg-scanner-accent text-primary-foreground rounded-full px-6 py-3 flex items-center gap-2 font-semibold text-[13px] shadow-elevated"
             >
-              <Camera size={16} /> Scan with Camera
+              <Camera size={16} /> Scan product barcode
             </motion.button>
             {cameraError && (
               <p className="text-[11px] text-destructive text-center max-w-[240px]">{cameraError}</p>
@@ -454,7 +459,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             )}
 
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium">
-              Align barcode in the red line
+              Center the barcode in the red line
             </div>
           </>
         )}
@@ -466,7 +471,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-30"
           >
             <Loader2 size={26} className="text-scanner-accent animate-spin" />
-            <p className="text-sm text-foreground font-medium mt-2">Looking up product…</p>
+            <p className="text-sm text-foreground font-medium mt-2">Finding product details…</p>
           </motion.div>
         )}
       </div>
@@ -481,7 +486,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               inputMode="numeric"
               value={manualBarcode}
               onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
-              placeholder="Type barcode manually"
+              placeholder="Enter barcode number"
               className="h-10 rounded-full bg-muted/40 border-border/30 pl-9 text-[13px]"
               disabled={isLookingUp}
               aria-label="Manual barcode input"
@@ -604,7 +609,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             </div>
             <p className="text-sm font-semibold text-foreground">Ready to scan</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
-              Tap "Scan with Camera" and hold the barcode over the red line
+              Tap "Scan product barcode" or enter the full barcode number below
             </p>
           </div>
         )}
