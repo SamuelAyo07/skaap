@@ -43,6 +43,12 @@ import { hapticLight, hapticMedium, hapticSuccess, hapticHeavy, hapticSelection 
 import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingFlow";
 import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
+import { StandaloneHome } from "@/components/scan/StandaloneHome";
+
+const isStandalone = typeof window !== "undefined" && (
+  window.matchMedia("(display-mode: standalone)").matches ||
+  (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+);
 
 const LAST_SCAN_KEY = "skaap_last_scan";
 
@@ -1054,6 +1060,26 @@ const SkaapScan = () => {
       {showCelebration && (
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
+      {/* Standalone PWA home — richer, personalized entry point */}
+      {isStandalone ? (
+        <>
+          <StandaloneHome
+            onScan={goToScan}
+            onSearch={() => handleNavChange("search")}
+            onHistory={() => handleNavChange("history")}
+            onSaved={() => handleNavChange("saved")}
+            onRecs={() => handleNavChange("kitchen")}
+            onCommunity={() => handleNavChange("community")}
+            onScanProduct={handleBarcodeDetected}
+            onImageScan={() => setShowImageRecognition(true)}
+          />
+          <BottomNavBar active="home" onNavigate={handleNavChange} />
+          <AuthSheet open={authSheetOpen} onClose={() => setAuthSheetOpen(false)} />
+          <AnimatePresence>
+            {showImageRecognition && <ImageRecognition onClose={() => setShowImageRecognition(false)} />}
+          </AnimatePresence>
+        </>
+      ) : (
       <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         {/* Ambient blob */}
         <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(196,30,58,0.06)", filter: "blur(80px)" }} />
@@ -1208,6 +1234,7 @@ const SkaapScan = () => {
           {showImageRecognition && <ImageRecognition onClose={() => setShowImageRecognition(false)} />}
         </AnimatePresence>
       </div>
+      )}
       </>
     );
   }
