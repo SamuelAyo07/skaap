@@ -486,7 +486,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               inputMode="numeric"
               value={manualBarcode}
               onChange={(e) => setManualBarcode(e.target.value.replace(/[^0-9A-Za-z-]/g, ""))}
-              placeholder="Type barcode manually"
+              placeholder="Enter barcode number"
               className="h-10 rounded-full bg-muted/40 border-border/30 pl-9 text-[13px]"
               disabled={isLookingUp}
               aria-label="Manual barcode input"
