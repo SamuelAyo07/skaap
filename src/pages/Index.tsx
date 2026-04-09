@@ -135,7 +135,7 @@ const Index = () => {
               ))}
             </div>
             <span className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-              <strong className="text-white">1,000+ people</strong> slapped worldwide
+              <strong className="text-white">1,000+ people</strong> skapped worldwide
             </span>
           </motion.div>
 
