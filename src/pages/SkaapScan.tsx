@@ -1342,7 +1342,7 @@ const SkaapScan = () => {
             <X size={20} color="#fff" />
           </motion.button>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
