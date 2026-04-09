@@ -315,9 +315,9 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     } catch (error: any) {
       const message = String(error?.message || "").toLowerCase();
       if (message.includes("notallowed") || message.includes("permission") || message.includes("denied")) {
-        setCameraError("Please allow camera access in your browser settings.");
+        setCameraError("Please allow camera access to scan product barcodes.");
       } else {
-        setCameraError("Camera unavailable. Please try again or use manual barcode entry.");
+        setCameraError("Camera unavailable. Try again or enter the barcode number manually.");
       }
       await stopCamera();
     } finally {
