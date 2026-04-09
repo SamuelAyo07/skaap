@@ -459,7 +459,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
             )}
 
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium">
-              Align barcode in the red line
+              Center the barcode in the red line
             </div>
           </>
         )}
