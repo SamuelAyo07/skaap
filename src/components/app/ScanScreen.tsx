@@ -289,7 +289,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       // After 12 seconds with no detection, stop camera and nudge user to manual entry
       cameraTimeoutRef.current = setTimeout(() => {
         void stopCamera();
-        setCameraError("Couldn't detect a barcode — try typing it manually below.");
+        setCameraError("We couldn't read the barcode. Try better lighting or enter the full number below.");
         setTimeout(() => manualInputRef.current?.focus(), 300);
       }, 12000);
 
