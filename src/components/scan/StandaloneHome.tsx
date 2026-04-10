@@ -7,6 +7,7 @@ import {
 import skaapIcon from "@/assets/skaap-icon.png";
 import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
 import { getScoreColor } from "@/lib/skaapScore";
+import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
 
 const HISTORY_KEY = "skaap_scan_history";
 const BASKET_KEY = "skaap_basket";
@@ -138,7 +139,7 @@ export function StandaloneHome({
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-2.5">
             <img src={skaapIcon} alt="SKAAP" className="w-8 h-8 rounded-xl" width="32" height="32" />
-            <span className="font-extrabold text-[22px] tracking-tight" style={{ color: "#1B2A4A", letterSpacing: "-0.5px" }}>SKAAP</span>
+            <span className="font-extrabold text-[22px] tracking-tight" style={{ color: "#0A1220", letterSpacing: "-0.5px" }}>SKAAP</span>
           </div>
           <div className="flex items-center gap-2">
             {savedCount > 0 && (
@@ -153,8 +154,8 @@ export function StandaloneHome({
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-2">
-          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#1B2A4A" }}>{greeting}</h1>
-          <p className="text-[14px] mt-1" style={{ color: "#9CA3AF" }}>{motivation}</p>
+          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#0A1220" }}>{greeting}</h1>
+          <p className="text-[14px] mt-1 font-medium" style={{ color: "#6B7280" }}>{motivation}</p>
         </motion.div>
       </div>
 
@@ -357,6 +358,13 @@ export function StandaloneHome({
                 </motion.button>
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {/* Share Rewards */}
+        {stats.total_scans > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-4">
+            <ShareRewardsCard onShare={onScan} />
           </motion.div>
         )}
 
