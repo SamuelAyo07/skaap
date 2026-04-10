@@ -326,48 +326,16 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     if (canAccess) fetchData();
   }, [fetchData, canAccess]);
 
-  // Real-time subscription
+  // Poll for new community scans every 30 seconds (replaces realtime for security)
   useEffect(() => {
     if (!geoLocation?.city || !canAccess) return;
 
-    const cityFilter = `city=eq.${geoLocation.city}`;
-    const channelName = `community-live:${geoLocation.city
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")}`;
+    const interval = setInterval(() => {
+      fetchData();
+    }, 30_000);
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "community_scans", filter: cityFilter },
-        (payload: any) => {
-          if (payload.new?.city !== geoLocation.city) return;
-
-          setScansToday(prev => prev + 1);
-          if (!payload.new.saved && payload.new.score < 50) {
-            setProductsAvoided(prev => prev + 1);
-          }
-
-          // Add to live feed
-          const newScan: LiveScanItem = {
-            id: payload.new.id,
-            product_name: payload.new.product_name,
-            brand: payload.new.brand,
-            image_url: payload.new.image_url,
-            score: payload.new.score,
-            city: payload.new.city,
-            scan_timestamp: payload.new.scan_timestamp,
-            barcode: payload.new.barcode,
-          };
-          setRecentScans(prev => [newScan, ...prev].slice(0, 20));
-        }
-      )
-      .subscribe();
-
-    channelRef.current = channel;
-    return () => { supabase.removeChannel(channel); };
-  }, [geoLocation?.city, canAccess]);
+    return () => clearInterval(interval);
+  }, [geoLocation?.city, canAccess, fetchData]);
 
   // Share worst in city
   const handleShareWorst = async () => {
