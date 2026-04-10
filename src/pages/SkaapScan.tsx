@@ -23,6 +23,7 @@ import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShareType, type UserStats } from "@/lib/skaapUserStats";
 import { generateShareCard as generateCard, type ShareCardType, type ShareProductData } from "@/lib/shareCardGenerator";
+import { recordShare, getShareRewards, type Badge } from "@/lib/shareRewards";
 import skaapIcon from "@/assets/skaap-icon.png";
 import {
   calculateSkaapScore, getScoreColor, getScoreVerdict, getVerdictBanner,
@@ -1011,11 +1012,22 @@ const SkaapScan = () => {
       a.click(); URL.revokeObjectURL(url);
       toast("Image saved — open Instagram Stories and tap +", { duration: 3000 });
     }
+    // Record share reward
+    const reward = recordShare(selectedCardType, target);
+    if (reward.newBadges.length > 0) {
+      reward.newBadges.forEach(b => toast(`🎉 New badge: ${b.emoji} ${b.name}!`, { duration: 4000 }));
+    }
+    if (reward.bonusScansAdded > 0) {
+      toast(`+${reward.bonusScansAdded} bonus scans earned!`, { duration: 2500 });
+    }
+    if (reward.trialDaysAdded > 0) {
+      toast(`🎁 +${reward.trialDaysAdded} day of SKAAP Plus trial!`, { duration: 3000 });
+    }
     setShareModalOpen(false);
     if (shareImageUrl) { URL.revokeObjectURL(shareImageUrl); setShareImageUrl(null); }
     setShareState("shared");
     setTimeout(() => setShareState("idle"), 2000);
-  }, [shareImageBlob, shareImageUrl, shareFilename, scoreBreakdown]);
+  }, [shareImageBlob, shareImageUrl, shareFilename, scoreBreakdown, selectedCardType]);
 
   const handleChallengeCopy = useCallback(() => {
     const text = `Can you beat my SKAAP Kitchen Score of ${userStats.kitchen_score}/100? Try it free: useskaap.com/scan`;
