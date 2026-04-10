@@ -361,6 +361,13 @@ export function StandaloneHome({
           </motion.div>
         )}
 
+        {/* Share Rewards */}
+        {stats.total_scans > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-4">
+            <ShareRewardsCard onShare={onScan} />
+          </motion.div>
+        )}
+
         {/* Empty state for brand new users */}
         {stats.total_scans === 0 && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-8 text-center px-4">
