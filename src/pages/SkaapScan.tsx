@@ -2368,15 +2368,9 @@ function SkaapScanWithDesktopShell() {
   if (isMobile) return <SkaapScan />;
 
   return (
-    <>
-      <DesktopShell>
-        <SkaapScan />
-      </DesktopShell>
-      {/* Mobile-only: render without shell */}
-      <div className="md:hidden">
-        <SkaapScan />
-      </div>
-    </>
+    <DesktopShell>
+      <SkaapScan />
+    </DesktopShell>
   );
 }
 
