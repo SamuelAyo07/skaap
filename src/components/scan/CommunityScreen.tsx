@@ -122,7 +122,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Live feed
   const [recentScans, setRecentScans] = useState<LiveScanItem[]>([]);
 
-  const channelRef = useRef<any>(null);
+  
 
   const cityName = geoLocation?.city || "Your City";
 
