@@ -32,18 +32,21 @@ export interface ProductFullInfo {
   additivesTags?: string[];
   labelsTags?: string[];
   usdaFallback?: boolean;
-  // New fields for Yuka-style result screen
   ecoscoreGrade?: string;
   ecoscoreScore?: number;
   categoriesTags?: string[];
   servingSize?: string;
+  aiGeneratedImage?: boolean;
 }
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
 
 async function tryFetch(url: string): Promise<ProductFullInfo | null> {
   try {
-    const res = await fetch(url);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) return null;
 
     const data = await res.json();
@@ -53,8 +56,8 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
     const n = p.nutriments || {};
     const nl = p.nutrient_levels || {};
 
-  return {
-      productName: p.product_name || "Unknown Product",
+    return {
+      productName: p.product_name || p.product_name_en || "Unknown Product",
       brand: p.brands || undefined,
       imageUrl: p.image_front_url || p.image_url || undefined,
       imageSmallUrl: p.image_front_small_url || undefined,
@@ -91,10 +94,6 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
   }
 }
 
-/**
- * Count how many of the 6 key nutrient fields are missing/null.
- * If more than 3 are empty, we try USDA as a fallback.
- */
 function countEmptyNutrients(info: ProductFullInfo): number {
   const n = info.nutriments;
   if (!n) return 6;
@@ -108,10 +107,6 @@ function countEmptyNutrients(info: ProductFullInfo): number {
   return empty;
 }
 
-/**
- * Fill empty nutrient fields in the product info with USDA data.
- * Never overwrites existing Open Food Facts data.
- */
 async function fillFromUSDA(info: ProductFullInfo): Promise<ProductFullInfo> {
   try {
     const query = [info.productName, info.brand].filter(Boolean).join(" ");
@@ -149,21 +144,54 @@ async function fillFromUSDA(info: ProductFullInfo): Promise<ProductFullInfo> {
   }
 }
 
+/**
+ * Generate an AI product image when none exists.
+ * Returns a base64 data URL or null on failure.
+ */
+async function generateProductImage(productName: string, brand?: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("ai-product-insights", {
+      body: {
+        type: "product_image",
+        productName,
+        brandName: brand,
+      },
+    });
+    if (error || !data?.result) return null;
+    return data.result;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo | null> {
   if (sessionCache.has(barcode)) {
     return sessionCache.get(barcode)!;
   }
 
-  // Try Open Food Facts first, then Open Beauty Facts for cosmetics/skincare
   const encoded = encodeURIComponent(barcode);
-  let info = await tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`);
-  if (!info) {
-    info = await tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`);
-  }
+
+  // Parallel lookup: Open Food Facts + Open Beauty Facts simultaneously
+  const [offResult, obbResult] = await Promise.all([
+    tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`),
+    tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`),
+  ]);
+
+  let info = offResult || obbResult;
 
   // If product found but has >3 empty nutrient fields, try USDA fallback
   if (info && countEmptyNutrients(info) > 3) {
     info = await fillFromUSDA(info);
+  }
+
+  // If product found but no image, generate one with AI
+  if (info && !info.imageUrl) {
+    const aiImage = await generateProductImage(info.productName, info.brand);
+    if (aiImage) {
+      info.imageUrl = aiImage;
+      info.imageSmallUrl = aiImage;
+      info.aiGeneratedImage = true;
+    }
   }
 
   sessionCache.set(barcode, info);
