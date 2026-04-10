@@ -67,11 +67,7 @@ function buildBarcodeCandidates(rawBarcode: string): string[] {
 
 function parseAllergens(product: NonNullable<OpenFoodFactsResponse["product"]>): string[] | undefined {
   const fromTags = (product.allergens_tags || []).map((tag) =>
-    tag
-      .replace(/^\w+:/, "")
-      .replace(/_/g, " ")
-      .replace(/-/g, " ")
-      .trim()
+    tag.replace(/^\w+:/, "").replace(/_/g, " ").replace(/-/g, " ").trim()
   );
 
   const fromText = `${product.allergens_from_ingredients || ""},${product.allergens || ""}`
@@ -85,29 +81,24 @@ function parseAllergens(product: NonNullable<OpenFoodFactsResponse["product"]>):
 
 function getProductName(product: NonNullable<OpenFoodFactsResponse["product"]>): string {
   return (
-    product.product_name ||
-    product.product_name_en ||
-    product.generic_name_en ||
-    product.generic_name ||
-    "Unknown Product"
+    product.product_name || product.product_name_en ||
+    product.generic_name_en || product.generic_name || "Unknown Product"
   );
 }
 
 function getBrandName(product: NonNullable<OpenFoodFactsResponse["product"]>): string | undefined {
   if (product.brands?.trim()) return product.brands;
-
   const firstBrandTag = product.brands_tags?.[0];
   if (!firstBrandTag) return undefined;
-
-  return firstBrandTag
-    .replace(/^\w+:/, "")
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  return firstBrandTag.replace(/^\w+:/, "").replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 async function fetchProductMatch(baseUrl: string, barcode: string): Promise<ProductLookupMatch | null> {
   try {
-    const response = await fetch(`${baseUrl}/api/v0/product/${encodeURIComponent(barcode)}.json`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const response = await fetch(`${baseUrl}/api/v0/product/${encodeURIComponent(barcode)}.json`, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!response.ok) return null;
 
     const data: OpenFoodFactsResponse = await response.json();
@@ -121,16 +112,19 @@ async function fetchProductMatch(baseUrl: string, barcode: string): Promise<Prod
 
 async function fetchPrice(barcode: string): Promise<number> {
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
     const res = await fetch(
-      `https://prices.openfoodfacts.org/api/v1/prices?product_code=${encodeURIComponent(barcode)}`
+      `https://prices.openfoodfacts.org/api/v1/prices?product_code=${encodeURIComponent(barcode)}`,
+      { signal: controller.signal }
     );
+    clearTimeout(timeout);
     if (!res.ok) return generateFallbackPrice(barcode);
 
     const data: PriceResponse = await res.json();
     if (data.items && data.items.length > 0 && data.items[0].price != null) {
       return data.items[0].price;
     }
-
     return generateFallbackPrice(barcode);
   } catch {
     return generateFallbackPrice(barcode);
@@ -139,47 +133,49 @@ async function fetchPrice(barcode: string): Promise<number> {
 
 export async function lookupBarcode(rawBarcode: string): Promise<Product | null> {
   try {
-    for (const candidate of buildBarcodeCandidates(rawBarcode)) {
-      for (const catalog of PRODUCT_CATALOGS) {
-        const match = await fetchProductMatch(catalog, candidate);
-        if (!match) continue;
+    const candidates = buildBarcodeCandidates(rawBarcode);
 
-        const price = await fetchPrice(match.barcode);
-        const p = match.product;
-        const n = p.nutriments;
+    // Try all candidates across all catalogs in parallel for speed
+    const attempts = candidates.flatMap(candidate =>
+      PRODUCT_CATALOGS.map(catalog => fetchProductMatch(catalog, candidate))
+    );
 
-        const nutrition: NutritionInfo | undefined = n
-          ? {
-              calories: n["energy-kcal_100g"],
-              fat: n.fat_100g,
-              saturatedFat: n["saturated-fat_100g"],
-              carbs: n.carbohydrates_100g,
-              sugars: n.sugars_100g,
-              protein: n.proteins_100g,
-              salt: n.salt_100g,
-              fiber: n.fiber_100g,
-            }
-          : undefined;
+    const results = await Promise.all(attempts);
+    const match = results.find(r => r !== null) || null;
 
-        return {
-          id: match.barcode,
-          name: getProductName(p),
-          brand: getBrandName(p),
-          weight: p.quantity || "",
-          price,
-          image: p.image_front_url || p.image_url || "/placeholder.svg",
-          barcode: match.barcode,
-          nutriScore: p.nutriscore_grade || undefined,
-          ingredients: p.ingredients_text_en || p.ingredients_text || undefined,
-          allergens: parseAllergens(p),
-          nutrition,
-        };
-      }
-    }
+    if (!match) return null;
 
-    return null;
+    const price = await fetchPrice(match.barcode);
+    const p = match.product;
+    const n = p.nutriments;
+
+    const nutrition: NutritionInfo | undefined = n
+      ? {
+          calories: n["energy-kcal_100g"],
+          fat: n.fat_100g,
+          saturatedFat: n["saturated-fat_100g"],
+          carbs: n.carbohydrates_100g,
+          sugars: n.sugars_100g,
+          protein: n.proteins_100g,
+          salt: n.salt_100g,
+          fiber: n.fiber_100g,
+        }
+      : undefined;
+
+    return {
+      id: match.barcode,
+      name: getProductName(p),
+      brand: getBrandName(p),
+      weight: p.quantity || "",
+      price,
+      image: p.image_front_url || p.image_url || "/placeholder.svg",
+      barcode: match.barcode,
+      nutriScore: p.nutriscore_grade || undefined,
+      ingredients: p.ingredients_text_en || p.ingredients_text || undefined,
+      allergens: parseAllergens(p),
+      nutrition,
+    };
   } catch {
     return null;
   }
 }
-
