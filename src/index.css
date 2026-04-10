@@ -20,8 +20,8 @@
     --secondary: 222 47% 11%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 222 30% 14%;
-    --muted-foreground: 0 0% 100% / 0.5;
+    --muted: 222 30% 12%;
+    --muted-foreground: 0 0% 100% / 0.6;
 
     --accent: 351 73% 43%;
     --accent-foreground: 0 0% 100%;
@@ -35,8 +35,8 @@
     --scanner-accent: 351 73% 43%;
     --scanner-ink: 222 47% 20%;
 
-    --border: 0 0% 100% / 0.12;
-    --input: 0 0% 100% / 0.12;
+    --border: 0 0% 100% / 0.15;
+    --input: 0 0% 100% / 0.15;
     --ring: 351 73% 43%;
 
     --radius: 1.25rem;
@@ -49,9 +49,9 @@
     --shadow-hero: 0 20px 60px -12px rgba(0,0,0,0.5);
 
     /* Glass tokens */
-    --glass-bg: rgba(255,255,255,0.08);
-    --glass-border: rgba(255,255,255,0.12);
-    --glass-blur: blur(24px) saturate(180%);
+    --glass-bg: rgba(255,255,255,0.1);
+    --glass-border: rgba(255,255,255,0.15);
+    --glass-blur: blur(28px) saturate(200%);
 
     /* Glow tokens */
     --glow-red: rgba(232,49,74,0.3);
