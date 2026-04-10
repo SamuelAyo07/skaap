@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { DesktopShell } from "@/components/scan/DesktopShell";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -2359,4 +2361,17 @@ function highlightAllergens(text: string, allergens: string[]): JSX.Element {
   return <>{parts.map((p, i) => regex.test(p) ? <strong key={i} style={{ color: "#1B2A4A" }}>{p}</strong> : <span key={i}>{p}</span>)}</>;
 }
 
-export default SkaapScan;
+// ─── Desktop wrapper ───
+function SkaapScanWithDesktopShell() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) return <SkaapScan />;
+
+  return (
+    <DesktopShell>
+      <SkaapScan />
+    </DesktopShell>
+  );
+}
+
+export default SkaapScanWithDesktopShell;
