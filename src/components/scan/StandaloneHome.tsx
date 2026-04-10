@@ -7,6 +7,7 @@ import {
 import skaapIcon from "@/assets/skaap-icon.png";
 import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
 import { getScoreColor } from "@/lib/skaapScore";
+import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
 
 const HISTORY_KEY = "skaap_scan_history";
 const BASKET_KEY = "skaap_basket";
