@@ -20,38 +20,48 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
       style={{
         height: 83,
         paddingBottom: "env(safe-area-inset-bottom, 20px)",
-        borderTop: "1px solid #E5E7EB",
-        background: "#fff",
+        borderTop: "1px solid rgba(255,255,255,0.18)",
+        background: "rgba(255,255,255,0.72)",
+        backdropFilter: "blur(40px) saturate(180%)",
+        WebkitBackdropFilter: "blur(40px) saturate(180%)",
+        boxShadow: "0 -1px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
       }}
     >
       {items.map((item) => (
         <button
           key={item.key}
           onClick={() => onNavigate(item.key)}
-          className="flex flex-col items-center gap-0.5 relative"
-          style={{ minWidth: 56 }}
+          className="flex flex-col items-center gap-0.5 relative transition-transform active:scale-90"
+          style={{
+            minWidth: 56,
+            WebkitTapHighlightColor: "transparent",
+          }}
         >
           {item.center ? (
             <div
-              className="flex items-center justify-center"
+              className="flex items-center justify-center transition-transform active:scale-95"
               style={{
                 width: 56,
                 height: 56,
                 borderRadius: 28,
-                background: "#C41E3A",
+                background: "linear-gradient(135deg, #C41E3A 0%, #E8314A 100%)",
                 marginTop: -24,
-                boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
+                boxShadow: "0 6px 20px rgba(196,30,58,0.4), 0 2px 8px rgba(196,30,58,0.2), inset 0 1px 0 rgba(255,255,255,0.25)",
+                border: "1.5px solid rgba(255,255,255,0.2)",
               }}
             >
               <span style={{ color: "#fff" }}>{item.icon}</span>
             </div>
           ) : (
-            <span style={{ color: active === item.key ? "#C41E3A" : "#9CA3AF" }}>
+            <span
+              className="transition-colors duration-200"
+              style={{ color: active === item.key ? "#C41E3A" : "#9CA3AF" }}
+            >
               {item.icon}
             </span>
           )}
           <span
-            className="text-[10px] font-medium"
+            className="text-[10px] font-medium transition-colors duration-200"
             style={{
               color: item.center
                 ? "#C41E3A"

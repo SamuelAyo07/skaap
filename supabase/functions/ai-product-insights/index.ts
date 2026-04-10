@@ -55,6 +55,37 @@ Return a JSON array of exactly 3 objects:
 Focus on widely available products with better nutritional profiles. Keep reasons under 12 words.`;
         break;
       }
+      case "product_image": {
+        const { productName, brandName } = params;
+        // Use image generation model
+        const imgResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3.1-flash-image-preview",
+            messages: [
+              { role: "system", content: "You are a product photography AI. Generate a clean, professional product photo." },
+              { role: "user", content: `Generate a realistic product photo of "${productName}"${brandName ? ` by ${brandName}` : ""}. Show the product on a clean white background, well-lit, studio-quality product photography style.` },
+            ],
+            modalities: ["image", "text"],
+          }),
+        });
+
+        if (!imgResponse.ok) {
+          throw new Error(`AI image gateway returned ${imgResponse.status}`);
+        }
+
+        const imgData = await imgResponse.json();
+        const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        if (!imageUrl) throw new Error("No image generated");
+
+        return new Response(JSON.stringify({ result: imageUrl }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       case "image_recognition": {
         const { imageBase64 } = params;
         systemPrompt = "You are a food nutrition AI that identifies foods from photos. Return ONLY valid JSON, no other text.";
