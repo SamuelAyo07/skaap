@@ -55,7 +55,7 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
           ) : (
             <span
               className="transition-colors duration-200"
-              style={{ color: active === item.key ? "#C41E3A" : "#9CA3AF" }}
+              style={{ color: active === item.key ? "#B01830" : "#6B7280" }}
             >
               {item.icon}
             </span>
@@ -64,10 +64,10 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
             className="text-[10px] font-medium transition-colors duration-200"
             style={{
               color: item.center
-                ? "#C41E3A"
+                ? "#B01830"
                 : active === item.key
-                ? "#C41E3A"
-                : "#9CA3AF",
+                ? "#B01830"
+                : "#6B7280",
               marginTop: item.center ? -2 : 0,
             }}
           >
@@ -76,7 +76,7 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
           {active === item.key && !item.center && (
             <div
               className="w-1 h-1 rounded-full"
-              style={{ background: "#C41E3A", marginTop: -2 }}
+              style={{ background: "#B01830", marginTop: -2 }}
             />
           )}
         </button>
