@@ -142,18 +142,25 @@ export function HistoryScreen({
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-12">
             {tab === "favorites" ? (
               <>
-                <Heart size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
-                <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>No favorites yet</p>
-                <p className="text-[12px] mt-1" style={{ color: "#D1D5DB" }}>Scan products and tap Save to add them here</p>
+                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ background: "#FEF2F2" }}>
+                  <Heart size={28} style={{ color: "#C41E3A" }} />
+                </div>
+                <p className="text-[15px] font-bold mt-4" style={{ color: "#1B2A4A" }}>No favorites yet</p>
+                <p className="text-[13px] mt-1 max-w-[240px] mx-auto" style={{ color: "#6B7280" }}>Scan any product and tap ♥ Save to build your healthy list</p>
               </>
             ) : (
               <>
-                <Clock size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
-                <p className="text-sm mt-3" style={{ color: "#9CA3AF" }}>
-                  {items.length === 0 ? "No scans yet" : "No products match"}
+                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ background: "#F0F9FF" }}>
+                  <Barcode size={28} style={{ color: "#2563EB" }} />
+                </div>
+                <p className="text-[15px] font-bold mt-4" style={{ color: "#1B2A4A" }}>
+                  {items.length === 0 ? "Start scanning" : "No products match"}
+                </p>
+                <p className="text-[13px] mt-1 max-w-[240px] mx-auto" style={{ color: "#6B7280" }}>
+                  {items.length === 0 ? "Tap Scan below to check any food product instantly" : "Try a different search or filter"}
                 </p>
               </>
             )}
