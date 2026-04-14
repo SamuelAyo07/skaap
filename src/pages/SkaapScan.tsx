@@ -449,7 +449,7 @@ const SkaapScan = () => {
   const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("history");
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
-  const { currentStore } = useNearbyStore();
+  const { currentCity } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
   const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
   const [showSplash, setShowSplash] = useState(() => window.matchMedia("(display-mode: standalone)").matches);
@@ -1123,16 +1123,16 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        {/* Store location banner */}
-        {currentStore && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-2 px-3 py-2 rounded-xl relative z-10" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
-            <span style={{ fontSize: 14 }}>📍</span>
-            <span className="text-[12px] font-semibold truncate" style={{ color: "#065F46" }}>You're at {currentStore.name}</span>
+        {/* City location pill */}
+        {currentCity && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg relative z-10" style={{ background: "#F0FDF4" }}>
+            <span style={{ fontSize: 12 }}>📍</span>
+            <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>{currentCity}</span>
           </motion.div>
         )}
 
-        <p className="px-5 mt-1 text-[15px] relative z-10" style={{ color: "#9CA3AF" }}>
-          {currentStore ? `Scanning at ${currentStore.name}` : "Know what's in your food."}
+        <p className="px-5 mt-1 text-[14px] relative z-10" style={{ color: "#9CA3AF" }}>
+          Know what's in your food.
         </p>
 
         {/* Scrollable content */}
@@ -1615,12 +1615,11 @@ const SkaapScan = () => {
           {/* ─── PRODUCT RESULT ─── */}
           {productInfo && !loading && (
             <>
-              {/* Store location pill */}
-              {currentStore && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 px-5 pt-3 pb-1">
-                  <span style={{ fontSize: 12 }}>📍</span>
-                  <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>Scanned at {currentStore.name}</span>
-                  {currentStore.address && <span className="text-[10px]" style={{ color: "#9CA3AF" }}>· {currentStore.address}</span>}
+              {/* City pill on result */}
+              {currentCity && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 px-5 pt-2 pb-1">
+                  <span style={{ fontSize: 11 }}>📍</span>
+                  <span className="text-[10px] font-medium" style={{ color: "#065F46" }}>{currentCity}</span>
                 </motion.div>
               )}
 
