@@ -1138,21 +1138,21 @@ const SkaapScan = () => {
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
           {/* CENTER — Compact scanner circle */}
-          <div className="flex flex-col items-center px-8 text-center pt-3" style={{ paddingBottom: 6 }}>
+          <div className="flex flex-col items-center px-8 text-center pt-2" style={{ paddingBottom: 4 }}>
             <motion.button
               whileTap={{ scale: 1.04 }}
               onClick={goToScan}
-              className="relative mb-4"
-              style={{ width: 140, height: 140 }}
+              className="relative mb-3"
+              style={{ width: 110, height: 110 }}
             >
               <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
-              <svg className="absolute inset-0 animate-rotate-arc" width="140" height="140" viewBox="0 0 140 140">
-                <circle cx="70" cy="70" r="68" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-                <path d="M 70 2 A 68 68 0 0 1 135 52" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
+              <svg className="absolute inset-0 animate-rotate-arc" width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="53" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M 55 2 A 53 53 0 0 1 105 40" fill="none" stroke="#B01830" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Barcode size={28} style={{ color: "#1B2A4A" }} />
-                <span className="text-[11px] mt-1" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+                <Barcode size={24} style={{ color: "#0A1220" }} />
+                <span className="text-[10px] mt-1 font-medium" style={{ color: "#6B7280" }}>Tap to scan</span>
               </div>
             </motion.button>
 
