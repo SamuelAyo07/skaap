@@ -18,13 +18,13 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
     <div
       className="flex items-center justify-around"
       style={{
-        height: 83,
-        paddingBottom: "env(safe-area-inset-bottom, 20px)",
-        borderTop: "1px solid rgba(255,255,255,0.18)",
-        background: "rgba(255,255,255,0.72)",
+        height: 64,
+        paddingBottom: "env(safe-area-inset-bottom, 8px)",
+        borderTop: "1px solid rgba(0,0,0,0.06)",
+        background: "rgba(255,255,255,0.88)",
         backdropFilter: "blur(40px) saturate(180%)",
         WebkitBackdropFilter: "blur(40px) saturate(180%)",
-        boxShadow: "0 -1px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
+        boxShadow: "0 -1px 12px rgba(0,0,0,0.04)",
       }}
     >
       {items.map((item) => (
@@ -41,12 +41,12 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
             <div
               className="flex items-center justify-center transition-transform active:scale-95"
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                background: "linear-gradient(135deg, #C41E3A 0%, #E8314A 100%)",
-                marginTop: -24,
-                boxShadow: "0 6px 20px rgba(196,30,58,0.4), 0 2px 8px rgba(196,30,58,0.2), inset 0 1px 0 rgba(255,255,255,0.25)",
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                background: "linear-gradient(135deg, #B01830 0%, #D42040 100%)",
+                marginTop: -18,
+                boxShadow: "0 4px 16px rgba(176,24,48,0.45), 0 2px 6px rgba(176,24,48,0.25)",
                 border: "1.5px solid rgba(255,255,255,0.2)",
               }}
             >
