@@ -1094,7 +1094,7 @@ const SkaapScan = () => {
           </AnimatePresence>
         </>
       ) : (
-      <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="flex flex-col relative overflow-hidden" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF", height: "100dvh" }}>
         {/* Ambient blob */}
         <div className="absolute top-16 right-0 w-56 h-56 rounded-full animate-blob pointer-events-none" style={{ background: "rgba(196,30,58,0.06)", filter: "blur(80px)" }} />
 
@@ -1131,28 +1131,28 @@ const SkaapScan = () => {
           </motion.div>
         )}
 
-        <p className="px-5 mt-1 text-[14px] relative z-10" style={{ color: "#9CA3AF" }}>
+        <p className="px-5 mt-0.5 text-[13px] font-medium relative z-10" style={{ color: "#6B7280" }}>
           Know what's in your food.
         </p>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
           {/* CENTER — Compact scanner circle */}
-          <div className="flex flex-col items-center px-8 text-center pt-3" style={{ paddingBottom: 6 }}>
+          <div className="flex flex-col items-center px-8 text-center pt-2" style={{ paddingBottom: 4 }}>
             <motion.button
               whileTap={{ scale: 1.04 }}
               onClick={goToScan}
-              className="relative mb-4"
-              style={{ width: 140, height: 140 }}
+              className="relative mb-3"
+              style={{ width: 110, height: 110 }}
             >
               <div className="absolute inset-0 rounded-full" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }} />
-              <svg className="absolute inset-0 animate-rotate-arc" width="140" height="140" viewBox="0 0 140 140">
-                <circle cx="70" cy="70" r="68" fill="none" stroke="#E5E7EB" strokeWidth="2" />
-                <path d="M 70 2 A 68 68 0 0 1 135 52" fill="none" stroke="#C41E3A" strokeWidth="2.5" strokeLinecap="round" />
+              <svg className="absolute inset-0 animate-rotate-arc" width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="53" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M 55 2 A 53 53 0 0 1 105 40" fill="none" stroke="#B01830" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Barcode size={28} style={{ color: "#1B2A4A" }} />
-                <span className="text-[11px] mt-1" style={{ color: "#9CA3AF" }}>Tap to scan</span>
+                <Barcode size={24} style={{ color: "#0A1220" }} />
+                <span className="text-[10px] mt-1 font-medium" style={{ color: "#6B7280" }}>Tap to scan</span>
               </div>
             </motion.button>
 
@@ -1216,16 +1216,16 @@ const SkaapScan = () => {
           )}
 
           {/* Stat chips */}
-          <div className="flex items-center justify-center gap-2 px-5 py-2">
+          <div className="flex items-center justify-center gap-2 px-5 py-1.5">
             {[
-              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
+              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "streak" },
               { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
               { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
             ].map(chip => (
               <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-                className="flex flex-col items-center justify-center" style={{ width: 96, height: 40, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-                <span className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
-                <span className="text-[9px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
+                className="flex flex-col items-center justify-center" style={{ width: 90, height: 36, borderRadius: 10, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+                <span className="text-[11px] font-bold" style={{ color: "#0A1220" }}>{chip.emoji} {chip.val}</span>
+                <span className="text-[8px] font-medium" style={{ color: "#6B7280" }}>{chip.label}</span>
               </button>
             ))}
           </div>
@@ -1439,7 +1439,7 @@ const SkaapScan = () => {
     };
 
     return (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "#FFFFFF" }}>
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "#FFFFFF", height: "100dvh" }}>
         {/* Share preview modal */}
         <AnimatePresence>
           {shareModalOpen && (
@@ -1652,9 +1652,9 @@ const SkaapScan = () => {
 
               {/* SCORE HERO — centered, animated */}
               {scoreBreakdown && (
-                <div className="flex flex-col items-center" style={{ marginTop: 16 }}>
+                <div className="flex flex-col items-center" style={{ marginTop: 12 }}>
                   <button onClick={() => setShowScoreModal(true)}>
-                    <ScoreRing score={scoreBreakdown.total} size={96} />
+                    <ScoreRing score={scoreBreakdown.total} size={88} />
                   </button>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
