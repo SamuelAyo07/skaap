@@ -1439,7 +1439,7 @@ const SkaapScan = () => {
     };
 
     return (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "#FFFFFF" }}>
+      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: "#FFFFFF", height: "100dvh" }}>
         {/* Share preview modal */}
         <AnimatePresence>
           {shareModalOpen && (
@@ -1652,9 +1652,9 @@ const SkaapScan = () => {
 
               {/* SCORE HERO — centered, animated */}
               {scoreBreakdown && (
-                <div className="flex flex-col items-center" style={{ marginTop: 16 }}>
+                <div className="flex flex-col items-center" style={{ marginTop: 12 }}>
                   <button onClick={() => setShowScoreModal(true)}>
-                    <ScoreRing score={scoreBreakdown.total} size={96} />
+                    <ScoreRing score={scoreBreakdown.total} size={88} />
                   </button>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
