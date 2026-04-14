@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import skaapIcon from "@/assets/skaap-icon.png";
 import { ScanLine, Shield, Sparkles, Globe } from "lucide-react";
+import { SocialLinks } from "@/components/scan/SocialLinks";
 
 interface DesktopShellProps {
   children: ReactNode;
@@ -94,6 +95,10 @@ export function DesktopShell({ children }: DesktopShellProps) {
             <p className="text-[11px] font-semibold" style={{ color: "rgba(255,255,255,0.3)" }}>
               💡 For the best experience, install SKAAP on your phone as a PWA — tap Share → Add to Home Screen.
             </p>
+          </div>
+
+          <div className="mt-4">
+            <SocialLinks variant="inline" />
           </div>
         </div>
       </div>

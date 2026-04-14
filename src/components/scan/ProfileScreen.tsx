@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink } from "lucide-react";
+import { SocialLinks } from "@/components/scan/SocialLinks";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -287,9 +288,14 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           })}
         </motion.div>
 
+        {/* Social Links */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <SocialLinks variant="pill" />
+        </motion.div>
+
         {/* Sign out */}
         <motion.button
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
           onClick={handleSignOut}
           className="w-full flex items-center gap-3 bg-white rounded-2xl px-4 py-3.5 text-left active:bg-gray-50 transition-colors"
           style={{ border: "1px solid #E5E7EB" }}

@@ -8,6 +8,7 @@ import skaapIcon from "@/assets/skaap-icon.png";
 import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
 import { getScoreColor } from "@/lib/skaapScore";
 import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
+import { SocialLinks } from "@/components/scan/SocialLinks";
 
 const HISTORY_KEY = "skaap_scan_history";
 const BASKET_KEY = "skaap_basket";
@@ -367,6 +368,11 @@ export function StandaloneHome({
             <ShareRewardsCard onShare={onScan} />
           </motion.div>
         )}
+
+        {/* Social Links */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4">
+          <SocialLinks variant="pill" />
+        </motion.div>
 
         {/* Empty state for brand new users */}
         {stats.total_scans === 0 && (
