@@ -128,8 +128,8 @@ export function StandaloneHome({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.25 }}
-      className="min-h-screen flex flex-col"
-      style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}
+      className="flex flex-col"
+      style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF", height: "100dvh" }}
     >
       {/* Ambient glow */}
       <div className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(196,30,58,0.06) 0%, transparent 70%)", filter: "blur(60px)" }} />
@@ -154,13 +154,13 @@ export function StandaloneHome({
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-2">
-          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#0A1220" }}>{greeting}</h1>
-          <p className="text-[14px] mt-1 font-medium" style={{ color: "#6B7280" }}>{motivation}</p>
+          <h1 className="font-extrabold text-[24px] leading-tight tracking-tight" style={{ color: "#0A1220" }}>{greeting}</h1>
+          <p className="text-[13px] mt-0.5 font-medium" style={{ color: "#4B5563" }}>{motivation}</p>
         </motion.div>
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto relative z-10 px-5 pb-8">
+      <div className="flex-1 overflow-y-auto relative z-10 px-5 pb-2">
 
         {/* Big scan button */}
         <motion.button
@@ -169,8 +169,8 @@ export function StandaloneHome({
           transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
           whileTap={{ scale: 0.97 }}
           onClick={onScan}
-          className="w-full mt-5 rounded-2xl overflow-hidden relative"
-          style={{ height: 120, background: "linear-gradient(135deg, #C41E3A, #8a1825)" }}
+          className="w-full mt-4 rounded-2xl overflow-hidden relative"
+          style={{ height: 100, background: "linear-gradient(135deg, #B01830, #7a1220)" }}
         >
           <div className="absolute right-6 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full" style={{ border: "2px solid rgba(255,255,255,0.12)" }} />
           <div className="absolute right-9 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full" style={{ border: "1.5px solid rgba(255,255,255,0.08)" }} />
