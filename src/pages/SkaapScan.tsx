@@ -1131,7 +1131,7 @@ const SkaapScan = () => {
           </motion.div>
         )}
 
-        <p className="px-5 mt-1 text-[14px] relative z-10" style={{ color: "#9CA3AF" }}>
+        <p className="px-5 mt-0.5 text-[13px] font-medium relative z-10" style={{ color: "#6B7280" }}>
           Know what's in your food.
         </p>
 
@@ -1216,16 +1216,16 @@ const SkaapScan = () => {
           )}
 
           {/* Stat chips */}
-          <div className="flex items-center justify-center gap-2 px-5 py-2">
+          <div className="flex items-center justify-center gap-2 px-5 py-1.5">
             {[
-              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "day streak" },
+              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "streak" },
               { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
               { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
             ].map(chip => (
               <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-                className="flex flex-col items-center justify-center" style={{ width: 96, height: 40, borderRadius: 12, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-                <span className="text-[11px] font-bold" style={{ color: "#1B2A4A" }}>{chip.emoji} {chip.val}</span>
-                <span className="text-[9px]" style={{ color: "#9CA3AF" }}>{chip.label}</span>
+                className="flex flex-col items-center justify-center" style={{ width: 90, height: 36, borderRadius: 10, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
+                <span className="text-[11px] font-bold" style={{ color: "#0A1220" }}>{chip.emoji} {chip.val}</span>
+                <span className="text-[8px] font-medium" style={{ color: "#6B7280" }}>{chip.label}</span>
               </button>
             ))}
           </div>
