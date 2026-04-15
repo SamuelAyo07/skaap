@@ -142,26 +142,55 @@ export function HistoryScreen({
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="flex flex-col items-center justify-center py-10">
             {tab === "favorites" ? (
               <>
-                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ background: "#FEF2F2" }}>
-                  <Heart size={28} style={{ color: "#C41E3A" }} />
-                </div>
-                <p className="text-[15px] font-bold mt-4" style={{ color: "#1B2A4A" }}>No favorites yet</p>
-                <p className="text-[13px] mt-1 max-w-[240px] mx-auto" style={{ color: "#6B7280" }}>Scan any product and tap ♥ Save to build your healthy list</p>
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="w-20 h-20 rounded-full flex items-center justify-center"
+                  style={{ background: "linear-gradient(135deg, #FEE2E2, #FECACA)" }}
+                >
+                  <Heart size={32} style={{ color: "#C41E3A" }} />
+                </motion.div>
+                <p className="text-[17px] font-extrabold mt-5" style={{ color: "#1B2A4A" }}>Save your favorites</p>
+                <p className="text-[13px] mt-1.5 max-w-[260px] text-center leading-relaxed" style={{ color: "#6B7280" }}>
+                  Tap ♥ on any product to save it here for quick access
+                </p>
+              </>
+            ) : items.length === 0 ? (
+              <>
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="w-20 h-20 rounded-full flex items-center justify-center"
+                  style={{ background: "linear-gradient(135deg, #EEF2FF, #DBEAFE)" }}
+                >
+                  <Barcode size={32} style={{ color: "#4F46E5" }} />
+                </motion.div>
+                <p className="text-[17px] font-extrabold mt-5" style={{ color: "#1B2A4A" }}>Your scan history is empty</p>
+                <p className="text-[13px] mt-1.5 max-w-[260px] text-center leading-relaxed" style={{ color: "#6B7280" }}>
+                  Scan any barcode or take a photo to instantly know what's in your food
+                </p>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => onNavChange("scan")}
+                  className="mt-5 flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-[14px] text-white"
+                  style={{ background: "linear-gradient(135deg, #B01830, #7a1220)" }}
+                >
+                  <Barcode size={18} color="white" />
+                  Scan your first product
+                </motion.button>
               </>
             ) : (
               <>
-                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ background: "#F0F9FF" }}>
-                  <Barcode size={28} style={{ color: "#2563EB" }} />
+                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                  <Search size={24} style={{ color: "#9CA3AF" }} />
                 </div>
-                <p className="text-[15px] font-bold mt-4" style={{ color: "#1B2A4A" }}>
-                  {items.length === 0 ? "Start scanning" : "No products match"}
-                </p>
-                <p className="text-[13px] mt-1 max-w-[240px] mx-auto" style={{ color: "#6B7280" }}>
-                  {items.length === 0 ? "Tap Scan below to check any food product instantly" : "Try a different search or filter"}
-                </p>
+                <p className="text-[15px] font-bold mt-4" style={{ color: "#1B2A4A" }}>No products match</p>
+                <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>Try a different search or filter</p>
               </>
             )}
           </div>
