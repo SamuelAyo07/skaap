@@ -181,23 +181,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 3. HOW IT WORKS — 3 Yuka-style cards horizontal row ─── */}
-      <section className="py-10" style={{ background: "#0A0F1E" }}>
+      {/* ─── 3. HOW IT WORKS — 3 phone mockups in a horizontal row ─── */}
+      <section className="py-6" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               How it works
             </h2>
-            <p className="text-center text-xs mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-center text-xs mb-5" style={{ color: "rgba(255,255,255,0.45)" }}>
               Scan → Score → Decide.
             </p>
           </FadeIn>
 
-          <div className="grid grid-cols-3 gap-2.5 md:gap-4 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto items-end">
             <FadeIn delay={0.05}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🍪"
-                productLabel="belVita Blueberry"
+                productLabel="belVita"
                 signals={[
                   { emoji: "🧪", text: "6 additives" },
                   { emoji: "🍬", text: "Too sweet" },
@@ -208,9 +208,9 @@ const Index = () => {
               />
             </FadeIn>
             <FadeIn delay={0.15}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🥣"
-                productLabel="Honey Nut Cheerios"
+                productLabel="Honey Nut"
                 signals={[
                   { emoji: "🧪", text: "7 additives" },
                   { emoji: "🍬", text: "32g sugar" },
@@ -221,9 +221,9 @@ const Index = () => {
               />
             </FadeIn>
             <FadeIn delay={0.25}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🥗"
-                productLabel="Plain Greek Yogurt"
+                productLabel="Greek Yogurt"
                 signals={[
                   { emoji: "💪", text: "High protein" },
                   { emoji: "✨", text: "Clean label" },
@@ -238,14 +238,14 @@ const Index = () => {
       </section>
 
       {/* ─── 4. WHAT YOU GET (compact grid) ─── */}
-      <section className="py-10" style={{ background: "#F9FAFB" }}>
+      <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Your personal product analyst.
               </h2>
-              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
+              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
                 Food + beauty. 4M+ products. Instant.
               </p>
             </div>
