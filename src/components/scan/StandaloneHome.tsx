@@ -9,6 +9,7 @@ import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStat
 import { getScoreColor } from "@/lib/skaapScore";
 import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
 import { SocialLinks } from "@/components/scan/SocialLinks";
+import { getUserFirstName } from "@/components/scan/FirstScanSignupModal";
 
 const HISTORY_KEY = "skaap_scan_history";
 const BASKET_KEY = "skaap_basket";
@@ -119,7 +120,8 @@ export function StandaloneHome({
 
   useEffect(() => { setStats(refreshStreak()); }, []);
 
-  const greeting = getTimeGreeting();
+  const firstName = getUserFirstName();
+  const greeting = firstName ? `${getTimeGreeting()}, ${firstName}` : getTimeGreeting();
   const motivation = getMotivation(stats);
   const tip = getDailyTip();
 
