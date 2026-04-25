@@ -84,21 +84,31 @@ function drawBranding(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
 
 function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, score: number, scoreNumSize = 96) {
   const color = getScoreColor(score);
+  // Outer halo (extra punch for social)
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 60;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius + 6, 0, Math.PI * 2);
+  ctx.strokeStyle = `${color}40`;
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.restore();
   // Glow
   ctx.save();
   ctx.shadowColor = color;
-  ctx.shadowBlur = 30;
+  ctx.shadowBlur = 36;
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.strokeStyle = "rgba(255,255,255,0.08)";
-  ctx.lineWidth = 14;
+  ctx.lineWidth = 16;
   ctx.stroke();
   ctx.restore();
   // Background ring
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.strokeStyle = "rgba(255,255,255,0.12)";
-  ctx.lineWidth = 14;
+  ctx.lineWidth = 16;
   ctx.stroke();
   // Score arc
   ctx.beginPath();
@@ -106,7 +116,7 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   const end = start + (score / 100) * Math.PI * 2;
   ctx.arc(cx, cy, radius, start, end);
   ctx.strokeStyle = color;
-  ctx.lineWidth = 14;
+  ctx.lineWidth = 16;
   ctx.lineCap = "round";
   ctx.stroke();
   ctx.lineCap = "butt";
@@ -115,6 +125,30 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   ctx.font = `800 ${scoreNumSize}px Inter800, Inter, system-ui, sans-serif`;
   ctx.textAlign = "center";
   ctx.fillText(String(score), cx, cy + scoreNumSize * 0.33);
+}
+
+// Tilted sticker badge — "tagged" feel for social sharing
+function drawSticker(ctx: CanvasRenderingContext2D, x: number, y: number, text: string, bg: string, fg: string, rotation = -0.12) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+  ctx.font = "800 22px Inter800, Inter, system-ui, sans-serif";
+  const m = ctx.measureText(text);
+  const w = m.width + 36, h = 48, r = 12;
+  ctx.shadowColor = "rgba(0,0,0,0.35)";
+  ctx.shadowBlur = 16;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  ctx.roundRect(-w / 2, -h / 2, w, h, r);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+  ctx.fillStyle = fg;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 0, 1);
+  ctx.textBaseline = "alphabetic";
+  ctx.restore();
 }
 
 function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline: string, tagline?: string) {
