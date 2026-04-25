@@ -1078,9 +1078,6 @@ const SkaapScan = () => {
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
       <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
-      {false && (
-        <span />
-      )}
       {/* Standalone PWA home — richer, personalized entry point */}
       {isStandalone ? (
         <>
