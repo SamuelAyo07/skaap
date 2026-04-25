@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
+import { useEffect, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users, AlertTriangle, Check, ChevronDown, Quote, Beaker, FlaskConical, Wheat, Factory } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
+import productCrackers from "@/assets/product-crackers.png";
+import productMacaroni from "@/assets/product-macaroni.png";
+import productOj from "@/assets/product-oj.png";
 
 const MAILTO = "mailto:oyedemisam@gmail.com";
 const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
@@ -24,17 +27,17 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Yuka-style product card (big score circle + colored signal rows) ─── */
+/* ─── Yuka-style product card with REAL product image ─── */
 function PhoneMockup({
   productLabel,
-  productEmoji,
+  productImage,
   signals,
   verdict,
   scoreColor,
   score,
 }: {
   productLabel: string;
-  productEmoji: string;
+  productImage: string;
   signals: { dot: string; text: string }[];
   verdict: string;
   scoreColor: string;
@@ -51,15 +54,15 @@ function PhoneMockup({
         aspectRatio: "9 / 16",
       }}
     >
-      {/* Top: product hero on cream */}
+      {/* Top: real product image on cream */}
       <div className="flex flex-col items-center justify-center pt-4 pb-3" style={{ background: "#FBF6E9" }}>
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl bg-white" style={{ boxShadow: "0 4px 12px -2px rgba(0,0,0,0.08)" }}>
-          {productEmoji}
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-white overflow-hidden" style={{ boxShadow: "0 4px 12px -2px rgba(0,0,0,0.08)" }}>
+          <img src={productImage} alt={productLabel} className="w-full h-full object-contain p-1" loading="lazy" />
         </div>
         <p className="text-[10px] font-bold mt-2 text-center leading-tight px-2" style={{ color: "#0A1220" }}>{productLabel}</p>
       </div>
 
-      {/* Big score circle (Yuka signature) */}
+      {/* Big score circle */}
       <div className="flex items-center justify-center -mt-5 z-10">
         <div
           className="w-14 h-14 rounded-full flex flex-col items-center justify-center"
@@ -70,10 +73,8 @@ function PhoneMockup({
         </div>
       </div>
 
-      {/* Verdict */}
       <p className="text-center text-[10px] font-extrabold mt-1" style={{ color: scoreColor }}>{verdict}</p>
 
-      {/* Signal rows (Yuka-style colored dot lines) */}
       <div className="flex-1 flex flex-col gap-1 px-2.5 mt-2 mb-3">
         {signals.map((s, i) => (
           <div key={i} className="flex items-center gap-1.5">
@@ -82,6 +83,25 @@ function PhoneMockup({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ─── Simple FAQ accordion item ─── */
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-white rounded-xl overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+      >
+        <span className="font-bold text-[13px] tracking-tight" style={{ color: "#0A1220" }}>{q}</span>
+        <ChevronDown size={16} className="flex-shrink-0 transition-transform" style={{ transform: open ? "rotate(180deg)" : "none", color: "#6B7280" }} />
+      </button>
+      {open && (
+        <div className="px-4 pb-3 text-[12px] leading-relaxed" style={{ color: "#6B7280" }}>{a}</div>
+      )}
     </div>
   );
 }
