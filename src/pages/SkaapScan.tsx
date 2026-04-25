@@ -513,6 +513,8 @@ const SkaapScan = () => {
   const [showImageRecognition, setShowImageRecognition] = useState(false);
   // First-scan celebration
   const [showCelebration, setShowCelebration] = useState(false);
+  // First-scan signup modal (one-time per device)
+  const [showSignupModal, setShowSignupModal] = useState(false);
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
