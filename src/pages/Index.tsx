@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, Barcode, Brain, CheckCircle2, ShoppingBag } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
 
 const MAILTO = "mailto:oyedemisam@gmail.com";
@@ -11,9 +13,9 @@ const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, 
 const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; delay?: number }>(
   ({ children, className = "", delay = 0 }, _r) => {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-60px" });
+    const isInView = useInView(ref, { once: true, margin: "-40px" });
     return (
-      <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+      <motion.div ref={ref} initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ ...spring, delay }} className={className}>
         {children}
       </motion.div>
@@ -22,24 +24,49 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─────── PHONE FRAME — visual how it works ─────── */
-function PhoneFrame({ children, label }: { children: React.ReactNode; label: string }) {
+/* ─── Yuka-style mini result phone (cream bg, product, signals, verdict pill) ─── */
+function YukaPhone({
+  productLabel,
+  productEmoji,
+  signals,
+  verdict,
+  scoreColor,
+  score,
+}: {
+  productLabel: string;
+  productEmoji: string;
+  signals: { emoji: string; text: string }[];
+  verdict: string;
+  scoreColor: string;
+  score: string;
+}) {
   return (
-    <div className="flex flex-col items-center">
-      <div
-        className="relative w-[160px] h-[300px] rounded-[28px] overflow-hidden"
-        style={{
-          background: "#0A1220",
-          border: "6px solid #1F2937",
-          boxShadow: "0 20px 60px -10px rgba(0,0,0,0.5)",
-        }}
-      >
-        <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-14 h-3 rounded-full bg-black z-10" />
-        <div className="w-full h-full bg-white flex flex-col">
-          {children}
+    <div
+      className="rounded-[20px] p-3 flex flex-col gap-2"
+      style={{ background: "#FBF6E9", boxShadow: "0 8px 24px -8px rgba(10,18,32,0.18)" }}
+    >
+      {/* Product row */}
+      <div className="flex items-center gap-2.5">
+        <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0" style={{ background: "#FFF" }}>
+          {productEmoji}
+        </div>
+        <div className="flex-1 flex flex-col gap-1">
+          {signals.slice(0, 2).map((s, i) => (
+            <div key={i} className="flex items-center gap-1.5 px-2 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
+              <span className="text-[10px]">{s.emoji}</span>
+              <span className="text-[9px] font-semibold" style={{ color: "#6B7280" }}>{s.text}</span>
+            </div>
+          ))}
         </div>
       </div>
-      <p className="text-xs font-semibold mt-3" style={{ color: "rgba(255,255,255,0.55)" }}>{label}</p>
+      {/* Verdict pill */}
+      <div className="flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 mt-1" style={{ background: "#FFF" }}>
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor }} />
+        <span className="text-[11px] font-extrabold tracking-tight" style={{ color: "#374151" }}>
+          {verdict} — <span style={{ color: "#0A1220" }}>{score}/100</span>
+        </span>
+      </div>
+      <p className="text-[9px] text-center font-medium" style={{ color: "#9CA3AF" }}>{productLabel}</p>
     </div>
   );
 }
@@ -47,12 +74,8 @@ function PhoneFrame({ children, label }: { children: React.ReactNode; label: str
 const Index = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  const isFromInstagram = useMemo(() => {
-    const src = searchParams.get("utm_source")?.toLowerCase();
-    const ref = searchParams.get("ref")?.toLowerCase();
-    return src === "instagram" || ref === "ig" || ref === "instagram";
-  }, [searchParams]);
+  const [contact, setContact] = useState({ name: "", email: "", message: "", type: "general" });
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     trackEvent("page_view", { page: "landing", utm_source: searchParams.get("utm_source") }, "/");
@@ -63,236 +86,296 @@ const Index = () => {
     navigate("/scan");
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contact.email || !contact.message) {
+      toast.error("Please add your email and a message.");
+      return;
+    }
+    setSending(true);
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: contact.name || null,
+        email: contact.email,
+        message: contact.message,
+        type: contact.type,
+      });
+      if (error) throw error;
+      // Fire-and-forget notify edge fn
+      supabase.functions.invoke("contact-notify", { body: contact }).catch(() => {});
+      trackEvent("contact_submitted", { type: contact.type });
+      toast.success("Thanks! We'll be in touch soon.");
+      setContact({ name: "", email: "", message: "", type: contact.type });
+    } catch {
+      toast.error("Could not send. Please email us directly.");
+    }
+    setSending(false);
+  };
+
   return (
     <div className="min-h-screen font-sans overflow-x-hidden" style={{ background: "#0A0F1E" }}>
       {/* ─── 1. NAV ─── */}
-      <nav className="fixed top-0 w-full z-50 glass-nav" style={{ height: 64 }}>
+      <nav className="fixed top-0 w-full z-50 glass-nav" style={{ height: 56 }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between px-5 h-full">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
-            <span className="font-extrabold text-xl tracking-tight text-white">SKAAP</span>
+            <span className="font-extrabold text-lg tracking-tight text-white">SKAAP</span>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "rgba(255,255,255,0.4)" }}><Instagram size={18} /></a>
-            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ color: "rgba(255,255,255,0.4)" }}><Linkedin size={18} /></a>
+            <a href="https://www.instagram.com/useskaap" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "rgba(255,255,255,0.45)" }}><Instagram size={18} /></a>
+            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ color: "rgba(255,255,255,0.45)" }}><Linkedin size={18} /></a>
             <button onClick={() => navigate("/scan")} className="text-sm font-semibold px-3 py-1.5 rounded-full" style={{ background: "#C41E3A", color: "#fff" }}>Scan</button>
           </div>
         </div>
       </nav>
 
-      {/* ─── 2. HERO ─── */}
-      <section className="relative flex items-center justify-center"
-        style={{ minHeight: "92vh", paddingTop: 88, paddingBottom: 48, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}>
+      {/* ─── 2. HERO (compact) ─── */}
+      <section
+        className="relative flex items-center justify-center"
+        style={{ minHeight: "auto", paddingTop: 96, paddingBottom: 28, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+      >
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(80px)" }} />
 
         <div className="w-full max-w-[680px] mx-auto px-5 text-center relative z-10">
           <motion.h1
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 }}
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 }}
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
-            style={{ fontSize: "clamp(34px, 8vw, 64px)" }}
+            style={{ fontSize: "clamp(32px, 7vw, 56px)" }}
           >
             Know what you're eating.<br />
             <span className="text-gradient">In 2 seconds.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="mt-5 text-base md:text-lg" style={{ color: "rgba(255,255,255,0.55)" }}>
+            className="mt-3 text-sm md:text-base" style={{ color: "rgba(255,255,255,0.55)" }}>
             Scan any product. Instant health score. No guesswork.
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex items-center justify-center mt-8">
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handleStartScan}
-              className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-base cta-pulse"
-              style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
-            >
-              <ScanLine size={18} /> Start Scanning — It's Free
-            </motion.button>
-          </motion.div>
+          <motion.button
+            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleStartScan}
+            className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
+            style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
+          >
+            <ScanLine size={16} /> Start Scanning — It's Free
+          </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-            className="mt-5 text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
-            <strong className="text-white/60">2,000 products</strong> SKAAPED worldwide. Scanning is always free.
+            className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <strong className="text-white/60">2,000+ products</strong> SKAAPED worldwide.
           </motion.p>
         </div>
       </section>
 
-      {/* ─── 3. HOW IT WORKS — phone screens ─── */}
-      <section className="py-16" style={{ background: "#0A0F1E" }}>
-        <div className="max-w-5xl mx-auto px-5">
+      {/* ─── 3. HOW IT WORKS — 3 Yuka-style cards horizontal row ─── */}
+      <section className="py-10" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
-            <h2 className="text-center text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-2">
+            <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               How it works
             </h2>
-            <p className="text-center text-sm mb-12" style={{ color: "rgba(255,255,255,0.45)" }}>
-              Three taps. No learning curve.
+            <p className="text-center text-xs mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>
+              Scan → Score → Decide.
             </p>
           </FadeIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 justify-items-center">
-            {/* Phone 1 — Scan */}
+          <div className="grid grid-cols-3 gap-2.5 md:gap-4 max-w-3xl mx-auto">
             <FadeIn delay={0.05}>
-              <PhoneFrame label="1. Scan a barcode">
-                <div className="flex-1 flex flex-col items-center justify-center px-3 bg-gradient-to-b from-white to-[#fafafa]">
-                  <div className="relative w-full aspect-square rounded-2xl flex items-center justify-center mb-3" style={{ background: "#0A1220" }}>
-                    <div className="flex gap-[2px] items-end h-[60px]">
-                      {[6,3,5,2,7,3,4,6,2,5,3,7,2,4].map((h, i) => (
-                        <div key={i} style={{ width: 2, height: `${20 + h * 5}px`, background: "#fff" }} />
-                      ))}
-                    </div>
-                    <div className="absolute left-2 right-2 h-[2px] top-1/2" style={{ background: "#C41E3A", boxShadow: "0 0 10px #C41E3A" }} />
-                  </div>
-                  <div className="text-[10px] font-semibold" style={{ color: "#0A1220" }}>Point. Tap. Done.</div>
-                </div>
-              </PhoneFrame>
+              <YukaPhone
+                productEmoji="🍪"
+                productLabel="belVita Blueberry"
+                signals={[
+                  { emoji: "🧪", text: "6 additives" },
+                  { emoji: "🍬", text: "Too sweet" },
+                ]}
+                verdict="Bad"
+                score="21"
+                scoreColor="#C41E3A"
+              />
             </FadeIn>
-
-            {/* Phone 2 — Score */}
             <FadeIn delay={0.15}>
-              <PhoneFrame label="2. See your score">
-                <div className="flex-1 flex flex-col items-center justify-center px-3">
-                  <div className="relative w-[110px] h-[110px]">
-                    <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-                      <circle cx="60" cy="60" r="52" fill="none" stroke="#F3F4F6" strokeWidth="10" />
-                      <circle cx="60" cy="60" r="52" fill="none" stroke="#22C55E" strokeWidth="10" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 52}
-                        strokeDashoffset={2 * Math.PI * 52 * (1 - 0.94)} />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-[34px] font-extrabold leading-none" style={{ color: "#0A1220" }}>94</span>
-                      <span className="text-[9px] font-semibold mt-0.5" style={{ color: "#9CA3AF" }}>/ 100</span>
-                    </div>
-                  </div>
-                  <span className="mt-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold"
-                    style={{ background: "rgba(34,197,94,0.15)", color: "#16A34A" }}>Excellent</span>
-                </div>
-              </PhoneFrame>
+              <YukaPhone
+                productEmoji="🥣"
+                productLabel="Honey Nut Cheerios"
+                signals={[
+                  { emoji: "🧪", text: "7 additives" },
+                  { emoji: "🍬", text: "32g sugar" },
+                ]}
+                verdict="Bad"
+                score="8"
+                scoreColor="#C41E3A"
+              />
             </FadeIn>
-
-            {/* Phone 3 — Decide */}
             <FadeIn delay={0.25}>
-              <PhoneFrame label="3. Eat smarter">
-                <div className="flex-1 flex flex-col px-3 py-3 gap-1.5">
-                  {[
-                    { ok: true, t: "No banned additives" },
-                    { ok: true, t: "Low in sugar" },
-                    { ok: false, t: "Ultra-processed (NOVA 4)" },
-                    { ok: true, t: "Plant-based" },
-                  ].map((row, i) => (
-                    <div key={i} className="flex items-center gap-1.5 py-1.5 px-2 rounded-lg" style={{ background: "#F9FAFB" }}>
-                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: row.ok ? "#22C55E" : "#F59E0B" }} />
-                      <span className="text-[9px] font-medium leading-tight" style={{ color: "#0A1220" }}>{row.t}</span>
-                    </div>
-                  ))}
-                </div>
-              </PhoneFrame>
+              <YukaPhone
+                productEmoji="🥗"
+                productLabel="Plain Greek Yogurt"
+                signals={[
+                  { emoji: "💪", text: "High protein" },
+                  { emoji: "✨", text: "Clean label" },
+                ]}
+                verdict="Excellent"
+                score="94"
+                scoreColor="#22C55E"
+              />
             </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ─── 4. BEAUTY & PRODUCT SCANNER ─── */}
-      <section className="py-14" style={{ background: "#F9FAFB" }}>
+      {/* ─── 4. WHAT YOU GET (compact grid) ─── */}
+      <section className="py-10" style={{ background: "#F9FAFB" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
-                🌿 Food + Beauty Scanner
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+            <div className="text-center mb-5">
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Your personal product analyst.
               </h2>
-              <p className="text-sm mt-2 max-w-xl mx-auto" style={{ color: "#6B7280" }}>
-                Scan groceries, snacks, cosmetics, and skincare. Instant safety analysis on 4M+ products worldwide.
+              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
+                Food + beauty. 4M+ products. Instant.
               </p>
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto">
             {[
-              { emoji: "🎯", title: "SKAAP Score", desc: "0–100 health score" },
-              { emoji: "🅰️", title: "Nutri-Score", desc: "A to E grade" },
-              { emoji: "🧪", title: "Additives", desc: "E-numbers decoded" },
-              { emoji: "🏭", title: "NOVA", desc: "Processing level 1–4" },
-              { emoji: "💄", title: "Cosmetics", desc: "Beauty safety" },
-              { emoji: "📊", title: "Nutrition", desc: "Color-coded breakdown" },
+              { emoji: "🎯", title: "SKAAP Score" },
+              { emoji: "🅰️", title: "Nutri-Score" },
+              { emoji: "🧪", title: "Additives" },
+              { emoji: "🏭", title: "NOVA" },
+              { emoji: "💄", title: "Cosmetics" },
+              { emoji: "📊", title: "Nutrition" },
             ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.04}>
-                <div className="bg-white rounded-2xl p-3.5 text-center" style={{ border: "1px solid #E5E7EB" }}>
-                  <span className="text-xl block mb-1.5">{item.emoji}</span>
-                  <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
-                  <p className="text-[10px] mt-0.5 leading-snug" style={{ color: "#9CA3AF" }}>{item.desc}</p>
+              <FadeIn key={i} delay={i * 0.03}>
+                <div className="bg-white rounded-xl p-2.5 text-center" style={{ border: "1px solid #E5E7EB" }}>
+                  <span className="text-lg block">{item.emoji}</span>
+                  <h3 className="font-bold text-[11px] tracking-tight mt-0.5" style={{ color: "#0A1220" }}>{item.title}</h3>
                 </div>
               </FadeIn>
             ))}
           </div>
-
-          <FadeIn delay={0.25}>
-            <div className="bg-white rounded-2xl p-4 flex items-center gap-4 max-w-2xl mx-auto" style={{ border: "1px solid #E5E7EB" }}>
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "rgba(196,30,58,0.1)" }}>
-                <ScanLine size={20} color="#C41E3A" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold tracking-tight" style={{ color: "#0A1220" }}>3M+ food. 1M+ cosmetics.</p>
-                <p className="text-[11px] mt-0.5" style={{ color: "#9CA3AF" }}>Works in any store, worldwide.</p>
-              </div>
-              <button onClick={handleStartScan} className="px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: "#C41E3A", color: "#fff" }}>
-                Scan now
-              </button>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
-      {/* ─── 5. SCAN & GO (B2B compact) ─── */}
-      <section className="py-14 bg-white">
-        <div className="max-w-3xl mx-auto px-5 text-center">
+      {/* ─── 5. BUILD HABIT (Members) ─── */}
+      <section className="py-10 bg-white">
+        <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
-              <Store size={12} /> For Stores
-            </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-              Checkout, reimagined for independent grocery.
-            </h2>
-            <p className="text-sm mt-3 max-w-xl mx-auto" style={{ color: "#6B7280" }}>
-              No hardware. No overhaul. Give your shoppers a faster, frictionless checkout from day one.
-            </p>
-            <a
-              href={MAILTO}
-              className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-2xl font-bold text-sm"
-              style={{ background: "#0A1220", color: "#fff" }}
-            >
-              <ShoppingBag size={16} /> Partner With Us →
-            </a>
+            <div className="text-center mb-5">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
+                ✦ For Members
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Build the habit. Not the app addiction.
+              </h2>
+              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
+                Weekly nudges. Repeat-behavior rewards. Real-life change.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {[
+              { icon: TrendingUp, title: "Your weekly grocery score", desc: "Every Sunday, see how clean your week was." },
+              { icon: ShieldCheck, title: "“12 harmful additives avoided”", desc: "We tally what you dodged. You feel the win." },
+              { icon: Repeat, title: "Daily + weekly triggers", desc: "Gentle nudges in-store. Repeat smarter trips." },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="rounded-2xl p-4" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{ background: "rgba(196,30,58,0.1)" }}>
+                      <Icon size={18} color="#C41E3A" />
+                    </div>
+                    <h3 className="font-bold text-[13px] tracking-tight" style={{ color: "#0A1220" }}>{item.title}</h3>
+                    <p className="text-[11px] mt-1 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 6. CONTACT / PARTNER (form) ─── */}
+      <section className="py-10" style={{ background: "#F9FAFB" }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <FadeIn>
+            <div className="text-center mb-5">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
+                <Store size={12} /> Stores · Press · Partners
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Let's talk.
+              </h2>
+              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
+                Partner with us, or just say hi. We read every message.
+              </p>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.1}>
+            <form onSubmit={handleContactSubmit} className="bg-white rounded-2xl p-4 space-y-2.5" style={{ border: "1px solid #E5E7EB" }}>
+              <div className="flex gap-2">
+                <input
+                  type="text" placeholder="Name (optional)" value={contact.name}
+                  onChange={e => setContact({ ...contact, name: e.target.value })}
+                  className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                />
+                <select
+                  value={contact.type}
+                  onChange={e => setContact({ ...contact, type: e.target.value })}
+                  className="px-3 py-2.5 rounded-lg text-sm focus:outline-none"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                >
+                  <option value="general">General</option>
+                  <option value="partner">Partner</option>
+                  <option value="press">Press</option>
+                  <option value="support">Support</option>
+                </select>
+              </div>
+              <input
+                type="email" required placeholder="Your email" value={contact.email}
+                onChange={e => setContact({ ...contact, email: e.target.value })}
+                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
+                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+              />
+              <textarea
+                required placeholder="How can we help?" rows={3} value={contact.message}
+                onChange={e => setContact({ ...contact, message: e.target.value })}
+                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30 resize-none"
+                style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+              />
+              <button
+                type="submit" disabled={sending}
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm disabled:opacity-60"
+                style={{ background: "#0A1220", color: "#fff" }}
+              >
+                <Send size={14} /> {sending ? "Sending…" : "Send message"}
+              </button>
+              <p className="text-center text-[10px]" style={{ color: "#9CA3AF" }}>
+                Or email us directly: <a href={MAILTO} className="underline">oyedemisam@gmail.com</a>
+              </p>
+            </form>
           </FadeIn>
         </div>
       </section>
 
-      {/* ─── 6. FOOTER ─── */}
-      <footer className="py-8" style={{ background: "#0A0F1E", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-6xl mx-auto px-5">
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex items-center gap-2.5">
-              <img src={skaapIcon} alt="SKAAP" className="w-7 h-7 rounded-lg" width="28" height="28" />
-              <div>
-                <span className="font-bold text-white tracking-tight text-sm">SKAAP</span>
-                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>Know what's in your food.</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>
-              <a href={MAILTO} className="hover:text-white transition-colors">Contact</a>
-              <a href={MAILTO} className="hover:text-white transition-colors">Support</a>
-              <a href={MAILTO} className="hover:text-white transition-colors">Partner</a>
-            </div>
-            <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/useskaap?igsh=MWV5aDY5ZHJzam1keQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "rgba(255,255,255,0.4)" }}><Instagram size={18} /></a>
-              <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ color: "rgba(255,255,255,0.4)" }}><Linkedin size={18} /></a>
-            </div>
+      {/* ─── 7. FOOTER ─── */}
+      <footer className="py-6" style={{ background: "#0A0F1E", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="max-w-6xl mx-auto px-5 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <img src={skaapIcon} alt="SKAAP" className="w-6 h-6 rounded-md" width="24" height="24" />
+            <span className="font-bold text-white tracking-tight text-sm">SKAAP</span>
           </div>
-          <div className="mt-6 pt-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.15)" }}>© 2026 SKAAP Technologies Inc.</p>
+          <div className="flex items-center gap-4">
+            <a href="https://www.instagram.com/useskaap" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "rgba(255,255,255,0.4)" }}><Instagram size={16} /></a>
+            <a href="https://www.linkedin.com/company/skaaptech/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style={{ color: "rgba(255,255,255,0.4)" }}><Linkedin size={16} /></a>
+            <a href={MAILTO} className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.4)" }}>Contact</a>
           </div>
+          <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>© 2026 SKAAP Technologies Inc.</p>
         </div>
       </footer>
     </div>
