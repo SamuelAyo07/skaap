@@ -313,13 +313,15 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
   // Giant score ring — centerpiece
   const cy = H * 0.48;
   drawScoreRing(ctx, W / 2, cy, 190, score, 110);
+  // Tilted sticker badge — top-right of ring
+  const verdictColor = getScoreColor(score);
+  drawSticker(ctx, W / 2 + 200, cy - 160, `${getEmoji(score)} ${getVerdict(score).toUpperCase()}`, verdictColor, "#fff", -0.14);
   // / 100
   ctx.fillStyle = "rgba(255,255,255,0.5)";
   ctx.font = "600 22px Inter600, Inter, system-ui, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("/ 100", W / 2, cy + 70);
   // Verdict with emoji
-  const verdictColor = getScoreColor(score);
   ctx.fillStyle = verdictColor;
   ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText(`${getVerdict(score)} ${getEmoji(score)}`, W / 2, cy + 108);
