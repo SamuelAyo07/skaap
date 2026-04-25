@@ -24,7 +24,7 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Yuka-style phone mockup (cream bg, product, signals, verdict pill) ─── */
+/* ─── Yuka-style product card (big score circle + colored signal rows) ─── */
 function PhoneMockup({
   productLabel,
   productEmoji,
@@ -35,49 +35,52 @@ function PhoneMockup({
 }: {
   productLabel: string;
   productEmoji: string;
-  signals: { emoji: string; text: string }[];
+  signals: { dot: string; text: string }[];
   verdict: string;
   scoreColor: string;
   score: string;
 }) {
   return (
     <div
-      className="relative mx-auto rounded-[26px] p-[5px]"
+      className="relative mx-auto rounded-[22px] overflow-hidden flex flex-col"
       style={{
-        background: "#0A1220",
-        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        background: "#FFFFFF",
+        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06)",
         width: "100%",
-        maxWidth: 180,
-        aspectRatio: "9 / 18",
+        maxWidth: 200,
+        aspectRatio: "9 / 16",
       }}
     >
-      {/* Notch */}
-      <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-10 h-[10px] rounded-full z-10" style={{ background: "#0A1220" }} />
-      {/* Screen */}
-      <div className="w-full h-full rounded-[22px] overflow-hidden flex flex-col items-center justify-between p-2.5 pt-5" style={{ background: "#FBF6E9" }}>
-        {/* Product hero */}
-        <div className="flex flex-col items-center mt-1">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ background: "#FFF", boxShadow: "0 4px 10px -2px rgba(0,0,0,0.08)" }}>
-            {productEmoji}
+      {/* Top: product hero on cream */}
+      <div className="flex flex-col items-center justify-center pt-4 pb-3" style={{ background: "#FBF6E9" }}>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl bg-white" style={{ boxShadow: "0 4px 12px -2px rgba(0,0,0,0.08)" }}>
+          {productEmoji}
+        </div>
+        <p className="text-[10px] font-bold mt-2 text-center leading-tight px-2" style={{ color: "#0A1220" }}>{productLabel}</p>
+      </div>
+
+      {/* Big score circle (Yuka signature) */}
+      <div className="flex items-center justify-center -mt-5 z-10">
+        <div
+          className="w-14 h-14 rounded-full flex flex-col items-center justify-center"
+          style={{ background: scoreColor, boxShadow: "0 6px 14px -2px rgba(0,0,0,0.18), inset 0 0 0 3px #fff" }}
+        >
+          <span className="text-base font-extrabold leading-none text-white">{score}</span>
+          <span className="text-[7px] font-bold text-white/80 tracking-wide">/100</span>
+        </div>
+      </div>
+
+      {/* Verdict */}
+      <p className="text-center text-[10px] font-extrabold mt-1" style={{ color: scoreColor }}>{verdict}</p>
+
+      {/* Signal rows (Yuka-style colored dot lines) */}
+      <div className="flex-1 flex flex-col gap-1 px-2.5 mt-2 mb-3">
+        {signals.map((s, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.dot }} />
+            <span className="text-[8px] font-semibold truncate" style={{ color: "#374151" }}>{s.text}</span>
           </div>
-          <p className="text-[8px] font-bold mt-1.5 text-center leading-tight" style={{ color: "#0A1220" }}>{productLabel}</p>
-        </div>
-        {/* Signals */}
-        <div className="w-full flex flex-col gap-1 px-0.5">
-          {signals.map((s, i) => (
-            <div key={i} className="flex items-center gap-1 px-1.5 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
-              <span className="text-[9px]">{s.emoji}</span>
-              <span className="text-[8px] font-semibold truncate" style={{ color: "#6B7280" }}>{s.text}</span>
-            </div>
-          ))}
-        </div>
-        {/* Verdict pill */}
-        <div className="flex items-center justify-center gap-1 rounded-full px-2 py-1 w-full" style={{ background: "#FFF", boxShadow: "0 2px 6px -2px rgba(0,0,0,0.1)" }}>
-          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: scoreColor }} />
-          <span className="text-[9px] font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-            {verdict} · {score}/100
-          </span>
-        </div>
+        ))}
       </div>
     </div>
   );
