@@ -7,9 +7,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PRICES: Record<string, string> = {
-  monthly: "price_1TAWbrBJzpMoZjm46lHSgk3R",
-  annual: "price_1TAWcHBJzpMoZjm4wSgXzi0n",
+// 4 supporter tiers
+type TierKey = "supporter" | "member" | "champion" | "builder" | "monthly" | "annual";
+
+const TIERS: Record<TierKey, { price: string; mode: "subscription" | "payment" }> = {
+  // New 4-tier structure
+  supporter: { price: "price_1TQD12BJzpMoZjm4heo7GrL8", mode: "subscription" }, // $2.99/mo
+  member:    { price: "price_1TQD1XBJzpMoZjm4Zh9GHBkN", mode: "payment" },      // $10/yr one-time
+  champion:  { price: "price_1TQD1tBJzpMoZjm43jRsOxee", mode: "payment" },      // $20/yr one-time
+  builder:   { price: "price_1TQD2JBJzpMoZjm4hkQIGFhW", mode: "payment" },      // $49/yr one-time
+  // Legacy aliases (kept so old clients still work)
+  monthly:   { price: "price_1TAWbrBJzpMoZjm46lHSgk3R", mode: "subscription" },
+  annual:    { price: "price_1TAWcHBJzpMoZjm4wSgXzi0n", mode: "subscription" },
 };
 
 const ALLOWED_ORIGINS = [
@@ -46,18 +55,18 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
 
     const body = await req.json();
-    const billing = typeof body?.billing === "string" ? body.billing : "";
+    // Accept either { tier } (new) or { billing } (legacy)
+    const requested = (typeof body?.tier === "string" ? body.tier : body?.billing) as TierKey | undefined;
 
-    if (!PRICES[billing]) {
-      return new Response(JSON.stringify({ error: "Invalid billing period. Use 'monthly' or 'annual'." }), {
+    if (!requested || !TIERS[requested]) {
+      return new Response(JSON.stringify({ error: "Invalid tier. Use one of: supporter, member, champion, builder." }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    const priceId = PRICES[billing];
+    const tier = TIERS[requested];
 
-    // Validate origin for redirect URLs
     const origin = req.headers.get("origin") || "";
     const safeOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
 
@@ -66,28 +75,31 @@ serve(async (req) => {
     });
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId: string | undefined;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-    }
+    const customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: "subscription",
-      subscription_data: { trial_period_days: 7 },
+      line_items: [{ price: tier.price, quantity: 1 }],
+      mode: tier.mode,
       allow_promotion_codes: true,
-      success_url: `${safeOrigin}/scan?upgraded=true`,
+      success_url: `${safeOrigin}/scan?upgraded=true&tier=${requested}`,
       cancel_url: `${safeOrigin}/scan`,
-    });
+      metadata: { tier: requested, user_id: user.id },
+    };
+
+    if (tier.mode === "subscription") {
+      sessionParams.subscription_data = { trial_period_days: 7, metadata: { tier: requested, user_id: user.id } };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
