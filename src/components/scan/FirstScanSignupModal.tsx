@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
 
 const STORAGE_KEY = "skaap_first_scan_signup_v1";
+const NAME_KEY = "skaap_user_name_v1";
+const EMAIL_KEY = "skaap_user_email_v1";
 
 export function hasCompletedFirstScanSignup(): boolean {
   try { return localStorage.getItem(STORAGE_KEY) === "1"; } catch { return false; }
@@ -14,6 +16,23 @@ export function hasCompletedFirstScanSignup(): boolean {
 
 export function markFirstScanSignupSeen() {
   try { localStorage.setItem(STORAGE_KEY, "1"); } catch {}
+}
+
+export function getUserName(): string | null {
+  try { return localStorage.getItem(NAME_KEY); } catch { return null; }
+}
+
+export function getUserFirstName(): string | null {
+  const n = getUserName();
+  if (!n) return null;
+  return n.trim().split(/\s+/)[0] || null;
+}
+
+export function saveUserIdentity(name: string, email: string) {
+  try {
+    localStorage.setItem(NAME_KEY, name);
+    localStorage.setItem(EMAIL_KEY, email);
+  } catch {}
 }
 
 const Schema = z.object({
@@ -46,11 +65,13 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
         source: "first_scan",
       });
       if (error) throw error;
+      saveUserIdentity(parsed.data.name, parsed.data.email);
       markFirstScanSignupSeen();
-      toast.success("You're in 🎉");
+      toast.success(`You're in, ${parsed.data.name.split(/\s+/)[0]} 🎉`);
       onClose();
     } catch {
-      // Don't block the user — mark seen so they aren't nagged again
+      // Save locally even if remote insert fails so the experience is personalized
+      saveUserIdentity(parsed.data.name, parsed.data.email);
       markFirstScanSignupSeen();
       onClose();
     } finally {
@@ -102,8 +123,8 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
                 <input
                   type="text" value={name} onChange={(e) => setName(e.target.value)}
                   placeholder="Your name" maxLength={100} required autoFocus
-                  className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                  className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2 placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }}
                 />
               </div>
               <div className="relative">
@@ -111,8 +132,8 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com" maxLength={255} required inputMode="email" autoComplete="email"
-                  className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                  className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2 placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }}
                 />
               </div>
 
