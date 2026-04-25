@@ -47,6 +47,7 @@ import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingF
 import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
 import { StandaloneHome } from "@/components/scan/StandaloneHome";
+import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -512,6 +513,8 @@ const SkaapScan = () => {
   const [showImageRecognition, setShowImageRecognition] = useState(false);
   // First-scan celebration
   const [showCelebration, setShowCelebration] = useState(false);
+  // First-scan signup modal (one-time per device)
+  const [showSignupModal, setShowSignupModal] = useState(false);
   // Sheet state (must be top-level for hooks rules)
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const sheetContentRef = useRef<HTMLDivElement>(null);
@@ -722,7 +725,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
-      if (updatedStats.total_scans === 1) setShowCelebration(true);
+      if (updatedStats.total_scans === 1) { setShowCelebration(true); if (!hasCompletedFirstScanSignup()) setTimeout(() => setShowSignupModal(true), 3600); }
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       if (user) {
         supabase.from("user_scans").insert({
@@ -763,7 +766,7 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
-      if (updatedStats.total_scans === 1) setShowCelebration(true);
+      if (updatedStats.total_scans === 1) { setShowCelebration(true); if (!hasCompletedFirstScanSignup()) setTimeout(() => setShowSignupModal(true), 3600); }
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       // Persist to database for logged-in users
@@ -1074,6 +1077,7 @@ const SkaapScan = () => {
       {showCelebration && (
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
+      <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
       {/* Standalone PWA home — richer, personalized entry point */}
       {isStandalone ? (
         <>
