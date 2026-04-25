@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users, AlertTriangle, Check, ChevronDown, Quote, Beaker, FlaskConical, Wheat, Factory } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users, AlertTriangle, Check, ChevronDown, Quote, Beaker, FlaskConical, Wheat, Factory, Flame, Share, Download, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -107,19 +107,62 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 
+interface BIPEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }>; }
+
 const Index = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [contact, setContact] = useState({ name: "", email: "", message: "", type: "general" });
   const [sending, setSending] = useState(false);
+  const [streak, setStreak] = useState<number>(() => Number(localStorage.getItem("skaap_scan_count") || 0));
+  const [device, setDevice] = useState<"ios" | "android" | "desktop">("desktop");
+  const [installed, setInstalled] = useState(false);
+  const [showIosTip, setShowIosTip] = useState(false);
+  const deferredRef = useRef<BIPEvent | null>(null);
 
   useEffect(() => {
     trackEvent("page_view", { page: "landing", utm_source: searchParams.get("utm_source") }, "/");
+
+    // Detect device
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as unknown as { MSStream?: unknown }).MSStream;
+    const isAndroid = /Android/.test(ua);
+    setDevice(isIOS ? "ios" : isAndroid ? "android" : "desktop");
+    setInstalled(window.matchMedia("(display-mode: standalone)").matches);
+
+    // Capture install prompt for Android/Chrome
+    const onBIP = (e: Event) => {
+      e.preventDefault();
+      deferredRef.current = e as BIPEvent;
+    };
+    window.addEventListener("beforeinstallprompt", onBIP);
+    return () => window.removeEventListener("beforeinstallprompt", onBIP);
   }, []);
 
   const handleStartScan = () => {
     trackEvent("cta_clicked", { cta: "hero_start_scanning" });
+    // Increment local streak so the teaser feels alive
+    const next = streak + 1;
+    localStorage.setItem("skaap_scan_count", String(next));
+    setStreak(next);
     navigate("/scan");
+  };
+
+  const handleInstall = async () => {
+    trackEvent("cta_clicked", { cta: "install_pwa", device });
+    if (device === "ios") {
+      setShowIosTip(true);
+      return;
+    }
+    if (deferredRef.current) {
+      await deferredRef.current.prompt();
+      const choice = await deferredRef.current.userChoice;
+      if (choice.outcome === "accepted") setInstalled(true);
+      deferredRef.current = null;
+    } else {
+      // Android with no prompt available, or desktop — show toast
+      toast.info(device === "android" ? "Open this page in Chrome, then tap menu (⋮) → Install app." : "Open useskaap.com on your phone to install.");
+    }
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -209,6 +252,55 @@ const Index = () => {
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
             Free. No signup.
           </motion.p>
+
+          {/* Device-aware install CTA */}
+          {!installed && (
+            <motion.button
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleInstall}
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
+              style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.14)" }}
+            >
+              {device === "ios" ? <><Share size={13} /> Add to iPhone Home Screen</> :
+               device === "android" ? <><Download size={13} /> Install on Android</> :
+               <><Download size={13} /> Get the app on your phone</>}
+            </motion.button>
+          )}
+
+          {/* iOS install tip — appears after CTA tap */}
+          {showIosTip && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-3 mx-auto max-w-xs rounded-xl p-3 text-left"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+            >
+              <p className="text-[11px] font-bold mb-1.5 flex items-center gap-1.5"><Share size={12} /> Two taps in Safari:</p>
+              <p className="text-[11px] leading-relaxed">
+                Tap <strong>Share</strong> (📤) at the bottom → <strong>"Add to Home Screen"</strong> → <strong>Add</strong>.
+              </p>
+            </motion.div>
+          )}
+
+          {/* Build a habit — streak teaser */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}
+            className="mt-5 mx-auto max-w-xs rounded-2xl p-3 flex items-center gap-3"
+            style={{ background: "rgba(196,30,58,0.08)", border: "1px solid rgba(196,30,58,0.18)" }}
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,30,58,0.18)" }}>
+              <Flame size={18} color="#FCA5A5" />
+            </div>
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-[12px] font-extrabold text-white leading-tight">
+                {streak === 0 ? "Start your scan streak" : `${streak} ${streak === 1 ? "scan" : "scans"} so far 🔥`}
+              </p>
+              <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+                {streak === 0 ? "Scan one product to begin." : streak < 5 ? "Keep going — habits start at 5." : "You're building the habit."}
+              </p>
+            </div>
+            <Plus size={14} color="rgba(255,255,255,0.4)" className="flex-shrink-0" />
+          </motion.div>
         </div>
       </section>
 
@@ -301,54 +393,6 @@ const Index = () => {
                 </div>
               </FadeIn>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 5. PWA INSTALL — iOS Share + Android Install ─── */}
-      <section className="py-7" style={{ background: "#FBF6E9" }}>
-        <div className="max-w-3xl mx-auto px-5">
-          <FadeIn>
-            <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-                📱 Get the app
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Put SKAAP on your phone.
-              </h2>
-              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                One tap. No app store. Works offline.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <FadeIn delay={0.05}>
-              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🍎</span>
-                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>iPhone (Safari)</h3>
-                </div>
-                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>Share</strong> button (📤 bottom bar)</li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Add to Home Screen"</strong></li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Add</strong>. Done.</li>
-                </ol>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.12}>
-              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🤖</span>
-                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>Android (Chrome)</h3>
-                </div>
-                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>menu</strong> (⋮ top right)</li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Install app"</strong></li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Install</strong>. Done.</li>
-                </ol>
-              </div>
-            </FadeIn>
           </div>
         </div>
       </section>
