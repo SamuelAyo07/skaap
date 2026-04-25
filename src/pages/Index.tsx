@@ -178,7 +178,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> The label is lying to you
+            <AlertTriangle size={11} /> Labels lie. We don't.
           </motion.div>
 
           <motion.h1
@@ -186,13 +186,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
             style={{ fontSize: "clamp(30px, 6.5vw, 52px)" }}
           >
-            "Healthy" is a marketing word.<br />
-            <span className="text-gradient">Real ingredients aren't.</span>
+            Know what's<br />
+            <span className="text-gradient">really in your food.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Hidden sugars. Banned-abroad additives. Fake protein claims. Scan any product — get the truth in 2 seconds.
+            Scan it. See the score. Skip the bad stuff.
           </motion.p>
 
           <motion.button
@@ -202,12 +202,12 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan Your First Product — Free
+            <ScanLine size={16} /> Scan Your First Product
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
-            <strong className="text-white/60">2,000+ products</strong> SKAAPED worldwide. No signup needed.
+            Free. No signup.
           </motion.p>
         </div>
       </section>
@@ -305,30 +305,50 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 5. TESTIMONIALS — quote row, 3 cards ─── */}
-      <section className="py-7 bg-white">
-        <div className="max-w-5xl mx-auto px-5">
+      {/* ─── 5. PWA INSTALL — iOS Share + Android Install ─── */}
+      <section className="py-7" style={{ background: "#FBF6E9" }}>
+        <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-4">
-              <h2 className="text-xl md:text-2xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                People who finally read their labels.
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
+                📱 Get the app
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Put SKAAP on your phone.
               </h2>
+              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
+                One tap. No app store. Works offline.
+              </p>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {[
-              { quote: "I dropped 4 brands of cereal in a week. My kids don't even notice.", who: "Maya · Mom of 2" },
-              { quote: "Caught a banned dye in my pre-workout. Switched the same day.", who: "Jordan · Athlete" },
-              { quote: "Finally — a score I trust more than the front of the box.", who: "Sam · Cancer survivor" },
-            ].map((t, i) => (
-              <FadeIn key={i} delay={i * 0.05}>
-                <div className="rounded-2xl p-4 h-full" style={{ background: "#FBF6E9", border: "1px solid rgba(10,18,32,0.04)" }}>
-                  <Quote size={16} color="#C41E3A" className="mb-2" />
-                  <p className="text-[12px] leading-snug font-medium" style={{ color: "#0A1220" }}>"{t.quote}"</p>
-                  <p className="text-[10px] mt-2 font-bold" style={{ color: "#6B7280" }}>{t.who}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FadeIn delay={0.05}>
+              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">🍎</span>
+                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>iPhone (Safari)</h3>
                 </div>
-              </FadeIn>
-            ))}
+                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>Share</strong> button (📤 bottom bar)</li>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Add to Home Screen"</strong></li>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Add</strong>. Done.</li>
+                </ol>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.12}>
+              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">🤖</span>
+                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>Android (Chrome)</h3>
+                </div>
+                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>menu</strong> (⋮ top right)</li>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Install app"</strong></li>
+                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Install</strong>. Done.</li>
+                </ol>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
