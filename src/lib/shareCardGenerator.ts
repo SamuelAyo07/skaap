@@ -199,21 +199,15 @@ function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline:
   ctx.font = "800 22px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText("Scan yours free → useskaap.com", W / 2, pillY + 41);
 
-  // Social proof line below
+  // Follow CTA — drives social engagement
   ctx.fillStyle = "#0A1220";
   ctx.font = "700 15px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText("Join thousands knowing what's really in their food 🌱", W / 2, pillY + 96);
+  ctx.fillText("Follow @useskaap for more real-food scans 🌱", W / 2, pillY + 96);
 
   // Tagline
-  if (tagline) {
-    ctx.fillStyle = "#9CA3AF";
-    ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(tagline, W / 2, pillY + 120);
-  } else {
-    ctx.fillStyle = "#9CA3AF";
-    ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText("@useskaap · Tag us and we'll repost 🙌", W / 2, pillY + 120);
-  }
+  ctx.fillStyle = "#9CA3AF";
+  ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
+  ctx.fillText(tagline || "Tag us in your scan — we'll repost 🙌", W / 2, pillY + 120);
 }
 
 function drawWatermark(ctx: CanvasRenderingContext2D) {
@@ -340,13 +334,14 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, addY);
   }
 
-  // Bottom CTA — more viral, fun copy
+  // Bottom CTA — personalized with the item name so each share feels unique
+  const shortName = p.product_name.length > 26 ? p.product_name.slice(0, 24) + "…" : p.product_name;
   let l1: string, l2: string;
-  if (score >= 75) { l1 = "This one passed the vibe check 🌿"; l2 = "Clean ingredients confirmed. Would you eat it?"; }
-  else if (score >= 50) { l1 = "Hmm… it's giving mid 👀"; l2 = "Not the worst, but those additives tho."; }
-  else if (score >= 25) { l1 = "Nah this is crazy 😬"; l2 = "Check what's in YOUR food before you judge me."; }
-  else { l1 = "This should be illegal 🚨"; l2 = "Banned in Europe btw. Still on US shelves."; }
-  drawBottomCTA(ctx, l1, l2, "Drop a 💀 if yours is worse → @useskaap");
+  if (score >= 75) { l1 = `${shortName} passed the vibe check 🌿`; l2 = "Clean ingredients confirmed. Would you eat it?"; }
+  else if (score >= 50) { l1 = `${shortName} is giving mid 👀`; l2 = "Not the worst, but those additives tho."; }
+  else if (score >= 25) { l1 = `Nah, ${shortName}? 😬`; l2 = "Check what's in YOUR food before you judge me."; }
+  else { l1 = `${shortName} should be illegal 🚨`; l2 = "Banned in Europe btw. Still on US shelves."; }
+  drawBottomCTA(ctx, l1, l2, `Scan ${shortName} yourself → @useskaap`);
   drawWatermark(ctx);
 }
 

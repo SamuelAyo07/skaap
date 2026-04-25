@@ -360,7 +360,7 @@ const Index = () => {
               The food industry hides what's in your food. We don't.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              SKAAP scans any product barcode and breaks down what's actually inside — in plain English. Built for anyone who wants to know more about what they eat.
+              Scan any barcode and we break down what's really inside — in 2 seconds, plain English. Free forever. No ads. No tracking. Made for anyone who wants to eat smarter without reading every label.
             </p>
           </FadeIn>
 
@@ -389,25 +389,6 @@ const Index = () => {
               </div>
             </div>
           </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
-            {[
-              { icon: Heart, title: "Why we built it", desc: "Most 'healthy' labels lie. We surface the truth in 2 seconds." },
-              { icon: Sparkles, title: "How it works", desc: "Open Food Facts + USDA + AI explainers. No ads. No tracking." },
-              { icon: Users, title: "Who it's for", desc: "Anyone who wants to know more about what they eat. Free forever." },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <FadeIn key={i} delay={i * 0.05}>
-                  <div className="bg-white rounded-2xl p-3.5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-                    <Icon size={18} color="#C41E3A" />
-                    <h3 className="font-bold text-[13px] tracking-tight mt-2" style={{ color: "#0A1220" }}>{item.title}</h3>
-                    <p className="text-[11px] mt-1 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
         </div>
       </section>
 
