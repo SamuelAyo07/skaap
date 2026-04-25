@@ -24,8 +24,8 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Yuka-style mini result phone (cream bg, product, signals, verdict pill) ─── */
-function YukaPhone({
+/* ─── Yuka-style phone mockup (cream bg, product, signals, verdict pill) ─── */
+function PhoneMockup({
   productLabel,
   productEmoji,
   signals,
@@ -42,34 +42,47 @@ function YukaPhone({
 }) {
   return (
     <div
-      className="rounded-[20px] p-3 flex flex-col gap-2"
-      style={{ background: "#FBF6E9", boxShadow: "0 8px 24px -8px rgba(10,18,32,0.18)" }}
+      className="relative mx-auto rounded-[26px] p-[5px]"
+      style={{
+        background: "#0A1220",
+        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        width: "100%",
+        maxWidth: 180,
+        aspectRatio: "9 / 18",
+      }}
     >
-      {/* Product row */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0" style={{ background: "#FFF" }}>
-          {productEmoji}
+      {/* Notch */}
+      <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-10 h-[10px] rounded-full z-10" style={{ background: "#0A1220" }} />
+      {/* Screen */}
+      <div className="w-full h-full rounded-[22px] overflow-hidden flex flex-col items-center justify-between p-2.5 pt-5" style={{ background: "#FBF6E9" }}>
+        {/* Product hero */}
+        <div className="flex flex-col items-center mt-1">
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ background: "#FFF", boxShadow: "0 4px 10px -2px rgba(0,0,0,0.08)" }}>
+            {productEmoji}
+          </div>
+          <p className="text-[8px] font-bold mt-1.5 text-center leading-tight" style={{ color: "#0A1220" }}>{productLabel}</p>
         </div>
-        <div className="flex-1 flex flex-col gap-1">
-          {signals.slice(0, 2).map((s, i) => (
-            <div key={i} className="flex items-center gap-1.5 px-2 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
-              <span className="text-[10px]">{s.emoji}</span>
-              <span className="text-[9px] font-semibold" style={{ color: "#6B7280" }}>{s.text}</span>
+        {/* Signals */}
+        <div className="w-full flex flex-col gap-1 px-0.5">
+          {signals.map((s, i) => (
+            <div key={i} className="flex items-center gap-1 px-1.5 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
+              <span className="text-[9px]">{s.emoji}</span>
+              <span className="text-[8px] font-semibold truncate" style={{ color: "#6B7280" }}>{s.text}</span>
             </div>
           ))}
         </div>
+        {/* Verdict pill */}
+        <div className="flex items-center justify-center gap-1 rounded-full px-2 py-1 w-full" style={{ background: "#FFF", boxShadow: "0 2px 6px -2px rgba(0,0,0,0.1)" }}>
+          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: scoreColor }} />
+          <span className="text-[9px] font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+            {verdict} · {score}/100
+          </span>
+        </div>
       </div>
-      {/* Verdict pill */}
-      <div className="flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 mt-1" style={{ background: "#FFF" }}>
-        <div className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor }} />
-        <span className="text-[11px] font-extrabold tracking-tight" style={{ color: "#374151" }}>
-          {verdict} — <span style={{ color: "#0A1220" }}>{score}/100</span>
-        </span>
-      </div>
-      <p className="text-[9px] text-center font-medium" style={{ color: "#9CA3AF" }}>{productLabel}</p>
     </div>
   );
 }
+
 
 const Index = () => {
   const navigate = useNavigate();
