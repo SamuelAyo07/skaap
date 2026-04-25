@@ -410,9 +410,6 @@ const Index = () => {
               >
                 <Send size={14} /> {sending ? "Sending…" : "Send message"}
               </button>
-              <p className="text-center text-[10px]" style={{ color: "#9CA3AF" }}>
-                Or email us directly: <a href={MAILTO} className="underline">oyedemisam@gmail.com</a>
-              </p>
             </form>
           </FadeIn>
         </div>
