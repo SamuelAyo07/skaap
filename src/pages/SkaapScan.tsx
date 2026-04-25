@@ -725,7 +725,7 @@ const SkaapScan = () => {
         additives: cached.additivesTags, nova_group: cached.novaGroup,
       });
       setUserStats(updatedStats);
-      if (updatedStats.total_scans === 1) setShowCelebration(true);
+      if (updatedStats.total_scans === 1) { setShowCelebration(true); if (!hasCompletedFirstScanSignup()) setTimeout(() => setShowSignupModal(true), 3600); }
       writeCommunityData(barcode, cached.productName, cached.brand, cachedScore.total, cached.imageUrl, cached.additivesTags);
       if (user) {
         supabase.from("user_scans").insert({
@@ -766,7 +766,7 @@ const SkaapScan = () => {
         additives: info.additivesTags, nova_group: info.novaGroup,
       });
       setUserStats(updatedStats);
-      if (updatedStats.total_scans === 1) setShowCelebration(true);
+      if (updatedStats.total_scans === 1) { setShowCelebration(true); if (!hasCompletedFirstScanSignup()) setTimeout(() => setShowSignupModal(true), 3600); }
       // Write anonymous community scan data
       writeCommunityData(barcode, info.productName, info.brand, score.total, info.imageUrl, info.additivesTags);
       // Persist to database for logged-in users
@@ -1076,6 +1076,10 @@ const SkaapScan = () => {
       )}
       {showCelebration && (
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
+      )}
+      <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
+      {false && (
+        <span />
       )}
       {/* Standalone PWA home — richer, personalized entry point */}
       {isStandalone ? (
