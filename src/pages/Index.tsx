@@ -353,6 +353,43 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ─── 5b. SCAN & PAY (checkout freedom) ─── */}
+      <section className="py-8" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <FadeIn>
+            <div className="text-center">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
+                <CreditCard size={12} /> Scan & Pay
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                Skip the line. Scan, bag, walk out.
+              </h2>
+              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
+                Scan items in-store, pay from your phone, walk out. No cashier. No queue.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-3 gap-2 mt-5 max-w-md mx-auto">
+            {[
+              { icon: ShoppingBag, label: "Scan items" },
+              { icon: CreditCard, label: "Tap to pay" },
+              { icon: Clock, label: "Walk out" },
+            ].map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <Icon size={18} color="#fff" className="mx-auto mb-1.5" />
+                    <p className="text-[11px] font-bold text-white">{s.label}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ─── 6. CONTACT / PARTNER (form) ─── */}
       <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
