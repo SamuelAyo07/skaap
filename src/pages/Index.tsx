@@ -200,10 +200,11 @@ const Index = () => {
             <FadeIn delay={0.05}>
               <PhoneMockup
                 productEmoji="🍪"
-                productLabel="belVita"
+                productLabel="belVita Breakfast"
                 signals={[
-                  { emoji: "🧪", text: "6 additives" },
-                  { emoji: "🍬", text: "Too sweet" },
+                  { dot: "#C41E3A", text: "Too much sugar" },
+                  { dot: "#F59E0B", text: "6 additives" },
+                  { dot: "#F59E0B", text: "Ultra-processed" },
                 ]}
                 verdict="Bad"
                 score="21"
@@ -213,10 +214,11 @@ const Index = () => {
             <FadeIn delay={0.15}>
               <PhoneMockup
                 productEmoji="🥣"
-                productLabel="Honey Nut"
+                productLabel="Honey Nut Cereal"
                 signals={[
-                  { emoji: "🧪", text: "7 additives" },
-                  { emoji: "🍬", text: "32g sugar" },
+                  { dot: "#C41E3A", text: "32g sugar / serv" },
+                  { dot: "#C41E3A", text: "7 additives" },
+                  { dot: "#F59E0B", text: "Low fiber" },
                 ]}
                 verdict="Bad"
                 score="8"
@@ -226,16 +228,53 @@ const Index = () => {
             <FadeIn delay={0.25}>
               <PhoneMockup
                 productEmoji="🥗"
-                productLabel="Greek Yogurt"
+                productLabel="Greek Yogurt Plain"
                 signals={[
-                  { emoji: "💪", text: "High protein" },
-                  { emoji: "✨", text: "Clean label" },
+                  { dot: "#22C55E", text: "High protein" },
+                  { dot: "#22C55E", text: "No additives" },
+                  { dot: "#22C55E", text: "Clean label" },
                 ]}
                 verdict="Excellent"
                 score="94"
                 scoreColor="#22C55E"
               />
             </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 3b. KNOW YOUR FOOD — what we do & why ─── */}
+      <section className="py-8" style={{ background: "#FBF6E9" }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <FadeIn>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
+              <Eye size={12} /> Know your food
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
+              The food industry hides what's in your food. We don't.
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
+              SKAAP scans any product barcode and breaks down what's actually inside — sugar, additives, ultra-processing, protein, allergens — in plain English. Built for people who want to eat better but don't have time to read every label.
+            </p>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            {[
+              { icon: Heart, title: "Why we built it", desc: "Most 'healthy' labels lie. Hidden sugars, banned-abroad additives, fake protein claims. We surface the truth in 2 seconds." },
+              { icon: Sparkles, title: "How it works", desc: "Open-source databases (OFF, USDA) + our own SKAAP Score (0–100) + AI-powered ingredient explainers. No ads. No tracking." },
+              { icon: Users, title: "Who it's for", desc: "Parents, athletes, anyone managing allergies or just tired of guessing. Free forever for scans. Plus unlocks habits & alerts." },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="bg-white rounded-2xl p-3.5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
+                    <Icon size={18} color="#C41E3A" />
+                    <h3 className="font-bold text-[13px] tracking-tight mt-2" style={{ color: "#0A1220" }}>{item.title}</h3>
+                    <p className="text-[11px] mt-1 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
         </div>
       </section>
