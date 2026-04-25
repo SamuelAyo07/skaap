@@ -452,7 +452,7 @@ const SkaapScan = () => {
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
   const { currentCity } = useNearbyStore();
   const [lastScan, setLastScan] = useState<LastScan | null>(getLastScan());
-  const [showOnboarding, setShowOnboarding] = useState(!hasSeenOnboarding());
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSplash, setShowSplash] = useState(() => window.matchMedia("(display-mode: standalone)").matches);
 
   // Scanner
@@ -1160,7 +1160,7 @@ const SkaapScan = () => {
               </div>
             </motion.button>
 
-            {/* Action row — Search + Photo */}
+            {/* Action row — Search only */}
             <div className="flex items-center gap-2 w-full max-w-xs">
               <motion.button
                 whileTap={{ scale: 0.97 }}
@@ -1173,16 +1173,6 @@ const SkaapScan = () => {
               >
                 <Search size={14} style={{ color: "#9CA3AF" }} />
                 <span className="font-semibold text-[12px]" style={{ color: "#1B2A4A" }}>Search product</span>
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowImageRecognition(true)}
-                className="flex items-center justify-center gap-1.5"
-                style={{ height: 40, paddingLeft: 12, paddingRight: 12, borderRadius: 20, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
-                aria-label="Photo scan"
-              >
-                <span className="text-white text-[14px]">📸</span>
-                <span className="font-semibold text-[11px] text-white">Photo</span>
               </motion.button>
             </div>
           </div>
