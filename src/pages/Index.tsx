@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
