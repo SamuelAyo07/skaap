@@ -10,7 +10,7 @@ import productCrackers from "@/assets/product-crackers.png";
 import productMacaroni from "@/assets/product-macaroni.png";
 import productOj from "@/assets/product-oj.png";
 
-const MAILTO = "mailto:oyedemisam@gmail.com";
+
 const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
 
 const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; delay?: number }>(
