@@ -305,54 +305,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 5. PWA INSTALL — iOS Share + Android Install ─── */}
-      <section className="py-7" style={{ background: "#FBF6E9" }}>
-        <div className="max-w-3xl mx-auto px-5">
-          <FadeIn>
-            <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-                📱 Get the app
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Put SKAAP on your phone.
-              </h2>
-              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                One tap. No app store. Works offline.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <FadeIn delay={0.05}>
-              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🍎</span>
-                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>iPhone (Safari)</h3>
-                </div>
-                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>Share</strong> button (📤 bottom bar)</li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Add to Home Screen"</strong></li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Add</strong>. Done.</li>
-                </ol>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.12}>
-              <div className="bg-white rounded-2xl p-4 h-full" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">🤖</span>
-                  <h3 className="font-extrabold text-[14px]" style={{ color: "#0A1220" }}>Android (Chrome)</h3>
-                </div>
-                <ol className="space-y-1.5 text-[12px]" style={{ color: "#374151" }}>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">1.</span> Tap the <strong>menu</strong> (⋮ top right)</li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">2.</span> Pick <strong>"Install app"</strong></li>
-                  <li className="flex gap-2"><span className="font-bold text-[#C41E3A]">3.</span> Tap <strong>Install</strong>. Done.</li>
-                </ol>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
       {/* ─── 6. KNOW YOUR FOOD (moved DOWN) — with "What we scan" checklist ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
