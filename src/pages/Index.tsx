@@ -145,7 +145,7 @@ const Index = () => {
       {/* ─── 2. HERO (compact) ─── */}
       <section
         className="relative flex items-center justify-center"
-        style={{ minHeight: "auto", paddingTop: 96, paddingBottom: 28, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+        style={{ minHeight: "auto", paddingTop: 80, paddingBottom: 20, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
       >
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(80px)" }} />
 
@@ -272,10 +272,10 @@ const Index = () => {
       </section>
 
       {/* ─── 5. BUILD HABIT (Members) ─── */}
-      <section className="py-10 bg-white">
+      <section className="py-6 bg-white">
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
                 ✦ For Members
               </span>
@@ -312,18 +312,18 @@ const Index = () => {
       </section>
 
       {/* ─── 6. CONTACT / PARTNER (form) ─── */}
-      <section className="py-10" style={{ background: "#F9FAFB" }}>
+      <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
                 <Store size={12} /> Stores · Press · Partners
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Let's talk.
               </h2>
-              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
-                Partner with us, or just say hi. We read every message.
+              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
+                Partner with us, or just say hi. Goes straight to our inbox.
               </p>
             </div>
           </FadeIn>
