@@ -24,8 +24,8 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Yuka-style mini result phone (cream bg, product, signals, verdict pill) ─── */
-function YukaPhone({
+/* ─── Yuka-style phone mockup (cream bg, product, signals, verdict pill) ─── */
+function PhoneMockup({
   productLabel,
   productEmoji,
   signals,
@@ -42,34 +42,47 @@ function YukaPhone({
 }) {
   return (
     <div
-      className="rounded-[20px] p-3 flex flex-col gap-2"
-      style={{ background: "#FBF6E9", boxShadow: "0 8px 24px -8px rgba(10,18,32,0.18)" }}
+      className="relative mx-auto rounded-[26px] p-[5px]"
+      style={{
+        background: "#0A1220",
+        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        width: "100%",
+        maxWidth: 180,
+        aspectRatio: "9 / 18",
+      }}
     >
-      {/* Product row */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0" style={{ background: "#FFF" }}>
-          {productEmoji}
+      {/* Notch */}
+      <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-10 h-[10px] rounded-full z-10" style={{ background: "#0A1220" }} />
+      {/* Screen */}
+      <div className="w-full h-full rounded-[22px] overflow-hidden flex flex-col items-center justify-between p-2.5 pt-5" style={{ background: "#FBF6E9" }}>
+        {/* Product hero */}
+        <div className="flex flex-col items-center mt-1">
+          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ background: "#FFF", boxShadow: "0 4px 10px -2px rgba(0,0,0,0.08)" }}>
+            {productEmoji}
+          </div>
+          <p className="text-[8px] font-bold mt-1.5 text-center leading-tight" style={{ color: "#0A1220" }}>{productLabel}</p>
         </div>
-        <div className="flex-1 flex flex-col gap-1">
-          {signals.slice(0, 2).map((s, i) => (
-            <div key={i} className="flex items-center gap-1.5 px-2 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
-              <span className="text-[10px]">{s.emoji}</span>
-              <span className="text-[9px] font-semibold" style={{ color: "#6B7280" }}>{s.text}</span>
+        {/* Signals */}
+        <div className="w-full flex flex-col gap-1 px-0.5">
+          {signals.map((s, i) => (
+            <div key={i} className="flex items-center gap-1 px-1.5 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
+              <span className="text-[9px]">{s.emoji}</span>
+              <span className="text-[8px] font-semibold truncate" style={{ color: "#6B7280" }}>{s.text}</span>
             </div>
           ))}
         </div>
+        {/* Verdict pill */}
+        <div className="flex items-center justify-center gap-1 rounded-full px-2 py-1 w-full" style={{ background: "#FFF", boxShadow: "0 2px 6px -2px rgba(0,0,0,0.1)" }}>
+          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: scoreColor }} />
+          <span className="text-[9px] font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+            {verdict} · {score}/100
+          </span>
+        </div>
       </div>
-      {/* Verdict pill */}
-      <div className="flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 mt-1" style={{ background: "#FFF" }}>
-        <div className="w-2.5 h-2.5 rounded-full" style={{ background: scoreColor }} />
-        <span className="text-[11px] font-extrabold tracking-tight" style={{ color: "#374151" }}>
-          {verdict} — <span style={{ color: "#0A1220" }}>{score}/100</span>
-        </span>
-      </div>
-      <p className="text-[9px] text-center font-medium" style={{ color: "#9CA3AF" }}>{productLabel}</p>
     </div>
   );
 }
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -132,7 +145,7 @@ const Index = () => {
       {/* ─── 2. HERO (compact) ─── */}
       <section
         className="relative flex items-center justify-center"
-        style={{ minHeight: "auto", paddingTop: 96, paddingBottom: 28, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+        style={{ minHeight: "auto", paddingTop: 80, paddingBottom: 20, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
       >
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(80px)" }} />
 
@@ -168,23 +181,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 3. HOW IT WORKS — 3 Yuka-style cards horizontal row ─── */}
-      <section className="py-10" style={{ background: "#0A0F1E" }}>
+      {/* ─── 3. HOW IT WORKS — 3 phone mockups in a horizontal row ─── */}
+      <section className="py-6" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               How it works
             </h2>
-            <p className="text-center text-xs mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-center text-xs mb-5" style={{ color: "rgba(255,255,255,0.45)" }}>
               Scan → Score → Decide.
             </p>
           </FadeIn>
 
-          <div className="grid grid-cols-3 gap-2.5 md:gap-4 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto items-end">
             <FadeIn delay={0.05}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🍪"
-                productLabel="belVita Blueberry"
+                productLabel="belVita"
                 signals={[
                   { emoji: "🧪", text: "6 additives" },
                   { emoji: "🍬", text: "Too sweet" },
@@ -195,9 +208,9 @@ const Index = () => {
               />
             </FadeIn>
             <FadeIn delay={0.15}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🥣"
-                productLabel="Honey Nut Cheerios"
+                productLabel="Honey Nut"
                 signals={[
                   { emoji: "🧪", text: "7 additives" },
                   { emoji: "🍬", text: "32g sugar" },
@@ -208,9 +221,9 @@ const Index = () => {
               />
             </FadeIn>
             <FadeIn delay={0.25}>
-              <YukaPhone
+              <PhoneMockup
                 productEmoji="🥗"
-                productLabel="Plain Greek Yogurt"
+                productLabel="Greek Yogurt"
                 signals={[
                   { emoji: "💪", text: "High protein" },
                   { emoji: "✨", text: "Clean label" },
@@ -225,14 +238,14 @@ const Index = () => {
       </section>
 
       {/* ─── 4. WHAT YOU GET (compact grid) ─── */}
-      <section className="py-10" style={{ background: "#F9FAFB" }}>
+      <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Your personal product analyst.
               </h2>
-              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
+              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
                 Food + beauty. 4M+ products. Instant.
               </p>
             </div>
@@ -259,10 +272,10 @@ const Index = () => {
       </section>
 
       {/* ─── 5. BUILD HABIT (Members) ─── */}
-      <section className="py-10 bg-white">
+      <section className="py-6 bg-white">
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
                 ✦ For Members
               </span>
@@ -299,18 +312,18 @@ const Index = () => {
       </section>
 
       {/* ─── 6. CONTACT / PARTNER (form) ─── */}
-      <section className="py-10" style={{ background: "#F9FAFB" }}>
+      <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
                 <Store size={12} /> Stores · Press · Partners
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Let's talk.
               </h2>
-              <p className="text-xs mt-1.5" style={{ color: "#6B7280" }}>
-                Partner with us, or just say hi. We read every message.
+              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
+                Partner with us, or just say hi. Goes straight to our inbox.
               </p>
             </div>
           </FadeIn>
