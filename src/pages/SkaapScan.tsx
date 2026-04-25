@@ -47,6 +47,7 @@ import { OnboardingFlow, hasSeenOnboarding } from "@/components/scan/OnboardingF
 import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
 import { StandaloneHome } from "@/components/scan/StandaloneHome";
+import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
