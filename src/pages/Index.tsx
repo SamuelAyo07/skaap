@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Repeat, TrendingUp, ShieldCheck, Eye, Heart, Sparkles, CreditCard, Clock, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -24,7 +24,7 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Yuka-style phone mockup (cream bg, product, signals, verdict pill) ─── */
+/* ─── Yuka-style product card (big score circle + colored signal rows) ─── */
 function PhoneMockup({
   productLabel,
   productEmoji,
@@ -35,49 +35,52 @@ function PhoneMockup({
 }: {
   productLabel: string;
   productEmoji: string;
-  signals: { emoji: string; text: string }[];
+  signals: { dot: string; text: string }[];
   verdict: string;
   scoreColor: string;
   score: string;
 }) {
   return (
     <div
-      className="relative mx-auto rounded-[26px] p-[5px]"
+      className="relative mx-auto rounded-[22px] overflow-hidden flex flex-col"
       style={{
-        background: "#0A1220",
-        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        background: "#FFFFFF",
+        boxShadow: "0 14px 40px -10px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06)",
         width: "100%",
-        maxWidth: 180,
-        aspectRatio: "9 / 18",
+        maxWidth: 200,
+        aspectRatio: "9 / 16",
       }}
     >
-      {/* Notch */}
-      <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-10 h-[10px] rounded-full z-10" style={{ background: "#0A1220" }} />
-      {/* Screen */}
-      <div className="w-full h-full rounded-[22px] overflow-hidden flex flex-col items-center justify-between p-2.5 pt-5" style={{ background: "#FBF6E9" }}>
-        {/* Product hero */}
-        <div className="flex flex-col items-center mt-1">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{ background: "#FFF", boxShadow: "0 4px 10px -2px rgba(0,0,0,0.08)" }}>
-            {productEmoji}
+      {/* Top: product hero on cream */}
+      <div className="flex flex-col items-center justify-center pt-4 pb-3" style={{ background: "#FBF6E9" }}>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl bg-white" style={{ boxShadow: "0 4px 12px -2px rgba(0,0,0,0.08)" }}>
+          {productEmoji}
+        </div>
+        <p className="text-[10px] font-bold mt-2 text-center leading-tight px-2" style={{ color: "#0A1220" }}>{productLabel}</p>
+      </div>
+
+      {/* Big score circle (Yuka signature) */}
+      <div className="flex items-center justify-center -mt-5 z-10">
+        <div
+          className="w-14 h-14 rounded-full flex flex-col items-center justify-center"
+          style={{ background: scoreColor, boxShadow: "0 6px 14px -2px rgba(0,0,0,0.18), inset 0 0 0 3px #fff" }}
+        >
+          <span className="text-base font-extrabold leading-none text-white">{score}</span>
+          <span className="text-[7px] font-bold text-white/80 tracking-wide">/100</span>
+        </div>
+      </div>
+
+      {/* Verdict */}
+      <p className="text-center text-[10px] font-extrabold mt-1" style={{ color: scoreColor }}>{verdict}</p>
+
+      {/* Signal rows (Yuka-style colored dot lines) */}
+      <div className="flex-1 flex flex-col gap-1 px-2.5 mt-2 mb-3">
+        {signals.map((s, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.dot }} />
+            <span className="text-[8px] font-semibold truncate" style={{ color: "#374151" }}>{s.text}</span>
           </div>
-          <p className="text-[8px] font-bold mt-1.5 text-center leading-tight" style={{ color: "#0A1220" }}>{productLabel}</p>
-        </div>
-        {/* Signals */}
-        <div className="w-full flex flex-col gap-1 px-0.5">
-          {signals.map((s, i) => (
-            <div key={i} className="flex items-center gap-1 px-1.5 py-1 rounded-full" style={{ background: "#E8E4D6" }}>
-              <span className="text-[9px]">{s.emoji}</span>
-              <span className="text-[8px] font-semibold truncate" style={{ color: "#6B7280" }}>{s.text}</span>
-            </div>
-          ))}
-        </div>
-        {/* Verdict pill */}
-        <div className="flex items-center justify-center gap-1 rounded-full px-2 py-1 w-full" style={{ background: "#FFF", boxShadow: "0 2px 6px -2px rgba(0,0,0,0.1)" }}>
-          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: scoreColor }} />
-          <span className="text-[9px] font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-            {verdict} · {score}/100
-          </span>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -197,10 +200,11 @@ const Index = () => {
             <FadeIn delay={0.05}>
               <PhoneMockup
                 productEmoji="🍪"
-                productLabel="belVita"
+                productLabel="belVita Breakfast"
                 signals={[
-                  { emoji: "🧪", text: "6 additives" },
-                  { emoji: "🍬", text: "Too sweet" },
+                  { dot: "#C41E3A", text: "Too much sugar" },
+                  { dot: "#F59E0B", text: "6 additives" },
+                  { dot: "#F59E0B", text: "Ultra-processed" },
                 ]}
                 verdict="Bad"
                 score="21"
@@ -210,10 +214,11 @@ const Index = () => {
             <FadeIn delay={0.15}>
               <PhoneMockup
                 productEmoji="🥣"
-                productLabel="Honey Nut"
+                productLabel="Honey Nut Cereal"
                 signals={[
-                  { emoji: "🧪", text: "7 additives" },
-                  { emoji: "🍬", text: "32g sugar" },
+                  { dot: "#C41E3A", text: "32g sugar / serv" },
+                  { dot: "#C41E3A", text: "7 additives" },
+                  { dot: "#F59E0B", text: "Low fiber" },
                 ]}
                 verdict="Bad"
                 score="8"
@@ -223,16 +228,53 @@ const Index = () => {
             <FadeIn delay={0.25}>
               <PhoneMockup
                 productEmoji="🥗"
-                productLabel="Greek Yogurt"
+                productLabel="Greek Yogurt Plain"
                 signals={[
-                  { emoji: "💪", text: "High protein" },
-                  { emoji: "✨", text: "Clean label" },
+                  { dot: "#22C55E", text: "High protein" },
+                  { dot: "#22C55E", text: "No additives" },
+                  { dot: "#22C55E", text: "Clean label" },
                 ]}
                 verdict="Excellent"
                 score="94"
                 scoreColor="#22C55E"
               />
             </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 3b. KNOW YOUR FOOD — what we do & why ─── */}
+      <section className="py-8" style={{ background: "#FBF6E9" }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <FadeIn>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
+              <Eye size={12} /> Know your food
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
+              The food industry hides what's in your food. We don't.
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
+              SKAAP scans any product barcode and breaks down what's actually inside — sugar, additives, ultra-processing, protein, allergens — in plain English. Built for people who want to eat better but don't have time to read every label.
+            </p>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            {[
+              { icon: Heart, title: "Why we built it", desc: "Most 'healthy' labels lie. Hidden sugars, banned-abroad additives, fake protein claims. We surface the truth in 2 seconds." },
+              { icon: Sparkles, title: "How it works", desc: "Open-source databases (OFF, USDA) + our own SKAAP Score (0–100) + AI-powered ingredient explainers. No ads. No tracking." },
+              { icon: Users, title: "Who it's for", desc: "Parents, athletes, anyone managing allergies or just tired of guessing. Free forever for scans. Plus unlocks habits & alerts." },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="bg-white rounded-2xl p-3.5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
+                    <Icon size={18} color="#C41E3A" />
+                    <h3 className="font-bold text-[13px] tracking-tight mt-2" style={{ color: "#0A1220" }}>{item.title}</h3>
+                    <p className="text-[11px] mt-1 leading-snug" style={{ color: "#6B7280" }}>{item.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -311,6 +353,43 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ─── 5b. SCAN & PAY (checkout freedom) ─── */}
+      <section className="py-8" style={{ background: "#0A0F1E" }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <FadeIn>
+            <div className="text-center">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
+                <CreditCard size={12} /> Scan & Pay
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+                Skip the line. Scan, bag, walk out.
+              </h2>
+              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
+                Scan items in-store, pay from your phone, walk out. No cashier. No queue.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-3 gap-2 mt-5 max-w-md mx-auto">
+            {[
+              { icon: ShoppingBag, label: "Scan items" },
+              { icon: CreditCard, label: "Tap to pay" },
+              { icon: Clock, label: "Walk out" },
+            ].map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <Icon size={18} color="#fff" className="mx-auto mb-1.5" />
+                    <p className="text-[11px] font-bold text-white">{s.label}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ─── 6. CONTACT / PARTNER (form) ─── */}
       <section className="py-6" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
@@ -368,9 +447,6 @@ const Index = () => {
               >
                 <Send size={14} /> {sending ? "Sending…" : "Send message"}
               </button>
-              <p className="text-center text-[10px]" style={{ color: "#9CA3AF" }}>
-                Or email us directly: <a href={MAILTO} className="underline">oyedemisam@gmail.com</a>
-              </p>
             </form>
           </FadeIn>
         </div>
