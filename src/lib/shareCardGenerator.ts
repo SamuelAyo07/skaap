@@ -118,52 +118,67 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
 }
 
 function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline: string, tagline?: string) {
-  // Frosted card at bottom
-  const ctaY = 1660, ctaW = 940, ctaH = 220, ctaR = 28;
+  // Frosted card at bottom — taller, bolder, with red accent bar
+  const ctaY = 1620, ctaW = 960, ctaH = 270, ctaR = 32;
   const ctaX = (W - ctaW) / 2;
-  
-  // Glass effect background
-  ctx.fillStyle = "rgba(255,255,255,0.95)";
+
+  // Outer glow
+  ctx.save();
+  ctx.shadowColor = "rgba(232,49,74,0.5)";
+  ctx.shadowBlur = 40;
+  ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
   ctx.fill();
-  
-  // Subtle border
-  ctx.strokeStyle = "rgba(255,255,255,0.6)";
-  ctx.lineWidth = 1;
+  ctx.restore();
+
+  // Red top accent stripe
+  ctx.save();
   ctx.beginPath();
-  ctx.roundRect(ctaX, ctaY, ctaW, ctaH, ctaR);
-  ctx.stroke();
+  ctx.roundRect(ctaX, ctaY, ctaW, 8, [ctaR, ctaR, 0, 0] as unknown as number);
+  ctx.fillStyle = "#E8314A";
+  ctx.fill();
+  ctx.restore();
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#1B2A4A";
-  ctx.font = "800 28px Inter800, Inter, system-ui, sans-serif";
-  ctx.fillText(headline, W / 2, ctaY + 48);
-  
+  ctx.fillStyle = "#0A1220";
+  ctx.font = "800 32px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText(headline, W / 2, ctaY + 64);
+
   ctx.fillStyle = "#6B7280";
-  ctx.font = "400 18px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText(subline, W / 2, ctaY + 80);
-  
-  // CTA pill button
-  const pillW = 380, pillH = 48, pillR = 24;
-  const pillX = (W - pillW) / 2, pillY = ctaY + 100;
+  ctx.font = "500 19px Inter600, Inter, system-ui, sans-serif";
+  ctx.fillText(subline, W / 2, ctaY + 100);
+
+  // BIG CTA pill — bigger, with shadow
+  const pillW = 500, pillH = 64, pillR = 32;
+  const pillX = (W - pillW) / 2, pillY = ctaY + 124;
+  ctx.save();
+  ctx.shadowColor = "rgba(232,49,74,0.45)";
+  ctx.shadowBlur = 24;
+  ctx.shadowOffsetY = 6;
   ctx.fillStyle = "#E8314A";
   ctx.beginPath();
   ctx.roundRect(pillX, pillY, pillW, pillH, pillR);
   ctx.fill();
+  ctx.restore();
   ctx.fillStyle = "#fff";
-  ctx.font = "700 16px Inter600, Inter, system-ui, sans-serif";
-  ctx.fillText("Scan yours free → useskaap.com", W / 2, pillY + 31);
-  
-  // Tagline below pill
+  ctx.font = "800 22px Inter800, Inter, system-ui, sans-serif";
+  ctx.fillText("Scan yours free → useskaap.com", W / 2, pillY + 41);
+
+  // Social proof line below
+  ctx.fillStyle = "#0A1220";
+  ctx.font = "700 15px Inter600, Inter, system-ui, sans-serif";
+  ctx.fillText("Join thousands knowing what's really in their food 🌱", W / 2, pillY + 96);
+
+  // Tagline
   if (tagline) {
     ctx.fillStyle = "#9CA3AF";
-    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText(tagline, W / 2, pillY + 72);
+    ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText(tagline, W / 2, pillY + 120);
   } else {
     ctx.fillStyle = "#9CA3AF";
-    ctx.font = "400 14px Inter400, Inter, system-ui, sans-serif";
-    ctx.fillText("@useskaap · Tag us and we'll repost 🙌", W / 2, pillY + 72);
+    ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
+    ctx.fillText("@useskaap · Tag us and we'll repost 🙌", W / 2, pillY + 120);
   }
 }
 
