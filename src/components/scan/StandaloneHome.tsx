@@ -188,14 +188,10 @@ export function StandaloneHome({
         </motion.button>
 
         {/* Quick actions */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-3 gap-2 mt-4">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-2 gap-2 mt-4">
           <button onClick={onSearch} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
             <Search size={18} style={{ color: "#6B7280" }} />
             <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Search</span>
-          </button>
-          <button onClick={onImageScan} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <span className="text-[16px]">📸</span>
-            <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Photo scan</span>
           </button>
           <button onClick={onCommunity} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
             <TrendingUp size={18} style={{ color: "#6B7280" }} />
