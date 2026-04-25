@@ -252,6 +252,55 @@ const Index = () => {
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
             Free. No signup.
           </motion.p>
+
+          {/* Device-aware install CTA */}
+          {!installed && (
+            <motion.button
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleInstall}
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold"
+              style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.14)" }}
+            >
+              {device === "ios" ? <><Share size={13} /> Add to iPhone Home Screen</> :
+               device === "android" ? <><Download size={13} /> Install on Android</> :
+               <><Download size={13} /> Get the app on your phone</>}
+            </motion.button>
+          )}
+
+          {/* iOS install tip — appears after CTA tap */}
+          {showIosTip && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-3 mx-auto max-w-xs rounded-xl p-3 text-left"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+            >
+              <p className="text-[11px] font-bold mb-1.5 flex items-center gap-1.5"><Share size={12} /> Two taps in Safari:</p>
+              <p className="text-[11px] leading-relaxed">
+                Tap <strong>Share</strong> (📤) at the bottom → <strong>"Add to Home Screen"</strong> → <strong>Add</strong>.
+              </p>
+            </motion.div>
+          )}
+
+          {/* Build a habit — streak teaser */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}
+            className="mt-5 mx-auto max-w-xs rounded-2xl p-3 flex items-center gap-3"
+            style={{ background: "rgba(196,30,58,0.08)", border: "1px solid rgba(196,30,58,0.18)" }}
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(196,30,58,0.18)" }}>
+              <Flame size={18} color="#FCA5A5" />
+            </div>
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-[12px] font-extrabold text-white leading-tight">
+                {streak === 0 ? "Start your scan streak" : `${streak} ${streak === 1 ? "scan" : "scans"} so far 🔥`}
+              </p>
+              <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+                {streak === 0 ? "Scan one product to begin." : streak < 5 ? "Keep going — habits start at 5." : "You're building the habit."}
+              </p>
+            </div>
+            <Plus size={14} color="rgba(255,255,255,0.4)" className="flex-shrink-0" />
+          </motion.div>
         </div>
       </section>
 
