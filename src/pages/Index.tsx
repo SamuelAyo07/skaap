@@ -107,19 +107,62 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 
+interface BIPEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }>; }
+
 const Index = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [contact, setContact] = useState({ name: "", email: "", message: "", type: "general" });
   const [sending, setSending] = useState(false);
+  const [streak, setStreak] = useState<number>(() => Number(localStorage.getItem("skaap_scan_count") || 0));
+  const [device, setDevice] = useState<"ios" | "android" | "desktop">("desktop");
+  const [installed, setInstalled] = useState(false);
+  const [showIosTip, setShowIosTip] = useState(false);
+  const deferredRef = useRef<BIPEvent | null>(null);
 
   useEffect(() => {
     trackEvent("page_view", { page: "landing", utm_source: searchParams.get("utm_source") }, "/");
+
+    // Detect device
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as unknown as { MSStream?: unknown }).MSStream;
+    const isAndroid = /Android/.test(ua);
+    setDevice(isIOS ? "ios" : isAndroid ? "android" : "desktop");
+    setInstalled(window.matchMedia("(display-mode: standalone)").matches);
+
+    // Capture install prompt for Android/Chrome
+    const onBIP = (e: Event) => {
+      e.preventDefault();
+      deferredRef.current = e as BIPEvent;
+    };
+    window.addEventListener("beforeinstallprompt", onBIP);
+    return () => window.removeEventListener("beforeinstallprompt", onBIP);
   }, []);
 
   const handleStartScan = () => {
     trackEvent("cta_clicked", { cta: "hero_start_scanning" });
+    // Increment local streak so the teaser feels alive
+    const next = streak + 1;
+    localStorage.setItem("skaap_scan_count", String(next));
+    setStreak(next);
     navigate("/scan");
+  };
+
+  const handleInstall = async () => {
+    trackEvent("cta_clicked", { cta: "install_pwa", device });
+    if (device === "ios") {
+      setShowIosTip(true);
+      return;
+    }
+    if (deferredRef.current) {
+      await deferredRef.current.prompt();
+      const choice = await deferredRef.current.userChoice;
+      if (choice.outcome === "accepted") setInstalled(true);
+      deferredRef.current = null;
+    } else {
+      // Android with no prompt available, or desktop — show toast
+      toast.info(device === "android" ? "Open this page in Chrome, then tap menu (⋮) → Install app." : "Open useskaap.com on your phone to install.");
+    }
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
