@@ -277,10 +277,10 @@ const Index = () => {
           <FadeIn>
             <div className="text-center mb-4">
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Your personal product analyst.
+                One scan. Everything you need.
               </h2>
               <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                Food + beauty. 4M+ products. Instant.
+                Food and beauty. Over 4 million products.
               </p>
             </div>
           </FadeIn>
