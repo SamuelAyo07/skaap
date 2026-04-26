@@ -7,6 +7,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { UpgradeSheet } from "@/components/scan/UpgradeSheet";
 import InstallBanner from "@/components/InstallBanner";
+import AutoUpdater from "@/components/AutoUpdater";
 import Index from "./pages/Index";
 import AppPage from "./pages/AppPage";
 import SkaapScan from "./pages/SkaapScan";
