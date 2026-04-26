@@ -536,6 +536,9 @@ const Index = () => {
           <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>© 2026 SKAAP Technologies Inc.</p>
         </div>
       </footer>
+
+      {/* ─── Sticky mobile CTA — drives visitors into the food intelligence flow ─── */}
+      <StickyScanCTA onScan={handleStartScan} />
     </div>
   );
 };
