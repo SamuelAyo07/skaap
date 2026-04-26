@@ -27,6 +27,40 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
+/* ─── Sticky bottom CTA (mobile) — appears after hero scroll for conversion lift ─── */
+const StickyScanCTA = ({ onScan }: { onScan: () => void }) => {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 480);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <motion.div
+      initial={false}
+      animate={{ y: show ? 0 : 96, opacity: show ? 1 : 0 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 pointer-events-none"
+      style={{
+        background: "linear-gradient(to top, rgba(10,15,30,0.96) 60%, rgba(10,15,30,0))",
+      }}
+    >
+      <button
+        onClick={() => { trackEvent("cta_clicked", { cta: "sticky_scan_cta" }); onScan(); }}
+        className="pointer-events-auto w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm shadow-2xl"
+        style={{
+          background: "linear-gradient(135deg, #C41E3A, #a11830)",
+          color: "#fff",
+          boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
+        }}
+      >
+        <ScanLine size={16} /> Scan a product — free
+      </button>
+    </motion.div>
+  );
+};
+
 /* ─── Yuka-style product card with REAL product image ─── */
 function PhoneMockup({
   productLabel,
