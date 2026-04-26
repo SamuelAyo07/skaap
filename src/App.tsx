@@ -54,6 +54,7 @@ const App = () => (
           <Sonner />
           <UpgradeSheet />
           <InstallBanner />
+          <AutoUpdater />
           <BrowserRouter>
             <AppRoutes />
           </BrowserRouter>
