@@ -4,6 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
+const buildId = new Date().toISOString();
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -13,15 +15,23 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  define: {
+    __SKAAP_BUILD_ID__: JSON.stringify(buildId),
+  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
+      injectRegister: false,
       registerType: "autoUpdate",
+      devOptions: {
+        enabled: false,
+      },
       includeAssets: ["favicon.ico", "skaap-icon-192.png", "skaap-icon-512.png"],
       workbox: {
+        navigateFallback: null,
         navigateFallbackDenylist: [/^\/~oauth/],
-        globPatterns: ["**/*.{js,css,html,ico,png,jpg,svg,woff2}"],
+        globPatterns: ["**/*.{js,css,ico,png,jpg,svg,woff2}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
