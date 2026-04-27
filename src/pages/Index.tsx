@@ -255,21 +255,21 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Every bite leaves a mark
+            <AlertTriangle size={11} /> Stop guessing in the aisle
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
-            style={{ fontSize: "clamp(30px, 6.5vw, 52px)" }}
+            style={{ fontSize: "clamp(34px, 7vw, 56px)" }}
           >
-            What you eat today<br />
-            <span className="text-gradient">becomes you tomorrow.</span>
+            Don't eat that.<br />
+            <span className="text-gradient">Scan it first.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.72)" }}>
-            Hidden sugar. Banned additives. Toxic skincare. You can't fix what you can't see — scan one product and know in 2 seconds.
+            className="mt-3 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
+            2 seconds. One score. Know if it's safe before it hits your cart.
           </motion.p>
 
           <motion.button
@@ -279,12 +279,12 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan one thing right now
+            <ScanLine size={16} /> Scan now — free
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-            Free. Takes 5 seconds. No signup.
+            No signup. No app. Works in 2 seconds.
           </motion.p>
 
         </div>
