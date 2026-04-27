@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
+import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -160,6 +161,11 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             <ChevronRight size={16} color="rgba(255,255,255,0.5)" />
           </motion.button>
         )}
+
+        {/* ─── Share Rewards (moved from bottom nav for simplicity) ─── */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+          <ShareRewardsCard onShare={onBack} />
+        </motion.div>
 
         {/* ─── Ingredient Alerts ─── */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>

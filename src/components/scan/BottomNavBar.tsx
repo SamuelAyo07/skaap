@@ -1,4 +1,4 @@
-import { Clock, Scan, Globe, Gift } from "lucide-react";
+import { Clock, Scan, Globe } from "lucide-react";
 
 interface BottomNavBarProps {
   active: string;
@@ -10,7 +10,6 @@ export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
     { icon: <Clock size={22} />, label: "History", key: "history" },
     { icon: <Globe size={22} />, label: "Community", key: "community" },
     { icon: <Scan size={28} />, label: "Scan", key: "scan", center: true },
-    { icon: <Gift size={22} />, label: "Rewards", key: "rewards" },
     { icon: <span className="text-[18px]">👤</span>, label: "Me", key: "profile" },
   ];
 

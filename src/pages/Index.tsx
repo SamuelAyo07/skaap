@@ -481,7 +481,7 @@ const Index = () => {
           </FadeIn>
           <div className="space-y-2">
             {[
-              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus ($1.99/mo) unlocks weekly habit reports, custom alerts, and product search." },
+              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus is pay-what-you-want — from $2.99/mo or a one-time yearly contribution — and unlocks weekly habit reports, custom alerts, and product search." },
               { q: "How is the SKAAP Score calculated?", a: "0–100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic/processing. Same product = same score, anywhere." },
               { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database — cross-checked with FDA/EFSA bans. AI translates the science so anyone can understand it." },
               { q: "Do you sell my data or run ads?", a: "Never. No ads. No third-party tracking. Your scans are private to your account." },
