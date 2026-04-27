@@ -95,7 +95,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     }
   }, [isPlus, hasFreeView]);
 
-  const canAccess = isPlus || hasFreeView;
+  const canAccess = true; // Everyone gets the friendly preview; deeper sections gate inline
 
   const [geoLocation, setGeoLocation] = useState<GeoLocation | null>(null);
   const [locationScope, setLocationScope] = useState<LocationScope>("city");
