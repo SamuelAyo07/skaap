@@ -162,6 +162,11 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </motion.button>
         )}
 
+        {/* ─── Share Rewards (moved from bottom nav for simplicity) ─── */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+          <ShareRewardsCard onShare={onBack} />
+        </motion.div>
+
         {/* ─── Ingredient Alerts ─── */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <div className="flex items-center justify-between mb-2">
