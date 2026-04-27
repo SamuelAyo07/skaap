@@ -5,7 +5,7 @@ import { getScoreColor } from "@/lib/skaapScore";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { HealthSnapshot } from "./HealthSnapshot";
-import { ShareRewardsCard } from "./ShareRewardsCard";
+
 import { getUserStats } from "@/lib/skaapUserStats";
 
 interface ScanHistoryItem {
