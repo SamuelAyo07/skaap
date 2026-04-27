@@ -1055,7 +1055,6 @@ const SkaapScan = () => {
     hapticSelection();
     if (nav === "home") setScreen("home");
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-    else if (nav === "rewards") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") {
       // Search is a Plus-only feature — gate non-members
       if (!isPlus) { openUpgrade("Product Search"); return; }

@@ -687,7 +687,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock for $1.99/mo
+              Unlock — Pay what you want
             </motion.button>
           </div>
         )}
