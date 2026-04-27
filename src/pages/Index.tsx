@@ -255,7 +255,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Labels lie. We don't.
+            <AlertTriangle size={11} /> Every bite leaves a mark
           </motion.div>
 
           <motion.h1
@@ -263,13 +263,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
             style={{ fontSize: "clamp(30px, 6.5vw, 52px)" }}
           >
-            Know what's<br />
-            <span className="text-gradient">really in your food.</span>
+            What you eat today<br />
+            <span className="text-gradient">becomes you tomorrow.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Scan it. See the score. Skip the bad stuff.
+            className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.72)" }}>
+            Hidden sugar. Banned additives. Toxic skincare. You can't fix what you can't see — scan one product and know in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -279,12 +279,12 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan Your First Product
+            <ScanLine size={16} /> Scan one thing right now
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
-            Free. No signup.
+            className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+            Free. Takes 5 seconds. No signup.
           </motion.p>
 
         </div>
