@@ -383,31 +383,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 6. KNOW YOUR FOOD (moved DOWN) — with "What we scan" checklist ─── */}
+      {/* ─── 6. KNOW YOUR FOOD — urgency-led ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-              <Eye size={12} /> Know your food
+              <Eye size={12} /> Why this can't wait
             </span>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
-              The food industry hides what's in your food. We don't.
+              The longer you wait, the more your body pays.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Scan any barcode and we break down what's really inside — in 2 seconds, plain English. Free forever. No ads. No tracking. Made for anyone who wants to eat smarter without reading every label.
+              Hidden sugar today is inflammation tomorrow. Banned additives stay in your system for years. The chemicals in your moisturizer absorb in 26 seconds. Most people find out way too late — after the doctor visit, the diagnosis, the regret.
+            </p>
+            <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
+              Scan one thing in your kitchen or bathroom right now. It takes 2 seconds. You'll never look at a label the same way.
             </p>
           </FadeIn>
 
-          {/* What we scan checklist */}
+          {/* What we scan checklist — now includes cosmetics */}
           <FadeIn delay={0.1}>
             <div className="bg-white rounded-2xl p-4 mt-5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
               <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we scan for</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                 {[
                   { icon: Beaker, label: "Hidden sugar" },
-                  { icon: FlaskConical, label: "Harmful additives" },
+                  { icon: FlaskConical, label: "Banned additives" },
                   { icon: Wheat, label: "Allergens" },
                   { icon: Factory, label: "Ultra-processing" },
+                  { icon: Eye, label: "Toxic skincare" },
+                  { icon: AlertTriangle, label: "Hormone disruptors" },
                 ].map((item, i) => {
                   const Icon = item.icon;
                   return (
