@@ -245,41 +245,7 @@ export function StandaloneHome({
           </button>
         </motion.div>
 
-        {/* Stats strip */}
-        {stats.total_scans > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.37 }} className="mt-4">
-            <button onClick={onRecs} className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <div className="flex items-center gap-4 flex-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[14px] text-white"
-                    style={{ background: stats.kitchen_score > 0 ? getScoreColor(stats.kitchen_score) : "#D1D5DB" }}>
-                    {stats.kitchen_score > 0 ? stats.kitchen_score : "—"}
-                  </div>
-                  <div>
-                    <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>Kitchen Score</p>
-                    <p className="text-[10px]" style={{ color: "#9CA3AF" }}>
-                      {stats.kitchen_percentile > 0 ? `Top ${100 - stats.kitchen_percentile}%` : "Keep scanning"}
-                    </p>
-                  </div>
-                </div>
-                <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-                <div className="flex items-center gap-1.5">
-                  <Flame size={16} style={{ color: stats.current_streak > 0 ? "#F59E0B" : "#D1D5DB" }} />
-                  <div>
-                    <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{stats.current_streak > 0 ? stats.current_streak : "—"}</p>
-                    <p className="text-[10px]" style={{ color: "#9CA3AF" }}>streak</p>
-                  </div>
-                </div>
-                <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-                <div>
-                  <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{stats.total_scans}</p>
-                  <p className="text-[10px]" style={{ color: "#9CA3AF" }}>scanned</p>
-                </div>
-              </div>
-              <ChevronRight size={14} style={{ color: "#D1D5DB" }} />
-            </button>
-          </motion.div>
-        )}
+        {/* Stats strip removed for simplicity — kitchen score lives in History tab */}
 
         {/* Last scan quick card */}
         {lastScan && (
