@@ -1055,14 +1055,19 @@ const SkaapScan = () => {
     hapticSelection();
     if (nav === "home") setScreen("home");
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
-    else if (nav === "search") setScreen("search");
+    else if (nav === "rewards") { setHistory(getHistory()); setScreen("history"); }
+    else if (nav === "search") {
+      // Search is a Plus-only feature — gate non-members
+      if (!isPlus) { openUpgrade("Product Search"); return; }
+      setScreen("search");
+    }
     else if (nav === "kitchen") setScreen("kitchen");
     else if (nav === "community") setScreen("community");
     else if (nav === "top") setScreen("top");
     else if (nav === "scan") goToScan();
     else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
     else if (nav === "profile") user ? setScreen("profile") : setAuthSheetOpen(true);
-  }, [user, goToScan]);
+  }, [user, goToScan, isPlus, openUpgrade]);
 
   // ─── SCREEN: HOME ───
   if (screen === "home") {
