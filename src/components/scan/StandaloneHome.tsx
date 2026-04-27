@@ -188,16 +188,16 @@ export function StandaloneHome({
         </motion.button>
 
         {/* Quick actions */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-2 gap-2 mt-4">
-          <button onClick={onSearch} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <Search size={18} style={{ color: "#6B7280" }} />
-            <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Search</span>
-          </button>
-          <button onClick={onCommunity} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <TrendingUp size={18} style={{ color: "#6B7280" }} />
-            <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Community</span>
-          </button>
-        </motion.div>
+        <motion.button
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+          onClick={onCommunity}
+          className="w-full mt-3 flex items-center justify-center gap-2 py-3 rounded-2xl"
+          style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
+        >
+          <TrendingUp size={16} style={{ color: "#6B7280" }} />
+          <span className="text-[12px] font-semibold" style={{ color: "#374151" }}>What people are scanning today</span>
+          <ChevronRight size={14} style={{ color: "#D1D5DB" }} />
+        </motion.button>
 
         {/* ── Daily Tip Card ── */}
         <motion.div
