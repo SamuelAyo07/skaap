@@ -255,7 +255,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Labels lie. We don't.
+            <AlertTriangle size={11} /> Every bite leaves a mark
           </motion.div>
 
           <motion.h1
@@ -263,13 +263,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
             style={{ fontSize: "clamp(30px, 6.5vw, 52px)" }}
           >
-            Know what's<br />
-            <span className="text-gradient">really in your food.</span>
+            What you eat today<br />
+            <span className="text-gradient">becomes you tomorrow.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Scan it. See the score. Skip the bad stuff.
+            className="mt-3 text-sm md:text-base max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.72)" }}>
+            Hidden sugar. Banned additives. Toxic skincare. You can't fix what you can't see — scan one product and know in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -279,12 +279,12 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan Your First Product
+            <ScanLine size={16} /> Scan one thing right now
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
-            Free. No signup.
+            className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+            Free. Takes 5 seconds. No signup.
           </motion.p>
 
         </div>
@@ -383,31 +383,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 6. KNOW YOUR FOOD (moved DOWN) — with "What we scan" checklist ─── */}
+      {/* ─── 6. KNOW YOUR FOOD — urgency-led ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-              <Eye size={12} /> Know your food
+              <Eye size={12} /> Why this can't wait
             </span>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
-              The food industry hides what's in your food. We don't.
+              The longer you wait, the more your body pays.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Scan any barcode and we break down what's really inside — in 2 seconds, plain English. Free forever. No ads. No tracking. Made for anyone who wants to eat smarter without reading every label.
+              Hidden sugar today is inflammation tomorrow. Banned additives stay in your system for years. The chemicals in your moisturizer absorb in 26 seconds. Most people find out way too late — after the doctor visit, the diagnosis, the regret.
+            </p>
+            <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
+              Scan one thing in your kitchen or bathroom right now. It takes 2 seconds. You'll never look at a label the same way.
             </p>
           </FadeIn>
 
-          {/* What we scan checklist */}
+          {/* What we scan checklist — now includes cosmetics */}
           <FadeIn delay={0.1}>
             <div className="bg-white rounded-2xl p-4 mt-5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
               <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we scan for</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                 {[
                   { icon: Beaker, label: "Hidden sugar" },
-                  { icon: FlaskConical, label: "Harmful additives" },
+                  { icon: FlaskConical, label: "Banned additives" },
                   { icon: Wheat, label: "Allergens" },
                   { icon: Factory, label: "Ultra-processing" },
+                  { icon: Eye, label: "Toxic skincare" },
+                  { icon: AlertTriangle, label: "Hormone disruptors" },
                 ].map((item, i) => {
                   const Icon = item.icon;
                   return (
@@ -478,7 +483,7 @@ const Index = () => {
             {[
               { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus ($1.99/mo) unlocks weekly habit reports, custom alerts, and product search." },
               { q: "How is the SKAAP Score calculated?", a: "0–100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic/processing. Same product = same score, anywhere." },
-              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database — cross-checked with FDA/EFSA bans. AI fills in plain-English explanations." },
+              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database — cross-checked with FDA/EFSA bans. AI translates the science so anyone can understand it." },
               { q: "Do you sell my data or run ads?", a: "Never. No ads. No third-party tracking. Your scans are private to your account." },
               { q: "Does it work without signup?", a: "Yes — scan as a guest. Sign up only if you want to save scans, set alerts, or see your weekly grocery score." },
               { q: "Can I install it on my phone?", a: "Yes. Open useskaap.com on your phone, then 'Add to Home Screen' (iOS Share menu) or tap 'Install' (Android Chrome). It works like a native app." },

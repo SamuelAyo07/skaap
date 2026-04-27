@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ScanLine, Search, Flame, TrendingUp,
+  ScanLine, TrendingUp,
   ChevronRight, Barcode, Heart, Sparkles, Lightbulb,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
+import { refreshStreak, type UserStats } from "@/lib/skaapUserStats";
 import { getScoreColor } from "@/lib/skaapScore";
-import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
-import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName } from "@/components/scan/FirstScanSignupModal";
 
 const HISTORY_KEY = "skaap_scan_history";
@@ -190,16 +188,16 @@ export function StandaloneHome({
         </motion.button>
 
         {/* Quick actions */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-2 gap-2 mt-4">
-          <button onClick={onSearch} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <Search size={18} style={{ color: "#6B7280" }} />
-            <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Search</span>
-          </button>
-          <button onClick={onCommunity} className="flex flex-col items-center gap-1.5 py-3.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <TrendingUp size={18} style={{ color: "#6B7280" }} />
-            <span className="text-[11px] font-semibold" style={{ color: "#374151" }}>Community</span>
-          </button>
-        </motion.div>
+        <motion.button
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+          onClick={onCommunity}
+          className="w-full mt-3 flex items-center justify-center gap-2 py-3 rounded-2xl"
+          style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
+        >
+          <TrendingUp size={16} style={{ color: "#6B7280" }} />
+          <span className="text-[12px] font-semibold" style={{ color: "#374151" }}>What people are scanning today</span>
+          <ChevronRight size={14} style={{ color: "#D1D5DB" }} />
+        </motion.button>
 
         {/* ── Daily Tip Card ── */}
         <motion.div
@@ -247,41 +245,7 @@ export function StandaloneHome({
           </button>
         </motion.div>
 
-        {/* Stats strip */}
-        {stats.total_scans > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.37 }} className="mt-4">
-            <button onClick={onRecs} className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <div className="flex items-center gap-4 flex-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[14px] text-white"
-                    style={{ background: stats.kitchen_score > 0 ? getScoreColor(stats.kitchen_score) : "#D1D5DB" }}>
-                    {stats.kitchen_score > 0 ? stats.kitchen_score : "—"}
-                  </div>
-                  <div>
-                    <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>Kitchen Score</p>
-                    <p className="text-[10px]" style={{ color: "#9CA3AF" }}>
-                      {stats.kitchen_percentile > 0 ? `Top ${100 - stats.kitchen_percentile}%` : "Keep scanning"}
-                    </p>
-                  </div>
-                </div>
-                <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-                <div className="flex items-center gap-1.5">
-                  <Flame size={16} style={{ color: stats.current_streak > 0 ? "#F59E0B" : "#D1D5DB" }} />
-                  <div>
-                    <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{stats.current_streak > 0 ? stats.current_streak : "—"}</p>
-                    <p className="text-[10px]" style={{ color: "#9CA3AF" }}>streak</p>
-                  </div>
-                </div>
-                <div className="w-px h-8" style={{ background: "#E5E7EB" }} />
-                <div>
-                  <p className="text-[12px] font-bold" style={{ color: "#1B2A4A" }}>{stats.total_scans}</p>
-                  <p className="text-[10px]" style={{ color: "#9CA3AF" }}>scanned</p>
-                </div>
-              </div>
-              <ChevronRight size={14} style={{ color: "#D1D5DB" }} />
-            </button>
-          </motion.div>
-        )}
+        {/* Stats strip removed for simplicity — kitchen score lives in History tab */}
 
         {/* Last scan quick card */}
         {lastScan && (
@@ -360,17 +324,7 @@ export function StandaloneHome({
           </motion.div>
         )}
 
-        {/* Share Rewards */}
-        {stats.total_scans > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-4">
-            <ShareRewardsCard onShare={onScan} />
-          </motion.div>
-        )}
-
-        {/* Social Links */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4">
-          <SocialLinks variant="pill" />
-        </motion.div>
+        {/* Share rewards moved to History tab. Social follow removed for focus. */}
 
         {/* Empty state for brand new users */}
         {stats.total_scans === 0 && (

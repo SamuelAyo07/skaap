@@ -95,7 +95,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     }
   }, [isPlus, hasFreeView]);
 
-  const canAccess = isPlus || hasFreeView;
+  const canAccess = true; // Everyone gets the friendly preview; deeper sections gate inline
 
   const [geoLocation, setGeoLocation] = useState<GeoLocation | null>(null);
   const [locationScope, setLocationScope] = useState<LocationScope>("city");
@@ -534,512 +534,231 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     north_america: "North America",
   };
 
+  // ─── Build the friendly headline insight ───
+  const dailyInsight = (() => {
+    if (loading) return { emoji: "👀", text: `Looking around ${cityName}…` };
+    if (scansToday === 0 && worstProducts.length === 0) {
+      return { emoji: "🌱", text: `Be the first to scan in ${cityName} today.` };
+    }
+    if (worstProducts.length > 0) {
+      const w = worstProducts[0];
+      return {
+        emoji: "🚨",
+        text: `People in ${cityName} are putting back ${w.product_name.split(" ").slice(0, 4).join(" ")} today. Score: ${w.avg_score}/100.`,
+      };
+    }
+    return { emoji: "✨", text: `${scansToday} scans in ${cityName} today. Healthy choices winning.` };
+  })();
+
+  const totalAvoided = productsAvoided;
+  const healthiest = healthiestProducts[0];
+
   return (
     <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       <div className="flex-1 overflow-y-auto pb-28">
         {/* Header */}
         <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-3">
-          <div className="flex items-center justify-between">
-            <h1 className="font-extrabold text-[24px]" style={{ color: "#1A1A1A" }}>Community</h1>
-            {!isPlus && hasFreeView && (
-              <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
-                Free Preview
+          <h1 className="font-extrabold text-[26px] tracking-tight" style={{ color: "#1A1A1A" }}>
+            What people are eating
+          </h1>
+          <div className="flex items-center gap-1.5 mt-1">
+            <MapPin size={12} style={{ color: "#C41E3A" }} />
+            <p className="text-[13px] font-medium" style={{ color: "#6B7280" }}>{cityName}</p>
+            {!isPlus && (
+              <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
+                Free preview
               </span>
-            )}
-          </div>
-
-          {/* Location selector */}
-          <div className="relative mt-3">
-            <button
-              onClick={() => setLocationDropdownOpen(!locationDropdownOpen)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[14px] font-semibold"
-              style={{ background: "#F3F4F6", color: "#1A1A1A", border: "1px solid #E5E7EB" }}
-            >
-              <MapPin size={14} style={{ color: "#C41E3A" }} />
-              {scopeLabels[locationScope]}
-              <ChevronDown size={14} style={{ color: "#9CA3AF" }} />
-            </button>
-            {locationDropdownOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="absolute top-full left-0 mt-2 rounded-2xl py-2 z-50 shadow-lg"
-                style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", minWidth: 200 }}
-              >
-                {(Object.keys(scopeLabels) as LocationScope[]).map(scope => (
-                  <button
-                    key={scope}
-                    onClick={() => { setLocationScope(scope); setLocationDropdownOpen(false); }}
-                    className="w-full text-left px-4 py-2.5 text-[14px] font-medium hover:bg-gray-50"
-                    style={{ color: locationScope === scope ? "#C41E3A" : "#1A1A1A" }}
-                  >
-                    {scopeLabels[scope]}
-                  </button>
-                ))}
-              </motion.div>
             )}
           </div>
         </div>
 
-        {/* SECTION 1 — Live Stats */}
-        <div className="flex gap-3 px-5 mt-5">
+        {/* HERO INSIGHT — single plain-language sentence */}
+        <div className="mx-5 mt-5 p-5 rounded-[20px]"
+          style={{ background: "linear-gradient(135deg, #FFF7ED, #FEF3C7)", border: "1px solid #FDE68A" }}>
+          <span className="text-[32px] leading-none">{dailyInsight.emoji}</span>
+          <p className="font-extrabold text-[17px] mt-2 leading-snug" style={{ color: "#0A1220" }}>
+            {dailyInsight.text}
+          </p>
+          <p className="text-[12px] mt-2" style={{ color: "#92400E" }}>
+            Updates with every new scan from your area.
+          </p>
+        </div>
+
+        {/* THREE SIMPLE STATS — kid-friendly labels */}
+        <div className="grid grid-cols-3 gap-2 px-5 mt-4">
           {[
-            { label: `scans today in ${cityName}`, value: scansToday, icon: <Scan size={18} style={{ color: "#C41E3A" }} />, color: "#C41E3A" },
-            { label: "products avoided", value: productsAvoided, icon: <Shield size={18} style={{ color: "#22C55E" }} />, color: "#22C55E" },
-            { label: "top concern", value: topConcern, icon: <AlertTriangle size={18} style={{ color: "#F59E0B" }} />, color: "#F59E0B" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="flex-1 flex flex-col items-center justify-center rounded-2xl px-2 py-3 text-center"
-              style={{ height: 72, background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
-            >
-              {stat.icon}
-              <span className="font-extrabold text-[18px] mt-1" style={{ color: stat.color }}>
-                {typeof stat.value === "number" ? stat.value.toLocaleString() : stat.value}
-              </span>
-              <span className="text-[9px] font-medium leading-tight mt-0.5" style={{ color: "#9CA3AF" }}>
-                {stat.label}
-              </span>
+            { emoji: "📱", value: scansToday, label: "scans today" },
+            { emoji: "🚫", value: totalAvoided, label: "put back" },
+            { emoji: "💚", value: healthiest ? healthiest.avg_score : "—", label: "best score" },
+          ].map((s, i) => (
+            <div key={i} className="rounded-2xl py-3 text-center"
+              style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+              <span className="text-[20px]">{s.emoji}</span>
+              <p className="font-extrabold text-[18px] mt-0.5" style={{ color: "#0A1220" }}>
+                {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
+              </p>
+              <p className="text-[10px] font-medium" style={{ color: "#6B7280" }}>{s.label}</p>
             </div>
           ))}
         </div>
 
-        {/* SECTION 1.5 — Live Scan Feed */}
+        {/* TWO SIMPLE LISTS — Avoid + Try Instead */}
         <div className="px-5 mt-6">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="relative flex items-center justify-center">
-              <Activity size={16} style={{ color: "#C41E3A" }} />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse" style={{ background: "#22C55E" }} />
-            </div>
-            <h2 className="font-extrabold text-[18px]" style={{ color: "#1A1A1A" }}>Live Feed</h2>
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full" style={{ background: "#F0FDF4", color: "#22C55E" }}>
-              Real-time
-            </span>
-          </div>
-
-          <div className="space-y-2 max-h-[280px] overflow-y-auto rounded-2xl" style={{ scrollbarWidth: "none" }}>
-            {loading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: "#F9FAFB" }}>
-                  <Skeleton className="w-10 h-10 rounded-lg" style={{ background: "#E5E7EB" }} />
-                  <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
-                    <Skeleton className="h-2 w-1/2" style={{ background: "#E5E7EB" }} />
-                  </div>
-                </div>
-              ))
-            ) : recentScans.length === 0 ? (
-              <div className="text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                <Sparkles size={24} style={{ color: "#D1D5DB" }} className="mx-auto" />
-                <p className="text-[13px] font-medium mt-2" style={{ color: "#9CA3AF" }}>
-                  No scans yet today — be the first in {cityName}!
-                </p>
-              </div>
-            ) : (
-              <AnimatePresence initial={false}>
-                {recentScans.slice(0, 10).map((scan, i) => {
-                  const timeAgo = getTimeAgo(scan.scan_timestamp);
-                  const scoreColor = scan.score != null ? getScoreColor(scan.score) : "#D1D5DB";
-                  return (
-                    <motion.button
-                      key={scan.id}
-                      initial={{ opacity: 0, x: -20, height: 0 }}
-                      animate={{ opacity: 1, x: 0, height: "auto" }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      onClick={() => onScanProduct(scan.barcode)}
-                      className="w-full flex items-center gap-3 p-3 rounded-xl text-left"
-                      style={{ background: i === 0 ? "#FFFBEB" : "#FFFFFF", border: `1px solid ${i === 0 ? "#FEF3C7" : "#F3F4F6"}` }}
-                    >
-                      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
-                        {scan.image_url ? (
-                          <img src={scan.image_url} alt={scan.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Scan size={14} style={{ color: "#D1D5DB" }} />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>
-                          {scan.product_name}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          {scan.brand && (
-                            <span className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{scan.brand}</span>
-                          )}
-                          <span className="text-[10px]" style={{ color: "#D1D5DB" }}>•</span>
-                          <span className="text-[10px] flex-shrink-0" style={{ color: "#9CA3AF" }}>{timeAgo}</span>
-                        </div>
-                      </div>
-                      {scan.score != null && (
-                        <div
-                          className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ background: scoreColor }}
-                        >
-                          <span className="font-bold text-[14px] text-white">{scan.score}</span>
-                        </div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </AnimatePresence>
-            )}
-          </div>
-        </div>
-
-        <div className="px-5 mt-8">
-          <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
-            Worst in {cityName} Right Now 🚨
+          <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
+            🚨 People are putting back
           </h2>
-          <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-            Products your neighbors are putting back
-          </p>
+          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The lowest-scoring stuff this week</p>
 
-          <div className="mt-4 space-y-2">
+          <div className="mt-3 space-y-2">
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex gap-3 p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                  <Skeleton className="w-[52px] h-[52px] rounded-xl" style={{ background: "#E5E7EB" }} />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
-                    <Skeleton className="h-3 w-1/2" style={{ background: "#E5E7EB" }} />
-                  </div>
-                </div>
+                <Skeleton key={i} className="h-16 rounded-2xl" style={{ background: "#F3F4F6" }} />
               ))
             ) : worstProducts.length === 0 ? (
-              <div className="text-center py-12 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                <Scan size={32} style={{ color: "#D1D5DB" }} className="mx-auto" />
-                <p className="text-[14px] font-semibold mt-3" style={{ color: "#1A1A1A" }}>No community data yet</p>
-                <p className="text-[12px] mt-1" style={{ color: "#9CA3AF" }}>Be the first to scan in {cityName}!</p>
-                <motion.button whileTap={{ scale: 0.97 }} onClick={() => onNavChange("scan")}
-                  className="mt-4 px-6 py-3 rounded-2xl font-bold text-sm text-white"
-                  style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-                  Start Scanning
-                </motion.button>
+              <div className="text-center py-6 rounded-2xl" style={{ background: "#F9FAFB" }}>
+                <p className="text-[13px]" style={{ color: "#9CA3AF" }}>Nothing yet. Be the first to scan!</p>
               </div>
             ) : (
-              worstProducts.map((p, i) => (
-                <motion.button
-                  key={p.barcode}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => onScanProduct(p.barcode)}
-                  className="w-full flex items-center gap-3 p-4 text-left rounded-2xl"
-                  style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}
-                >
-                  <div className="w-[52px] h-[52px] rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-1" loading="lazy" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Scan size={16} style={{ color: "#D1D5DB" }} />
-                      </div>
-                    )}
+              worstProducts.slice(0, isPlus ? 5 : 2).map(p => (
+                <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                  style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
+                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center"><Scan size={14} style={{ color: "#D1D5DB" }} /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                    {p.brand && <p className="text-[13px] truncate" style={{ color: "#6B7280" }}>{p.brand}</p>}
-                    <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Scanned {p.scan_count} times this week</p>
+                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                    {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
                   </div>
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: getScoreColor(p.avg_score) }}
-                  >
-                    <span className="font-bold text-[18px] text-white">{p.avg_score}</span>
-                  </div>
-                </motion.button>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
+                    style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
+                </button>
               ))
             )}
           </div>
-
-          {worstProducts.length > 0 && (
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handleShareWorst}
-              className="w-full mt-4 flex items-center justify-center gap-2 font-semibold text-[15px]"
-              style={{
-                height: 48, borderRadius: 14,
-                background: "#FFF1F2", border: "1px solid #FECDD3", color: "#C41E3A",
-              }}
-            >
-              <Share2 size={16} />
-              Share Worst in {cityName} 🚨
-            </motion.button>
-          )}
         </div>
 
-        {/* SECTION 3 — Most Scanned */}
-        <div className="px-5 mt-8">
-          <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
-            Most Scanned in {cityName} This Week
+        <div className="px-5 mt-6">
+          <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
+            💚 Try these instead
           </h2>
-          <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-            What your neighbors are checking
-          </p>
+          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The healthiest picks people are buying</p>
 
-          <div className="flex gap-3 mt-4 overflow-x-auto pb-2 -mx-5 px-5" style={{ scrollbarWidth: "none" }}>
+          <div className="mt-3 space-y-2">
             {loading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[150px] h-[110px] rounded-2xl" style={{ background: "#F3F4F6" }}>
-                  <Skeleton className="w-full h-full rounded-2xl" style={{ background: "#E5E7EB" }} />
-                </div>
-              ))
-            ) : mostScanned.length === 0 ? (
-              <p className="text-[13px]" style={{ color: "#9CA3AF" }}>No data yet — start scanning!</p>
-            ) : (
-              mostScanned.map(p => (
-                <motion.button
-                  key={p.barcode}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => onScanProduct(p.barcode)}
-                  className="flex-shrink-0 flex flex-col items-center p-3 rounded-2xl text-center"
-                  style={{ width: 150, height: 110, background: "#FFFFFF", border: "1px solid #F3F4F6" }}
-                >
-                  <div className="w-10 h-10 rounded-xl overflow-hidden" style={{ background: "#F3F4F6" }}>
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Scan size={12} style={{ color: "#D1D5DB" }} />
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-[12px] font-semibold mt-1.5 line-clamp-2 leading-tight" style={{ color: "#1A1A1A" }}>
-                    {p.product_name}
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-auto">
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-white"
-                      style={{ background: getScoreColor(p.avg_score) }}>
-                      {p.avg_score}
-                    </span>
-                    <span className="text-[10px]" style={{ color: "#9CA3AF" }}>{p.scan_count} scans</span>
-                  </div>
-                </motion.button>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* SECTION 3.5 — Healthiest Products */}
-        <div className="px-5 mt-8">
-          <div className="flex items-center gap-2 mb-1">
-            <Heart size={18} style={{ color: "#22C55E" }} />
-            <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
-              Healthiest in {cityName} 🌿
-            </h2>
-          </div>
-          <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-            Top-scored products people are actually buying
-          </p>
-
-          <div className="mt-4 space-y-2">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex gap-3 p-4 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                  <Skeleton className="w-[52px] h-[52px] rounded-xl" style={{ background: "#E5E7EB" }} />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-3 w-3/4" style={{ background: "#E5E7EB" }} />
-                    <Skeleton className="h-3 w-1/2" style={{ background: "#E5E7EB" }} />
-                  </div>
-                </div>
+              Array.from({ length: 2 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 rounded-2xl" style={{ background: "#F3F4F6" }} />
               ))
             ) : healthiestProducts.length === 0 ? (
-              <div className="text-center py-8 rounded-2xl" style={{ background: "#F0FDF4", border: "1px solid #DCFCE7" }}>
-                <Heart size={24} style={{ color: "#86EFAC" }} className="mx-auto" />
-                <p className="text-[13px] font-medium mt-2" style={{ color: "#6B7280" }}>
-                  Not enough data yet — keep scanning!
-                </p>
+              <div className="text-center py-6 rounded-2xl" style={{ background: "#F0FDF4" }}>
+                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon — keep scanning to fill this in!</p>
               </div>
             ) : (
-              healthiestProducts.map((p, i) => (
-                <motion.button
-                  key={p.barcode}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => onScanProduct(p.barcode)}
-                  className="w-full flex items-center gap-3 p-4 text-left rounded-2xl"
-                  style={{ background: i === 0 ? "#F0FDF4" : "#FFFFFF", border: `1px solid ${i === 0 ? "#DCFCE7" : "#F3F4F6"}` }}
-                >
-                  <div className="relative">
-                    {i === 0 && (
-                      <span className="absolute -top-1 -left-1 text-[12px] z-10">👑</span>
-                    )}
-                    <div className="w-[52px] h-[52px] rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
-                      {p.image_url ? (
-                        <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-1" loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Scan size={16} style={{ color: "#D1D5DB" }} />
-                        </div>
-                      )}
-                    </div>
+              healthiestProducts.slice(0, isPlus ? 5 : 2).map(p => (
+                <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
+                  className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                  style={{ background: "#F0FDF4", border: "1px solid #DCFCE7" }}>
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-white">
+                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center"><Heart size={14} style={{ color: "#86EFAC" }} /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                    {p.brand && <p className="text-[13px] truncate" style={{ color: "#6B7280" }}>{p.brand}</p>}
-                    <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Bought {p.scan_count} times this week</p>
+                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                    {p.brand && <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{p.brand}</p>}
                   </div>
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: getScoreColor(p.avg_score) }}
-                  >
-                    <span className="font-bold text-[18px] text-white">{p.avg_score}</span>
-                  </div>
-                </motion.button>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
+                    style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
+                </button>
               ))
             )}
           </div>
         </div>
 
-        {/* Subtle PWA Install Nudge */}
-        {!window.matchMedia("(display-mode: standalone)").matches && (
-          <div className="mx-5 mt-6">
-            <button
-              onClick={() => {
-                const banner = document.querySelector('[data-install-banner]') as HTMLElement;
-                if (banner) banner.click();
-                else window.open("https://useskaap.com/scan", "_self");
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left"
-              style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}
-            >
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#DBEAFE" }}>
-                <Download size={16} style={{ color: "#3B82F6" }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold" style={{ color: "#1E40AF" }}>Add SKAAP to Home Screen</p>
-                <p className="text-[11px]" style={{ color: "#60A5FA" }}>Instant access — no app store needed</p>
-              </div>
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: "#3B82F6", color: "#fff" }}>
-                Free
-              </span>
-            </button>
-          </div>
-        )}
-
-        {/* SECTION 4 — Top Additives */}
-        <div className="px-5 mt-8">
-          <h2 className="font-extrabold text-[20px]" style={{ color: "#1A1A1A" }}>
-            What {cityName} Is Saying No To
-          </h2>
-          <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-            Additives most frequently flagged in your area
-          </p>
-
-          <div className="mt-4 space-y-1.5">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-14 rounded-xl" style={{ background: "#F3F4F6" }} />
-              ))
-            ) : topAdditives.length === 0 ? (
-              <p className="text-[13px] py-4 text-center" style={{ color: "#9CA3AF" }}>
-                No additive data yet
-              </p>
-            ) : (
-              topAdditives.map(a => (
-                <div key={a.code}>
-                  <button
-                    onClick={() => handleAdditiveExpand(a)}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left"
-                    style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}
-                  >
-                    <span className="px-2 py-1 rounded-lg text-[12px] font-semibold flex-shrink-0"
-                      style={{ background: "#FFF1F2", border: "1px solid #FECDD3", color: "#C41E3A" }}>
-                      {a.code}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{a.name}</p>
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <span className="text-[12px]" style={{ color: "#9CA3AF" }}>{a.rejection_count} rejections</span>
-                      {a.trending_up && <TrendingUp size={12} style={{ color: "#C41E3A" }} />}
-                    </div>
-                  </button>
-                  {expandedAdditive === a.code && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-                      className="px-4 py-3 mx-2 rounded-b-xl text-[13px] leading-relaxed"
-                      style={{ background: "#FAFAFA", color: "#4B5563", borderTop: "1px solid #F3F4F6" }}
-                    >
-                      {additiveLoading ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
-                          <span style={{ color: "#9CA3AF" }}>Loading...</span>
-                        </div>
-                      ) : (
-                        <>
-                          <p>{additiveExplanation}</p>
-                          <p className="text-[10px] mt-2 flex items-center gap-1" style={{ color: "#9CA3AF" }}>
-                            ✦ AI · Why {cityName} is avoiding this
-                          </p>
-                        </>
-                      )}
-                    </motion.div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* SECTION 5 — Community Rank */}
-        {(userAvgScore !== null || cityAvgScore !== null) && (
-          <div className="mx-5 mt-8 p-5 rounded-[20px]"
-            style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
-            <h3 className="font-extrabold text-[18px]" style={{ color: "#1A1A1A" }}>How You Compare</h3>
-
-            {userAvgScore !== null && cityAvgScore !== null && (
-              <div className="mt-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px]" style={{ color: "#6B7280" }}>Your Kitchen Score</span>
-                  <span className="font-bold text-[16px]" style={{ color: getScoreColor(userAvgScore) }}>{userAvgScore}/100</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px]" style={{ color: "#6B7280" }}>{cityName} Average</span>
-                  <span className="font-bold text-[16px]" style={{ color: getScoreColor(cityAvgScore) }}>{cityAvgScore}/100</span>
-                </div>
-
-                {/* Progress bars */}
-                <div className="space-y-2 mt-2">
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: "#F3F4F6" }}>
-                    <div className="h-full rounded-full transition-all" style={{ width: `${userAvgScore}%`, background: getScoreColor(userAvgScore) }} />
-                  </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: "#F3F4F6" }}>
-                    <div className="h-full rounded-full transition-all" style={{ width: `${cityAvgScore}%`, background: "#D1D5DB" }} />
-                  </div>
-                </div>
-
-                {userAvgScore > cityAvgScore ? (
-                  <p className="text-[14px] font-medium mt-3" style={{ color: "#22C55E" }}>
-                    You eat better than {Math.round(((userAvgScore - cityAvgScore) / cityAvgScore) * 100 + 50)}% of {cityName} SKAAP users 🌿
-                  </p>
-                ) : (
-                  <p className="text-[14px] font-medium mt-3" style={{ color: "#F59E0B" }}>
-                    The {cityName} average is {cityAvgScore}/100 — you're close. Keep scanning.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Free preview footer */}
-        {!isPlus && hasFreeView && (
-          <div className="mx-5 mt-8 p-4 rounded-2xl text-center"
-            style={{ background: "#FFF1F2", border: "1px solid #FECDD3" }}>
-            <p className="text-[13px] font-semibold" style={{ color: "#C41E3A" }}>
-              This was your free preview of Community Intelligence
+        {/* Plus teaser for free users — single clear gate */}
+        {!isPlus && (
+          <div className="mx-5 mt-7 p-5 rounded-2xl text-center"
+            style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
+            <Lock size={18} style={{ color: "#C41E3A" }} className="mx-auto" />
+            <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
+              See the full picture
             </p>
-            <p className="text-[12px] mt-1" style={{ color: "#6B7280" }}>
-              Become a member to unlock ongoing access
+            <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
+              Live scan feed, additives your city avoids, your kitchen rank, and more — with SKAAP Plus.
             </p>
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={() => openUpgrade("Community Intelligence")}
-              className="mt-3 px-6 py-2.5 rounded-xl font-bold text-[14px] text-white"
-              style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
-            >
-              Become a Member
+            <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
+              className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
+              style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
+              Unlock for $1.99/mo
             </motion.button>
           </div>
+        )}
+
+        {/* Plus members get the deeper sections */}
+        {isPlus && (
+          <>
+            <div className="px-5 mt-7">
+              <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
+                🧪 Stuff your area is avoiding
+              </h2>
+              <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>
+                The ingredients people in {cityName} are saying no to
+              </p>
+              <div className="mt-3 space-y-1.5">
+                {topAdditives.length === 0 ? (
+                  <p className="text-[12px] py-3 text-center" style={{ color: "#9CA3AF" }}>Not enough data yet</p>
+                ) : (
+                  topAdditives.slice(0, 5).map(a => (
+                    <div key={a.code}>
+                      <button onClick={() => handleAdditiveExpand(a)}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left"
+                        style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+                        <span className="px-2 py-1 rounded-lg text-[11px] font-bold flex-shrink-0"
+                          style={{ background: "#FFF1F2", color: "#C41E3A" }}>{a.code}</span>
+                        <p className="text-[13px] font-semibold truncate flex-1" style={{ color: "#1A1A1A" }}>{a.name}</p>
+                        <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{a.rejection_count}×</span>
+                      </button>
+                      {expandedAdditive === a.code && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                          className="px-4 py-3 mx-2 rounded-b-xl text-[12px] leading-relaxed"
+                          style={{ background: "#FAFAFA", color: "#4B5563" }}>
+                          {additiveLoading ? "Loading…" : <p>{additiveExplanation}</p>}
+                        </motion.div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {userAvgScore !== null && cityAvgScore !== null && (
+              <div className="mx-5 mt-7 p-5 rounded-[20px]"
+                style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+                <h3 className="font-extrabold text-[16px]" style={{ color: "#0A1220" }}>How you compare</h3>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-[13px]" style={{ color: "#6B7280" }}>You</span>
+                  <span className="font-bold text-[15px]" style={{ color: getScoreColor(userAvgScore) }}>{userAvgScore}/100</span>
+                </div>
+                <div className="mt-1 flex items-center justify-between">
+                  <span className="text-[13px]" style={{ color: "#6B7280" }}>{cityName} avg</span>
+                  <span className="font-bold text-[15px]" style={{ color: getScoreColor(cityAvgScore) }}>{cityAvgScore}/100</span>
+                </div>
+                <p className="text-[12px] mt-3" style={{ color: userAvgScore > cityAvgScore ? "#16A34A" : "#F59E0B" }}>
+                  {userAvgScore > cityAvgScore
+                    ? `You eat better than the ${cityName} average. Keep it up. 🌿`
+                    : `You're close to the ${cityName} average. A few smart swaps and you'll pull ahead.`}
+                </p>
+              </div>
+            )}
+
+            {worstProducts.length > 0 && (
+              <div className="px-5 mt-5">
+                <button onClick={handleShareWorst}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-[13px]"
+                  style={{ background: "#FFF1F2", border: "1px solid #FECDD3", color: "#C41E3A" }}>
+                  <Share2 size={14} /> Share what {cityName} is avoiding
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

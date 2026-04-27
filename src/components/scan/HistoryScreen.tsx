@@ -5,6 +5,7 @@ import { getScoreColor } from "@/lib/skaapScore";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { HealthSnapshot } from "./HealthSnapshot";
+import { ShareRewardsCard } from "./ShareRewardsCard";
 import { getUserStats } from "@/lib/skaapUserStats";
 
 interface ScanHistoryItem {
@@ -139,6 +140,10 @@ export function HistoryScreen({
       {/* Health Snapshot */}
       <HealthSnapshot stats={getUserStats()} />
 
+      {/* Share Rewards (relocated from scan home for simplicity) */}
+      <div className="px-5 mt-3">
+        <ShareRewardsCard onShare={() => onNavChange("scan")} />
+      </div>
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
