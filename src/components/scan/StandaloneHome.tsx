@@ -324,17 +324,7 @@ export function StandaloneHome({
           </motion.div>
         )}
 
-        {/* Share Rewards */}
-        {stats.total_scans > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-4">
-            <ShareRewardsCard onShare={onScan} />
-          </motion.div>
-        )}
-
-        {/* Social Links */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4">
-          <SocialLinks variant="pill" />
-        </motion.div>
+        {/* Share rewards moved to History tab. Social follow removed for focus. */}
 
         {/* Empty state for brand new users */}
         {stats.total_scans === 0 && (
