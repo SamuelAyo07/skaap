@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ScanLine, Search, Flame, TrendingUp,
+  ScanLine, TrendingUp,
   ChevronRight, Barcode, Heart, Sparkles, Lightbulb,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
-import { getUserStats, refreshStreak, type UserStats } from "@/lib/skaapUserStats";
+import { refreshStreak, type UserStats } from "@/lib/skaapUserStats";
 import { getScoreColor } from "@/lib/skaapScore";
-import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
-import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName } from "@/components/scan/FirstScanSignupModal";
 
 const HISTORY_KEY = "skaap_scan_history";
