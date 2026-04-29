@@ -439,6 +439,39 @@ export type Database = {
       }
     }
     Views: {
+      my_subscription: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          id: string | null
+          plan: string | null
+          status: string | null
+          trial_ends_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string | null
+          plan?: string | null
+          status?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string | null
+          plan?: string | null
+          status?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       public_stores: {
         Row: {
           address: string | null
