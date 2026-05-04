@@ -146,7 +146,21 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         </motion.div>
 
         {/* Subscription status */}
-        {!isPlus && (
+        {isPlus ? (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            className="w-full rounded-2xl p-4 flex items-center gap-3"
+            style={{ background: "linear-gradient(135deg, #0A1220, #1A2540)" }}
+          >
+            <Crown size={20} color="#FFD700" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-bold text-white truncate">
+                Welcome back, {user?.user_metadata?.full_name?.split(" ")[0] || "friend"} ✦
+              </p>
+              <p className="text-[11px] text-white/70">Thanks for supporting SKAAP. All features unlocked.</p>
+            </div>
+          </motion.div>
+        ) : (
           <motion.button
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
             onClick={() => openUpgrade()}

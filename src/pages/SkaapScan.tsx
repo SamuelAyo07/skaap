@@ -48,6 +48,7 @@ import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
 import { StandaloneHome } from "@/components/scan/StandaloneHome";
 import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
+import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -646,7 +647,8 @@ const SkaapScan = () => {
         ZXing.BarcodeFormat.QR_CODE,
       ]);
 
-      const reader = new ZXing.BrowserMultiFormatReader(hints, 80);
+      // 30ms decode interval = ~33 attempts/sec for Snapchat-fast lock-on
+      const reader = new ZXing.BrowserMultiFormatReader(hints, 30);
       readerRef.current = reader;
 
       setTimeout(() => setBottomHintVisible(false), 3000);
@@ -1041,14 +1043,19 @@ const SkaapScan = () => {
     setTimeout(() => setChallengeCopied(false), 2000);
   }, [userStats.kitchen_score]);
 
-  const toggleTorch = async () => {
+  const toggleTorch = useCallback(async () => {
     const track = streamRef.current?.getVideoTracks()[0];
     if (!track) return;
     try {
       await track.applyConstraints({ advanced: [{ torch: !torchOn } as any] });
       setTorchOn(!torchOn);
     } catch {}
-  };
+  }, [torchOn]);
+
+  const handleScannerClose = useCallback(() => {
+    stopCamera();
+    setScreen("home");
+  }, [stopCamera]);
 
   // ─── Shared nav handler for bottom nav ───
   const handleNavChange = useCallback((nav: string) => {
@@ -1285,74 +1292,15 @@ const SkaapScan = () => {
   // ─── SCREEN: SCANNING ───
   if (screen === "scanning") {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 40 }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="fixed inset-0 bg-black z-50"
-      >
-        <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 12px) + 12px)" }}>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
-            className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Back">
-            <ArrowLeft size={18} color="#fff" />
-          </motion.button>
-          <AnimatePresence>
-            {hintVisible && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="px-4 py-2 rounded-full glass-pill">
-                <motion.p animate={{ opacity: [1, 0.6, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-white text-[13px] font-semibold">
-                  Point at any barcode
-                </motion.p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {torchSupported ? (
-            <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
-              className="w-9 h-9 rounded-full flex items-center justify-center glass-pill" aria-label="Toggle flashlight">
-              {torchOn ? <ZapOff size={18} color="#fff" /> : <Zap size={18} color="#fff" />}
-            </motion.button>
-          ) : <div className="w-9" />}
-        </div>
-
-        {/* Scan reticle — red corner brackets */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" style={{ paddingBottom: "10%" }}>
-          <div className="relative animate-bracket-pulse" style={{ width: 260, height: 160 }}>
-            {[
-              { top: 0, left: 0, borderTop: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
-              { top: 0, right: 0, borderTop: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
-              { bottom: 0, left: 0, borderBottom: "3px solid #C41E3A", borderLeft: "3px solid #C41E3A" },
-              { bottom: 0, right: 0, borderBottom: "3px solid #C41E3A", borderRight: "3px solid #C41E3A" },
-            ].map((style, i) => (
-              <div key={i} className="absolute" style={{ ...style, width: 24, height: 24, borderRadius: 4 } as any} />
-            ))}
-            <motion.div animate={{ y: [0, 136, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-3 right-3" style={{ height: 1, background: "linear-gradient(90deg, transparent, #C41E3A, transparent)", top: 12 }} />
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {bottomHintVisible && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full glass-pill">
-              <p className="text-white text-xs font-normal text-center">Works on all barcodes</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 glass-nav flex items-center justify-between px-6" style={{ height: 80, paddingBottom: 20 }}>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={toggleTorch}
-            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Flashlight">
-            {torchOn ? <ZapOff size={20} color="#fff" /> : <Zap size={20} color="#fff" />}
-          </motion.button>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => { stopCamera(); setScreen("home"); }}
-            className="w-11 h-11 rounded-full flex items-center justify-center glass-pill" aria-label="Close">
-            <X size={20} color="#fff" />
-          </motion.button>
-        </div>
-      </motion.div>
+      <ScannerOverlay
+        ref={videoRef}
+        torchOn={torchOn}
+        torchSupported={torchSupported}
+        hintVisible={hintVisible}
+        bottomHintVisible={bottomHintVisible}
+        onClose={handleScannerClose}
+        onToggleTorch={toggleTorch}
+      />
     );
   }
 

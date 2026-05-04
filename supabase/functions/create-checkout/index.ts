@@ -77,6 +77,30 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     const customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
 
+    // Enforce one active subscription per email/account.
+    // If this customer already has an active or trialing subscription, send them
+    // to the billing portal instead of letting them stack a second subscription.
+    if (customerId) {
+      const existingSubs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 10,
+      });
+      const hasActive = existingSubs.data.some(
+        (s) => s.status === "active" || s.status === "trialing" || s.status === "past_due",
+      );
+      if (hasActive) {
+        return new Response(
+          JSON.stringify({
+            error: "already_subscribed",
+            message:
+              "This email already has an active SKAAP subscription. Manage it from your account instead of creating a new one.",
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 },
+        );
+      }
+    }
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
