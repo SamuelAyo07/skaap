@@ -28,8 +28,6 @@ export const ScannerOverlay = memo(
           autoPlay
           playsInline
           muted
-          // @ts-expect-error - non-standard but supported on Safari/Chrome
-          disablePictureInPicture
           className="absolute inset-0 w-full h-full object-cover"
         />
 
