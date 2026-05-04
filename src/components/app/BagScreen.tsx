@@ -3,6 +3,7 @@ import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "@/data/products";
+import { ProductImage } from "@/components/app/ProductImage";
 import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
 interface BagScreenProps {
   onPayNow: () => void;
@@ -53,9 +54,12 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
                   className="bg-card rounded-2xl p-4 border border-border/40 flex items-center gap-4"
                 >
                   <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-muted/20 flex-shrink-0">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
+                    <ProductImage
+                      barcode={item.product.barcode}
+                      name={item.product.name}
+                      brand={item.product.brand}
+                      fallbackImage={item.product.image}
+                      category={item.product.category}
                       className="w-full h-full object-contain p-2"
                     />
                   </div>
