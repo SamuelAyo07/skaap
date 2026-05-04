@@ -41,6 +41,12 @@ export function UpgradeSheet() {
         body: { tier: selected },
       });
       if (error) throw error;
+      if (data?.error === "already_subscribed") {
+        toast.info(data.message || "You're already a SKAAP supporter — thank you!");
+        closeUpgrade();
+        setLoading(false);
+        return;
+      }
       if (data?.url) {
         // Open Stripe checkout in a new tab
         window.open(data.url, "_blank", "noopener,noreferrer");
