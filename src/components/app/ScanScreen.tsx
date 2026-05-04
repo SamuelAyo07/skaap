@@ -550,7 +550,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   className="flex items-center gap-3 bg-card rounded-2xl p-3 border-2 border-scanner-accent/20"
                 >
                   <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
-                    <img src={lastScanned.image} alt={lastScanned.name} className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+                    <ProductImage
+                      barcode={lastScanned.barcode}
+                      name={lastScanned.name}
+                      brand={lastScanned.brand}
+                      fallbackImage={lastScanned.image}
+                      category={lastScanned.category}
+                      className="w-full h-full object-contain p-1.5"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{lastScanned.name}</h4>
@@ -577,7 +584,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/50"
                 >
                   <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted/30 flex-shrink-0">
-                    <img src={item.product.image} alt={item.product.name} className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+                    <ProductImage
+                      barcode={item.product.barcode}
+                      name={item.product.name}
+                      brand={item.product.brand}
+                      fallbackImage={item.product.image}
+                      category={item.product.category}
+                      className="w-full h-full object-contain p-1.5"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-bold text-foreground leading-snug line-clamp-2">{item.product.name}</h4>
