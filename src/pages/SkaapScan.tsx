@@ -48,6 +48,7 @@ import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
 import { StandaloneHome } from "@/components/scan/StandaloneHome";
 import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
+import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -646,7 +647,8 @@ const SkaapScan = () => {
         ZXing.BarcodeFormat.QR_CODE,
       ]);
 
-      const reader = new ZXing.BrowserMultiFormatReader(hints, 80);
+      // 30ms decode interval = ~33 attempts/sec for Snapchat-fast lock-on
+      const reader = new ZXing.BrowserMultiFormatReader(hints, 30);
       readerRef.current = reader;
 
       setTimeout(() => setBottomHintVisible(false), 3000);
