@@ -14,6 +14,7 @@ import {
   Minus,
 } from "lucide-react";
 import { Product } from "@/data/products";
+import { ProductImage } from "@/components/app/ProductImage";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { lookupBarcode } from "@/lib/openfoodfacts";
