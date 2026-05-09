@@ -37,11 +37,17 @@ interface AlertItem {
 
 export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const { user, signOut } = useAuth();
-  const { isPlus, openUpgrade } = useSubscription();
+  const { isPlus, openUpgrade, trialActive, trialDaysRemaining } = useSubscription();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [loadingAlerts, setLoadingAlerts] = useState(true);
   const [customAlert, setCustomAlert] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
+
+  const stats = useMemo(() => getUserStats(), [user?.id]);
+  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "friend";
+  const memberSince = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    : null;
 
   // Load alerts
   useEffect(() => {
