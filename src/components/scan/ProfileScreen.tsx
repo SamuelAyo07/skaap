@@ -235,12 +235,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
             style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}
           >
-          <motion.button
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            onClick={() => openUpgrade()}
-            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
-            style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}
-          >
+
             <Crown size={20} color="#fff" />
             <div className="flex-1">
               <p className="text-[13px] font-bold text-white">Upgrade to SKAAP Plus</p>
