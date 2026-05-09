@@ -61,7 +61,6 @@ export type Database = {
           score: number | null
           state: string | null
           store_id: string | null
-          zip_code: string | null
         }
         Insert: {
           additives_flagged?: Json | null
@@ -76,7 +75,6 @@ export type Database = {
           score?: number | null
           state?: string | null
           store_id?: string | null
-          zip_code?: string | null
         }
         Update: {
           additives_flagged?: Json | null
@@ -91,7 +89,6 @@ export type Database = {
           score?: number | null
           state?: string | null
           store_id?: string | null
-          zip_code?: string | null
         }
         Relationships: [
           {
