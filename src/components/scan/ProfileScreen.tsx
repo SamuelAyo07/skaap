@@ -154,20 +154,87 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
         {/* Subscription status */}
         {isPlus ? (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            className="w-full rounded-2xl p-4 flex items-center gap-3"
-            style={{ background: "linear-gradient(135deg, #0A1220, #1A2540)" }}
-          >
-            <Crown size={20} color="#FFD700" />
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-bold text-white truncate">
-                Welcome back, {user?.user_metadata?.full_name?.split(" ")[0] || "friend"} ✦
-              </p>
-              <p className="text-[11px] text-white/70">Thanks for supporting SKAAP. All features unlocked.</p>
-            </div>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+              className="w-full rounded-2xl p-4 flex items-center gap-3"
+              style={{ background: "linear-gradient(135deg, #0A1220, #1A2540)" }}
+            >
+              <Crown size={20} color="#FFD700" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-white truncate">
+                  Welcome back, {firstName} ✦
+                </p>
+                <p className="text-[11px] text-white/70">
+                  {trialActive
+                    ? `Trial: ${trialDaysRemaining} day${trialDaysRemaining === 1 ? "" : "s"} left — all features unlocked.`
+                    : "Thanks for supporting SKAAP. All features unlocked."}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Plus personalized hero panel */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }}
+              className="rounded-2xl p-4"
+              style={{ background: "#fff", border: "1px solid #E5E7EB" }}
+            >
+              <div className="flex items-center gap-1.5 mb-3">
+                <Sparkles size={14} style={{ color: "#B0202F" }} />
+                <h3 className="font-bold text-[13px]" style={{ color: "#0A1220" }}>
+                  Your SKAAP, {firstName}
+                </h3>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="rounded-xl p-2.5" style={{ background: "#F9FAFB" }}>
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <TrendingUp size={11} style={{ color: "#10B981" }} />
+                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Kitchen</span>
+                  </div>
+                  <p className="text-[18px] font-extrabold" style={{ color: "#0A1220" }}>
+                    {stats.kitchen_score || "–"}
+                  </p>
+                </div>
+                <div className="rounded-xl p-2.5" style={{ background: "#F9FAFB" }}>
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <Heart size={11} style={{ color: "#B0202F" }} />
+                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Scans</span>
+                  </div>
+                  <p className="text-[18px] font-extrabold" style={{ color: "#0A1220" }}>
+                    {stats.total_scans}
+                  </p>
+                </div>
+                <div className="rounded-xl p-2.5" style={{ background: "#F9FAFB" }}>
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <Flame size={11} style={{ color: "#F59E0B" }} />
+                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Streak</span>
+                  </div>
+                  <p className="text-[18px] font-extrabold" style={{ color: "#0A1220" }}>
+                    {stats.current_streak}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: "1px solid #F3F4F6" }}>
+                <span className="text-[11px]" style={{ color: "#6B7280" }}>
+                  {alerts.length > 0
+                    ? `${alerts.length} active alert${alerts.length === 1 ? "" : "s"}`
+                    : "No alerts set"}
+                </span>
+                {memberSince && (
+                  <span className="text-[11px] font-semibold" style={{ color: "#9CA3AF" }}>
+                    Member since {memberSince}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+          </>
         ) : (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            onClick={() => openUpgrade()}
+            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
+            style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}
+          >
           <motion.button
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
             onClick={() => openUpgrade()}
