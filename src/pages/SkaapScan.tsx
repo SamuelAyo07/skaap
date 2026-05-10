@@ -465,6 +465,10 @@ const SkaapScan = () => {
   const [hintVisible, setHintVisible] = useState(true);
   const [bottomHintVisible, setBottomHintVisible] = useState(true);
   const [scanDetected, setScanDetected] = useState(false);
+  const [noDetection, setNoDetection] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const noDetectionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const detectorRafRef = useRef<number | null>(null);
 
   // Result
   const [loading, setLoading] = useState(false);
