@@ -465,6 +465,10 @@ const SkaapScan = () => {
   const [hintVisible, setHintVisible] = useState(true);
   const [bottomHintVisible, setBottomHintVisible] = useState(true);
   const [scanDetected, setScanDetected] = useState(false);
+  const [noDetection, setNoDetection] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const noDetectionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const detectorRafRef = useRef<number | null>(null);
 
   // Result
   const [loading, setLoading] = useState(false);
@@ -612,6 +616,8 @@ const SkaapScan = () => {
 
   // ─── Camera ───
   const stopCamera = useCallback(() => {
+    if (noDetectionTimerRef.current) { clearTimeout(noDetectionTimerRef.current); noDetectionTimerRef.current = null; }
+    if (detectorRafRef.current) { cancelAnimationFrame(detectorRafRef.current); detectorRafRef.current = null; }
     try { readerRef.current?.reset?.(); } catch {}
     readerRef.current = null;
     streamRef.current?.getTracks().forEach(t => t.stop());
@@ -620,52 +626,181 @@ const SkaapScan = () => {
     setTorchOn(false); setTorchSupported(false);
   }, []);
 
-  const startCamera = useCallback(async () => {
+  // Pick the best back-facing camera (prefer wide/main lens, not ultrawide/telephoto)
+  const pickBackCameraId = useCallback(async (): Promise<string | undefined> => {
     try {
-      const ZXing = await loadZXing();
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cams = devices.filter(d => d.kind === "videoinput");
+      if (cams.length === 0) return undefined;
+      const back = cams.filter(d => /back|rear|environment/i.test(d.label) && !/front/i.test(d.label));
+      const pool = back.length ? back : cams;
+      // Prefer the plain "back camera" without ultra/tele qualifiers
+      const main = pool.find(d => !/ultra|tele|wide ?angle|0\.5|2x|3x|zoom/i.test(d.label));
+      return (main || pool[pool.length - 1]).deviceId || undefined;
+    } catch { return undefined; }
+  }, []);
+
+  // Apply continuous autofocus / exposure / white-balance for sharper, faster reads
+  const applyOptimalConstraints = useCallback(async (track: MediaStreamTrack) => {
+    try {
+      const caps: any = track.getCapabilities?.() || {};
+      const advanced: any[] = [];
+      if (Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) advanced.push({ focusMode: "continuous" });
+      if (Array.isArray(caps.exposureMode) && caps.exposureMode.includes("continuous")) advanced.push({ exposureMode: "continuous" });
+      if (Array.isArray(caps.whiteBalanceMode) && caps.whiteBalanceMode.includes("continuous")) advanced.push({ whiteBalanceMode: "continuous" });
+      if (caps.zoom && typeof caps.zoom.min === "number") advanced.push({ zoom: caps.zoom.min });
+      if (advanced.length) await track.applyConstraints({ advanced });
+    } catch {}
+  }, []);
+
+  const handleTapFocus = useCallback(async (xPct: number, yPct: number) => {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track) return;
+    try {
+      const caps: any = track.getCapabilities?.() || {};
+      const advanced: any[] = [];
+      if (Array.isArray(caps.focusMode) && caps.focusMode.includes("single-shot")) {
+        advanced.push({ focusMode: "single-shot" });
+      } else if (Array.isArray(caps.focusMode) && caps.focusMode.includes("manual")) {
+        advanced.push({ focusMode: "manual" });
+      }
+      if (caps.pointsOfInterest) advanced.push({ pointsOfInterest: [{ x: xPct, y: yPct }] });
+      if (advanced.length) {
+        await track.applyConstraints({ advanced });
+        // Re-enable continuous after a moment
+        setTimeout(() => { void applyOptimalConstraints(track); }, 1500);
+      }
+      hapticLight();
+    } catch {}
+  }, [applyOptimalConstraints]);
+
+  const handleManualEntry = useCallback(() => {
+    const value = window.prompt("Enter the barcode number (8–14 digits):");
+    if (!value) return;
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.length < 8 || cleaned.length > 14) {
+      toast.error("Barcode should be 8–14 digits");
+      return;
+    }
+    stopCamera();
+    handleBarcodeDetected(cleaned);
+  }, [stopCamera]);
+
+  const startCamera = useCallback(async () => {
+    setScanError(null);
+    setNoDetection(false);
+    try {
+      const deviceId = await pickBackCameraId();
+      const baseVideo: MediaTrackConstraints = {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        frameRate: { ideal: 30 },
+      };
       let stream: MediaStream;
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: deviceId
+            ? { ...baseVideo, deviceId: { exact: deviceId } }
+            : { ...baseVideo, facingMode: { exact: "environment" } },
+          audio: false,
+        });
       } catch {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { ...baseVideo, facingMode: { ideal: "environment" } }, audio: false,
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        }
       }
 
-      if (!videoRef.current) return;
+      if (!videoRef.current) { stream.getTracks().forEach(t => t.stop()); return; }
       streamRef.current = stream;
       videoRef.current.srcObject = stream;
+      videoRef.current.setAttribute("playsinline", "true");
       await videoRef.current.play();
 
       const track = stream.getVideoTracks()[0];
       const caps = track?.getCapabilities?.() as any;
       setTorchSupported(!!caps?.torch);
-
-      const hints = new Map();
-      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
-        ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8,
-        ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E,
-        ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
-        ZXing.BarcodeFormat.QR_CODE,
-      ]);
-
-      // 30ms decode interval = ~33 attempts/sec for Snapchat-fast lock-on
-      const reader = new ZXing.BrowserMultiFormatReader(hints, 30);
-      readerRef.current = reader;
+      void applyOptimalConstraints(track);
 
       setTimeout(() => setBottomHintVisible(false), 3000);
 
-      const onDecode = (result: any) => {
-        if (!result) return;
-        const text = typeof result.getText === "function" ? result.getText() : result.text;
+      // Reset no-detection timer (10s)
+      if (noDetectionTimerRef.current) clearTimeout(noDetectionTimerRef.current);
+      noDetectionTimerRef.current = setTimeout(() => setNoDetection(true), 10000);
+
+      let detected = false;
+      const onHit = (text: string) => {
+        if (detected) return;
+        detected = true;
         if (text) handleBarcodeDetected(text.trim());
       };
 
-      if (typeof reader.decodeFromStream === "function") {
-        reader.decodeFromStream(stream, videoRef.current, onDecode);
-      } else {
-        reader.decodeFromVideoDevice(undefined, videoRef.current, onDecode);
+      // ─── Try native BarcodeDetector (fastest, lowest CPU) ───
+      const NativeDetector: any = (window as any).BarcodeDetector;
+      let usingNative = false;
+      if (NativeDetector) {
+        try {
+          const supported = await NativeDetector.getSupportedFormats?.();
+          const formats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"]
+            .filter(f => !supported || supported.includes(f));
+          const detector = new NativeDetector({ formats });
+          usingNative = true;
+          const tick = async () => {
+            if (detected || !videoRef.current || !streamRef.current) return;
+            try {
+              const codes = await detector.detect(videoRef.current);
+              if (codes && codes.length && codes[0].rawValue) {
+                onHit(codes[0].rawValue);
+                return;
+              }
+            } catch {}
+            detectorRafRef.current = requestAnimationFrame(() => { void tick(); });
+          };
+          void tick();
+        } catch { usingNative = false; }
       }
-    } catch {}
-  }, []);
+
+      // ─── ZXing fallback (or in parallel for redundancy) ───
+      if (!usingNative) {
+        const ZXing = await loadZXing();
+        const hints = new Map();
+        hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+          ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8,
+          ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E,
+          ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
+          ZXing.BarcodeFormat.QR_CODE,
+        ]);
+        hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+        const reader = new ZXing.BrowserMultiFormatReader(hints, 80);
+        readerRef.current = reader;
+        const onDecode = (result: any) => {
+          if (!result) return;
+          const text = typeof result.getText === "function" ? result.getText() : result.text;
+          onHit(text);
+        };
+        if (typeof reader.decodeFromStream === "function") {
+          reader.decodeFromStream(stream, videoRef.current, onDecode);
+        } else {
+          reader.decodeFromVideoDevice(undefined, videoRef.current, onDecode);
+        }
+      }
+    } catch (err: any) {
+      const msg = String(err?.message || err?.name || "").toLowerCase();
+      if (msg.includes("notallowed") || msg.includes("permission") || msg.includes("denied")) {
+        setScanError("Allow camera access in your browser settings, then try again.");
+      } else if (msg.includes("notfound") || msg.includes("devicesnotfound")) {
+        setScanError("No camera detected on this device. You can type the barcode instead.");
+      } else if (msg.includes("notreadable") || msg.includes("inuse")) {
+        setScanError("Your camera is in use by another app. Close it and try again.");
+      } else {
+        setScanError("We couldn't start the camera. Try again or type the barcode.");
+      }
+    }
+  }, [applyOptimalConstraints, pickBackCameraId]);
+
 
   const handleBarcodeDetected = useCallback(async (barcode: string) => {
     setScanDetected(true);
@@ -1298,8 +1433,13 @@ const SkaapScan = () => {
         torchSupported={torchSupported}
         hintVisible={hintVisible}
         bottomHintVisible={bottomHintVisible}
+        noDetection={noDetection}
+        errorMessage={scanError}
         onClose={handleScannerClose}
         onToggleTorch={toggleTorch}
+        onTapFocus={handleTapFocus}
+        onManualEntry={handleManualEntry}
+        onRetry={() => { stopCamera(); setNoDetection(false); setScanError(null); setTimeout(() => startCamera(), 100); }}
       />
     );
   }
