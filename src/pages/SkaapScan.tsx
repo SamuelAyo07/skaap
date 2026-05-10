@@ -1433,8 +1433,13 @@ const SkaapScan = () => {
         torchSupported={torchSupported}
         hintVisible={hintVisible}
         bottomHintVisible={bottomHintVisible}
+        noDetection={noDetection}
+        errorMessage={scanError}
         onClose={handleScannerClose}
         onToggleTorch={toggleTorch}
+        onTapFocus={handleTapFocus}
+        onManualEntry={handleManualEntry}
+        onRetry={() => { stopCamera(); setNoDetection(false); setScanError(null); setTimeout(() => startCamera(), 100); }}
       />
     );
   }
