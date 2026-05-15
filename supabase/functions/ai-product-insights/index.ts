@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,13 +7,74 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Per-IP rate limit (per cold start) — defends AI credits
+const ipHits = new Map<string, { count: number; reset: number }>();
+function checkRate(ip: string, limit = 20, windowMs = 60_000): boolean {
+  const now = Date.now();
+  const e = ipHits.get(ip);
+  if (!e || now > e.reset) { ipHits.set(ip, { count: 1, reset: now + windowMs }); return true; }
+  if (e.count >= limit) return false;
+  e.count++;
+  return true;
+}
+
+const AUTH_REQUIRED_TYPES = new Set(["product_image", "image_recognition", "personalized-recs"]);
+const PLUS_REQUIRED_TYPES = new Set(["personalized-recs"]);
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (!checkRate(ip)) {
+    return new Response(JSON.stringify({ error: "Rate limited" }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const { type, ...params } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+
+    // Auth + subscription gating for expensive types
+    if (AUTH_REQUIRED_TYPES.has(type)) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+      );
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
+      const userId = claims?.claims?.sub;
+      if (authErr || !userId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (PLUS_REQUIRED_TYPES.has(type)) {
+        const service = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+          { auth: { persistSession: false } },
+        );
+        const { data: sub } = await service
+          .from("user_subscriptions")
+          .select("plan,status,current_period_end")
+          .eq("user_id", userId)
+          .maybeSingle();
+        const isPlus = sub && sub.plan === "plus" && (sub.status === "active" || sub.status === "trialing");
+        if (!isPlus) {
+          return new Response(JSON.stringify({ error: "SKAAP Plus required" }), {
+            status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+    }
 
     let systemPrompt = "";
     let userPrompt = "";

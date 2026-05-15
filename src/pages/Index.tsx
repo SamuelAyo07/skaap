@@ -214,8 +214,6 @@ const Index = () => {
         type: contact.type,
       });
       if (error) throw error;
-      // Fire-and-forget notify edge fn
-      supabase.functions.invoke("contact-notify", { body: contact }).catch(() => {});
       trackEvent("cta_clicked", { cta: "contact_submitted", type: contact.type });
       toast.success("Thanks! We'll be in touch soon.");
       setContact({ name: "", email: "", message: "", type: contact.type });
