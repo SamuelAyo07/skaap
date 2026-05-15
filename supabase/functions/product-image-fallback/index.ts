@@ -78,6 +78,13 @@ async function generateAIImage(name: string, brand?: string): Promise<string | n
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (!checkRate(ip)) {
+    return new Response(JSON.stringify({ error: "Rate limited" }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const { barcode, name, brand, category } = await req.json();
 
@@ -88,7 +95,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 1) OFF
+    // 1) OFF (free, no auth needed)
     if (typeof barcode === "string" && /^[0-9]{6,14}$/.test(barcode)) {
       const isBeauty = category === "beauty" || category === "cosmetics";
       const hosts = isBeauty
@@ -109,7 +116,25 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 2) AI fallback
+    // 2) AI fallback — REQUIRES authenticated user (costs AI credits)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "no_image_available" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
+    if (authErr || !claims?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "no_image_available" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const ai = await generateAIImage(name, typeof brand === "string" ? brand : undefined);
     if (ai) {
       return new Response(JSON.stringify({ imageUrl: ai, source: "ai" }), {
