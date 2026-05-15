@@ -4,11 +4,23 @@
 // Returns: { imageUrl: string, source: 'off' | 'obf' | 'ai' }
 // Caches AI generations in-memory per cold start; client also caches in localStorage.
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const ipHits = new Map<string, { count: number; reset: number }>();
+function checkRate(ip: string, limit = 30, windowMs = 60_000): boolean {
+  const now = Date.now();
+  const e = ipHits.get(ip);
+  if (!e || now > e.reset) { ipHits.set(ip, { count: 1, reset: now + windowMs }); return true; }
+  if (e.count >= limit) return false;
+  e.count++;
+  return true;
+}
 
 const aiCache = new Map<string, string>();
 
