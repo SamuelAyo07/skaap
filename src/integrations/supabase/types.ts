@@ -501,7 +501,7 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      is_plus_user: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
