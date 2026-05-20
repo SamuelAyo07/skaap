@@ -82,8 +82,17 @@ serve(async (req) => {
     switch (type) {
       case "summary": {
         const { productName, brandName, nutriScore, novaGroup, additiveCount, worstRisk, isOrganic, nutrientLevels } = params;
-        systemPrompt = "You are a food nutrition expert writing for everyday shoppers. Return ONLY 2 short sentences. No preamble. No formatting.";
-        userPrompt = `Write exactly 2 short sentences, maximum 20 words each, about this food product. Be factual and helpful. Never use the words dangerous, toxic, avoid, or bad. Use simple language a 12-year-old understands. Product: ${productName} by ${brandName}. Nutri-Score: ${nutriScore || "unknown"}. NOVA Group: ${novaGroup || "unknown"}. Number of additives: ${additiveCount}. Worst additive risk: ${worstRisk}. Is organic: ${isOrganic}. High nutrient concerns: ${nutrientLevels}. First sentence: what this product is nutritionally. Second sentence: the most important thing the shopper should know.`;
+        systemPrompt = "You are SKAAP — a calm, curious food guide. Your job is NOT to tell people what's good or bad. Your job is to help them SEE what's actually in their food, so they can eat with more intention. Write like a knowledgeable friend, not a label. Use plain English a 12-year-old understands. Never use the words dangerous, toxic, avoid, bad, harmful, or unhealthy. Never moralize. Return ONLY 3 short sentences separated by a single space. No bullets, no headings, no preamble.";
+        userPrompt = `Write exactly 3 short sentences (max 22 words each) about this product. 
+
+Sentence 1 — What it actually is: describe the product in real terms (e.g. "This is mostly sugar, palm oil, and cocoa, with hazelnuts making up about 13%."). Make the ingredients visible.
+Sentence 2 — Where it sits: give one concrete frame of reference (e.g. "Two tablespoons give you nearly a day's worth of added sugar," or "Each serving has about the same fat as a small handful of almonds, but very different sources."). Use everyday comparisons, never percentages alone.
+Sentence 3 — The intentional take: one thing worth knowing so the person can decide with their eyes open. Not advice. Just awareness. (e.g. "It's a treat designed to taste like a meal — knowing that changes how often you reach for it.")
+
+Product: ${productName} by ${brandName}
+Nutri-Score: ${nutriScore || "unknown"} · NOVA: ${novaGroup || "unknown"} · Additives: ${additiveCount} · Worst risk flag: ${worstRisk} · Organic: ${isOrganic} · High in: ${nutrientLevels}
+
+Tone: warm, factual, never preachy. Show, don't judge.`;
         break;
       }
       case "additive": {
