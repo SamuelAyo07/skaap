@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, X, Barcode, Clock, Lock, Heart } from "lucide-react";
+import { Search, X, Barcode, Clock, Lock, Heart, Sparkles } from "lucide-react";
 import { getScoreColor } from "@/lib/skaapScore";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
