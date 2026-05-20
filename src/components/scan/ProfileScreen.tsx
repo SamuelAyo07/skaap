@@ -127,7 +127,18 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         <button onClick={onBack} className="flex items-center">
           <ArrowLeft size={20} style={{ color: "#0A1220" }} />
         </button>
-        <h1 className="font-extrabold text-[20px] tracking-tight" style={{ color: "#0A1220" }}>Profile</h1>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-extrabold text-[20px] tracking-tight leading-tight truncate" style={{ color: "#0A1220" }}>
+            {user ? `Hi, ${firstName} 👋` : "Profile"}
+          </h1>
+          {user && (
+            <p className="text-[11px] font-medium truncate" style={{ color: "#9CA3AF" }}>
+              {stats.total_scans > 0
+                ? `${stats.total_scans} scan${stats.total_scans === 1 ? "" : "s"} · eating with more intention`
+                : "Welcome to SKAAP"}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="px-5 pt-4 pb-28 space-y-4">
