@@ -16,13 +16,12 @@ const FEATURES = [
   { icon: Bell, title: "Custom alerts", desc: "Gluten, palm oil & more" },
 ];
 
-type TierKey = "supporter" | "member" | "champion" | "builder";
+type TierKey = "supporter" | "member" | "champion";
 
 const TIERS: { key: TierKey; price: string; label: string; sub: string; recurring: boolean }[] = [
   { key: "supporter", price: "$2.99", label: "Supporter", sub: "/month", recurring: true },
   { key: "member",    price: "$10",   label: "Member",    sub: "/year",  recurring: false },
   { key: "champion",  price: "$20",   label: "Champion",  sub: "/year",  recurring: false },
-  { key: "builder",   price: "$49",   label: "Builder",   sub: "/year",  recurring: false },
 ];
 
 export function UpgradeSheet() {
