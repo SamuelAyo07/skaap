@@ -3,7 +3,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 
-const AI_SUMMARY_PREFIX = "ai_summary_";
+const AI_SUMMARY_PREFIX = "ai_summary_v2_";
 const AI_DIETARY_PREFIX = "ai_dietary_";
 const AI_ADDITIVE_PREFIX = "ai_additive_";
 const AI_RECS_PREFIX = "ai_recs_";
