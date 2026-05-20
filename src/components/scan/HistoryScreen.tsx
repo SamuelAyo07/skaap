@@ -171,9 +171,9 @@ export function HistoryScreen({
                 >
                   <Barcode size={32} style={{ color: "#4F46E5" }} />
                 </motion.div>
-                <p className="text-[17px] font-extrabold mt-5" style={{ color: "#1B2A4A" }}>Your scan history is empty</p>
+                <p className="text-[17px] font-extrabold mt-5" style={{ color: "#1B2A4A" }}>Ready when you are</p>
                 <p className="text-[13px] mt-1.5 max-w-[260px] text-center leading-relaxed" style={{ color: "#6B7280" }}>
-                  Scan any barcode or take a photo to instantly know what's in your food
+                  Scan a barcode on any food or beauty product — know what's inside in 2 seconds
                 </p>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
@@ -182,7 +182,7 @@ export function HistoryScreen({
                   style={{ background: "linear-gradient(135deg, #B01830, #7a1220)" }}
                 >
                   <Barcode size={18} color="white" />
-                  Scan your first product
+                  Scan a barcode
                 </motion.button>
               </>
             ) : (
