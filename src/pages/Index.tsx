@@ -55,7 +55,7 @@ const StickyScanCTA = ({ onScan }: { onScan: () => void }) => {
           boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
         }}
       >
-        <ScanLine size={16} /> Scan a product — free
+        <ScanLine size={16} /> Scan a barcode — free
       </button>
     </motion.div>
   );
@@ -261,13 +261,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
             style={{ fontSize: "clamp(34px, 7vw, 56px)" }}
           >
-            Don't eat that.<br />
-            <span className="text-gradient">Scan it first.</span>
+            Scan the barcode.<br />
+            <span className="text-gradient">Know in 2 seconds.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-3 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            2 seconds. One score. Know if it's safe before it hits your cart.
+            Point your camera at any <strong className="text-white">food</strong> or <strong className="text-white">beauty</strong> barcode. Get one clear score — and what's actually inside.
           </motion.p>
 
           <motion.button
@@ -277,12 +277,12 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan now — free
+            <ScanLine size={16} /> Scan a barcode — free
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-            No signup. No app. Works in 2 seconds.
+            Food &amp; beauty · No signup · No app needed
           </motion.p>
 
         </div>
