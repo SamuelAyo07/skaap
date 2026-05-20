@@ -80,7 +80,7 @@ export function HistoryScreen({
   return (
     <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Tabs: Favorites / History */}
-      <div className="flex items-center px-5 pt-[env(safe-area-inset-top,12px)] mt-2 gap-0">
+      <div className="flex items-center px-5 pt-[env(safe-area-inset-top,12px)] mt-2 gap-0 relative">
         <button
           onClick={() => setTab("favorites")}
           className="flex-1 text-center py-3 font-bold text-[16px] transition-colors"
@@ -101,7 +101,24 @@ export function HistoryScreen({
         >
           History
         </button>
+        {isPlus && (
+          <div
+            className="absolute right-4 top-[env(safe-area-inset-top,12px)] mt-3 flex items-center gap-1 px-2 py-0.5 rounded-full"
+            style={{
+              background: "linear-gradient(135deg, rgba(196,30,58,0.12), rgba(196,30,58,0.04))",
+              border: "1px solid rgba(196,30,58,0.25)",
+              backdropFilter: "blur(40px)",
+              WebkitBackdropFilter: "blur(40px)",
+              boxShadow: "0 4px 16px -4px rgba(196,30,58,0.25)",
+            }}
+            title="SKAAP Plus"
+          >
+            <Sparkles size={10} style={{ color: "#C41E3A" }} />
+            <span className="text-[10px] font-extrabold tracking-wide" style={{ color: "#C41E3A" }}>PLUS</span>
+          </div>
+        )}
       </div>
+
 
       {/* Search */}
       <div className="px-5 mt-3">
