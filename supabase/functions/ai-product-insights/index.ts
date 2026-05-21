@@ -36,6 +36,40 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
+    // Input size guards — defend AI credits against oversized payloads
+    const LIMITS: Record<string, number> = {
+      productName: 300,
+      brandName: 200,
+      ingredientsText: 5000,
+      additiveName: 200,
+      eNumber: 20,
+      riskLevel: 50,
+      worstRisk: 50,
+      nutriScore: 10,
+      nutrientLevels: 500,
+      category: 200,
+      scanHistory: 10000,
+    };
+    for (const [key, max] of Object.entries(LIMITS)) {
+      const v = (params as any)[key];
+      if (typeof v === "string" && v.length > max) {
+        return new Response(JSON.stringify({ error: `${key} too long (max ${max})` }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+    if (typeof (params as any).imageBase64 === "string" && (params as any).imageBase64.length > 1_500_000) {
+      return new Response(JSON.stringify({ error: "image too large (max ~1MB)" }), {
+        status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (Array.isArray((params as any).allergensTags) && (params as any).allergensTags.length > 50) {
+      return new Response(JSON.stringify({ error: "too many allergen tags" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+
     // Auth + subscription gating for expensive types
     if (AUTH_REQUIRED_TYPES.has(type)) {
       const authHeader = req.headers.get("Authorization");
@@ -250,9 +284,10 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
     });
   } catch (e) {
     console.error("ai-product-insights error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "Request failed. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 });
