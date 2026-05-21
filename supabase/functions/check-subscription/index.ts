@@ -104,8 +104,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("check-subscription error:", error);
+    return new Response(JSON.stringify({ error: "Unable to verify subscription." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
