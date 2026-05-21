@@ -31,6 +31,12 @@ export function ImageRecognition({ onClose }: ImageRecognitionProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 1_000_000) {
+      setError("Image too large. Please use a photo under 1 MB.");
+      return;
+    }
+
+
     // Convert to base64
     const reader = new FileReader();
     reader.onload = async (ev) => {
