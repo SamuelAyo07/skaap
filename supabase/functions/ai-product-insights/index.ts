@@ -284,9 +284,10 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
     });
   } catch (e) {
     console.error("ai-product-insights error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "Request failed. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 });
