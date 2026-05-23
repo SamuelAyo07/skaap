@@ -579,8 +579,9 @@ const Index = () => {
                 {[0,1,2,3,4].map(i => <Star key={i} size={14} fill="#F59E0B" stroke="#F59E0B" />)}
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Loved by people who finally read the back of the box.
+                Real scans. Real changes.
               </h2>
+
             </div>
           </FadeIn>
 
