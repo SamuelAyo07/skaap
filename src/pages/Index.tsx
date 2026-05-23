@@ -293,10 +293,10 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* ─── 2. HERO — problem-focused / pain-point framing ─── */}
+      {/* ─── 2. HERO — urgency framing ─── */}
       <section
         className="relative flex items-center justify-center"
-        style={{ minHeight: "auto", paddingTop: 80, paddingBottom: 24, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+        style={{ minHeight: "auto", paddingTop: 72, paddingBottom: 16, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
       >
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(80px)" }} />
 
@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <Sparkles size={11} /> Meet SKAAP
+            <AlertTriangle size={11} /> Your body deserves to know
           </motion.div>
 
           <motion.h1
@@ -315,12 +315,12 @@ const Index = () => {
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
             Scan it.<br />
-            <span className="text-gradient">Know what's inside.</span>
+            <span className="text-gradient">Know what's really in it.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            SKAAP reads the barcode on any food or beauty product and shows you what's actually in it. In plain English. In 2 seconds.
+            Most labels hide more than they show. SKAAP reads the barcode and tells you what's actually in your food and beauty products, in 2 seconds.
           </motion.p>
 
           <motion.button
