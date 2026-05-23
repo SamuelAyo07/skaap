@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Labels shouldn't be this hard
+            <Sparkles size={11} /> Meet SKAAP
           </motion.div>
 
           <motion.h1
@@ -315,12 +315,12 @@ const Index = () => {
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
             Scan it.<br />
-            <span className="text-gradient">Know it.</span>
+            <span className="text-gradient">Know what's inside.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-4 text-base max-w-xs mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            One score for what you eat — and what you put on your skin.
+            className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
+            SKAAP reads the barcode on any food or beauty product and shows you what's actually in it. In plain English. In 2 seconds.
           </motion.p>
 
           <motion.button
@@ -330,13 +330,14 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan a barcode — free
+            <ScanLine size={16} /> Scan a barcode for free
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-            Food &amp; beauty · No signup · No app needed
+            Works on any product, anywhere in the world · No signup · No app store
           </motion.p>
+
 
         </div>
       </section>
