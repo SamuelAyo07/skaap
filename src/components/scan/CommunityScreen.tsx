@@ -80,6 +80,26 @@ function getTimeAgo(timestamp: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// Seeded fallback so the feed always feels alive when a city is quiet.
+// Mix of food + beauty so both shopper types see themselves represented.
+const SEED_WORST: CommunityProduct[] = [
+  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14 },
+  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22 },
+  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11 },
+];
+const SEED_BEST: CommunityProduct[] = [
+  { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9 },
+  { barcode: "3018712393155", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: "https://images.openbeautyfacts.org/images/products/301/871/239/3155/front_en.400.jpg", avg_score: 78, scan_count: 12 },
+  { barcode: "0030000010402", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: "https://images.openfoodfacts.org/images/products/003/000/001/0402/front_en.400.jpg", avg_score: 88, scan_count: 7 },
+];
+const SEED_RECENT: LiveScanItem[] = [
+  { id: "seed-1", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: SEED_BEST[1].image_url, score: 78, city: null, scan_timestamp: new Date(Date.now() - 2 * 60_000).toISOString(), barcode: SEED_BEST[1].barcode },
+  { id: "seed-2", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: SEED_WORST[1].image_url, score: 18, city: null, scan_timestamp: new Date(Date.now() - 7 * 60_000).toISOString(), barcode: SEED_WORST[1].barcode },
+  { id: "seed-3", product_name: "The Ordinary Niacinamide 10%", brand: "The Ordinary", image_url: SEED_BEST[0].image_url, score: 82, city: null, scan_timestamp: new Date(Date.now() - 14 * 60_000).toISOString(), barcode: SEED_BEST[0].barcode },
+  { id: "seed-4", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: SEED_WORST[0].image_url, score: 22, city: null, scan_timestamp: new Date(Date.now() - 28 * 60_000).toISOString(), barcode: SEED_WORST[0].barcode },
+  { id: "seed-5", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: SEED_BEST[2].image_url, score: 88, city: null, scan_timestamp: new Date(Date.now() - 41 * 60_000).toISOString(), barcode: SEED_BEST[2].barcode },
+];
+
 export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenProps) {
   const { user } = useAuth();
   const { isPlus, openUpgrade } = useSubscription();
