@@ -565,20 +565,23 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     north_america: "North America",
   };
 
-  // ─── Build the friendly headline insight ───
+  // ─── Build the friendly headline insight, honest to the data ───
   const dailyInsight = (() => {
     if (loading) return { text: `Looking around ${cityName}…` };
-    if (scansToday === 0 && worstProducts.length === 0) {
+    if (scansToday === 0) {
+      if (worstProducts.length > 0) {
+        const w = worstProducts[0];
+        return { text: `Quiet in ${cityName} today. Lowest scored this week: ${w.product_name.split(" ").slice(0, 4).join(" ")} (${w.avg_score}/100).` };
+      }
       return { text: `Be the first to scan in ${cityName} today.` };
     }
     if (worstProducts.length > 0) {
       const w = worstProducts[0];
-      return {
-        text: `People in ${cityName} are putting back ${w.product_name.split(" ").slice(0, 4).join(" ")} today. Score ${w.avg_score}/100.`,
-      };
+      return { text: `${scansToday} ${scansToday === 1 ? "scan" : "scans"} in ${cityName} today. Lowest scored: ${w.product_name.split(" ").slice(0, 4).join(" ")} (${w.avg_score}/100).` };
     }
-    return { text: `${scansToday} scans in ${cityName} today. Healthy choices winning.` };
+    return { text: `${scansToday} ${scansToday === 1 ? "scan" : "scans"} in ${cityName} today.` };
   })();
+
 
   const totalAvoided = productsAvoided;
   const healthiest = healthiestProducts[0];
@@ -613,7 +616,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             {dailyInsight.text}
           </p>
           <p className="text-[12px] mt-2" style={{ color: "#6B7280" }}>
-            Updates with every new scan from your area.
+            Updates with every new scan nearby.
           </p>
         </div>
 
@@ -621,8 +624,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         <div className="grid grid-cols-3 gap-2 px-5 mt-4">
           {[
             { label: "Scans today", value: scansToday },
-            { label: "Put back", value: totalAvoided },
-            { label: "Best score", value: healthiest ? healthiest.avg_score : ", " },
+            { label: "Low scores", value: totalAvoided },
+            { label: "Top score", value: healthiest ? healthiest.avg_score : "—" },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl py-3 text-center"
               style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
@@ -637,9 +640,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         {/* TWO SIMPLE LISTS, Avoid + Try Instead */}
         <div className="px-5 mt-6">
           <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> Lowest scores this week
+            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> Lowest scored this week
           </h2>
-          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>What's getting the worst ratings from people near you. We show the score, not the verdict, you choose.</p>
+          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>Scores only. You choose.</p>
 
           <div className="mt-3 space-y-2">
             {loading ? (
