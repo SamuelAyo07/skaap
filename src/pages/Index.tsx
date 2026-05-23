@@ -587,10 +587,11 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { q: "I caught two products my kids eat every week with banned dyes. Game-changer.", n: "Maya R.", r: "Mom of 2 · Austin" },
-              { q: "Switched my whole skincare shelf in a weekend. SKAAP made it obvious.", n: "Jordan K.", r: "Sensitive skin · NYC" },
-              { q: "Finally a score I trust. No ads, no agenda — just what's inside.", n: "Priya S.", r: "Pescatarian · SF" },
+              { q: "I scanned a popular biscuit my kids eat almost every day and saw it had three additives banned in Europe. I switched the brand the same afternoon. My grocery runs feel completely different now because I actually know what I am buying.", n: "Adaeze O.", r: "Mom of 3 · Lagos, Nigeria" },
+              { q: "I used to spend twenty minutes Googling ingredients in the aisle and still leave confused. Now I scan, read the breakdown, and decide in seconds. My pantry got cleaner in a month without me trying to be perfect about it.", n: "Maya R.", r: "Home cook · Austin, TX" },
+              { q: "I had been blaming my breakouts on stress for months. SKAAP showed me my moisturizer had two ingredients flagged for sensitive skin. I swapped products and my skin calmed down in three weeks. I am never buying skincare blind again.", n: "Jordan K.", r: "Sensitive skin · New York" },
             ].map((t, i) => (
+
               <FadeIn key={i} delay={i * 0.06}>
                 <div className="bg-white rounded-2xl p-4 h-full flex flex-col" style={{ border: "1px solid #E5E7EB" }}>
                   <Quote size={16} style={{ color: "#C41E3A" }} className="mb-2" />
