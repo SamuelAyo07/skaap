@@ -17,18 +17,45 @@ const HEALTH_OPTIONS = [
   "Thyroid", "PCOS",
 ];
 
+const SKIN_GOAL_OPTIONS = [
+  "Hydration", "Anti-aging", "Acne", "Brightening", "Redness",
+  "Dark spots", "Pores", "Firmness", "Sensitivity care", "Barrier repair",
+];
+
+const SKIN_TYPE_OPTIONS = [
+  "Oily", "Dry", "Combination", "Normal", "Sensitive", "Mature", "Acne-prone",
+];
+
+const SKIN_ALLERGY_OPTIONS = [
+  "Fragrance", "Parabens", "Sulfates", "Essential oils", "Nickel",
+  "Lanolin", "Formaldehyde", "Nut oils",
+];
+
 interface Prefs {
   diets: string[];
   health: string[];
+  skinGoals: string[];
+  skinType: string[];
+  skinAllergies: string[];
   notes: string;
 }
 
 function loadPrefs(): Prefs {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const p = JSON.parse(raw);
+      return {
+        diets: p.diets || [],
+        health: p.health || [],
+        skinGoals: p.skinGoals || [],
+        skinType: p.skinType || [],
+        skinAllergies: p.skinAllergies || [],
+        notes: p.notes || "",
+      };
+    }
   } catch {}
-  return { diets: [], health: [], notes: "" };
+  return { diets: [], health: [], skinGoals: [], skinType: [], skinAllergies: [], notes: "" };
 }
 
 /* ─────────────────────────────────────────────────────────────
