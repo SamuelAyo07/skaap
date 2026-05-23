@@ -173,14 +173,16 @@ export function PersonalizationCard() {
 
   if (!isPlus) return <LockedPreview onUpgrade={() => openUpgrade("SKAAP AI")} />;
 
-  const toggle = (key: "diets" | "health", value: string) => {
+  const toggle = (key: "diets" | "health" | "skinGoals" | "skinType" | "skinAllergies", value: string) => {
     setPrefs(p => ({
       ...p,
       [key]: p[key].includes(value) ? p[key].filter(v => v !== value) : [...p[key], value],
     }));
   };
 
-  const count = prefs.diets.length + prefs.health.length;
+  const count =
+    prefs.diets.length + prefs.health.length +
+    prefs.skinGoals.length + prefs.skinType.length + prefs.skinAllergies.length;
 
   const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
     <motion.button
