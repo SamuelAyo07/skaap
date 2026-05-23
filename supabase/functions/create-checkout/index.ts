@@ -13,7 +13,7 @@ type TierKey = "supporter" | "member" | "champion" | "builder" | "monthly" | "an
 const TIERS: Record<TierKey, { price: string; mode: "subscription" | "payment" }> = {
   // New 4-tier structure
   supporter: { price: "price_1TQD12BJzpMoZjm4heo7GrL8", mode: "subscription" }, // $2.99/mo
-  member:    { price: "price_1TQD1XBJzpMoZjm4Zh9GHBkN", mode: "payment" },      // $10/yr one-time
+  member:    { price: "price_1Ta3CDBJzpMoZjm4FvDJxgmp", mode: "payment" },      // $15.99/yr one-time
   champion:  { price: "price_1TQD1tBJzpMoZjm43jRsOxee", mode: "payment" },      // $20/yr one-time
   builder:   { price: "price_1TQD2JBJzpMoZjm4hkQIGFhW", mode: "payment" },      // $49/yr one-time
   // Legacy aliases (kept so old clients still work)
