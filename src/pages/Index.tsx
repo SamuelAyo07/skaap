@@ -455,19 +455,35 @@ const Index = () => {
 
 
       {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
-      <section className="py-10" style={{ background: "#FFFFFF" }}>
+      <section className="py-7" style={{ background: "#FFFFFF" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-6">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
-                <Sparkles size={11} /> Two scans. One language.
-              </span>
+            <div className="text-center mb-5">
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
               <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
                 Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
               </p>
+            </div>
+          </FadeIn>
+
+          {/* What you get with one scan */}
+          <FadeIn delay={0.03}>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto mb-5">
+              {[
+                { emoji: "🎯", title: "SKAAP Score" },
+                { emoji: "🅰️", title: "Nutri-Score" },
+                { emoji: "🧪", title: "Additives" },
+                { emoji: "🏭", title: "NOVA" },
+                { emoji: "💄", title: "Cosmetics" },
+                { emoji: "📊", title: "Nutrition" },
+              ].map((item, i) => (
+                <div key={i} className="bg-white rounded-xl p-2 text-center" style={{ border: "1px solid #E5E7EB" }}>
+                  <span className="text-base block leading-none">{item.emoji}</span>
+                  <h3 className="font-bold text-[10.5px] tracking-tight mt-1" style={{ color: "#0A1220" }}>{item.title}</h3>
+                </div>
+              ))}
             </div>
           </FadeIn>
 
