@@ -653,70 +653,48 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 10. CONTACT ─── */}
+      {/* ─── 10. CONTACT — single simple bar ─── */}
       <section className="py-6" style={{ background: "#FBF6E9" }}>
-        <div className="max-w-2xl mx-auto px-5">
+        <div className="max-w-xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
-                <Store size={12} /> Stores · Press · Partners
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Let's talk.
+            <div className="text-center mb-3">
+              <h2 className="text-xl md:text-2xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Contact us
               </h2>
               <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                Partner with us, or just say hi. Goes straight to our inbox.
+                Any message lands straight in our inbox.
               </p>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <form onSubmit={handleContactSubmit} className="bg-white rounded-2xl p-4 space-y-2.5" style={{ border: "1px solid #E5E7EB" }}>
-              <div className="flex gap-2">
-                <input
-                  type="text" placeholder="Name (optional)" value={contact.name}
-                  onChange={e => setContact({ ...contact, name: e.target.value })}
-                  className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                  maxLength={100}
-                />
-                <select
-                  value={contact.type}
-                  onChange={e => setContact({ ...contact, type: e.target.value })}
-                  className="px-3 py-2.5 rounded-lg text-sm focus:outline-none"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                >
-                  <option value="general">General</option>
-                  <option value="partner">Partner</option>
-                  <option value="press">Press</option>
-                  <option value="support">Support</option>
-                </select>
-              </div>
+            <form onSubmit={handleContactSubmit} className="bg-white rounded-2xl p-3 flex flex-col sm:flex-row gap-2" style={{ border: "1px solid #E5E7EB" }}>
               <input
                 type="email" required placeholder="Your email" value={contact.email}
                 onChange={e => setContact({ ...contact, email: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
+                className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
                 style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
                 maxLength={255}
               />
-              <textarea
-                required placeholder="How can we help?" rows={3} value={contact.message}
+              <input
+                type="text" required placeholder="Your message" value={contact.message}
                 onChange={e => setContact({ ...contact, message: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30 resize-none"
+                className="flex-[2] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
                 style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
                 maxLength={1000}
               />
               <button
                 type="submit" disabled={sending}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm disabled:opacity-60"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm disabled:opacity-60 whitespace-nowrap"
                 style={{ background: "#0A1220", color: "#fff" }}
               >
-                <Send size={14} /> {sending ? "Sending…" : "Send message"}
+                <Send size={14} /> {sending ? "Sending..." : "Send"}
               </button>
             </form>
           </FadeIn>
         </div>
       </section>
+
 
       {/* ─── 11. FOOTER ─── */}
       <footer className="py-6" style={{ background: "#0A0F1E", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
