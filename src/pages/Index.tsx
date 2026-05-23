@@ -80,7 +80,7 @@ const StickyScanCTA = ({ onScan: _onScan }: { onScan: () => void }) => {
           >
             <div className="mx-auto w-10 h-1 rounded-full mb-4" style={{ background: "#E5E7EB" }} />
             <h3 className="text-lg font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-              Install SKAAP — 5 seconds
+              Install SKAAP in 5 seconds
             </h3>
             <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
               Works just like an app. No store. No download.
