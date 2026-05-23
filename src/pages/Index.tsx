@@ -9,6 +9,7 @@ import skaapIcon from "@/assets/skaap-icon.png";
 import productCrackers from "@/assets/product-crackers.png";
 import productMacaroni from "@/assets/product-macaroni.png";
 import productOj from "@/assets/product-oj.png";
+import productMoisturizer from "@/assets/product-moisturizer.png";
 
 
 const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
