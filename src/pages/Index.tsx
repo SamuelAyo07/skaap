@@ -293,10 +293,10 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* ─── 2. HERO — problem-focused / pain-point framing ─── */}
+      {/* ─── 2. HERO — urgency framing ─── */}
       <section
         className="relative flex items-center justify-center"
-        style={{ minHeight: "auto", paddingTop: 80, paddingBottom: 24, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+        style={{ minHeight: "auto", paddingTop: 72, paddingBottom: 16, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
       >
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(80px)" }} />
 
@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <Sparkles size={11} /> Meet SKAAP
+            <AlertTriangle size={11} /> Your body deserves to know
           </motion.div>
 
           <motion.h1
@@ -315,12 +315,12 @@ const Index = () => {
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
             Scan it.<br />
-            <span className="text-gradient">Know what's inside.</span>
+            <span className="text-gradient">Know what's really in it.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            SKAAP reads the barcode on any food or beauty product and shows you what's actually in it. In plain English. In 2 seconds.
+            Most labels hide more than they show. SKAAP reads the barcode and tells you what's actually in your food and beauty products, in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -343,13 +343,13 @@ const Index = () => {
       </section>
 
       {/* ─── 3. HOW IT WORKS — 3 mockups with REAL product images ─── */}
-      <section className="py-6" style={{ background: "#0A0F1E" }}>
+      <section className="py-5" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               See it in action
             </h2>
-            <p className="text-center text-xs mb-5" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-center text-xs mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>
               Scan → Score → Decide.
             </p>
           </FadeIn>
@@ -364,7 +364,7 @@ const Index = () => {
                   { dot: "#F59E0B", text: "6 additives" },
                   { dot: "#F59E0B", text: "NOVA 4" },
                 ]}
-                verdict="Inside"
+                verdict="Poor"
                 score="21"
                 scoreColor="#C41E3A"
               />
@@ -378,7 +378,7 @@ const Index = () => {
                   { dot: "#C41E3A", text: "7 additives" },
                   { dot: "#F59E0B", text: "Fiber: 1g" },
                 ]}
-                verdict="Inside"
+                verdict="Poor"
                 score="14"
                 scoreColor="#C41E3A"
               />
@@ -392,7 +392,7 @@ const Index = () => {
                   { dot: "#C41E3A", text: "2 hormone disruptors" },
                   { dot: "#22C55E", text: "Hyaluronic acid" },
                 ]}
-                verdict="Inside"
+                verdict="Fair"
                 score="54"
                 scoreColor="#F59E0B"
               />
@@ -402,42 +402,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 4. PERSONAL PRODUCT ANALYST (moved UP) ─── */}
-      <section className="py-7" style={{ background: "#F9FAFB" }}>
-        <div className="max-w-5xl mx-auto px-5">
-          <FadeIn>
-            <div className="text-center mb-4">
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                One scan. Everything you need.
-              </h2>
-              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                Food and beauty. Over 4 million products.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto">
-            {[
-              { emoji: "🎯", title: "SKAAP Score" },
-              { emoji: "🅰️", title: "Nutri-Score" },
-              { emoji: "🧪", title: "Additives" },
-              { emoji: "🏭", title: "NOVA" },
-              { emoji: "💄", title: "Cosmetics" },
-              { emoji: "📊", title: "Nutrition" },
-            ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.03}>
-                <div className="bg-white rounded-xl p-2.5 text-center" style={{ border: "1px solid #E5E7EB" }}>
-                  <span className="text-lg block">{item.emoji}</span>
-                  <h3 className="font-bold text-[11px] tracking-tight mt-0.5" style={{ color: "#0A1220" }}>{item.title}</h3>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* (section merged into Food & Beauty translated below) */}
 
       {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
-      <section className="py-8" style={{ background: "#FBF6E9" }}>
+      <section className="py-6" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
@@ -447,7 +415,7 @@ const Index = () => {
               Every label, finally readable.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Ingredient lists are written for regulators, not for you. SKAAP turns them into plain English so you can see exactly what's in your food and your beauty products.
+              Food and beauty labels are packed with chemical names, codes, and fine print written for regulators, not for you. SKAAP unpacks every ingredient: what it actually is, what it does in your body or on your skin, whether it's been linked to health issues, and whether it's banned in other countries. No PhD required. No guessing in the aisle.
             </p>
             <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
               We don't tell you what to think. We just show you what's inside. You decide.
@@ -487,19 +455,35 @@ const Index = () => {
 
 
       {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
-      <section className="py-10" style={{ background: "#FFFFFF" }}>
+      <section className="py-7" style={{ background: "#FFFFFF" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-6">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
-                <Sparkles size={11} /> Two scans. One language.
-              </span>
+            <div className="text-center mb-5">
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
               <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
                 Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
               </p>
+            </div>
+          </FadeIn>
+
+          {/* What you get with one scan */}
+          <FadeIn delay={0.03}>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto mb-5">
+              {[
+                { emoji: "🎯", title: "SKAAP Score" },
+                { emoji: "🅰️", title: "Nutri-Score" },
+                { emoji: "🧪", title: "Additives" },
+                { emoji: "🏭", title: "NOVA" },
+                { emoji: "💄", title: "Cosmetics" },
+                { emoji: "📊", title: "Nutrition" },
+              ].map((item, i) => (
+                <div key={i} className="bg-white rounded-xl p-2 text-center" style={{ border: "1px solid #E5E7EB" }}>
+                  <span className="text-base block leading-none">{item.emoji}</span>
+                  <h3 className="font-bold text-[10.5px] tracking-tight mt-1" style={{ color: "#0A1220" }}>{item.title}</h3>
+                </div>
+              ))}
             </div>
           </FadeIn>
 
@@ -571,7 +555,7 @@ const Index = () => {
       </section>
 
       {/* ─── 6c. TESTIMONIALS — short, kind, human ─── */}
-      <section className="py-10" style={{ background: "#F9FAFB" }}>
+      <section className="py-7" style={{ background: "#F9FAFB" }}>
         <div className="max-w-4xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-6">
@@ -608,7 +592,7 @@ const Index = () => {
       </section>
 
       {/* ─── 8. RETAIL — frictionless self-checkout teaser ─── */}
-      <section className="py-8" style={{ background: "#0A0F1E" }}>
+      <section className="py-6" style={{ background: "#0A0F1E" }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
@@ -625,7 +609,7 @@ const Index = () => {
       </section>
 
       {/* ─── 9. FAQs ─── */}
-      <section className="py-7" style={{ background: "#F9FAFB" }}>
+      <section className="py-5" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-4">
