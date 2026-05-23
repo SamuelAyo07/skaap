@@ -314,13 +314,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.02] text-white"
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
-            Scan it.<br />
-            <span className="text-gradient">Know what's really in it.</span>
+            Know what goes<br />
+            <span className="text-gradient">in and on your body.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Most labels hide more than they show. SKAAP reads the barcode and tells you what's actually in your food and beauty products, in 2 seconds.
+            Scan any food or beauty barcode. See what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -462,30 +462,9 @@ const Index = () => {
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
-              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
-                Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
-              </p>
             </div>
           </FadeIn>
 
-          {/* What you get with one scan */}
-          <FadeIn delay={0.03}>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto mb-5">
-              {[
-                { emoji: "🎯", title: "SKAAP Score" },
-                { emoji: "🅰️", title: "Nutri-Score" },
-                { emoji: "🧪", title: "Additives" },
-                { emoji: "🏭", title: "NOVA" },
-                { emoji: "💄", title: "Cosmetics" },
-                { emoji: "📊", title: "Nutrition" },
-              ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl p-2 text-center" style={{ border: "1px solid #E5E7EB" }}>
-                  <span className="text-base block leading-none">{item.emoji}</span>
-                  <h3 className="font-bold text-[10.5px] tracking-tight mt-1" style={{ color: "#0A1220" }}>{item.title}</h3>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* FOOD */}
