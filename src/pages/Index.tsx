@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Eye, CreditCard, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory, Sparkles, Droplet, Quote, Star, Utensils, Heart, Download } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Send, Eye, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory, Sparkles, Droplet, Quote, Star, Utensils, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -80,7 +80,7 @@ const StickyScanCTA = ({ onScan: _onScan }: { onScan: () => void }) => {
           >
             <div className="mx-auto w-10 h-1 rounded-full mb-4" style={{ background: "#E5E7EB" }} />
             <h3 className="text-lg font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-              Install SKAAP — 5 seconds
+              Install SKAAP in 5 seconds
             </h3>
             <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
               Works just like an app. No store. No download.
@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Labels shouldn't be this hard
+            <Sparkles size={11} /> Meet SKAAP
           </motion.div>
 
           <motion.h1
@@ -315,12 +315,12 @@ const Index = () => {
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
             Scan it.<br />
-            <span className="text-gradient">Know it.</span>
+            <span className="text-gradient">Know what's inside.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-4 text-base max-w-xs mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            One score for what you eat — and what you put on your skin.
+            className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
+            SKAAP reads the barcode on any food or beauty product and shows you what's actually in it. In plain English. In 2 seconds.
           </motion.p>
 
           <motion.button
@@ -330,13 +330,14 @@ const Index = () => {
             className="mt-5 inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
-            <ScanLine size={16} /> Scan a barcode — free
+            <ScanLine size={16} /> Scan a barcode for free
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
             className="mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-            Food &amp; beauty · No signup · No app needed
+            Works on any product, anywhere in the world · No signup · No app store
           </motion.p>
+
 
         </div>
       </section>
@@ -359,11 +360,11 @@ const Index = () => {
                 productImage={productCrackers}
                 productLabel="Snack Crackers"
                 signals={[
-                  { dot: "#C41E3A", text: "Too much salt" },
+                  { dot: "#C41E3A", text: "Sodium: 600mg" },
                   { dot: "#F59E0B", text: "6 additives" },
-                  { dot: "#F59E0B", text: "Ultra-processed" },
+                  { dot: "#F59E0B", text: "NOVA 4" },
                 ]}
-                verdict="Bad"
+                verdict="Inside"
                 score="21"
                 scoreColor="#C41E3A"
               />
@@ -373,11 +374,11 @@ const Index = () => {
                 productImage={productMacaroni}
                 productLabel="Mac & Cheese Box"
                 signals={[
-                  { dot: "#C41E3A", text: "High sodium" },
+                  { dot: "#C41E3A", text: "Sodium: 720mg" },
                   { dot: "#C41E3A", text: "7 additives" },
-                  { dot: "#F59E0B", text: "Low fiber" },
+                  { dot: "#F59E0B", text: "Fiber: 1g" },
                 ]}
-                verdict="Bad"
+                verdict="Inside"
                 score="14"
                 scoreColor="#C41E3A"
               />
@@ -387,15 +388,16 @@ const Index = () => {
                 productImage={productMoisturizer}
                 productLabel="Daily Moisturizer"
                 signals={[
-                  { dot: "#F59E0B", text: "Fragrance" },
+                  { dot: "#F59E0B", text: "Fragrance listed" },
                   { dot: "#C41E3A", text: "2 hormone disruptors" },
-                  { dot: "#22C55E", text: "Hydrating base" },
+                  { dot: "#22C55E", text: "Hyaluronic acid" },
                 ]}
-                verdict="Caution"
+                verdict="Inside"
                 score="54"
                 scoreColor="#F59E0B"
               />
             </FadeIn>
+
           </div>
         </div>
       </section>
@@ -434,36 +436,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 6. KNOW YOUR FOOD — urgency-led ─── */}
+      {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-              <Eye size={12} /> Why this can't wait
+              <Eye size={12} /> What's actually inside
             </span>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
-              The longer you wait, the more your body pays.
+              Every label, finally readable.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Hidden sugar today is inflammation tomorrow. Banned additives stay in your system for years. The chemicals in your moisturizer absorb in 26 seconds. Most people find out way too late — after the doctor visit, the diagnosis, the regret.
+              Ingredient lists are written for regulators, not for you. SKAAP turns them into plain English so you can see exactly what's in your food and your beauty products.
             </p>
             <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
-              Scan one thing in your kitchen or bathroom right now. It takes 2 seconds. You'll never look at a label the same way.
+              We don't tell you what to think. We just show you what's inside. You decide.
             </p>
           </FadeIn>
 
-          {/* What we scan checklist — now includes cosmetics */}
+          {/* What we show you */}
           <FadeIn delay={0.1}>
             <div className="bg-white rounded-2xl p-4 mt-5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we scan for</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we show you</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                 {[
-                  { icon: Beaker, label: "Hidden sugar" },
-                  { icon: FlaskConical, label: "Banned additives" },
+                  { icon: Beaker, label: "Sugar, added and hidden" },
+                  { icon: FlaskConical, label: "Additives and where they're banned" },
                   { icon: Wheat, label: "Allergens" },
-                  { icon: Factory, label: "Ultra-processing" },
-                  { icon: Eye, label: "Toxic skincare" },
-                  { icon: AlertTriangle, label: "Hormone disruptors" },
+                  { icon: Factory, label: "Processing level (NOVA)" },
+                  { icon: Droplet, label: "Skincare ingredients" },
+                  { icon: AlertTriangle, label: "Hormone-disrupting chemicals" },
                 ].map((item, i) => {
                   const Icon = item.icon;
                   return (
@@ -483,6 +485,7 @@ const Index = () => {
       </section>
 
 
+
       {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
       <section className="py-10" style={{ background: "#FFFFFF" }}>
         <div className="max-w-5xl mx-auto px-5">
@@ -492,7 +495,7 @@ const Index = () => {
                 <Sparkles size={11} /> Two scans. One language.
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty — finally translated.
+                Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
               <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
                 Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
@@ -521,7 +524,7 @@ const Index = () => {
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#C41E3A" }}>21</div>
                 </div>
 
-                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What's inside</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {["Hidden sugar","Banned additives","Ultra-processing","Sodium bombs","Seed oils","Allergens"].map(t => (
                     <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
@@ -552,7 +555,7 @@ const Index = () => {
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#F59E0B" }}>54</div>
                 </div>
 
-                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What's inside</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {["Hormone disruptors","Parabens","Synthetic fragrance","Sulfates","Allergens","Comedogenic oils"].map(t => (
                     <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
@@ -576,17 +579,19 @@ const Index = () => {
                 {[0,1,2,3,4].map(i => <Star key={i} size={14} fill="#F59E0B" stroke="#F59E0B" />)}
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Loved by people who finally read the back of the box.
+                Real scans. Real changes.
               </h2>
+
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { q: "I caught two products my kids eat every week with banned dyes. Game-changer.", n: "Maya R.", r: "Mom of 2 · Austin" },
-              { q: "Switched my whole skincare shelf in a weekend. SKAAP made it obvious.", n: "Jordan K.", r: "Sensitive skin · NYC" },
-              { q: "Finally a score I trust. No ads, no agenda — just what's inside.", n: "Priya S.", r: "Pescatarian · SF" },
+              { q: "I scanned a popular biscuit my kids eat almost every day and saw it had three additives banned in Europe. I switched the brand the same afternoon. My grocery runs feel completely different now because I actually know what I am buying.", n: "Adaeze O.", r: "Mom of 3 · Lagos, Nigeria" },
+              { q: "I used to spend twenty minutes Googling ingredients in the aisle and still leave confused. Now I scan, read the breakdown, and decide in seconds. My pantry got cleaner in a month without me trying to be perfect about it.", n: "Maya R.", r: "Home cook · Austin, TX" },
+              { q: "I had been blaming my breakouts on stress for months. SKAAP showed me my moisturizer had two ingredients flagged for sensitive skin. I swapped products and my skin calmed down in three weeks. I am never buying skincare blind again.", n: "Jordan K.", r: "Sensitive skin · New York" },
             ].map((t, i) => (
+
               <FadeIn key={i} delay={i * 0.06}>
                 <div className="bg-white rounded-2xl p-4 h-full flex flex-col" style={{ border: "1px solid #E5E7EB" }}>
                   <Quote size={16} style={{ color: "#C41E3A" }} className="mb-2" />
@@ -631,12 +636,14 @@ const Index = () => {
           </FadeIn>
           <div className="space-y-2">
             {[
-              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus is pay-what-you-want — from $2.99/mo or a one-time yearly contribution — and unlocks weekly habit reports, custom alerts, and product search." },
-              { q: "How is the SKAAP Score calculated?", a: "0–100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic/processing. Same product = same score, anywhere." },
-              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database — cross-checked with FDA/EFSA bans. AI translates the science so anyone can understand it." },
+              { q: "Does SKAAP work on any product, anywhere in the world?", a: "Yes. SKAAP works on any barcode on the planet. Whether you are shopping in Lagos, London, New York, Tokyo, or anywhere else, point the camera at the barcode and we pull the ingredients. Works on food, drinks, snacks, skincare, makeup and household products." },
+              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus is pay-what-you-want, starting at $2.99 a month or a one-time yearly contribution, and unlocks weekly habit reports, custom alerts, and product search." },
+              { q: "How is the SKAAP Score calculated?", a: "0 to 100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic and processing. Same product, same score, anywhere." },
+              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database, cross-checked with FDA and EFSA bans. AI translates the science so anyone can understand it." },
               { q: "Do you sell my data or run ads?", a: "Never. No ads. No third-party tracking. Your scans are private to your account." },
-              { q: "Does it work without signup?", a: "Yes — scan as a guest. Sign up only if you want to save scans, set alerts, or see your weekly grocery score." },
+              { q: "Does it work without signup?", a: "Yes. Scan as a guest. Sign up only if you want to save scans, set alerts, or see your weekly grocery score." },
               { q: "Can I install it on my phone?", a: "Yes. Open useskaap.com on your phone, then 'Add to Home Screen' (iOS Share menu) or tap 'Install' (Android Chrome). It works like a native app." },
+
             ].map((f, i) => (
               <FadeIn key={i} delay={i * 0.03}>
                 <FAQItem q={f.q} a={f.a} />
@@ -646,70 +653,48 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 10. CONTACT ─── */}
+      {/* ─── 10. CONTACT — single simple bar ─── */}
       <section className="py-6" style={{ background: "#FBF6E9" }}>
-        <div className="max-w-2xl mx-auto px-5">
+        <div className="max-w-xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2" style={{ background: "rgba(10,18,32,0.06)", color: "#0A1220" }}>
-                <Store size={12} /> Stores · Press · Partners
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Let's talk.
+            <div className="text-center mb-3">
+              <h2 className="text-xl md:text-2xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Contact us
               </h2>
               <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                Partner with us, or just say hi. Goes straight to our inbox.
+                Any message lands straight in our inbox.
               </p>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <form onSubmit={handleContactSubmit} className="bg-white rounded-2xl p-4 space-y-2.5" style={{ border: "1px solid #E5E7EB" }}>
-              <div className="flex gap-2">
-                <input
-                  type="text" placeholder="Name (optional)" value={contact.name}
-                  onChange={e => setContact({ ...contact, name: e.target.value })}
-                  className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                  maxLength={100}
-                />
-                <select
-                  value={contact.type}
-                  onChange={e => setContact({ ...contact, type: e.target.value })}
-                  className="px-3 py-2.5 rounded-lg text-sm focus:outline-none"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                >
-                  <option value="general">General</option>
-                  <option value="partner">Partner</option>
-                  <option value="press">Press</option>
-                  <option value="support">Support</option>
-                </select>
-              </div>
+            <form onSubmit={handleContactSubmit} className="bg-white rounded-2xl p-3 flex flex-col sm:flex-row gap-2" style={{ border: "1px solid #E5E7EB" }}>
               <input
                 type="email" required placeholder="Your email" value={contact.email}
                 onChange={e => setContact({ ...contact, email: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
+                className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
                 style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
                 maxLength={255}
               />
-              <textarea
-                required placeholder="How can we help?" rows={3} value={contact.message}
+              <input
+                type="text" required placeholder="Your message" value={contact.message}
                 onChange={e => setContact({ ...contact, message: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30 resize-none"
+                className="flex-[2] px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41E3A]/30"
                 style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
                 maxLength={1000}
               />
               <button
                 type="submit" disabled={sending}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm disabled:opacity-60"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm disabled:opacity-60 whitespace-nowrap"
                 style={{ background: "#0A1220", color: "#fff" }}
               >
-                <Send size={14} /> {sending ? "Sending…" : "Send message"}
+                <Send size={14} /> {sending ? "Sending..." : "Send"}
               </button>
             </form>
           </FadeIn>
         </div>
       </section>
+
 
       {/* ─── 11. FOOTER ─── */}
       <footer className="py-6" style={{ background: "#0A0F1E", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
