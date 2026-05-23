@@ -405,7 +405,7 @@ const Index = () => {
       {/* (section merged into Food & Beauty translated below) */}
 
       {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
-      <section className="py-8" style={{ background: "#FBF6E9" }}>
+      <section className="py-6" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
@@ -415,7 +415,7 @@ const Index = () => {
               Every label, finally readable.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Ingredient lists are written for regulators, not for you. SKAAP turns them into plain English so you can see exactly what's in your food and your beauty products.
+              Food and beauty labels are packed with chemical names, codes, and fine print written for regulators, not for you. SKAAP unpacks every ingredient: what it actually is, what it does in your body or on your skin, whether it's been linked to health issues, and whether it's banned in other countries. No PhD required. No guessing in the aisle.
             </p>
             <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
               We don't tell you what to think. We just show you what's inside. You decide.
