@@ -362,7 +362,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                   if (!email) { toast.error("Sign in to join the early access list"); return; }
                   try {
                     await supabase.from("contact_submissions").insert({
-                      email, name: getUserName(user) || null, type: "general",
+                      email, name: getUserName() || null, type: "general",
                       message: `Health integration waitlist: ${app.name}`,
                     });
                     toast.success(`You're on the ${app.name} early access list.`);
