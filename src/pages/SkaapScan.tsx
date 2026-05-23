@@ -1213,7 +1213,7 @@ const SkaapScan = () => {
     else if (nav === "top") setScreen("top");
     else if (nav === "scan") goToScan();
     else if (nav === "saved") { setBasket(getBasket()); setScreen("basket"); }
-    else if (nav === "profile") user ? setScreen("profile") : setAuthSheetOpen(true);
+    else if (nav === "profile") setScreen("profile");
   }, [user, goToScan, isPlus, openUpgrade]);
 
   // ─── SCREEN: HOME ───
