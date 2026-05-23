@@ -892,6 +892,15 @@ const SkaapScan = () => {
     clearTimeout(slowTimer);
 
     if (info) {
+      // Beauty soft paywall: 3 free unique beauty scans/day, then locked.
+      if (!isPlus && isBeautyProduct(info) && isOverBeautyLimit(barcode)) {
+        setCachedProduct(barcode, info); // still cache for later (after upgrade)
+        setLoading(false);
+        toast(`You have used your ${FREE_BEAUTY_LIMIT} free beauty scans today. Unlock unlimited with Plus, or come back tomorrow.`, { duration: 4500 });
+        openUpgrade("Unlimited beauty scans");
+        return;
+      }
+      if (isBeautyProduct(info)) recordBeautyScan(barcode);
       setCachedProduct(barcode, info);
       const score = calculateSkaapScore(info.nutriScoreGrade, info.additivesTags, info.labelsTags);
       setCachedScore(barcode, score);
