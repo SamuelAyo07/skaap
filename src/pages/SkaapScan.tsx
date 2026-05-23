@@ -1939,6 +1939,14 @@ const SkaapScan = () => {
                 );
               })()}
 
+              {/* ─── BEAUTY PERSONALIZATION (skin goals / type / allergies) ─── */}
+              {isBeautyProduct(productInfo) && (
+                <BeautyPersonalizationBanner
+                  ingredientsText={productInfo?.ingredientsText}
+                  productName={displayName}
+                />
+              )}
+
               {/* ─── POSITIVES SECTION ─── */}
               {positives.length > 0 && (
                 <div className="mx-5" style={{ marginTop: 20 }}>
