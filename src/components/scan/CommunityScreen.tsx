@@ -257,17 +257,16 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           scan_count: p.count,
         }));
 
-        // Worst 5
-        setWorstProducts([...products].sort((a, b) => a.avg_score - b.avg_score).slice(0, 5));
-        // Most scanned 8
+        const seenBarcodes = new Set(products.map(p => p.barcode));
+        const padWorst = SEED_WORST.filter(s => !seenBarcodes.has(s.barcode));
+        const padBest = SEED_BEST.filter(s => !seenBarcodes.has(s.barcode));
+
+        const realWorst = [...products].sort((a, b) => a.avg_score - b.avg_score);
+        const realBest = [...products].filter(p => p.avg_score >= 60 && p.scan_count >= 2).sort((a, b) => b.avg_score - a.avg_score);
+
+        setWorstProducts([...realWorst, ...padWorst].slice(0, 5));
         setMostScanned([...products].sort((a, b) => b.scan_count - a.scan_count).slice(0, 8));
-        // Healthiest 5 (score >= 60, sorted desc by score, min 2 scans)
-        setHealthiestProducts(
-          [...products]
-            .filter(p => p.avg_score >= 60 && p.scan_count >= 2)
-            .sort((a, b) => b.avg_score - a.avg_score)
-            .slice(0, 5)
-        );
+        setHealthiestProducts([...realBest, ...padBest].slice(0, 5));
 
         // City average score
         const allScores = weekScans.filter(s => s.score != null).map(s => s.score!);
