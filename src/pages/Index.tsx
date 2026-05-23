@@ -436,36 +436,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 6. KNOW YOUR FOOD — urgency-led ─── */}
+      {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
-              <Eye size={12} /> Why this can't wait
+              <Eye size={12} /> What's actually inside
             </span>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2" style={{ color: "#0A1220" }}>
-              The longer you wait, the more your body pays.
+              Every label, finally readable.
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "#374151" }}>
-              Hidden sugar today is inflammation tomorrow. Banned additives stay in your system for years. The chemicals in your moisturizer absorb in 26 seconds. Most people find out way too late — after the doctor visit, the diagnosis, the regret.
+              Ingredient lists are written for regulators, not for you. SKAAP turns them into plain English so you can see exactly what's in your food and your beauty products.
             </p>
             <p className="text-sm leading-relaxed mt-3 font-semibold" style={{ color: "#0A1220" }}>
-              Scan one thing in your kitchen or bathroom right now. It takes 2 seconds. You'll never look at a label the same way.
+              We don't tell you what to think. We just show you what's inside. You decide.
             </p>
           </FadeIn>
 
-          {/* What we scan checklist — now includes cosmetics */}
+          {/* What we show you */}
           <FadeIn delay={0.1}>
             <div className="bg-white rounded-2xl p-4 mt-5" style={{ border: "1px solid rgba(10,18,32,0.06)" }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we scan for</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#6B7280" }}>What we show you</p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                 {[
-                  { icon: Beaker, label: "Hidden sugar" },
-                  { icon: FlaskConical, label: "Banned additives" },
+                  { icon: Beaker, label: "Sugar, added and hidden" },
+                  { icon: FlaskConical, label: "Additives and where they're banned" },
                   { icon: Wheat, label: "Allergens" },
-                  { icon: Factory, label: "Ultra-processing" },
-                  { icon: Eye, label: "Toxic skincare" },
-                  { icon: AlertTriangle, label: "Hormone disruptors" },
+                  { icon: Factory, label: "Processing level (NOVA)" },
+                  { icon: Droplet, label: "Skincare ingredients" },
+                  { icon: AlertTriangle, label: "Hormone-disrupting chemicals" },
                 ].map((item, i) => {
                   const Icon = item.icon;
                   return (
@@ -483,6 +483,7 @@ const Index = () => {
           </FadeIn>
         </div>
       </section>
+
 
 
       {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
