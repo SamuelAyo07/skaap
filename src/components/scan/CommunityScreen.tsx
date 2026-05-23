@@ -332,8 +332,20 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         .order("scan_timestamp", { ascending: false })
         .limit(20);
 
-      if (recentData) {
+      const liveSeed = SEED_RECENT.map(s => ({ ...s, city }));
+      if (recentData && recentData.length >= 5) {
         setRecentScans(recentData);
+      } else {
+        const real = recentData || [];
+        const seen = new Set(real.map(r => r.barcode));
+        const pad = liveSeed.filter(s => !seen.has(s.barcode));
+        setRecentScans([...real, ...pad].slice(0, 20));
+      }
+
+      // If no real week scans at all, seed worst/best so the city does not feel empty.
+      if (!weekScans || weekScans.length === 0) {
+        setWorstProducts(SEED_WORST.slice(0, 3));
+        setHealthiestProducts(SEED_BEST.slice(0, 3));
       }
     } catch (err) {
       console.error("Community fetch error:", err);
