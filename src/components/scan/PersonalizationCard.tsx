@@ -93,7 +93,7 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
           </span>
         </div>
         <p className="text-[12.5px] mt-2 leading-snug" style={{ color: "#4B5563" }}>
-          Your private nutrition &amp; beauty coach. Tell it your diet, allergies, skin goals, every scan reads through <em>your</em> lens.
+          Your food and beauty, your call. Tell SKAAP your diet, allergies, and skin goals, every scan is read through <em>your</em> lens so you choose with confidence.
         </p>
       </div>
 

@@ -347,17 +347,29 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             <Activity size={16} style={{ color: "#B0202F" }} />
             <h3 className="font-bold text-[14px]" style={{ color: "#0A1220" }}>Health Connections</h3>
           </div>
-          <p className="text-[11px] mb-3" style={{ color: "#9CA3AF" }}>Sync your nutrition data with health platforms.</p>
+          <p className="text-[11px] mb-3" style={{ color: "#9CA3AF" }}>Send every scan's nutrition data to your health app. Tap to join the early access list.</p>
 
           <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
             {[
-              { name: "Apple Health", icon: "🍎", desc: "Sync nutrients & calories", available: false },
-              { name: "Google Fit", icon: "💚", desc: "Track food intake", available: false },
-              { name: "MyFitnessPal", icon: "🔥", desc: "Log scanned products", available: false },
-              { name: "Samsung Health", icon: "💙", desc: "Nutrition tracking", available: false },
+              { name: "Apple Health", icon: "🍎", desc: "Sync nutrients and calories" },
+              { name: "Google Fit", icon: "💚", desc: "Track food intake" },
+              { name: "MyFitnessPal", icon: "🔥", desc: "Log scanned products" },
+              { name: "Samsung Health", icon: "💙", desc: "Nutrition tracking" },
             ].map((app, i) => (
               <button key={app.name}
-                onClick={() => toast.info(`${app.name} integration coming soon!`)}
+                onClick={async () => {
+                  const email = user?.email;
+                  if (!email) { toast.error("Sign in to join the early access list"); return; }
+                  try {
+                    await supabase.from("contact_submissions").insert({
+                      email, name: getUserName() || null, type: "general",
+                      message: `Health integration waitlist: ${app.name}`,
+                    });
+                    toast.success(`You're on the ${app.name} early access list.`);
+                  } catch {
+                    toast.error("Could not save right now, please try again.");
+                  }
+                }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 transition-colors"
                 style={{ borderBottom: i < 3 ? "1px solid #F3F4F6" : "none" }}>
                 <span className="text-[18px]">{app.icon}</span>
@@ -365,7 +377,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                   <span className="text-[13px] font-semibold block" style={{ color: "#0A1220" }}>{app.name}</span>
                   <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{app.desc}</span>
                 </div>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#F3F4F6", color: "#9CA3AF" }}>Soon</span>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FFF1F2", color: "#C41E3A" }}>Early access</span>
               </button>
             ))}
           </div>
