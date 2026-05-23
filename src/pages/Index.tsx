@@ -402,39 +402,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 4. PERSONAL PRODUCT ANALYST (moved UP) ─── */}
-      <section className="py-7" style={{ background: "#F9FAFB" }}>
-        <div className="max-w-5xl mx-auto px-5">
-          <FadeIn>
-            <div className="text-center mb-4">
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                One scan. Everything you need.
-              </h2>
-              <p className="text-xs mt-1" style={{ color: "#6B7280" }}>
-                Food and beauty. Over 4 million products.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 max-w-3xl mx-auto">
-            {[
-              { emoji: "🎯", title: "SKAAP Score" },
-              { emoji: "🅰️", title: "Nutri-Score" },
-              { emoji: "🧪", title: "Additives" },
-              { emoji: "🏭", title: "NOVA" },
-              { emoji: "💄", title: "Cosmetics" },
-              { emoji: "📊", title: "Nutrition" },
-            ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.03}>
-                <div className="bg-white rounded-xl p-2.5 text-center" style={{ border: "1px solid #E5E7EB" }}>
-                  <span className="text-lg block">{item.emoji}</span>
-                  <h3 className="font-bold text-[11px] tracking-tight mt-0.5" style={{ color: "#0A1220" }}>{item.title}</h3>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* (section merged into Food & Beauty translated below) */}
 
       {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
       <section className="py-8" style={{ background: "#FBF6E9" }}>
