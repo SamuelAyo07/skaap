@@ -655,8 +655,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
                   className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
                   style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: "#F3F4F6" }}>
-                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center"><Scan size={14} style={{ color: "#D1D5DB" }} /></div>}
+                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
