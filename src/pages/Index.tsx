@@ -495,7 +495,7 @@ const Index = () => {
                 <Sparkles size={11} /> Two scans. One language.
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty — finally translated.
+                Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
               <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
                 Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
