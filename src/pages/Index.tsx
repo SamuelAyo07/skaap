@@ -28,37 +28,89 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Sticky bottom CTA (mobile) — appears after hero scroll for conversion lift ─── */
-const StickyScanCTA = ({ onScan }: { onScan: () => void }) => {
+/* ─── Sticky bottom CTA (mobile) — install SKAAP to Home Screen ─── */
+const StickyScanCTA = ({ onScan: _onScan }: { onScan: () => void }) => {
   const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 480);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   return (
-    <motion.div
-      initial={false}
-      animate={{ y: show ? 0 : 96, opacity: show ? 1 : 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 pointer-events-none"
-      style={{
-        background: "linear-gradient(to top, rgba(10,15,30,0.96) 60%, rgba(10,15,30,0))",
-      }}
-    >
-      <button
-        onClick={() => { trackEvent("cta_clicked", { cta: "sticky_scan_cta" }); onScan(); }}
-        className="pointer-events-auto w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm shadow-2xl"
-        style={{
-          background: "linear-gradient(135deg, #C41E3A, #a11830)",
-          color: "#fff",
-          boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
-        }}
+    <>
+      <motion.div
+        initial={false}
+        animate={{ y: show ? 0 : 96, opacity: show ? 1 : 0 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(10,15,30,0.96) 60%, rgba(10,15,30,0))" }}
       >
-        <ScanLine size={16} /> Scan a barcode — free
-      </button>
-    </motion.div>
+        <button
+          onClick={() => { trackEvent("cta_clicked", { cta: "sticky_install_cta" }); setOpen(true); }}
+          className="pointer-events-auto w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm shadow-2xl"
+          style={{
+            background: "linear-gradient(135deg, #C41E3A, #a11830)",
+            color: "#fff",
+            boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
+          }}
+        >
+          <Download size={16} /> Add SKAAP to Home Screen
+        </button>
+      </motion.div>
+
+      {/* Install instructions sheet */}
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="md:hidden fixed inset-0 z-50 flex items-end justify-center"
+          style={{ background: "rgba(10,15,30,0.6)", backdropFilter: "blur(6px)" }}
+          onClick={() => setOpen(false)}
+        >
+          <motion.div
+            initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full rounded-t-3xl p-5 pb-[max(20px,env(safe-area-inset-bottom))] bg-white"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="mx-auto w-10 h-1 rounded-full mb-4" style={{ background: "#E5E7EB" }} />
+            <h3 className="text-lg font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+              Install SKAAP — 5 seconds
+            </h3>
+            <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
+              Works just like an app. No store. No download.
+            </p>
+
+            {isIOS ? (
+              <ol className="space-y-2 text-sm" style={{ color: "#0A1220" }}>
+                <li><span className="font-bold">1.</span> Tap the <span className="font-bold">Share</span> button at the bottom of Safari.</li>
+                <li><span className="font-bold">2.</span> Scroll and tap <span className="font-bold">Add to Home Screen</span>.</li>
+                <li><span className="font-bold">3.</span> Tap <span className="font-bold">Add</span>. Done.</li>
+              </ol>
+            ) : (
+              <ol className="space-y-2 text-sm" style={{ color: "#0A1220" }}>
+                <li><span className="font-bold">1.</span> Tap the <span className="font-bold">⋮ menu</span> in Chrome.</li>
+                <li><span className="font-bold">2.</span> Tap <span className="font-bold">Add to Home Screen</span> (or "Install app").</li>
+                <li><span className="font-bold">3.</span> Tap <span className="font-bold">Install</span>. Done.</li>
+              </ol>
+            )}
+
+            <button
+              onClick={() => setOpen(false)}
+              className="w-full mt-5 py-3 rounded-xl font-bold text-sm text-white"
+              style={{ background: "#0A1220" }}
+            >
+              Got it
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 };
 
