@@ -360,11 +360,11 @@ const Index = () => {
                 productImage={productCrackers}
                 productLabel="Snack Crackers"
                 signals={[
-                  { dot: "#C41E3A", text: "Too much salt" },
+                  { dot: "#C41E3A", text: "Sodium: 600mg" },
                   { dot: "#F59E0B", text: "6 additives" },
-                  { dot: "#F59E0B", text: "Ultra-processed" },
+                  { dot: "#F59E0B", text: "NOVA 4" },
                 ]}
-                verdict="Bad"
+                verdict="Inside"
                 score="21"
                 scoreColor="#C41E3A"
               />
@@ -374,11 +374,11 @@ const Index = () => {
                 productImage={productMacaroni}
                 productLabel="Mac & Cheese Box"
                 signals={[
-                  { dot: "#C41E3A", text: "High sodium" },
+                  { dot: "#C41E3A", text: "Sodium: 720mg" },
                   { dot: "#C41E3A", text: "7 additives" },
-                  { dot: "#F59E0B", text: "Low fiber" },
+                  { dot: "#F59E0B", text: "Fiber: 1g" },
                 ]}
-                verdict="Bad"
+                verdict="Inside"
                 score="14"
                 scoreColor="#C41E3A"
               />
@@ -388,15 +388,16 @@ const Index = () => {
                 productImage={productMoisturizer}
                 productLabel="Daily Moisturizer"
                 signals={[
-                  { dot: "#F59E0B", text: "Fragrance" },
+                  { dot: "#F59E0B", text: "Fragrance listed" },
                   { dot: "#C41E3A", text: "2 hormone disruptors" },
-                  { dot: "#22C55E", text: "Hydrating base" },
+                  { dot: "#22C55E", text: "Hyaluronic acid" },
                 ]}
-                verdict="Caution"
+                verdict="Inside"
                 score="54"
                 scoreColor="#F59E0B"
               />
             </FadeIn>
+
           </div>
         </div>
       </section>
