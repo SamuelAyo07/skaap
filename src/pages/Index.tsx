@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Eye, CreditCard, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Eye, CreditCard, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory, Sparkles, Droplet, Quote, Star, Utensils, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -253,21 +253,21 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Food became harder to understand than it should be
+            <AlertTriangle size={11} /> Labels shouldn't be this hard
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
-            className="font-extrabold tracking-tighter leading-[1.05] text-white"
-            style={{ fontSize: "clamp(34px, 7vw, 56px)" }}
+            className="font-extrabold tracking-tighter leading-[1.02] text-white"
+            style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
-            Scan food &amp; beauty.<br />
-            <span className="text-gradient">Know what you're really putting on &amp; in your body.</span>
+            Scan it.<br />
+            <span className="text-gradient">Know it.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-3 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Instantly. Point your camera at any <strong className="text-white">food</strong> or <strong className="text-white">beauty</strong> barcode — get one clear score and what's actually inside.
+            className="mt-4 text-base max-w-xs mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
+            One score for what you eat — and what you put on your skin.
           </motion.p>
 
           <motion.button
@@ -429,6 +429,146 @@ const Index = () => {
         </div>
       </section>
 
+
+      {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
+      <section className="py-10" style={{ background: "#FFFFFF" }}>
+        <div className="max-w-5xl mx-auto px-5">
+          <FadeIn>
+            <div className="text-center mb-6">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
+                <Sparkles size={11} /> Two scans. One language.
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty — finally translated.
+              </h2>
+              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
+                Same camera. Same simple score. Whether it's cereal or serum, you'll know in 2 seconds.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* FOOD */}
+            <FadeIn delay={0.05}>
+              <div className="rounded-2xl p-5 h-full" style={{ background: "linear-gradient(180deg,#FBF6E9, #FFFFFF)", border: "1px solid #E5E7EB" }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(196,30,58,0.1)" }}>
+                    <Utensils size={15} color="#C41E3A" />
+                  </span>
+                  <h3 className="font-extrabold text-base" style={{ color: "#0A1220" }}>Food</h3>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#0A1220", color: "#fff" }}>4M+ products</span>
+                </div>
+
+                <div className="rounded-xl p-3 mb-3 flex items-center gap-3" style={{ background: "#fff", border: "1px solid #F1F2F4" }}>
+                  <img src={productCrackers} alt="Snack crackers" className="w-12 h-12 object-contain" loading="lazy" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-bold leading-tight" style={{ color: "#0A1220" }}>Snack Crackers</p>
+                    <p className="text-[10.5px]" style={{ color: "#6B7280" }}>Ultra-processed · 6 additives</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#C41E3A" }}>21</div>
+                </div>
+
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {["Hidden sugar","Banned additives","Ultra-processing","Sodium bombs","Seed oils","Allergens"].map(t => (
+                    <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C41E3A" }} /> {t}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* BEAUTY */}
+            <FadeIn delay={0.12}>
+              <div className="rounded-2xl p-5 h-full" style={{ background: "linear-gradient(180deg,#FCE9EE, #FFFFFF)", border: "1px solid #F3D5DE" }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(196,30,58,0.12)" }}>
+                    <Droplet size={15} color="#C41E3A" />
+                  </span>
+                  <h3 className="font-extrabold text-base" style={{ color: "#0A1220" }}>Beauty &amp; Skincare</h3>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#C41E3A", color: "#fff" }}>New</span>
+                </div>
+
+                <div className="rounded-xl p-3 mb-3 flex items-center gap-3" style={{ background: "#fff", border: "1px solid #F3D5DE" }}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: "#FBF6E9" }}>🧴</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-bold leading-tight" style={{ color: "#0A1220" }}>Daily Moisturizer</p>
+                    <p className="text-[10.5px]" style={{ color: "#6B7280" }}>2 hormone disruptors · Fragrance</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#F59E0B" }}>54</div>
+                </div>
+
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {["Hormone disruptors","Parabens","Synthetic fragrance","Sulfates","Allergens","Comedogenic oils"].map(t => (
+                    <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C41E3A" }} /> {t}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Ingredient spotlight strip */}
+          <FadeIn delay={0.2}>
+            <div className="mt-6 rounded-2xl p-4 md:p-5" style={{ background: "#0A1220", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <p className="text-[10.5px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>Ingredient spotlight</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { name: "Parabens", tag: "Beauty", why: "Linked to hormone disruption — banned in EU cosmetics.", color: "#C41E3A" },
+                  { name: "Red 40", tag: "Food", why: "Restricted in EU; tied to hyperactivity in kids.", color: "#F59E0B" },
+                  { name: "Retinol", tag: "Beauty", why: "Effective but avoid in pregnancy — we'll warn you.", color: "#22C55E" },
+                ].map(i => (
+                  <div key={i.name} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-bold text-[13px] text-white">{i.name}</span>
+                      <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: `${i.color}22`, color: i.color }}>{i.tag}</span>
+                    </div>
+                    <p className="text-[11.5px] leading-snug" style={{ color: "rgba(255,255,255,0.65)" }}>{i.why}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ─── 6c. TESTIMONIALS — short, kind, human ─── */}
+      <section className="py-10" style={{ background: "#F9FAFB" }}>
+        <div className="max-w-4xl mx-auto px-5">
+          <FadeIn>
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-1 mb-2" style={{ color: "#F59E0B" }}>
+                {[0,1,2,3,4].map(i => <Star key={i} size={14} fill="#F59E0B" stroke="#F59E0B" />)}
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+                Loved by people who finally read the back of the box.
+              </h2>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              { q: "I caught two products my kids eat every week with banned dyes. Game-changer.", n: "Maya R.", r: "Mom of 2 · Austin" },
+              { q: "Switched my whole skincare shelf in a weekend. SKAAP made it obvious.", n: "Jordan K.", r: "Sensitive skin · NYC" },
+              { q: "Finally a score I trust. No ads, no agenda — just what's inside.", n: "Priya S.", r: "Pescatarian · SF" },
+            ].map((t, i) => (
+              <FadeIn key={i} delay={i * 0.06}>
+                <div className="bg-white rounded-2xl p-4 h-full flex flex-col" style={{ border: "1px solid #E5E7EB" }}>
+                  <Quote size={16} style={{ color: "#C41E3A" }} className="mb-2" />
+                  <p className="text-[13px] leading-snug flex-1" style={{ color: "#0A1220" }}>"{t.q}"</p>
+                  <div className="mt-3 pt-3" style={{ borderTop: "1px solid #F1F2F4" }}>
+                    <p className="text-[12px] font-bold" style={{ color: "#0A1220" }}>{t.n}</p>
+                    <p className="text-[10.5px]" style={{ color: "#6B7280" }}>{t.r}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ─── 8. SCAN & PAY ─── */}
       <section className="py-8" style={{ background: "#0A0F1E" }}>

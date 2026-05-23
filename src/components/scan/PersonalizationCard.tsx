@@ -17,18 +17,45 @@ const HEALTH_OPTIONS = [
   "Thyroid", "PCOS",
 ];
 
+const SKIN_GOAL_OPTIONS = [
+  "Hydration", "Anti-aging", "Acne", "Brightening", "Redness",
+  "Dark spots", "Pores", "Firmness", "Sensitivity care", "Barrier repair",
+];
+
+const SKIN_TYPE_OPTIONS = [
+  "Oily", "Dry", "Combination", "Normal", "Sensitive", "Mature", "Acne-prone",
+];
+
+const SKIN_ALLERGY_OPTIONS = [
+  "Fragrance", "Parabens", "Sulfates", "Essential oils", "Nickel",
+  "Lanolin", "Formaldehyde", "Nut oils",
+];
+
 interface Prefs {
   diets: string[];
   health: string[];
+  skinGoals: string[];
+  skinType: string[];
+  skinAllergies: string[];
   notes: string;
 }
 
 function loadPrefs(): Prefs {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const p = JSON.parse(raw);
+      return {
+        diets: p.diets || [],
+        health: p.health || [],
+        skinGoals: p.skinGoals || [],
+        skinType: p.skinType || [],
+        skinAllergies: p.skinAllergies || [],
+        notes: p.notes || "",
+      };
+    }
   } catch {}
-  return { diets: [], health: [], notes: "" };
+  return { diets: [], health: [], skinGoals: [], skinType: [], skinAllergies: [], notes: "" };
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -146,14 +173,16 @@ export function PersonalizationCard() {
 
   if (!isPlus) return <LockedPreview onUpgrade={() => openUpgrade("SKAAP AI")} />;
 
-  const toggle = (key: "diets" | "health", value: string) => {
+  const toggle = (key: "diets" | "health" | "skinGoals" | "skinType" | "skinAllergies", value: string) => {
     setPrefs(p => ({
       ...p,
       [key]: p[key].includes(value) ? p[key].filter(v => v !== value) : [...p[key], value],
     }));
   };
 
-  const count = prefs.diets.length + prefs.health.length;
+  const count =
+    prefs.diets.length + prefs.health.length +
+    prefs.skinGoals.length + prefs.skinType.length + prefs.skinAllergies.length;
 
   const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
     <motion.button
@@ -220,6 +249,35 @@ export function PersonalizationCard() {
                 <div className="flex flex-wrap gap-1.5">
                   {HEALTH_OPTIONS.map(d => (
                     <Chip key={d} label={d} active={prefs.health.includes(d)} onClick={() => toggle("health", d)} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-3" style={{ borderTop: "1px dashed rgba(10,18,32,0.08)" }}>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#C41E3A" }}>
+                  💄 Skin goals
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_GOAL_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinGoals.includes(d)} onClick={() => toggle("skinGoals", d)} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Skin type</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_TYPE_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinType.includes(d)} onClick={() => toggle("skinType", d)} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Skin allergies &amp; avoids</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_ALLERGY_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinAllergies.includes(d)} onClick={() => toggle("skinAllergies", d)} />
                   ))}
                 </div>
               </div>
