@@ -343,13 +343,13 @@ const Index = () => {
       </section>
 
       {/* ─── 3. HOW IT WORKS — 3 mockups with REAL product images ─── */}
-      <section className="py-6" style={{ background: "#0A0F1E" }}>
+      <section className="py-5" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               See it in action
             </h2>
-            <p className="text-center text-xs mb-5" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-center text-xs mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>
               Scan → Score → Decide.
             </p>
           </FadeIn>
@@ -364,7 +364,7 @@ const Index = () => {
                   { dot: "#F59E0B", text: "6 additives" },
                   { dot: "#F59E0B", text: "NOVA 4" },
                 ]}
-                verdict="Inside"
+                verdict="Poor"
                 score="21"
                 scoreColor="#C41E3A"
               />
@@ -378,7 +378,7 @@ const Index = () => {
                   { dot: "#C41E3A", text: "7 additives" },
                   { dot: "#F59E0B", text: "Fiber: 1g" },
                 ]}
-                verdict="Inside"
+                verdict="Poor"
                 score="14"
                 scoreColor="#C41E3A"
               />
@@ -392,7 +392,7 @@ const Index = () => {
                   { dot: "#C41E3A", text: "2 hormone disruptors" },
                   { dot: "#22C55E", text: "Hyaluronic acid" },
                 ]}
-                verdict="Inside"
+                verdict="Fair"
                 score="54"
                 scoreColor="#F59E0B"
               />
