@@ -261,8 +261,8 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.05] text-white"
             style={{ fontSize: "clamp(34px, 7vw, 56px)" }}
           >
-            Scan any product.<br />
-            <span className="text-gradient">Know what you're really eating.</span>
+            Scan food &amp; beauty.<br />
+            <span className="text-gradient">Know what you're really putting on &amp; in your body.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
