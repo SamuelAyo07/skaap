@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink, Flame, Sparkles, TrendingUp } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
-import { ShareRewardsCard } from "@/components/scan/ShareRewardsCard";
 import { PersonalizationCard } from "@/components/scan/PersonalizationCard";
+import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,7 +45,11 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [showCustomInput, setShowCustomInput] = useState(false);
 
   const stats = useMemo(() => getUserStats(), [user?.id]);
-  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "friend";
+  const localName = getUserName();
+  const localFirst = getUserFirstName();
+  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || localFirst || "friend";
+  const displayName = user?.user_metadata?.full_name || localName || "Guest";
+  const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "—";
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" })
     : null;
@@ -130,15 +134,13 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-extrabold text-[20px] tracking-tight leading-tight truncate" style={{ color: "#0A1220" }}>
-            {user ? `Hi, ${firstName} 👋` : "Profile"}
+            {(user || localFirst) ? `Hi, ${firstName}` : "Profile"}
           </h1>
-          {user && (
-            <p className="text-[11px] font-medium truncate" style={{ color: "#9CA3AF" }}>
-              {stats.total_scans > 0
-                ? `${stats.total_scans} scan${stats.total_scans === 1 ? "" : "s"} · eating with more intention`
-                : "Welcome to SKAAP"}
-            </p>
-          )}
+          <p className="text-[11px] font-medium truncate" style={{ color: "#9CA3AF" }}>
+            {stats.total_scans > 0
+              ? `${stats.total_scans} scan${stats.total_scans === 1 ? "" : "s"} · eating with more intention`
+              : "Welcome to SKAAP"}
+          </p>
         </div>
       </div>
 
@@ -151,10 +153,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-[15px] font-bold truncate tracking-tight" style={{ color: "#0A1220" }}>
-              {user?.user_metadata?.full_name || "User"}
+              {displayName}
             </h2>
             <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>
-              {user?.email || "—"}
+              {displayEmail}
             </p>
           </div>
           {isPlus && (
@@ -260,10 +262,6 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         {/* ─── Personalization (Plus-gated: diet, health restrictions, AI coach notes) ─── */}
         <PersonalizationCard />
 
-        {/* ─── Share Rewards (moved from bottom nav for simplicity) ─── */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-          <ShareRewardsCard onShare={onBack} />
-        </motion.div>
 
         {/* ─── Ingredient Alerts ─── */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
