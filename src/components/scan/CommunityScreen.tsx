@@ -502,7 +502,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             <MapPin size={32} style={{ color: "#3B82F6" }} />
           </div>
           <h2 className="font-extrabold text-[22px] mt-6" style={{ color: "#1A1A1A" }}>
-            See what your city is scanning 📍
+            See what your city is scanning
           </h2>
           <p className="text-[14px] mt-3" style={{ color: "#6B7280" }}>
             Allow location access to see community food intelligence for your area.
@@ -536,18 +536,17 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
   // ─── Build the friendly headline insight ───
   const dailyInsight = (() => {
-    if (loading) return { emoji: "👀", text: `Looking around ${cityName}…` };
+    if (loading) return { text: `Looking around ${cityName}…` };
     if (scansToday === 0 && worstProducts.length === 0) {
-      return { emoji: "🌱", text: `Be the first to scan in ${cityName} today.` };
+      return { text: `Be the first to scan in ${cityName} today.` };
     }
     if (worstProducts.length > 0) {
       const w = worstProducts[0];
       return {
-        emoji: "🚨",
-        text: `People in ${cityName} are putting back ${w.product_name.split(" ").slice(0, 4).join(" ")} today. Score: ${w.avg_score}/100.`,
+        text: `People in ${cityName} are putting back ${w.product_name.split(" ").slice(0, 4).join(" ")} today. Score ${w.avg_score}/100.`,
       };
     }
-    return { emoji: "✨", text: `${scansToday} scans in ${cityName} today. Healthy choices winning.` };
+    return { text: `${scansToday} scans in ${cityName} today. Healthy choices winning.` };
   })();
 
   const totalAvoided = productsAvoided;
@@ -574,38 +573,40 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
         {/* HERO INSIGHT — single plain-language sentence */}
         <div className="mx-5 mt-5 p-5 rounded-[20px]"
-          style={{ background: "linear-gradient(135deg, #FFF7ED, #FEF3C7)", border: "1px solid #FDE68A" }}>
-          <span className="text-[32px] leading-none">{dailyInsight.emoji}</span>
+          style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+          <div className="flex items-center gap-1.5">
+            <Activity size={14} style={{ color: "#C41E3A" }} />
+            <span className="text-[10px] font-bold tracking-[0.12em] uppercase" style={{ color: "#C41E3A" }}>Today in {cityName}</span>
+          </div>
           <p className="font-extrabold text-[17px] mt-2 leading-snug" style={{ color: "#0A1220" }}>
             {dailyInsight.text}
           </p>
-          <p className="text-[12px] mt-2" style={{ color: "#92400E" }}>
+          <p className="text-[12px] mt-2" style={{ color: "#6B7280" }}>
             Updates with every new scan from your area.
           </p>
         </div>
 
-        {/* THREE SIMPLE STATS — kid-friendly labels */}
+        {/* THREE SIMPLE STATS */}
         <div className="grid grid-cols-3 gap-2 px-5 mt-4">
           {[
-            { emoji: "📱", value: scansToday, label: "scans today" },
-            { emoji: "🚫", value: totalAvoided, label: "put back" },
-            { emoji: "💚", value: healthiest ? healthiest.avg_score : "—", label: "best score" },
+            { label: "Scans today", value: scansToday },
+            { label: "Put back", value: totalAvoided },
+            { label: "Best score", value: healthiest ? healthiest.avg_score : "—" },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl py-3 text-center"
               style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <span className="text-[20px]">{s.emoji}</span>
-              <p className="font-extrabold text-[18px] mt-0.5" style={{ color: "#0A1220" }}>
+              <p className="font-extrabold text-[20px]" style={{ color: "#0A1220" }}>
                 {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
               </p>
-              <p className="text-[10px] font-medium" style={{ color: "#6B7280" }}>{s.label}</p>
+              <p className="text-[10px] font-medium mt-0.5" style={{ color: "#6B7280" }}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* TWO SIMPLE LISTS — Avoid + Try Instead */}
         <div className="px-5 mt-6">
-          <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
-            🚨 People are putting back
+          <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
+            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> People are putting back
           </h2>
           <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The lowest-scoring stuff this week</p>
 
@@ -639,8 +640,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         </div>
 
         <div className="px-5 mt-6">
-          <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
-            💚 Try these instead
+          <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
+            <Heart size={15} style={{ color: "#16A34A" }} /> Try these instead
           </h2>
           <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The healthiest picks people are buying</p>
 
@@ -696,8 +697,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         {isPlus && (
           <>
             <div className="px-5 mt-7">
-              <h2 className="font-extrabold text-[17px]" style={{ color: "#0A1220" }}>
-                🧪 Stuff your area is avoiding
+              <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
+                <Shield size={15} style={{ color: "#C41E3A" }} /> Stuff your area is avoiding
               </h2>
               <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>
                 The ingredients people in {cityName} are saying no to
@@ -743,7 +744,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 </div>
                 <p className="text-[12px] mt-3" style={{ color: userAvgScore > cityAvgScore ? "#16A34A" : "#F59E0B" }}>
                   {userAvgScore > cityAvgScore
-                    ? `You eat better than the ${cityName} average. Keep it up. 🌿`
+                    ? `You eat better than the ${cityName} average. Keep it up.`
                     : `You're close to the ${cityName} average. A few smart swaps and you'll pull ahead.`}
                 </p>
               </div>
