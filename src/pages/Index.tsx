@@ -511,27 +511,6 @@ const Index = () => {
             </FadeIn>
           </div>
 
-          {/* Ingredient spotlight strip */}
-          <FadeIn delay={0.2}>
-            <div className="mt-6 rounded-2xl p-4 md:p-5" style={{ background: "#0A1220", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <p className="text-[10.5px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>Ingredient spotlight</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { name: "Parabens", tag: "Beauty", why: "Linked to hormone disruption — banned in EU cosmetics.", color: "#C41E3A" },
-                  { name: "Red 40", tag: "Food", why: "Restricted in EU; tied to hyperactivity in kids.", color: "#F59E0B" },
-                  { name: "Retinol", tag: "Beauty", why: "Effective but avoid in pregnancy — we'll warn you.", color: "#22C55E" },
-                ].map(i => (
-                  <div key={i.name} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-bold text-[13px] text-white">{i.name}</span>
-                      <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: `${i.color}22`, color: i.color }}>{i.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] leading-snug" style={{ color: "rgba(255,255,255,0.65)" }}>{i.why}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
