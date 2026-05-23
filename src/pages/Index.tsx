@@ -253,21 +253,21 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Food became harder to understand than it should be
+            <AlertTriangle size={11} /> Labels shouldn't be this hard
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
-            className="font-extrabold tracking-tighter leading-[1.05] text-white"
-            style={{ fontSize: "clamp(34px, 7vw, 56px)" }}
+            className="font-extrabold tracking-tighter leading-[1.02] text-white"
+            style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
-            Scan food &amp; beauty.<br />
-            <span className="text-gradient">Know what you're really putting on &amp; in your body.</span>
+            Scan it.<br />
+            <span className="text-gradient">Know it.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-3 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Instantly. Point your camera at any <strong className="text-white">food</strong> or <strong className="text-white">beauty</strong> barcode — get one clear score and what's actually inside.
+            className="mt-4 text-base max-w-xs mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
+            One score for what you eat — and what you put on your skin.
           </motion.p>
 
           <motion.button
