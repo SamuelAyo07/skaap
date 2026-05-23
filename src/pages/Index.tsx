@@ -636,12 +636,14 @@ const Index = () => {
           </FadeIn>
           <div className="space-y-2">
             {[
-              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus is pay-what-you-want — from $2.99/mo or a one-time yearly contribution — and unlocks weekly habit reports, custom alerts, and product search." },
-              { q: "How is the SKAAP Score calculated?", a: "0–100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic/processing. Same product = same score, anywhere." },
-              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database — cross-checked with FDA/EFSA bans. AI translates the science so anyone can understand it." },
+              { q: "Does SKAAP work on any product, anywhere in the world?", a: "Yes. SKAAP works on any barcode on the planet. Whether you are shopping in Lagos, London, New York, Tokyo, or anywhere else, point the camera at the barcode and we pull the ingredients. Works on food, drinks, snacks, skincare, makeup and household products." },
+              { q: "Is SKAAP free?", a: "Yes. Scanning, scores, and ingredient breakdowns are free forever. SKAAP Plus is pay-what-you-want, starting at $2.99 a month or a one-time yearly contribution, and unlocks weekly habit reports, custom alerts, and product search." },
+              { q: "How is the SKAAP Score calculated?", a: "0 to 100 scale: 60% nutrition (Nutri-Score), 30% additives (with bans flagged), and 10% organic and processing. Same product, same score, anywhere." },
+              { q: "Where does the data come from?", a: "Open Food Facts, USDA FoodData Central, and our own additive database, cross-checked with FDA and EFSA bans. AI translates the science so anyone can understand it." },
               { q: "Do you sell my data or run ads?", a: "Never. No ads. No third-party tracking. Your scans are private to your account." },
-              { q: "Does it work without signup?", a: "Yes — scan as a guest. Sign up only if you want to save scans, set alerts, or see your weekly grocery score." },
+              { q: "Does it work without signup?", a: "Yes. Scan as a guest. Sign up only if you want to save scans, set alerts, or see your weekly grocery score." },
               { q: "Can I install it on my phone?", a: "Yes. Open useskaap.com on your phone, then 'Add to Home Screen' (iOS Share menu) or tap 'Install' (Android Chrome). It works like a native app." },
+
             ].map((f, i) => (
               <FadeIn key={i} delay={i * 0.03}>
                 <FAQItem q={f.q} a={f.a} />
