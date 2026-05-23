@@ -314,13 +314,13 @@ const Index = () => {
             className="font-extrabold tracking-tighter leading-[1.02] text-white"
             style={{ fontSize: "clamp(44px, 9vw, 68px)" }}
           >
-            Scan it.<br />
-            <span className="text-gradient">Know what's really in it.</span>
+            Know what goes<br />
+            <span className="text-gradient">in and on your body.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-4 text-base max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Most labels hide more than they show. SKAAP reads the barcode and tells you what's actually in your food and beauty products, in 2 seconds.
+            Scan any food or beauty barcode. See what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
