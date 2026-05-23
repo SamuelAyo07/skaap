@@ -14,7 +14,7 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": 2022,
-    "risk_reason": "Potential DNA damage and genotoxicity — nanoparticles may accumulate in organs",
+    "risk_reason": "Potential DNA damage and genotoxicity, nanoparticles may accumulate in organs",
     "efsa_opinion": "No longer considered safe as food additive (EFSA 2021 opinion)",
     "fda_position": "Currently considered safe at permitted levels under 21 CFR 73.575",
     "sources": ["EFSA 2021 Scientific Opinion", "FDA 21 CFR 73.575", "EU Regulation 2022/63"]
@@ -34,7 +34,7 @@
     "australia_status": "banned",
     "brazil_status": "banned",
     "ban_year_eu": 2005,
-    "risk_reason": "Decomposes into semicarbazide (a carcinogen) when heated — also used as a blowing agent in yoga mats and shoe soles",
+    "risk_reason": "Decomposes into semicarbazide (a carcinogen) when heated, also used as a blowing agent in yoga mats and shoe soles",
     "efsa_opinion": "Banned as food additive in EU since 2005",
     "fda_position": "Permitted as flour bleaching and dough conditioning agent up to 45 ppm under 21 CFR 172.806",
     "sources": ["EU Directive 2003/95/EC", "FDA 21 CFR 172.806", "WHO JECFA"]
@@ -54,7 +54,7 @@
     "australia_status": "restricted",
     "brazil_status": "restricted",
     "ban_year_eu": null,
-    "risk_reason": "Classified as 'reasonably anticipated to be a human carcinogen' by NTP — endocrine disruptor concern",
+    "risk_reason": "Classified as 'reasonably anticipated to be a human carcinogen' by NTP, endocrine disruptor concern",
     "efsa_opinion": "Restricted to specific food categories with strict maximum limits (EU Regulation 1333/2008)",
     "fda_position": "Generally Recognized As Safe (GRAS) under 21 CFR 182.3169",
     "sources": ["IARC Group 2B", "NTP 15th Report on Carcinogens", "FDA 21 CFR 182.3169"]
@@ -94,7 +94,7 @@
     "australia_status": "banned",
     "brazil_status": "banned",
     "ban_year_eu": 1990,
-    "risk_reason": "Classified as Group 2B carcinogen by IARC — linked to kidney and thyroid tumors in animal studies",
+    "risk_reason": "Classified as Group 2B carcinogen by IARC, linked to kidney and thyroid tumors in animal studies",
     "efsa_opinion": "Banned as food additive across the EU since 1990",
     "fda_position": "Permitted but FDA encourages bakers to voluntarily stop using it",
     "sources": ["IARC Group 2B", "California AB 418 (2023)", "EU Regulation 1333/2008", "NAFDAC Nigeria"]
@@ -115,9 +115,9 @@
     "brazil_status": "banned",
     "ban_year_eu": 2008,
     "ban_year_us": 2024,
-    "risk_reason": "Bromine accumulates in body tissue — associated with neurological symptoms, memory loss, and skin lesions",
+    "risk_reason": "Bromine accumulates in body tissue, associated with neurological symptoms, memory loss, and skin lesions",
     "efsa_opinion": "Never approved for use in food in the EU",
-    "fda_position": "FDA revoked authorization July 2024 — manufacturers must comply by August 2, 2025",
+    "fda_position": "FDA revoked authorization July 2024, manufacturers must comply by August 2, 2025",
     "sources": ["FDA Final Rule 89 FR 55370 (2024)", "California AB 418 (2023)"]
   },
   {
@@ -135,7 +135,7 @@
     "australia_status": "banned",
     "brazil_status": "permitted",
     "ban_year_eu": 1999,
-    "risk_reason": "Increases IGF-1 levels in milk — IGF-1 linked to increased cancer risk in humans",
+    "risk_reason": "Increases IGF-1 levels in milk, IGF-1 linked to increased cancer risk in humans",
     "efsa_opinion": "Banned due to animal welfare and potential human health concerns",
     "fda_position": "Approved for use in dairy cattle since 1993 (Monsanto's Posilac)",
     "sources": ["EU Council Decision 1999/879/EC", "Health Canada 1999 Decision", "FDA"]
@@ -156,9 +156,9 @@
     "brazil_status": "restricted",
     "ban_year_us": 2025,
     "ban_year_eu": null,
-    "risk_reason": "Linked to thyroid tumors in male rats — banned under the Delaney Clause which prohibits any cancer-causing additive",
-    "efsa_opinion": "Permitted in EU only for specific uses (cocktail cherries, candied cherries) with strict limits — not broadly approved",
-    "fda_position": "FDA revoked authorization January 15, 2025 — food manufacturers must comply by January 15, 2027; drug manufacturers by January 18, 2028",
+    "risk_reason": "Linked to thyroid tumors in male rats, banned under the Delaney Clause which prohibits any cancer-causing additive",
+    "efsa_opinion": "Permitted in EU only for specific uses (cocktail cherries, candied cherries) with strict limits, not broadly approved",
+    "fda_position": "FDA revoked authorization January 15, 2025, food manufacturers must comply by January 15, 2027; drug manufacturers by January 18, 2028",
     "sources": ["FDA Final Rule January 2025", "California AB 418 (2023)", "EU Regulation 1333/2008 Annex II"]
   },
   {
@@ -176,9 +176,9 @@
     "australia_status": "warning_required",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Linked to hyperactivity in children in the 2007 Southampton study — most widely used artificial color in the US",
+    "risk_reason": "Linked to hyperactivity in children in the 2007 Southampton study, most widely used artificial color in the US",
     "efsa_opinion": "Permitted but requires mandatory warning label: 'may have an adverse effect on activity and attention in children'",
-    "fda_position": "Permitted without warning — FDA concluded evidence insufficient to warrant labeling",
+    "fda_position": "Permitted without warning, FDA concluded evidence insufficient to warrant labeling",
     "sources": ["EU Regulation 1333/2008", "McCann et al. 2007 (Southampton Study)", "FDA CFSAN"]
   },
   {
@@ -196,9 +196,9 @@
     "australia_status": "warning_required",
     "brazil_status": "warning_required",
     "ban_year_eu": null,
-    "risk_reason": "Hyperactivity in children and allergic reactions — especially in aspirin-sensitive individuals",
+    "risk_reason": "Hyperactivity in children and allergic reactions, especially in aspirin-sensitive individuals",
     "efsa_opinion": "Permitted but requires mandatory warning label in EU since 2010",
-    "fda_position": "Permitted — requires ingredient listing but no warning label",
+    "fda_position": "Permitted, requires ingredient listing but no warning label",
     "sources": ["EU Regulation 1333/2008", "FDA 21 CFR 74.1705", "ANVISA Brazil"]
   },
   {
@@ -216,7 +216,7 @@
     "australia_status": "warning_required",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Linked to hyperactivity in children — one of the 'Southampton Six' dyes",
+    "risk_reason": "Linked to hyperactivity in children, one of the 'Southampton Six' dyes",
     "efsa_opinion": "Permitted but requires mandatory warning label in EU since 2010",
     "fda_position": "Permitted without warning label",
     "sources": ["EU Regulation 1333/2008", "McCann et al. 2007"]
@@ -236,7 +236,7 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Linked to allergic reactions and chromosomal damage in some studies — banned in France, Belgium, and several other countries historically",
+    "risk_reason": "Linked to allergic reactions and chromosomal damage in some studies, banned in France, Belgium, and several other countries historically",
     "efsa_opinion": "Permitted in EU with Acceptable Daily Intake (ADI) of 6 mg/kg body weight",
     "fda_position": "Permitted without restriction under 21 CFR 74.101",
     "sources": ["EFSA 2010 re-evaluation", "FDA 21 CFR 74.101"]
@@ -256,7 +256,7 @@
     "australia_status": "restricted",
     "brazil_status": "banned",
     "ban_year_eu": 2006,
-    "risk_reason": "Endocrine disruptor — mimics estrogen and may affect reproductive health",
+    "risk_reason": "Endocrine disruptor, mimics estrogen and may affect reproductive health",
     "efsa_opinion": "Banned as food additive in EU since 2006 due to insufficient safety data",
     "fda_position": "Permitted as preservative under GRAS",
     "sources": ["EFSA 2004 opinion", "California AB 418 (2023)", "EU Regulation 1333/2008", "ANVISA Brazil"]
@@ -276,9 +276,9 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Associated with obesity, insulin resistance, fatty liver disease, and type 2 diabetes — makes up ~8% of US caloric intake",
-    "efsa_opinion": "Permitted in EU — historically limited by sugar production quotas (lifted 2017) but far less prevalent than in US",
-    "fda_position": "Generally Recognized As Safe — no limits on use",
+    "risk_reason": "Associated with obesity, insulin resistance, fatty liver disease, and type 2 diabetes, makes up ~8% of US caloric intake",
+    "efsa_opinion": "Permitted in EU, historically limited by sugar production quotas (lifted 2017) but far less prevalent than in US",
+    "fda_position": "Generally Recognized As Safe, no limits on use",
     "sources": ["USDA ERS", "WHO Guidelines on Sugars Intake 2015"]
   },
   {
@@ -296,9 +296,9 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Degraded carrageenan (poligeenan) is a known carcinogen — food-grade carrageenan may cause intestinal inflammation",
-    "efsa_opinion": "Permitted — EFSA re-evaluated in 2018 and lowered the ADI, flagging concerns about degradation",
-    "fda_position": "Generally Recognized As Safe — organic food boards have debated banning it",
+    "risk_reason": "Degraded carrageenan (poligeenan) is a known carcinogen, food-grade carrageenan may cause intestinal inflammation",
+    "efsa_opinion": "Permitted, EFSA re-evaluated in 2018 and lowered the ADI, flagging concerns about degradation",
+    "fda_position": "Generally Recognized As Safe, organic food boards have debated banning it",
     "sources": ["EFSA 2018 re-evaluation", "Cornucopia Institute", "IARC"]
   },
   {
@@ -317,8 +317,8 @@
     "brazil_status": "permitted",
     "ban_year_eu": null,
     "risk_reason": "Classified as 'possibly carcinogenic to humans' (Group 2B) by IARC in July 2023",
-    "efsa_opinion": "Permitted — EFSA and WHO/JECFA reaffirmed ADI of 40 mg/kg, stating no safety concern at current exposure levels",
-    "fda_position": "Permitted — FDA disagreed with IARC classification, citing methodological limitations in underlying studies",
+    "efsa_opinion": "Permitted, EFSA and WHO/JECFA reaffirmed ADI of 40 mg/kg, stating no safety concern at current exposure levels",
+    "fda_position": "Permitted, FDA disagreed with IARC classification, citing methodological limitations in underlying studies",
     "sources": ["IARC Monograph July 2023", "JECFA 2023 Assessment", "EFSA 2013 full risk assessment"]
   },
   {
@@ -336,8 +336,8 @@
     "australia_status": "restricted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "May impair immune response — EWG flagged as high concern; linked to tumors in animal studies at high doses",
-    "efsa_opinion": "Permitted in EU with strict ADI of 0.7 mg/kg body weight — limited to specific food categories",
+    "risk_reason": "May impair immune response, EWG flagged as high concern; linked to tumors in animal studies at high doses",
+    "efsa_opinion": "Permitted in EU with strict ADI of 0.7 mg/kg body weight, limited to specific food categories",
     "fda_position": "Permitted up to 0.02% of fat and oil content in food",
     "sources": ["EFSA 2004 opinion", "EWG Food Scores", "FDA 21 CFR 172.185"]
   },
@@ -356,9 +356,9 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Excess phosphate intake linked to cardiovascular disease and kidney damage — prevalent in processed foods",
+    "risk_reason": "Excess phosphate intake linked to cardiovascular disease and kidney damage, prevalent in processed foods",
     "efsa_opinion": "EFSA lowered the ADI in 2019 and flagged that current exposure in EU may exceed safe limits",
-    "fda_position": "Multiple phosphate additives are GRAS — widely used in processed meats, baked goods, and sodas",
+    "fda_position": "Multiple phosphate additives are GRAS, widely used in processed meats, baked goods, and sodas",
     "sources": ["EFSA 2019 re-evaluation", "American Journal of Clinical Nutrition"]
   },
   {
@@ -376,7 +376,7 @@
     "australia_status": "warning_required",
     "brazil_status": "banned",
     "ban_year_eu": null,
-    "risk_reason": "Linked to hyperactivity in children — one of the Southampton Six dyes; not approved for food use in the US",
+    "risk_reason": "Linked to hyperactivity in children, one of the Southampton Six dyes; not approved for food use in the US",
     "efsa_opinion": "Permitted with mandatory warning label since 2010",
     "fda_position": "Not approved for use in food in the US",
     "sources": ["EU Regulation 1333/2008", "McCann et al. 2007"]
@@ -396,7 +396,7 @@
     "australia_status": "warning_required",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Southampton Six dye — linked to hyperactivity in children; allergic reactions reported",
+    "risk_reason": "Southampton Six dye, linked to hyperactivity in children; allergic reactions reported",
     "efsa_opinion": "Permitted with mandatory warning label",
     "fda_position": "Not approved for use in food in the US",
     "sources": ["EU Regulation 1333/2008", "McCann et al. 2007"]
@@ -437,7 +437,7 @@
     "brazil_status": "permitted",
     "ban_year_eu": null,
     "risk_reason": "Allergic reactions including urticaria, anaphylaxis; not approved in US, Japan, or several other countries",
-    "efsa_opinion": "Permitted with strict ADI in EU — limited food categories",
+    "efsa_opinion": "Permitted with strict ADI in EU, limited food categories",
     "fda_position": "Not approved for use in food in the US",
     "sources": ["EFSA 2013 opinion", "EU Regulation 1333/2008"]
   },
@@ -456,7 +456,7 @@
     "australia_status": "banned",
     "brazil_status": "banned",
     "ban_year_eu": null,
-    "risk_reason": "Linked to tumors in animal studies — banned in the US since 1976; one of the most widely banned food dyes globally",
+    "risk_reason": "Linked to tumors in animal studies, banned in the US since 1976; one of the most widely banned food dyes globally",
     "efsa_opinion": "Permitted in EU only for specific uses (aperitif wines, fish roe) with very low limits",
     "fda_position": "Banned in the US since 1976 due to carcinogenicity concerns",
     "sources": ["FDA ban 1976", "EU Regulation 1333/2008"]
@@ -476,7 +476,7 @@
     "australia_status": "banned",
     "brazil_status": "banned",
     "ban_year_eu": 2007,
-    "risk_reason": "Metabolizes into aniline, a known carcinogen — banned virtually worldwide",
+    "risk_reason": "Metabolizes into aniline, a known carcinogen, banned virtually worldwide",
     "efsa_opinion": "Banned in 2007 after EFSA found safety concerns could not be ruled out",
     "fda_position": "Never approved in the US",
     "sources": ["EFSA 2007 opinion", "EU Regulation 884/2007"]
@@ -496,7 +496,7 @@
     "australia_status": "permitted",
     "brazil_status": "banned",
     "ban_year_eu": null,
-    "risk_reason": "Not approved in many countries due to insufficient safety data — linked to allergic reactions",
+    "risk_reason": "Not approved in many countries due to insufficient safety data, linked to allergic reactions",
     "efsa_opinion": "Permitted in EU with strict ADI; under re-evaluation",
     "fda_position": "Not approved for use in food in the US",
     "sources": ["EFSA re-evaluation", "EU Regulation 1333/2008"]
@@ -516,7 +516,7 @@
     "australia_status": "restricted",
     "brazil_status": "restricted",
     "ban_year_eu": null,
-    "risk_reason": "Form nitrosamines (potent carcinogens) when heated or combined with amines — IARC classifies processed meats as Group 1 carcinogen partly due to nitrites",
+    "risk_reason": "Form nitrosamines (potent carcinogens) when heated or combined with amines, IARC classifies processed meats as Group 1 carcinogen partly due to nitrites",
     "efsa_opinion": "EFSA 2023 re-evaluation confirmed health concerns; recommended reducing maximum levels",
     "fda_position": "Permitted as preservative and color fixative in cured meats under 21 CFR 172.175",
     "sources": ["IARC Monograph 114", "EFSA 2023 re-evaluation", "WHO"]
@@ -536,9 +536,9 @@
     "australia_status": "permitted",
     "brazil_status": "permitted",
     "ban_year_eu": null,
-    "risk_reason": "Banned in the US since 1969 after bladder cancer concerns in animal studies — still widely used elsewhere",
+    "risk_reason": "Banned in the US since 1969 after bladder cancer concerns in animal studies, still widely used elsewhere",
     "efsa_opinion": "Permitted in EU with ADI of 7 mg/kg body weight",
-    "fda_position": "Banned since 1969 — petition to reapprove has been pending",
+    "fda_position": "Banned since 1969, petition to reapprove has been pending",
     "sources": ["FDA ban 1969", "EFSA Scientific Opinion"]
   },
   {
@@ -557,7 +557,7 @@
     "brazil_status": "restricted",
     "ban_year_eu": null,
     "risk_reason": "May chelate essential minerals from the body, leading to mineral deficiency; environmental persistence concerns",
-    "efsa_opinion": "Permitted with strict limits — only for specific food categories",
+    "efsa_opinion": "Permitted with strict limits, only for specific food categories",
     "fda_position": "Permitted as preservative under 21 CFR 172.120",
     "sources": ["EFSA opinion", "FDA 21 CFR 172.120", "FSANZ Australia"]
   },
@@ -577,7 +577,7 @@
     "brazil_status": "permitted",
     "ban_year_eu": null,
     "risk_reason": "Contains methylene chloride, a potential carcinogen; may disrupt gut microbiome; insufficient long-term studies",
-    "efsa_opinion": "Permitted — EFSA set ADI of 9 mg/kg; under re-evaluation scheduled for 2024-2025",
+    "efsa_opinion": "Permitted, EFSA set ADI of 9 mg/kg; under re-evaluation scheduled for 2024-2025",
     "fda_position": "Approved as non-nutritive sweetener since 1988",
     "sources": ["EFSA 2000 opinion", "CSPI concerns", "FDA"]
   },
@@ -598,7 +598,7 @@
     "ban_year_eu": null,
     "risk_reason": "EFSA lowered ADI in 2017 due to neurotoxicity concerns at high doses; associated with 'Chinese Restaurant Syndrome' symptoms",
     "efsa_opinion": "Permitted but with reduced ADI of 30 mg/kg body weight (2017 re-evaluation)",
-    "fda_position": "Generally Recognized As Safe — must be declared on label",
+    "fda_position": "Generally Recognized As Safe, must be declared on label",
     "sources": ["EFSA 2017 re-evaluation", "FDA GRAS"]
   },
   {
@@ -617,8 +617,8 @@
     "brazil_status": "permitted",
     "ban_year_eu": null,
     "risk_reason": "2023 study found sucralose-6-acetate (metabolite) is genotoxic; may damage gut lining and alter glucose/insulin response",
-    "efsa_opinion": "Permitted with ADI of 15 mg/kg — under monitoring",
-    "fda_position": "Approved since 1998 — considered safe at current levels",
+    "efsa_opinion": "Permitted with ADI of 15 mg/kg, under monitoring",
+    "fda_position": "Approved since 1998, considered safe at current levels",
     "sources": ["Journal of Toxicology 2023", "EFSA", "FDA"]
   },
   {
@@ -636,8 +636,8 @@
     "australia_status": "banned",
     "brazil_status": "permitted",
     "ban_year_eu": 1996,
-    "risk_reason": "Growth promoter used in pigs and cattle — causes tremors, elevated heart rate, and stress in animals; banned in 160+ countries",
-    "efsa_opinion": "Banned in EU — EFSA could not establish safe MRL due to insufficient data",
+    "risk_reason": "Growth promoter used in pigs and cattle, causes tremors, elevated heart rate, and stress in animals; banned in 160+ countries",
+    "efsa_opinion": "Banned in EU, EFSA could not establish safe MRL due to insufficient data",
     "fda_position": "Approved for use in pigs, cattle, and turkeys",
     "sources": ["EU ban", "Codex Alimentarius debate", "FSIS USDA"]
   },

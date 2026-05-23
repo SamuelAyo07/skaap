@@ -305,7 +305,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         }
 
         if (!error) return;
-        // Silently ignore all scan errors — user has manual entry as fallback
+        // Silently ignore all scan errors, user has manual entry as fallback
       };
 
       if (typeof reader.decodeFromStream === "function") {

@@ -17,16 +17,16 @@ const LAST_SCAN_KEY = "skaap_last_scan";
 const DAILY_TIPS = [
   { emoji: "🧪", title: "Additives to watch", body: "E171 (titanium dioxide) is banned in the EU but still allowed in the US. SKAAP flags these for you." },
   { emoji: "🥦", title: "NOVA matters", body: "NOVA 4 (ultra-processed) foods are linked to higher inflammation. Look for NOVA 1-2 alternatives." },
-  { emoji: "🅰️", title: "Nutri-Score decoded", body: "Nutri-Score A doesn't always mean healthy — it compares within categories. A cookie can score B." },
+  { emoji: "🅰️", title: "Nutri-Score decoded", body: "Nutri-Score A doesn't always mean healthy, it compares within categories. A cookie can score B." },
   { emoji: "🧂", title: "Hidden sodium", body: "Bread, cereal, and sauces can contain more sodium than chips. Check the per-serving numbers." },
   { emoji: "🍬", title: "Sugar aliases", body: "Dextrose, maltose, and corn syrup are all sugar. Products can have 5+ types to look smaller on labels." },
   { emoji: "🌿", title: "Organic ≠ additive-free", body: "Organic products can still contain approved additives. Always check the full ingredient list." },
   { emoji: "🏭", title: "Processing matters", body: "The same ingredient can be healthy raw but harmful when ultra-processed. Context is everything." },
   { emoji: "🔬", title: "Emulsifiers alert", body: "E433 and E466 may affect gut bacteria. They're common in ice cream and plant milks." },
-  { emoji: "🥛", title: "Calcium check", body: "Many plant milks have added calcium but poor absorption. Shake well — it settles at the bottom." },
+  { emoji: "🥛", title: "Calcium check", body: "Many plant milks have added calcium but poor absorption. Shake well, it settles at the bottom." },
   { emoji: "🍎", title: "Fiber is king", body: "Most adults get only 15g of the recommended 25-30g daily fiber. Whole foods are the best source." },
   { emoji: "🧈", title: "Trans fats hide", body: "Products can say '0g trans fat' with up to 0.5g per serving. Check for 'partially hydrogenated' oils." },
-  { emoji: "🥤", title: "Drink smart", body: "A single soda can contain 39g of sugar — nearly your entire daily limit in one drink." },
+  { emoji: "🥤", title: "Drink smart", body: "A single soda can contain 39g of sugar, nearly your entire daily limit in one drink." },
   { emoji: "🐟", title: "Omega balance", body: "Most diets have too much omega-6 vs omega-3. Aim for fatty fish, flaxseed, or walnuts twice a week." },
   { emoji: "🫙", title: "Preservatives 101", body: "Sodium benzoate (E211) + vitamin C can form benzene. Check if both are in your flavored drinks." },
   { emoji: "🌾", title: "'Whole grain' tricks", body: "If 'whole wheat' isn't the FIRST ingredient, the product may be mostly refined flour." },
@@ -92,7 +92,7 @@ function getMotivation(stats: UserStats): string {
   if (stats.current_streak >= 7) return `🔥 ${stats.current_streak}-day streak! You're on fire`;
   if (stats.kitchen_score >= 70) return "Your kitchen is looking healthy!";
   if (stats.total_scans >= 50) return "You're becoming a food intelligence pro";
-  if (stats.total_scans >= 10) return "Keep scanning — knowledge is power";
+  if (stats.total_scans >= 10) return "Keep scanning, knowledge is power";
   return "Every scan makes you smarter about food";
 }
 
@@ -245,7 +245,7 @@ export function StandaloneHome({
           </button>
         </motion.div>
 
-        {/* Stats strip removed for simplicity — kitchen score lives in History tab */}
+        {/* Stats strip removed for simplicity, kitchen score lives in History tab */}
 
         {/* Last scan quick card */}
         {lastScan && (

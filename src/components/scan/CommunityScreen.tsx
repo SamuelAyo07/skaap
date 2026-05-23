@@ -106,7 +106,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Data
   const [scansToday, setScansToday] = useState(0);
   const [productsAvoided, setProductsAvoided] = useState(0);
-  const [topConcern, setTopConcern] = useState<string>("—");
+  const [topConcern, setTopConcern] = useState<string>(", ");
   const [worstProducts, setWorstProducts] = useState<CommunityProduct[]>([]);
   const [mostScanned, setMostScanned] = useState<CommunityProduct[]>([]);
   const [topAdditives, setTopAdditives] = useState<CommunityAdditive[]>([]);
@@ -305,7 +305,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         }
       }
 
-      // Recent scans (live feed) — last 20 scans in city
+      // Recent scans (live feed), last 20 scans in city
       const { data: recentData } = await supabase
         .from("community_scans")
         .select("id, product_name, brand, image_url, score, city, scan_timestamp, barcode")
@@ -473,7 +473,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             Community Intelligence
           </h2>
           <p className="text-[14px] mt-3 leading-relaxed" style={{ color: "#6B7280" }}>
-            See what your city is scanning, avoiding, and concerned about — in real time.
+            See what your city is scanning, avoiding, and concerned about, in real time.
           </p>
           <motion.button
             whileTap={{ scale: 0.97 }}
@@ -571,7 +571,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </div>
         </div>
 
-        {/* HERO INSIGHT — single plain-language sentence */}
+        {/* HERO INSIGHT, single plain-language sentence */}
         <div className="mx-5 mt-5 p-5 rounded-[20px]"
           style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-1.5">
@@ -591,7 +591,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           {[
             { label: "Scans today", value: scansToday },
             { label: "Put back", value: totalAvoided },
-            { label: "Best score", value: healthiest ? healthiest.avg_score : "—" },
+            { label: "Best score", value: healthiest ? healthiest.avg_score : ", " },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl py-3 text-center"
               style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
@@ -603,7 +603,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           ))}
         </div>
 
-        {/* TWO SIMPLE LISTS — Avoid + Try Instead */}
+        {/* TWO SIMPLE LISTS, Avoid + Try Instead */}
         <div className="px-5 mt-6">
           <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
             <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> People are putting back
@@ -652,7 +652,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               ))
             ) : healthiestProducts.length === 0 ? (
               <div className="text-center py-6 rounded-2xl" style={{ background: "#F0FDF4" }}>
-                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon — keep scanning to fill this in!</p>
+                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon, keep scanning to fill this in!</p>
               </div>
             ) : (
               healthiestProducts.slice(0, isPlus ? 5 : 2).map(p => (
@@ -674,7 +674,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </div>
         </div>
 
-        {/* Plus teaser for free users — single clear gate */}
+        {/* Plus teaser for free users, single clear gate */}
         {!isPlus && (
           <div className="mx-5 mt-7 p-5 rounded-2xl text-center"
             style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
@@ -683,12 +683,12 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               See the full picture
             </p>
             <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Live scan feed, additives your city avoids, your kitchen rank, and more — with SKAAP Plus.
+              Live scan feed, additives your city avoids, your kitchen rank, and more, with SKAAP Plus.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock — Pay what you want
+              Unlock, Pay what you want
             </motion.button>
           </div>
         )}

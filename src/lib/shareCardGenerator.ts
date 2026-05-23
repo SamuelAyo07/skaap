@@ -1,4 +1,4 @@
-// ─── SKAAP Share Card Generator — 5 card types via HTML Canvas ───
+// ─── SKAAP Share Card Generator, 5 card types via HTML Canvas ───
 // Social-media optimized, branded, compact, fun, fit-to-screen 9:16
 import type { UserStats, ScoreEntry } from "./skaapUserStats";
 import type { AIRecommendation } from "./aiProductInsights";
@@ -127,7 +127,7 @@ function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, ra
   ctx.fillText(String(score), cx, cy + scoreNumSize * 0.33);
 }
 
-// Tilted sticker badge — "tagged" feel for social sharing
+// Tilted sticker badge, "tagged" feel for social sharing
 function drawSticker(ctx: CanvasRenderingContext2D, x: number, y: number, text: string, bg: string, fg: string, rotation = -0.12) {
   ctx.save();
   ctx.translate(x, y);
@@ -152,7 +152,7 @@ function drawSticker(ctx: CanvasRenderingContext2D, x: number, y: number, text: 
 }
 
 function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline: string, tagline?: string) {
-  // Frosted card at bottom — taller, bolder, with red accent bar
+  // Frosted card at bottom, taller, bolder, with red accent bar
   const ctaY = 1620, ctaW = 960, ctaH = 270, ctaR = 32;
   const ctaX = (W - ctaW) / 2;
 
@@ -183,7 +183,7 @@ function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline:
   ctx.font = "500 19px Inter600, Inter, system-ui, sans-serif";
   ctx.fillText(subline, W / 2, ctaY + 100);
 
-  // BIG CTA pill — bigger, with shadow
+  // BIG CTA pill, bigger, with shadow
   const pillW = 500, pillH = 64, pillR = 32;
   const pillX = (W - pillW) / 2, pillY = ctaY + 124;
   ctx.save();
@@ -199,7 +199,7 @@ function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline:
   ctx.font = "800 22px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText("Scan yours free → useskaap.com", W / 2, pillY + 41);
 
-  // Follow CTA — drives social engagement
+  // Follow CTA, drives social engagement
   ctx.fillStyle = "#0A1220";
   ctx.font = "700 15px Inter600, Inter, system-ui, sans-serif";
   ctx.fillText("Follow @useskaap for more real-food scans 🌱", W / 2, pillY + 96);
@@ -207,7 +207,7 @@ function drawBottomCTA(ctx: CanvasRenderingContext2D, headline: string, subline:
   // Tagline
   ctx.fillStyle = "#9CA3AF";
   ctx.font = "500 13px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText(tagline || "Tag us in your scan — we'll repost 🙌", W / 2, pillY + 120);
+  ctx.fillText(tagline || "Tag us in your scan, we'll repost 🙌", W / 2, pillY + 120);
 }
 
 function drawWatermark(ctx: CanvasRenderingContext2D) {
@@ -304,10 +304,10 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     ctx.fillText(p.brand, W / 2, nameY + 36);
   }
 
-  // Giant score ring — centerpiece
+  // Giant score ring, centerpiece
   const cy = H * 0.48;
   drawScoreRing(ctx, W / 2, cy, 190, score, 110);
-  // Tilted sticker badge — top-right of ring
+  // Tilted sticker badge, top-right of ring
   const verdictColor = getScoreColor(score);
   drawSticker(ctx, W / 2 + 200, cy - 160, `${getEmoji(score)} ${getVerdict(score).toUpperCase()}`, verdictColor, "#fff", -0.14);
   // / 100
@@ -334,7 +334,7 @@ function drawProductCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
     ctx.fillText(`Contains: ${topAdds.join(", ")}`, W / 2, addY);
   }
 
-  // Bottom CTA — personalized with the item name so each share feels unique
+  // Bottom CTA, personalized with the item name so each share feels unique
   const shortName = p.product_name.length > 26 ? p.product_name.slice(0, 24) + "…" : p.product_name;
   let l1: string, l2: string;
   if (score >= 75) { l1 = `${shortName} passed the vibe check 🌿`; l2 = "Clean ingredients confirmed. Would you eat it?"; }
@@ -361,7 +361,7 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
   ctx.fillText("MY KITCHEN REPORT", W / 2, 250);
   ctx.letterSpacing = "0";
 
-  // Kitchen score — large number
+  // Kitchen score, large number
   const cy = H * 0.38;
   const color = getScoreColor(ks);
   
@@ -377,7 +377,7 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
   ctx.font = "800 26px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText(`${getVerdict(ks)} Kitchen ${getEmoji(ks)}`, W / 2, cy + 126);
 
-  // Three stats — glass cards
+  // Three stats, glass cards
   const statY = cy + 180;
   const cardW = 280, cardH = 100, cardR = 20, cardGap = 20;
   const totalCardsW = 3 * cardW + 2 * cardGap;
@@ -420,7 +420,7 @@ function drawKitchenCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement |
   else if (stats.total_scans > 50) l1 = "I've scanned 50+ products and I have regrets 🔍";
   else if (ks > 80) l1 = "My kitchen ate and left no crumbs 🏆";
   else if (ks < 40) l1 = "My kitchen is in its villain era 😅";
-  else l1 = `My kitchen is a ${ks}/100 — what's yours?`;
+  else l1 = `My kitchen is a ${ks}/100, what's yours?`;
 
   drawBottomCTA(ctx, l1, `Top ${stats.kitchen_percentile}% of all SKAAP kitchens`, "Rate YOUR kitchen → useskaap.com 🏆");
   drawWatermark(ctx);
@@ -431,7 +431,7 @@ function drawSwapCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
   const rec = p.top_recommendation;
   if (!rec) return;
 
-  // Split background — red top, green bottom
+  // Split background, red top, green bottom
   const topGrad = ctx.createLinearGradient(0, 0, 0, H / 2);
   topGrad.addColorStop(0, "#1a0808");
   topGrad.addColorStop(1, "#2a0a0a");
@@ -457,7 +457,7 @@ function drawSwapCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
 
   drawBranding(ctx, icon, "Smart Swap");
 
-  // TOP HALF — scanned product
+  // TOP HALF, scanned product
   const topCy = H * 0.30;
   ctx.textAlign = "center";
   
@@ -497,7 +497,7 @@ function drawSwapCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
   ctx.font = "800 24px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText("⇅", W / 2, divY + 9);
 
-  // BOTTOM HALF — recommendation
+  // BOTTOM HALF, recommendation
   const botCy = H * 0.68;
   
   ctx.fillStyle = "#2D7D46";
@@ -546,7 +546,7 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
   ctx.font = "140px serif";
   ctx.fillText("🔥", W / 2, cy - 20);
 
-  // Streak number — huge
+  // Streak number, huge
   ctx.fillStyle = "#FFC107";
   ctx.font = "800 120px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText(String(stats.current_streak), W / 2, cy + 120);
@@ -555,7 +555,7 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
   ctx.font = "800 36px Inter800, Inter, system-ui, sans-serif";
   ctx.fillText(stats.current_streak === 1 ? "day" : "days straight", W / 2, cy + 165);
 
-  // Day indicators — last 7 days
+  // Day indicators, last 7 days
   const indicatorY = cy + 240;
   const circleR = 28;
   const gap = 72;
@@ -620,9 +620,9 @@ function drawStreakCard(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | 
   let l1: string;
   if (s >= 30) l1 = "30 days of knowing what I eat 🧠";
   else if (s >= 14) l1 = "2 weeks of eating with purpose 🏆";
-  else if (s >= 7) l1 = "1 week streak — I'm locked in 💪";
+  else if (s >= 7) l1 = "1 week streak, I'm locked in 💪";
   else if (s >= 3) l1 = "Streak mode activated 🔥";
-  else l1 = "Day 1 energy — watch me 🌱";
+  else l1 = "Day 1 energy, watch me 🌱";
   drawBottomCTA(ctx, l1, "How long can YOU go?", "Start your streak → useskaap.com 🔥");
   drawWatermark(ctx);
 }

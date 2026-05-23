@@ -28,7 +28,7 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Sticky bottom CTA (mobile) — install SKAAP to Home Screen ─── */
+/* ─── Sticky bottom CTA (mobile), install SKAAP to Home Screen ─── */
 const StickyScanCTA = ({ onScan: _onScan }: { onScan: () => void }) => {
   const [show, setShow] = useState(false);
   const [open, setOpen] = useState(false);
@@ -247,7 +247,7 @@ const Index = () => {
       if (choice.outcome === "accepted") setInstalled(true);
       deferredRef.current = null;
     } else {
-      // Android with no prompt available, or desktop — show toast
+      // Android with no prompt available, or desktop, show toast
       toast.info(device === "android" ? "Open this page in Chrome, then tap menu (⋮) → Install app." : "Open useskaap.com on your phone to install.");
     }
   };
@@ -293,7 +293,7 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* ─── 2. HERO — urgency framing ─── */}
+      {/* ─── 2. HERO, urgency framing ─── */}
       <section
         className="relative flex items-center justify-center"
         style={{ minHeight: "auto", paddingTop: 72, paddingBottom: 16, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
@@ -342,7 +342,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 3. HOW IT WORKS — 3 mockups with REAL product images ─── */}
+      {/* ─── 3. HOW IT WORKS, 3 mockups with REAL product images ─── */}
       <section className="py-5" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
@@ -404,7 +404,7 @@ const Index = () => {
 
       {/* (section merged into Food & Beauty translated below) */}
 
-      {/* ─── 6. WHAT'S INSIDE — informational, no judgment ─── */}
+      {/* ─── 6. WHAT'S INSIDE, informational, no judgment ─── */}
       <section className="py-6" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
@@ -454,7 +454,7 @@ const Index = () => {
 
 
 
-      {/* ─── 6b. FOOD vs BEAUTY — two-rail explainer with example cards ─── */}
+      {/* ─── 6b. FOOD vs BEAUTY, two-rail explainer with example cards ─── */}
       <section className="py-7" style={{ background: "#FFFFFF" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
@@ -533,7 +533,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 6c. TESTIMONIALS — short, kind, human ─── */}
+      {/* ─── 6c. TESTIMONIALS, short, kind, human ─── */}
       <section className="py-7" style={{ background: "#F9FAFB" }}>
         <div className="max-w-4xl mx-auto px-5">
           <FadeIn>
@@ -570,7 +570,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 8. RETAIL — frictionless self-checkout teaser ─── */}
+      {/* ─── 8. RETAIL, frictionless self-checkout teaser ─── */}
       <section className="py-6" style={{ background: "#0A0F1E" }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
           <FadeIn>
@@ -616,7 +616,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 10. CONTACT — single simple bar ─── */}
+      {/* ─── 10. CONTACT, single simple bar ─── */}
       <section className="py-6" style={{ background: "#FBF6E9" }}>
         <div className="max-w-xl mx-auto px-5">
           <FadeIn>
@@ -674,7 +674,7 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* ─── Sticky mobile CTA — drives visitors into the food intelligence flow ─── */}
+      {/* ─── Sticky mobile CTA, drives visitors into the food intelligence flow ─── */}
       <StickyScanCTA onScan={handleStartScan} />
     </div>
   );

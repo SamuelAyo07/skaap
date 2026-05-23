@@ -552,7 +552,7 @@ const SkaapScan = () => {
     if (nl?.sugars === "high") concerns.push("high sugars");
     if (nl?.salt === "high") concerns.push("high salt");
 
-    // Fire all in parallel — never await
+    // Fire all in parallel, never await
     setAiSummaryLoading(true);
     fetchAISummary({
       barcode,
@@ -1006,7 +1006,7 @@ const SkaapScan = () => {
     hapticMedium();
     if (productInfo && currentBarcode) {
       if (isInBasket(currentBarcode)) {
-        // Already saved — remove from basket
+        // Already saved, remove from basket
         const updated = removeFromBasket(currentBarcode);
         setBasket(updated);
         setSavedState("idle");
@@ -1127,7 +1127,7 @@ const SkaapScan = () => {
     const file = new File([shareImageBlob], shareFilename, { type: "image/png" });
 
     if (target === "tiktok") {
-      // TikTok doesn't have a direct share API — save image + open TikTok
+      // TikTok doesn't have a direct share API, save image + open TikTok
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         try { await navigator.share({ files: [file], title: "My SKAAP Score" }); } catch {}
       } else {
@@ -1135,7 +1135,7 @@ const SkaapScan = () => {
         const a = document.createElement("a");
         a.href = url; a.download = shareFilename;
         a.click(); URL.revokeObjectURL(url);
-        toast("Image saved — open TikTok and create a new post", { duration: 3000 });
+        toast("Image saved, open TikTok and create a new post", { duration: 3000 });
       }
     } else if (target === "whatsapp") {
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
@@ -1150,7 +1150,7 @@ const SkaapScan = () => {
         await navigator.share({
           files: [file],
           title: "I just SKAAPed this",
-          text: `Score: ${scoreBreakdown?.total ?? 0}/100 — useskaap.com/scan`,
+          text: `Score: ${scoreBreakdown?.total ?? 0}/100, useskaap.com/scan`,
         });
       } catch {}
     } else {
@@ -1158,7 +1158,7 @@ const SkaapScan = () => {
       const a = document.createElement("a");
       a.href = url; a.download = shareFilename;
       a.click(); URL.revokeObjectURL(url);
-      toast("Image saved — open Instagram Stories and tap +", { duration: 3000 });
+      toast("Image saved, open Instagram Stories and tap +", { duration: 3000 });
     }
     // Record share reward
     const reward = recordShare(selectedCardType, target);
@@ -1204,7 +1204,7 @@ const SkaapScan = () => {
     if (nav === "home") setScreen("home");
     else if (nav === "history") { setHistory(getHistory()); setScreen("history"); }
     else if (nav === "search") {
-      // Search is a Plus-only feature — gate non-members
+      // Search is a Plus-only feature, gate non-members
       if (!isPlus) { openUpgrade("Product Search"); return; }
       setScreen("search");
     }
@@ -1228,7 +1228,7 @@ const SkaapScan = () => {
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
       <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
-      {/* Standalone PWA home — richer, personalized entry point */}
+      {/* Standalone PWA home, richer, personalized entry point */}
       {isStandalone ? (
         <>
           <StandaloneHome
@@ -1291,7 +1291,7 @@ const SkaapScan = () => {
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
-          {/* CENTER — Compact scanner circle */}
+          {/* CENTER, Compact scanner circle */}
           <div className="flex flex-col items-center px-8 text-center pt-2" style={{ paddingBottom: 4 }}>
             <motion.button
               whileTap={{ scale: 1.04 }}
@@ -1310,7 +1310,7 @@ const SkaapScan = () => {
               </div>
             </motion.button>
 
-            {/* Action row — Search only */}
+            {/* Action row, Search only */}
             <div className="flex items-center gap-2 w-full max-w-xs">
               <motion.button
                 whileTap={{ scale: 0.97 }}
@@ -1327,7 +1327,7 @@ const SkaapScan = () => {
             </div>
           </div>
 
-          {/* Last Scan — Quick re-access */}
+          {/* Last Scan, Quick re-access */}
           {lastScan && (
             <motion.button
               initial={{ opacity: 0, y: 8 }}
@@ -1501,7 +1501,7 @@ const SkaapScan = () => {
       if (n.saturatedFat100g != null && n.saturatedFat100g > 4)
         rows.push({ label: "Saturated fat", val: n.saturatedFat100g, unit: "g", icon: "💧", isPositive: false, level: "high", descriptor: "Can build up in your arteries and affect your heart over time.", dotColor: "#E8314A" });
       if (n.sugars100g != null && n.sugars100g > 15)
-        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "That's a lot of sugar — causes energy crashes and tooth decay.", dotColor: "#E8314A" });
+        rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "high", descriptor: "That's a lot of sugar, causes energy crashes and tooth decay.", dotColor: "#E8314A" });
       else if (n.sugars100g != null && n.sugars100g >= 5 && n.sugars100g <= 15)
         rows.push({ label: "Sugars", val: n.sugars100g, unit: "g", icon: "🍬", isPositive: false, level: "moderate", descriptor: "Some sugar here. Not terrible, but not great either.", dotColor: "#F59E0B" });
       if (n.salt100g != null && n.salt100g > 0.6)
@@ -1713,7 +1713,7 @@ const SkaapScan = () => {
                 </motion.div>
               )}
 
-              {/* HEADER — Product image + name + share */}
+              {/* HEADER, Product image + name + share */}
               <div className="flex items-start gap-3 px-5 pt-3">
                 <div className="flex-shrink-0 overflow-hidden" style={{ width: 72, height: 72, borderRadius: 14, background: "#F3F4F6" }}>
                   {productInfo.imageSmallUrl || productInfo.imageUrl ? (
@@ -1740,7 +1740,7 @@ const SkaapScan = () => {
                 </div>
               </div>
 
-              {/* SCORE HERO — centered, animated */}
+              {/* SCORE HERO, centered, animated */}
               {scoreBreakdown && (
                 <div className="flex flex-col items-center" style={{ marginTop: 12 }}>
                   <button onClick={() => setShowScoreModal(true)}>
@@ -1754,7 +1754,7 @@ const SkaapScan = () => {
                     {getScoreVerdict(scoreBreakdown.total)}
                   </motion.p>
 
-                  {/* Verdict banner — full width pill */}
+                  {/* Verdict banner, full width pill */}
                   <motion.div
                     initial={{ opacity: 0, scale: 1 }}
                     animate={{ opacity: 1, scale: [1, 1.04, 1] }}
@@ -1864,7 +1864,7 @@ const SkaapScan = () => {
                 })()}
               </div>
 
-              {/* LEARN WHY — Educational explainer cards */}
+              {/* LEARN WHY, Educational explainer cards */}
               <div className="mx-5" style={{ marginTop: 12 }}>
                 <button onClick={() => toggleSection("learn-why")} className="w-full flex items-center gap-2 text-left">
                   <span style={{ fontSize: 14 }}>📖</span>
@@ -1880,7 +1880,7 @@ const SkaapScan = () => {
                         { icon: "🅰️", title: "Nutri-Score", body: "A grade from A (best) to E (worst) based on calories, sugar, salt, saturated fat, fiber, and protein. A = eat freely. E = limit this." },
                         { icon: "⚗️", title: "Additives", body: "Chemicals added to food for color, flavor, or shelf life. Some are safe, some are banned in other countries. Fewer = better." },
                         { icon: "🏭", title: "NOVA Group", body: "How processed is this food? 1 = fresh/natural. 4 = ultra-processed (made in factories with lots of chemicals). Stick to 1-2 when you can." },
-                        { icon: "🌍", title: "Eco-Score", body: "How much this product impacts the planet — from farming to packaging. A = planet-friendly. E = heavy environmental cost." },
+                        { icon: "🌍", title: "Eco-Score", body: "How much this product impacts the planet, from farming to packaging. A = planet-friendly. E = heavy environmental cost." },
                       ].map(item => (
                         <div key={item.title} className="flex gap-3 items-start">
                           <span style={{ fontSize: 16, lineHeight: "20px" }}>{item.icon}</span>
@@ -1915,7 +1915,7 @@ const SkaapScan = () => {
                   <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mx-5" style={{ marginTop: 12, padding: "12px 16px", background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 12 }}>
                     <p className="font-semibold text-[14px]" style={{ color: "#92400E" }}>🚩 Contains ingredients banned in Europe</p>
                     <p className="text-[13px] mt-1" style={{ color: "#92400E" }}>
-                      {euBanned.map(b => b.name).join(", ")} — legal in the US but banned in the EU.
+                      {euBanned.map(b => b.name).join(", ")}, legal in the US but banned in the EU.
                     </p>
                   </motion.div>
                 );
@@ -2159,7 +2159,7 @@ const SkaapScan = () => {
           </div>
         )}
 
-        {/* BOTTOM ACTIONS — FIXED */}
+        {/* BOTTOM ACTIONS, FIXED */}
         <div className="flex-shrink-0 flex items-center gap-2.5 px-4 relative" style={{ borderTop: "1px solid #F3F4F6", background: "#FFFFFF", padding: "10px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 8px) + 10px)" }}>
           {/* Heart particle animation */}
           <AnimatePresence>
@@ -2297,7 +2297,7 @@ const SkaapScan = () => {
               </button>
               <button onClick={async () => {
                 const lines = basket.map((item, i) =>
-                  `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""} — Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
+                  `${i + 1}. ${item.name}${item.brand ? ` (${item.brand})` : ""}, Score: ${item.skaapScore ?? "N/A"}/100${item.nutriScore ? ` · Nutri-Score ${item.nutriScore.toUpperCase()}` : ""}`
                 );
                 const shareText = `🐑 SKAAP Product Comparison\n\n${lines.join("\n")}\n\nCompare food products at useskaap.com`;
                 if (navigator.share) {

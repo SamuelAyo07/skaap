@@ -59,7 +59,7 @@ function loadPrefs(): Prefs {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Locked state — Apple-style glass preview, fun & frictionless.
+   Locked state, Apple-style glass preview, fun & frictionless.
    Anchors on $2.99/mo (looks cheaper) with annual bonus framing.
    ───────────────────────────────────────────────────────────── */
 function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
@@ -93,7 +93,7 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
           </span>
         </div>
         <p className="text-[12.5px] mt-2 leading-snug" style={{ color: "#4B5563" }}>
-          Your private nutrition &amp; beauty coach. Tell it your diet, allergies, skin goals — every scan reads through <em>your</em> lens.
+          Your private nutrition &amp; beauty coach. Tell it your diet, allergies, skin goals, every scan reads through <em>your</em> lens.
         </p>
       </div>
 
@@ -132,7 +132,7 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
                 boxShadow: "0 8px 24px -8px rgba(10,18,32,0.55)",
               }}
             >
-              <Sparkles size={14} /> Unlock SKAAP AI — $2.99/mo
+              <Sparkles size={14} /> Unlock SKAAP AI, $2.99/mo
             </motion.button>
             <div className="flex items-center justify-center gap-1.5 mt-2.5 text-[10.5px]" style={{ color: "#6B7280" }}>
               <ShieldCheck size={11} style={{ color: "#10B981" }} />
@@ -158,7 +158,7 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
 
 
 /* ─────────────────────────────────────────────────────────────
-   Unlocked state — clean Apple-style editor
+   Unlocked state, clean Apple-style editor
    ───────────────────────────────────────────────────────────── */
 export function PersonalizationCard() {
   const { isPlus, openUpgrade } = useSubscription();

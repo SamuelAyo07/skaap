@@ -41,7 +41,7 @@ export function SocialLinks({ variant = "pill" }: SocialLinksProps) {
     );
   }
 
-  // pill variant — compact row with brand
+  // pill variant, compact row with brand
   return (
     <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl"
       style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
