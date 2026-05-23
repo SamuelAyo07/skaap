@@ -730,10 +730,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
             <Lock size={18} style={{ color: "#C41E3A" }} className="mx-auto" />
             <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
-              See the full picture
+              You're seeing a sliver
             </p>
             <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Live scan feed, additives your city avoids, your kitchen rank, and more, with SKAAP Plus.
+              Unlock the full live feed, every food and beauty product your area is scanning, the additives they're rejecting, and how your kitchen ranks. Real shoppers, real time.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
