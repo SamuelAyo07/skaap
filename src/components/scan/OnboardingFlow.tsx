@@ -27,7 +27,7 @@ const steps: Step[] = [
     icon: <Barcode size={36} strokeWidth={2} />,
     emoji: "📸",
     title: "Scan any product",
-    subtitle: "Point your camera at a barcode or take a photo — we'll identify it instantly.",
+    subtitle: "Point your camera at a barcode or take a photo, we'll identify it instantly.",
     color: "#1B2A4A",
   },
   {

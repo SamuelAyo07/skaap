@@ -76,7 +76,7 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
         Demo receipt QR · show at exit
       </motion.p>
       <p className="text-center text-xs text-foreground/80 mb-6">
-        Thanks for SKAAPing it — you just SKAAPed it.
+        Thanks for SKAAPing it, you just SKAAPed it.
       </p>
 
       {/* Stats */}

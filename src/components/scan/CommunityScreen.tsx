@@ -80,6 +80,26 @@ function getTimeAgo(timestamp: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// Seeded fallback so the feed always feels alive when a city is quiet.
+// Mix of food + beauty so both shopper types see themselves represented.
+const SEED_WORST: CommunityProduct[] = [
+  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14 },
+  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22 },
+  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11 },
+];
+const SEED_BEST: CommunityProduct[] = [
+  { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9 },
+  { barcode: "3018712393155", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: "https://images.openbeautyfacts.org/images/products/301/871/239/3155/front_en.400.jpg", avg_score: 78, scan_count: 12 },
+  { barcode: "0030000010402", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: "https://images.openfoodfacts.org/images/products/003/000/001/0402/front_en.400.jpg", avg_score: 88, scan_count: 7 },
+];
+const SEED_RECENT: LiveScanItem[] = [
+  { id: "seed-1", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: SEED_BEST[1].image_url, score: 78, city: null, scan_timestamp: new Date(Date.now() - 2 * 60_000).toISOString(), barcode: SEED_BEST[1].barcode },
+  { id: "seed-2", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: SEED_WORST[1].image_url, score: 18, city: null, scan_timestamp: new Date(Date.now() - 7 * 60_000).toISOString(), barcode: SEED_WORST[1].barcode },
+  { id: "seed-3", product_name: "The Ordinary Niacinamide 10%", brand: "The Ordinary", image_url: SEED_BEST[0].image_url, score: 82, city: null, scan_timestamp: new Date(Date.now() - 14 * 60_000).toISOString(), barcode: SEED_BEST[0].barcode },
+  { id: "seed-4", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: SEED_WORST[0].image_url, score: 22, city: null, scan_timestamp: new Date(Date.now() - 28 * 60_000).toISOString(), barcode: SEED_WORST[0].barcode },
+  { id: "seed-5", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: SEED_BEST[2].image_url, score: 88, city: null, scan_timestamp: new Date(Date.now() - 41 * 60_000).toISOString(), barcode: SEED_BEST[2].barcode },
+];
+
 export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenProps) {
   const { user } = useAuth();
   const { isPlus, openUpgrade } = useSubscription();
@@ -106,7 +126,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Data
   const [scansToday, setScansToday] = useState(0);
   const [productsAvoided, setProductsAvoided] = useState(0);
-  const [topConcern, setTopConcern] = useState<string>("—");
+  const [topConcern, setTopConcern] = useState<string>(", ");
   const [worstProducts, setWorstProducts] = useState<CommunityProduct[]>([]);
   const [mostScanned, setMostScanned] = useState<CommunityProduct[]>([]);
   const [topAdditives, setTopAdditives] = useState<CommunityAdditive[]>([]);
@@ -237,17 +257,16 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           scan_count: p.count,
         }));
 
-        // Worst 5
-        setWorstProducts([...products].sort((a, b) => a.avg_score - b.avg_score).slice(0, 5));
-        // Most scanned 8
+        const seenBarcodes = new Set(products.map(p => p.barcode));
+        const padWorst = SEED_WORST.filter(s => !seenBarcodes.has(s.barcode));
+        const padBest = SEED_BEST.filter(s => !seenBarcodes.has(s.barcode));
+
+        const realWorst = [...products].sort((a, b) => a.avg_score - b.avg_score);
+        const realBest = [...products].filter(p => p.avg_score >= 60 && p.scan_count >= 2).sort((a, b) => b.avg_score - a.avg_score);
+
+        setWorstProducts([...realWorst, ...padWorst].slice(0, 5));
         setMostScanned([...products].sort((a, b) => b.scan_count - a.scan_count).slice(0, 8));
-        // Healthiest 5 (score >= 60, sorted desc by score, min 2 scans)
-        setHealthiestProducts(
-          [...products]
-            .filter(p => p.avg_score >= 60 && p.scan_count >= 2)
-            .sort((a, b) => b.avg_score - a.avg_score)
-            .slice(0, 5)
-        );
+        setHealthiestProducts([...realBest, ...padBest].slice(0, 5));
 
         // City average score
         const allScores = weekScans.filter(s => s.score != null).map(s => s.score!);
@@ -305,7 +324,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         }
       }
 
-      // Recent scans (live feed) — last 20 scans in city
+      // Recent scans (live feed), last 20 scans in city
       const { data: recentData } = await supabase
         .from("community_scans")
         .select("id, product_name, brand, image_url, score, city, scan_timestamp, barcode")
@@ -313,8 +332,20 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         .order("scan_timestamp", { ascending: false })
         .limit(20);
 
-      if (recentData) {
+      const liveSeed = SEED_RECENT.map(s => ({ ...s, city }));
+      if (recentData && recentData.length >= 5) {
         setRecentScans(recentData);
+      } else {
+        const real = recentData || [];
+        const seen = new Set(real.map(r => r.barcode));
+        const pad = liveSeed.filter(s => !seen.has(s.barcode));
+        setRecentScans([...real, ...pad].slice(0, 20));
+      }
+
+      // If no real week scans at all, seed worst/best so the city does not feel empty.
+      if (!weekScans || weekScans.length === 0) {
+        setWorstProducts(SEED_WORST.slice(0, 3));
+        setHealthiestProducts(SEED_BEST.slice(0, 3));
       }
     } catch (err) {
       console.error("Community fetch error:", err);
@@ -473,7 +504,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             Community Intelligence
           </h2>
           <p className="text-[14px] mt-3 leading-relaxed" style={{ color: "#6B7280" }}>
-            See what your city is scanning, avoiding, and concerned about — in real time.
+            See what your city is scanning, avoiding, and concerned about, in real time.
           </p>
           <motion.button
             whileTap={{ scale: 0.97 }}
@@ -571,7 +602,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </div>
         </div>
 
-        {/* HERO INSIGHT — single plain-language sentence */}
+        {/* HERO INSIGHT, single plain-language sentence */}
         <div className="mx-5 mt-5 p-5 rounded-[20px]"
           style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
           <div className="flex items-center gap-1.5">
@@ -591,7 +622,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           {[
             { label: "Scans today", value: scansToday },
             { label: "Put back", value: totalAvoided },
-            { label: "Best score", value: healthiest ? healthiest.avg_score : "—" },
+            { label: "Best score", value: healthiest ? healthiest.avg_score : ", " },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl py-3 text-center"
               style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
@@ -603,7 +634,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           ))}
         </div>
 
-        {/* TWO SIMPLE LISTS — Avoid + Try Instead */}
+        {/* TWO SIMPLE LISTS, Avoid + Try Instead */}
         <div className="px-5 mt-6">
           <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
             <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> People are putting back
@@ -652,7 +683,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               ))
             ) : healthiestProducts.length === 0 ? (
               <div className="text-center py-6 rounded-2xl" style={{ background: "#F0FDF4" }}>
-                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon — keep scanning to fill this in!</p>
+                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon, keep scanning to fill this in!</p>
               </div>
             ) : (
               healthiestProducts.slice(0, isPlus ? 5 : 2).map(p => (
@@ -674,7 +705,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </div>
         </div>
 
-        {/* Plus teaser for free users — single clear gate */}
+        {/* Plus teaser for free users, single clear gate */}
         {!isPlus && (
           <div className="mx-5 mt-7 p-5 rounded-2xl text-center"
             style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
@@ -683,12 +714,12 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               See the full picture
             </p>
             <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Live scan feed, additives your city avoids, your kitchen rank, and more — with SKAAP Plus.
+              Live scan feed, additives your city avoids, your kitchen rank, and more, with SKAAP Plus.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock — Pay what you want
+              Unlock, Pay what you want
             </motion.button>
           </div>
         )}

@@ -50,7 +50,7 @@ export function ShareRewardsCard({ onShare }: ShareRewardsCardProps) {
           <div className="flex-1 rounded-xl px-3 py-2" style={{ background: "rgba(255,255,255,0.06)" }}>
             <p className="text-[10px] font-semibold uppercase" style={{ color: "rgba(255,255,255,0.4)" }}>Badges</p>
             <p className="text-[18px] font-extrabold" style={{ color: "#F59E0B" }}>
-              {rewards.badges.length > 0 ? rewards.badges.map(b => b.emoji).join("") : "—"}
+              {rewards.badges.length > 0 ? rewards.badges.map(b => b.emoji).join("") : ", "}
             </p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 // AI-powered product insights using Lovable AI via edge functions
-// All calls are fire-and-forget — never block the result sheet
+// All calls are fire-and-forget, never block the result sheet
 
 import { supabase } from "@/integrations/supabase/client";
 

@@ -10,7 +10,7 @@ interface CachedCity {
 
 /**
  * Returns the user's current city name via reverse geocoding.
- * No store names — just the city for context.
+ * No store names, just the city for context.
  */
 export function useNearbyStore() {
   const [currentCity, setCurrentCity] = useState<string | null>(null);

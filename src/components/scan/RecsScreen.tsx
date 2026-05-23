@@ -87,7 +87,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
         const grade = s.nutriscore_grade ? `Nutri-Score ${s.nutriscore_grade.toUpperCase()}` : "no grade";
         const nova = s.nova_group ? `NOVA ${s.nova_group}` : "";
         const adds = s.additives?.length ? `${s.additives.length} additives` : "0 additives";
-        return `${i + 1}. ${s.product_name}${s.brand ? ` (${s.brand})` : ""} — Score: ${s.skaap_score}/100, ${grade}, ${nova}, ${adds}`;
+        return `${i + 1}. ${s.product_name}${s.brand ? ` (${s.brand})` : ""}, Score: ${s.skaap_score}/100, ${grade}, ${nova}, ${adds}`;
       }).join("\n");
 
       const { data, error: fnError } = await supabase.functions.invoke("ai-product-insights", {
@@ -108,7 +108,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
       setRecs(parsed);
       setCachedRecs(parsed);
     } catch (e: any) {
-      setError(e?.message?.includes("Rate") ? "Too many requests — try again in a minute" : "Couldn't generate recommendations right now");
+      setError(e?.message?.includes("Rate") ? "Too many requests, try again in a minute" : "Couldn't generate recommendations right now");
     }
     setLoading(false);
   }, [hasHistory, stats]);

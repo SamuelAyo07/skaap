@@ -41,6 +41,6 @@ export async function trackEvent(
       screen_width: window.innerWidth,
     });
   } catch {
-    // Silent fail — analytics should never break the app
+    // Silent fail, analytics should never break the app
   }
 }

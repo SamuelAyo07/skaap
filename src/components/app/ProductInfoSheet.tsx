@@ -353,7 +353,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                 </div>
               ) : info && score ? (
                 <>
-                  {/* SECTION A — Product Header */}
+                  {/* SECTION A, Product Header */}
                   <div style={{
                     display: "flex", alignItems: "center", gap: 12,
                     height: 56, marginTop: 14, padding: "0 20px",
@@ -386,7 +386,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                   </div>
                   <div style={{ height: 1, background: "#F3F4F6", marginTop: 14 }} />
 
-                  {/* SECTION B — Score Hero */}
+                  {/* SECTION B, Score Hero */}
                   <div style={{
                     display: "flex", alignItems: "center", gap: 16,
                     marginTop: 16, padding: "0 20px",
@@ -406,7 +406,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                   </div>
                   <div style={{ height: 1, background: "#F3F4F6", marginTop: 16 }} />
 
-                  {/* SECTION C — Signal Chips */}
+                  {/* SECTION C, Signal Chips */}
                   <div style={{
                     display: "flex", gap: 8, marginTop: 12, padding: "0 20px",
                     overflowX: "auto", flexWrap: "nowrap",
@@ -419,7 +419,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                     }}>
                       <div style={{ width: 8, height: 8, borderRadius: 4, background: nsColor }} />
                       <span style={{ fontWeight: 600, fontSize: 12, color: "#1B2A4A" }}>
-                        Nutri-Score {nsGrade?.toUpperCase() || "—"}
+                        Nutri-Score {nsGrade?.toUpperCase() || ", "}
                       </span>
                     </div>
                     {/* Additives chip */}
@@ -442,13 +442,13 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                     }}>
                       <div style={{ width: 8, height: 8, borderRadius: 4, background: novaColor }} />
                       <span style={{ fontWeight: 600, fontSize: 12, color: "#1B2A4A" }}>
-                        NOVA {novaNum || "—"}
+                        NOVA {novaNum || ", "}
                       </span>
                     </div>
                   </div>
                   <div style={{ height: 1, background: "#F3F4F6", marginTop: 12 }} />
 
-                  {/* SECTION D — Accordions */}
+                  {/* SECTION D, Accordions */}
                   {/* Nutrition */}
                   <AccordionSection
                     icon={<UtensilsCrossed size={18} />}
@@ -494,7 +494,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                               <span style={{
                                 fontSize: 13, fontWeight: 600, color: "#1B2A4A", position: "relative",
                               }}>
-                                {row.value != null ? `${Number(row.value).toFixed(1)} ${row.unit}` : "—"}
+                                {row.value != null ? `${Number(row.value).toFixed(1)} ${row.unit}` : ", "}
                               </span>
                             </div>
                           );
@@ -583,7 +583,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
               ) : null}
             </div>
 
-            {/* SECTION E — Bottom Action Row */}
+            {/* SECTION E, Bottom Action Row */}
             {info && score && (
               <div style={{
                 position: "absolute", bottom: 0, left: 0, right: 0,

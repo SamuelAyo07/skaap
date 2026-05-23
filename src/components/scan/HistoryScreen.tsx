@@ -190,7 +190,7 @@ export function HistoryScreen({
                 </motion.div>
                 <p className="text-[17px] font-extrabold mt-5" style={{ color: "#1B2A4A" }}>Ready when you are</p>
                 <p className="text-[13px] mt-1.5 max-w-[260px] text-center leading-relaxed" style={{ color: "#6B7280" }}>
-                  Scan a barcode on any food or beauty product — know what's inside in 2 seconds
+                  Scan a barcode on any food or beauty product, know what's inside in 2 seconds
                 </p>
                 <motion.button
                   whileTap={{ scale: 0.95 }}

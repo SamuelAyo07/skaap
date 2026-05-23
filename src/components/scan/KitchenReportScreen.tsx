@@ -320,7 +320,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
                 <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color: "#1A1A1A" }}>The GRAS Loophole</p>
               </div>
               <p className="text-[13px] leading-relaxed" style={{ color: "#4B5563" }}>
-                The FDA allows thousands of chemicals to enter the US food supply through the "Generally Recognized As Safe" loophole — without independent scientific review. The EU takes the opposite approach: companies must prove an additive is safe before it can be used.
+                The FDA allows thousands of chemicals to enter the US food supply through the "Generally Recognized As Safe" loophole, without independent scientific review. The EU takes the opposite approach: companies must prove an additive is safe before it can be used.
               </p>
             </div>
 

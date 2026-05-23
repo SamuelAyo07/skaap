@@ -10,7 +10,7 @@ interface DesktopShellProps {
 export function DesktopShell({ children }: DesktopShellProps) {
   return (
     <div className="hidden md:flex min-h-screen w-full" style={{ background: "#060a14" }}>
-      {/* Left panel — branding */}
+      {/* Left panel, branding */}
       <div className="flex-1 flex flex-col items-end justify-center pr-12 relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full pointer-events-none"
@@ -47,7 +47,7 @@ export function DesktopShell({ children }: DesktopShellProps) {
         </div>
       </div>
 
-      {/* Center — phone frame */}
+      {/* Center, phone frame */}
       <div className="flex items-center justify-center py-8">
         <div className="relative" style={{ width: 430, minHeight: "90vh" }}>
           {/* Phone bezel */}
@@ -69,7 +69,7 @@ export function DesktopShell({ children }: DesktopShellProps) {
         </div>
       </div>
 
-      {/* Right panel — stats/info */}
+      {/* Right panel, stats/info */}
       <div className="flex-1 flex flex-col items-start justify-center pl-12 relative overflow-hidden">
         <div className="absolute bottom-1/4 left-0 w-72 h-72 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 70%)", filter: "blur(80px)" }} />
@@ -93,7 +93,7 @@ export function DesktopShell({ children }: DesktopShellProps) {
 
           <div className="mt-8 px-4 py-3 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p className="text-[11px] font-semibold" style={{ color: "rgba(255,255,255,0.3)" }}>
-              💡 For the best experience, install SKAAP on your phone as a PWA — tap Share → Add to Home Screen.
+              💡 For the best experience, install SKAAP on your phone as a PWA, tap Share → Add to Home Screen.
             </p>
           </div>
 

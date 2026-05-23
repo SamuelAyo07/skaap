@@ -1,4 +1,4 @@
-// SKAAP Score Engine — Yuka-inspired scoring system
+// SKAAP Score Engine, Yuka-inspired scoring system
 // Score = Nutrition (60%) + Additives (30%) + Organic (10%)
 
 // ─── Additive Risk Database ───

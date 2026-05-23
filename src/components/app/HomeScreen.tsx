@@ -184,7 +184,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
           <p className="text-xs text-muted-foreground max-w-[260px] leading-relaxed">
             {locationError
               ? "Allow location access in your browser settings, then refresh to discover real stores around you."
-              : "Try again from a different location — Skaap works with any grocery store worldwide."}
+              : "Try again from a different location, Skaap works with any grocery store worldwide."}
           </p>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -235,7 +235,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         </motion.button>
       )}
 
-      {/* Nearest store — hero card */}
+      {/* Nearest store, hero card */}
       <motion.button
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -89,7 +89,7 @@ export const ScannerOverlay = memo(
           )}
         </div>
 
-        {/* Reticle — pure CSS, no framer */}
+        {/* Reticle, pure CSS, no framer */}
         <div
           className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
           style={{ paddingBottom: "10%" }}

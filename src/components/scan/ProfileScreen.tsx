@@ -49,7 +49,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const localFirst = getUserFirstName();
   const firstName = user?.user_metadata?.full_name?.split(" ")[0] || localFirst || "friend";
   const displayName = user?.user_metadata?.full_name || localName || "Guest";
-  const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "—";
+  const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || ", ";
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" })
     : null;
@@ -181,7 +181,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                 </p>
                 <p className="text-[11px] text-white/70">
                   {trialActive
-                    ? `Trial: ${trialDaysRemaining} day${trialDaysRemaining === 1 ? "" : "s"} left — all features unlocked.`
+                    ? `Trial: ${trialDaysRemaining} day${trialDaysRemaining === 1 ? "" : "s"} left, all features unlocked.`
                     : "Thanks for supporting SKAAP. All features unlocked."}
                 </p>
               </div>

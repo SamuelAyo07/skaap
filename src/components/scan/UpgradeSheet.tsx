@@ -41,7 +41,7 @@ export function UpgradeSheet() {
       });
       if (error) throw error;
       if (data?.error === "already_subscribed") {
-        toast.info(data.message || "You're already a SKAAP supporter — thank you!");
+        toast.info(data.message || "You're already a SKAAP supporter, thank you!");
         closeUpgrade();
         setLoading(false);
         return;
@@ -160,7 +160,7 @@ export function UpgradeSheet() {
                   boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
                 }}
               >
-                {loading ? "Opening checkout..." : `Support SKAAP — ${tier.price}${tier.sub}`}
+                {loading ? "Opening checkout..." : `Support SKAAP, ${tier.price}${tier.sub}`}
               </motion.button>
 
               <p className="text-center mt-3 text-[10px] leading-relaxed" style={{ color: "#9CA3AF" }}>

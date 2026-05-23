@@ -276,7 +276,7 @@
   animation: bracketPulse 2s ease-in-out infinite;
 }
 
-/* Scanner laser sweep — pure CSS for jank-free motion */
+/* Scanner laser sweep, pure CSS for jank-free motion */
 @keyframes scanSweep {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(136px); }
@@ -293,7 +293,7 @@
 }
 .animate-hint-pulse { animation: hintPulse 1.5s ease-in-out infinite; }
 
-/* Scanner entry — fast Snapchat-style */
+/* Scanner entry, fast Snapchat-style */
 @keyframes scannerIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }

@@ -29,7 +29,7 @@ function writeCache(cache: Record<string, CacheEntry>) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
   } catch {
-    /* quota exceeded — silently ignore */
+    /* quota exceeded, silently ignore */
   }
 }
 

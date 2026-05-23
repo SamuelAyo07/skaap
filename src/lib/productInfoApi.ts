@@ -1,5 +1,5 @@
 // On-demand product info fetcher with session cache
-// Only called when user taps the "Info" button — never on scan
+// Only called when user taps the "Info" button, never on scan
 
 import { supabase } from "@/integrations/supabase/client";
 

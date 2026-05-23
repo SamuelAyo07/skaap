@@ -1,4 +1,4 @@
-// ─── SKAAP User Stats — localStorage persistence layer ───
+// ─── SKAAP User Stats, localStorage persistence layer ───
 
 const STATS_KEY = "skaap_user_stats";
 const LAST_SHARE_TYPE_KEY = "skaap_last_share_type";
