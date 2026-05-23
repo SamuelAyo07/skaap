@@ -592,7 +592,7 @@ const Index = () => {
       </section>
 
       {/* ─── 8. RETAIL — frictionless self-checkout teaser ─── */}
-      <section className="py-8" style={{ background: "#0A0F1E" }}>
+      <section className="py-6" style={{ background: "#0A0F1E" }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
