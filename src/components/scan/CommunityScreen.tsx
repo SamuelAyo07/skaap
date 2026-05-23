@@ -565,20 +565,23 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     north_america: "North America",
   };
 
-  // ─── Build the friendly headline insight ───
+  // ─── Build the friendly headline insight, honest to the data ───
   const dailyInsight = (() => {
     if (loading) return { text: `Looking around ${cityName}…` };
-    if (scansToday === 0 && worstProducts.length === 0) {
+    if (scansToday === 0) {
+      if (worstProducts.length > 0) {
+        const w = worstProducts[0];
+        return { text: `Quiet in ${cityName} today. Lowest scored this week: ${w.product_name.split(" ").slice(0, 4).join(" ")} (${w.avg_score}/100).` };
+      }
       return { text: `Be the first to scan in ${cityName} today.` };
     }
     if (worstProducts.length > 0) {
       const w = worstProducts[0];
-      return {
-        text: `People in ${cityName} are putting back ${w.product_name.split(" ").slice(0, 4).join(" ")} today. Score ${w.avg_score}/100.`,
-      };
+      return { text: `${scansToday} ${scansToday === 1 ? "scan" : "scans"} in ${cityName} today. Lowest scored: ${w.product_name.split(" ").slice(0, 4).join(" ")} (${w.avg_score}/100).` };
     }
-    return { text: `${scansToday} scans in ${cityName} today. Healthy choices winning.` };
+    return { text: `${scansToday} ${scansToday === 1 ? "scan" : "scans"} in ${cityName} today.` };
   })();
+
 
   const totalAvoided = productsAvoided;
   const healthiest = healthiestProducts[0];
