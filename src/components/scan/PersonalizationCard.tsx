@@ -32,8 +32,8 @@ function loadPrefs(): Prefs {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Locked state — Apple-style glass preview with blurred chips.
-   Sells the upgrade with concrete value, not a generic CTA.
+   Locked state — Apple-style glass preview, fun & frictionless.
+   Anchors on $2.99/mo (looks cheaper) with annual bonus framing.
    ───────────────────────────────────────────────────────────── */
 function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
   return (
@@ -49,14 +49,16 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <div className="flex items-center gap-2">
-          <div
+          <motion.div
+            animate={{ rotate: [0, -8, 8, 0] }}
+            transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 3 }}
             className="w-7 h-7 rounded-full flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 12px rgba(196,30,58,0.25)" }}
           >
             <Sparkles size={14} color="#fff" />
-          </div>
+          </motion.div>
           <h3 className="font-bold text-[15px] tracking-tight" style={{ color: "#0A1220" }}>
-            SKAAP AI
+            Meet SKAAP AI
           </h3>
           <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
             style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
@@ -64,21 +66,19 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
           </span>
         </div>
         <p className="text-[12.5px] mt-2 leading-snug" style={{ color: "#4B5563" }}>
-          Your private nutrition intelligence. Tell SKAAP AI your diet and health goals — every scan reads through your lens.
+          Your private nutrition &amp; beauty coach. Tell it your diet, allergies, skin goals — every scan reads through <em>your</em> lens.
         </p>
       </div>
 
       {/* Blurred preview content */}
-      <div className="relative px-5 pb-5">
+      <div className="relative px-5 pb-4">
         <div style={{ filter: "blur(6px)", opacity: 0.55, pointerEvents: "none", userSelect: "none" }}>
-          <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Dietary</p>
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className="flex flex-wrap gap-1.5 mb-2">
             {DIET_OPTIONS.slice(0, 6).map(d => (
               <span key={d} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
                 style={{ background: "#F3F4F6", color: "#6B7280" }}>{d}</span>
             ))}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Health</p>
           <div className="flex flex-wrap gap-1.5">
             {HEALTH_OPTIONS.slice(0, 5).map(d => (
               <span key={d} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
@@ -91,12 +91,13 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
         <div
           className="absolute inset-0 flex items-center justify-center px-5"
           style={{
-            background: "linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.85))",
+            background: "linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.9))",
             backdropFilter: "blur(2px)",
           }}
         >
           <div className="w-full">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.97 }}
               onClick={onUpgrade}
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[14px] text-white"
               style={{
@@ -104,18 +105,30 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
                 boxShadow: "0 8px 24px -8px rgba(10,18,32,0.55)",
               }}
             >
-              <Lock size={14} /> Unlock SKAAP AI — $15.99/yr
-            </button>
+              <Sparkles size={14} /> Unlock SKAAP AI — $2.99/mo
+            </motion.button>
             <div className="flex items-center justify-center gap-1.5 mt-2.5 text-[10.5px]" style={{ color: "#6B7280" }}>
               <ShieldCheck size={11} style={{ color: "#10B981" }} />
-              <span>Save $20 vs monthly · Cancel anytime · 7-day free trial</span>
+              <span>7-day free trial · or $15.99/yr (save 55%) · cancel anytime</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Fun social proof footer */}
+      <div className="px-5 pb-4 pt-1 flex items-center justify-center gap-1.5 text-[10.5px]" style={{ color: "#9CA3AF" }}>
+        <span>🥑 Food</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>💄 Beauty</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>🧴 Skincare</span>
+        <span style={{ opacity: 0.4 }}>·</span>
+        <span>One scan, your rules</span>
+      </div>
     </motion.div>
   );
 }
+
 
 /* ─────────────────────────────────────────────────────────────
    Unlocked state — clean Apple-style editor
