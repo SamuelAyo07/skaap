@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Lock, Check, ChevronDown } from "lucide-react";
+import { Sparkles, Lock, Check, ChevronDown, ShieldCheck } from "lucide-react";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { toast } from "sonner";
 
@@ -31,6 +31,95 @@ function loadPrefs(): Prefs {
   return { diets: [], health: [], notes: "" };
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Locked state — Apple-style glass preview with blurred chips.
+   Sells the upgrade with concrete value, not a generic CTA.
+   ───────────────────────────────────────────────────────────── */
+function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
+      className="relative rounded-3xl overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(249,250,251,0.92))",
+        border: "1px solid rgba(10,18,32,0.06)",
+        boxShadow: "0 1px 0 rgba(255,255,255,0.8) inset, 0 10px 30px -18px rgba(10,18,32,0.18)",
+      }}
+    >
+      {/* Header */}
+      <div className="px-5 pt-5 pb-3">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-7 h-7 rounded-full flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 12px rgba(196,30,58,0.25)" }}
+          >
+            <Sparkles size={14} color="#fff" />
+          </div>
+          <h3 className="font-bold text-[15px] tracking-tight" style={{ color: "#0A1220" }}>
+            SKAAP AI
+          </h3>
+          <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(196,30,58,0.08)", color: "#C41E3A" }}>
+            Plus
+          </span>
+        </div>
+        <p className="text-[12.5px] mt-2 leading-snug" style={{ color: "#4B5563" }}>
+          Your private nutrition intelligence. Tell SKAAP AI your diet and health goals — every scan reads through your lens.
+        </p>
+      </div>
+
+      {/* Blurred preview content */}
+      <div className="relative px-5 pb-5">
+        <div style={{ filter: "blur(6px)", opacity: 0.55, pointerEvents: "none", userSelect: "none" }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Dietary</p>
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {DIET_OPTIONS.slice(0, 6).map(d => (
+              <span key={d} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
+                style={{ background: "#F3F4F6", color: "#6B7280" }}>{d}</span>
+            ))}
+          </div>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Health</p>
+          <div className="flex flex-wrap gap-1.5">
+            {HEALTH_OPTIONS.slice(0, 5).map(d => (
+              <span key={d} className="text-[11px] font-semibold px-3 py-1.5 rounded-full"
+                style={{ background: "#F3F4F6", color: "#6B7280" }}>{d}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Glass overlay */}
+        <div
+          className="absolute inset-0 flex items-center justify-center px-5"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.85))",
+            backdropFilter: "blur(2px)",
+          }}
+        >
+          <div className="w-full">
+            <button
+              onClick={onUpgrade}
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[14px] text-white"
+              style={{
+                background: "linear-gradient(135deg, #0A1220, #1A2540)",
+                boxShadow: "0 8px 24px -8px rgba(10,18,32,0.55)",
+              }}
+            >
+              <Lock size={14} /> Unlock SKAAP AI — $15.99/yr
+            </button>
+            <div className="flex items-center justify-center gap-1.5 mt-2.5 text-[10.5px]" style={{ color: "#6B7280" }}>
+              <ShieldCheck size={11} style={{ color: "#10B981" }} />
+              <span>Save $20 vs monthly · Cancel anytime · 7-day free trial</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Unlocked state — clean Apple-style editor
+   ───────────────────────────────────────────────────────────── */
 export function PersonalizationCard() {
   const { isPlus, openUpgrade } = useSubscription();
   const [prefs, setPrefs] = useState<Prefs>(() => loadPrefs());
@@ -42,15 +131,16 @@ export function PersonalizationCard() {
     }
   }, [prefs, isPlus]);
 
-  const gate = () => { if (!isPlus) { openUpgrade("Personalization"); return false; } return true; };
+  if (!isPlus) return <LockedPreview onUpgrade={() => openUpgrade("SKAAP AI")} />;
 
   const toggle = (key: "diets" | "health", value: string) => {
-    if (!gate()) return;
     setPrefs(p => ({
       ...p,
       [key]: p[key].includes(value) ? p[key].filter(v => v !== value) : [...p[key], value],
     }));
   };
+
+  const count = prefs.diets.length + prefs.health.length;
 
   const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
     <motion.button
@@ -58,8 +148,8 @@ export function PersonalizationCard() {
       onClick={onClick}
       className="text-[12px] font-semibold px-3 py-1.5 rounded-full transition-all"
       style={{
-        background: active ? "rgba(196,30,58,0.12)" : "#F3F4F6",
-        color: active ? "#C41E3A" : "#6B7280",
+        background: active ? "rgba(196,30,58,0.10)" : "rgba(10,18,32,0.04)",
+        color: active ? "#C41E3A" : "#374151",
         border: active ? "1.5px solid #C41E3A" : "1.5px solid transparent",
       }}
     >
@@ -70,41 +160,41 @@ export function PersonalizationCard() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
-      className="rounded-2xl overflow-hidden"
-      style={{ background: "#fff", border: "1px solid #E5E7EB" }}
+      className="rounded-3xl overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(249,250,251,0.96))",
+        border: "1px solid rgba(10,18,32,0.06)",
+        boxShadow: "0 10px 30px -18px rgba(10,18,32,0.18)",
+      }}
     >
       <button
-        onClick={() => isPlus ? setExpanded(e => !e) : openUpgrade("Personalization")}
-        className="w-full flex items-center gap-2 px-4 py-3.5 text-left"
+        onClick={() => setExpanded(e => !e)}
+        className="w-full flex items-center gap-3 px-5 py-4 text-left"
       >
-        <Sparkles size={16} style={{ color: "#C41E3A" }} />
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 12px rgba(196,30,58,0.25)" }}
+        >
+          <Sparkles size={15} color="#fff" />
+        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h3 className="font-bold text-[14px]" style={{ color: "#0A1220" }}>Personalization</h3>
-            {!isPlus && <Lock size={11} style={{ color: "#9CA3AF" }} />}
-          </div>
-          <p className="text-[11px]" style={{ color: "#9CA3AF" }}>
-            {isPlus
-              ? `${prefs.diets.length + prefs.health.length} preference${prefs.diets.length + prefs.health.length === 1 ? "" : "s"} set`
-              : "Set your diet, health, and let your AI coach align scans to you."}
+          <h3 className="font-bold text-[14.5px] tracking-tight" style={{ color: "#0A1220" }}>SKAAP AI</h3>
+          <p className="text-[11.5px]" style={{ color: "#6B7280" }}>
+            {count > 0 ? `Tuned to ${count} preference${count === 1 ? "" : "s"}` : "Personalize your scans"}
           </p>
         </div>
-        {!isPlus ? (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEF3C7", color: "#92400E" }}>Plus</span>
-        ) : (
-          <ChevronDown size={16} style={{ color: "#9CA3AF", transform: expanded ? "rotate(180deg)" : "none", transition: "transform 200ms" }} />
-        )}
+        <ChevronDown size={16} style={{ color: "#9CA3AF", transform: expanded ? "rotate(180deg)" : "none", transition: "transform 200ms" }} />
       </button>
 
       <AnimatePresence>
-        {expanded && isPlus && (
+        {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="px-4 pb-4 space-y-4" style={{ borderTop: "1px solid #F3F4F6" }}>
-              <div className="pt-3">
-                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Dietary preferences</p>
+            <div className="px-5 pb-5 space-y-4" style={{ borderTop: "1px solid rgba(10,18,32,0.05)" }}>
+              <div className="pt-4">
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Dietary</p>
                 <div className="flex flex-wrap gap-1.5">
                   {DIET_OPTIONS.map(d => (
                     <Chip key={d} label={d} active={prefs.diets.includes(d)} onClick={() => toggle("diets", d)} />
@@ -113,7 +203,7 @@ export function PersonalizationCard() {
               </div>
 
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Health restrictions</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Health</p>
                 <div className="flex flex-wrap gap-1.5">
                   {HEALTH_OPTIONS.map(d => (
                     <Chip key={d} label={d} active={prefs.health.includes(d)} onClick={() => toggle("health", d)} />
@@ -122,23 +212,22 @@ export function PersonalizationCard() {
               </div>
 
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Anything else for your AI coach?</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Notes for SKAAP AI</p>
                 <textarea
                   value={prefs.notes}
                   onChange={e => setPrefs(p => ({ ...p, notes: e.target.value.slice(0, 500) }))}
                   placeholder="e.g. Training for a marathon, avoid seed oils, low FODMAP…"
                   rows={3}
                   maxLength={500}
-                  className="w-full text-[12px] px-3 py-2 rounded-xl outline-none resize-none"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220" }}
+                  className="w-full text-[12.5px] px-3 py-2.5 rounded-xl outline-none resize-none"
+                  style={{ background: "rgba(10,18,32,0.03)", border: "1px solid rgba(10,18,32,0.06)", color: "#0A1220" }}
                 />
-                <p className="text-[10px] mt-1 text-right" style={{ color: "#9CA3AF" }}>{prefs.notes.length}/500</p>
               </div>
 
               <button
-                onClick={() => toast.success("Personalization saved")}
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-[12px] text-white"
-                style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}
+                onClick={() => toast.success("SKAAP AI is tuned to you")}
+                className="w-full flex items-center justify-center gap-1.5 py-3 rounded-2xl font-bold text-[13px] text-white"
+                style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 6px 16px -6px rgba(196,30,58,0.4)" }}
               >
                 <Check size={13} /> Save preferences
               </button>
