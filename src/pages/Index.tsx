@@ -332,16 +332,16 @@ const Index = () => {
             </FadeIn>
             <FadeIn delay={0.25}>
               <PhoneMockup
-                productImage={productOj}
-                productLabel="100% Orange Juice"
+                productImage={productMoisturizer}
+                productLabel="Daily Moisturizer"
                 signals={[
-                  { dot: "#22C55E", text: "No additives" },
-                  { dot: "#22C55E", text: "Vitamin C rich" },
-                  { dot: "#F59E0B", text: "Watch sugar" },
+                  { dot: "#F59E0B", text: "Fragrance" },
+                  { dot: "#C41E3A", text: "2 hormone disruptors" },
+                  { dot: "#22C55E", text: "Hydrating base" },
                 ]}
-                verdict="Good"
-                score="78"
-                scoreColor="#22C55E"
+                verdict="Caution"
+                score="54"
+                scoreColor="#F59E0B"
               />
             </FadeIn>
           </div>
