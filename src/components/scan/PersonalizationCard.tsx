@@ -253,6 +253,35 @@ export function PersonalizationCard() {
                 </div>
               </div>
 
+              <div className="pt-3" style={{ borderTop: "1px dashed rgba(10,18,32,0.08)" }}>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#C41E3A" }}>
+                  💄 Skin goals
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_GOAL_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinGoals.includes(d)} onClick={() => toggle("skinGoals", d)} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Skin type</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_TYPE_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinType.includes(d)} onClick={() => toggle("skinType", d)} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Skin allergies &amp; avoids</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SKIN_ALLERGY_OPTIONS.map(d => (
+                    <Chip key={d} label={d} active={prefs.skinAllergies.includes(d)} onClick={() => toggle("skinAllergies", d)} />
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <p className="text-[10.5px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>Notes for SKAAP AI</p>
                 <textarea
