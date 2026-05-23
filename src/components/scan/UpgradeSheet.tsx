@@ -18,10 +18,10 @@ const FEATURES = [
 
 type TierKey = "supporter" | "member" | "champion";
 
-const TIERS: { key: TierKey; price: string; label: string; sub: string; recurring: boolean }[] = [
-  { key: "supporter", price: "$2.99", label: "Supporter", sub: "/month", recurring: true },
-  { key: "member",    price: "$10",   label: "Member",    sub: "/year",  recurring: false },
-  { key: "champion",  price: "$20",   label: "Champion",  sub: "/year",  recurring: false },
+const TIERS: { key: TierKey; price: string; label: string; sub: string; recurring: boolean; note?: string }[] = [
+  { key: "supporter", price: "$2.99",  label: "Supporter", sub: "/month", recurring: true },
+  { key: "member",    price: "$15.99", label: "Member",    sub: "/year",  recurring: false, note: "Save 55% vs monthly" },
+  { key: "champion",  price: "$20",    label: "Champion",  sub: "/year",  recurring: false },
 ];
 
 export function UpgradeSheet() {
@@ -127,8 +127,8 @@ export function UpgradeSheet() {
                       <div className="text-[11px] font-semibold mt-0.5" style={{ color: active ? "#C41E3A" : "#6B7280" }}>
                         {t.label}
                       </div>
-                      <div className="text-[10px] mt-0.5" style={{ color: "#9CA3AF" }}>
-                        {t.recurring ? "Recurring · 7-day trial" : "One-time payment"}
+                      <div className="text-[10px] mt-0.5" style={{ color: t.note ? "#16A34A" : "#9CA3AF" }}>
+                        {t.note ? t.note : t.recurring ? "Recurring · 7-day trial" : "One-time payment"}
                       </div>
                     </button>
                   );
