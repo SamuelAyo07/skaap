@@ -670,39 +670,58 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </div>
         </div>
 
+        {/* MOST SCANNED, split by category so food + beauty both feel represented */}
         <div className="px-5 mt-6">
           <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-            <Heart size={15} style={{ color: "#16A34A" }} /> Try these instead
+            <TrendingUp size={15} style={{ color: "#0A1220" }} /> Most scanned near you
           </h2>
-          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The healthiest picks people are buying</p>
+          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>
+            What real shoppers are checking right now. Food and beauty, side by side.
+          </p>
 
-          <div className="mt-3 space-y-2">
-            {loading ? (
-              Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 rounded-2xl" style={{ background: "#F3F4F6" }} />
-              ))
-            ) : healthiestProducts.length === 0 ? (
-              <div className="text-center py-6 rounded-2xl" style={{ background: "#F0FDF4" }}>
-                <p className="text-[13px]" style={{ color: "#16A34A" }}>Coming soon, keep scanning to fill this in!</p>
+          {(["food", "beauty"] as const).map(cat => {
+            const items = mostScanned.filter(p => {
+              const isBeauty = (p.image_url || "").includes("openbeautyfacts");
+              return cat === "beauty" ? isBeauty : !isBeauty;
+            }).slice(0, isPlus ? 5 : 2);
+            if (items.length === 0) return null;
+            return (
+              <div key={cat} className="mt-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#9CA3AF" }}>
+                  {cat === "food" ? "🥫 Food" : "💄 Beauty"}
+                </p>
+                <div className="space-y-2">
+                  {items.map(p => (
+                    <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
+                      className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                      style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+                      <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                        {p.image_url ? (
+                          <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5"
+                            loading="lazy" decoding="async"
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+                        ) : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                        <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>
+                          {p.brand ? `${p.brand} · ` : ""}{p.scan_count} {p.scan_count === 1 ? "scan" : "scans"}
+                        </p>
+                      </div>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
+                        style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            ) : (
-              healthiestProducts.slice(0, isPlus ? 5 : 2).map(p => (
-                <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
-                  style={{ background: "#F0FDF4", border: "1px solid #DCFCE7" }}>
-                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-white">
-                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center"><Heart size={14} style={{ color: "#86EFAC" }} /></div>}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                    {p.brand && <p className="text-[11px] truncate" style={{ color: "#6B7280" }}>{p.brand}</p>}
-                  </div>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
-                    style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
-                </button>
-              ))
-            )}
-          </div>
+            );
+          })}
+
+          {!isPlus && mostScanned.length > 4 && (
+            <p className="text-[11px] mt-3 text-center" style={{ color: "#9CA3AF" }}>
+              + {mostScanned.length - 4} more on Plus
+            </p>
+          )}
         </div>
 
         {/* Plus teaser for free users, single clear gate */}
