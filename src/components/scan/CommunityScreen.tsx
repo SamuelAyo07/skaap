@@ -637,9 +637,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         {/* TWO SIMPLE LISTS, Avoid + Try Instead */}
         <div className="px-5 mt-6">
           <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> People are putting back
+            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> Lowest scores this week
           </h2>
-          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>The lowest-scoring stuff this week</p>
+          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>What's getting the worst ratings from people near you. We show the score, not the verdict, you choose.</p>
 
           <div className="mt-3 space-y-2">
             {loading ? (
