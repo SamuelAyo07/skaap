@@ -524,7 +524,7 @@ const Index = () => {
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#C41E3A" }}>21</div>
                 </div>
 
-                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What's inside</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {["Hidden sugar","Banned additives","Ultra-processing","Sodium bombs","Seed oils","Allergens"].map(t => (
                     <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
@@ -555,7 +555,7 @@ const Index = () => {
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold text-white" style={{ background: "#F59E0B" }}>54</div>
                 </div>
 
-                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What we flag</p>
+                <p className="text-[10.5px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#6B7280" }}>What's inside</p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {["Hormone disruptors","Parabens","Synthetic fragrance","Sulfates","Allergens","Comedogenic oils"].map(t => (
                     <div key={t} className="flex items-center gap-1.5 text-[11.5px]" style={{ color: "#374151" }}>
