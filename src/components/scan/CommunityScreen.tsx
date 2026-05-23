@@ -616,7 +616,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             {dailyInsight.text}
           </p>
           <p className="text-[12px] mt-2" style={{ color: "#6B7280" }}>
-            Updates with every new scan from your area.
+            Updates with every new scan nearby.
           </p>
         </div>
 
@@ -624,8 +624,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         <div className="grid grid-cols-3 gap-2 px-5 mt-4">
           {[
             { label: "Scans today", value: scansToday },
-            { label: "Put back", value: totalAvoided },
-            { label: "Best score", value: healthiest ? healthiest.avg_score : ", " },
+            { label: "Low scores", value: totalAvoided },
+            { label: "Top score", value: healthiest ? healthiest.avg_score : "—" },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl py-3 text-center"
               style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
