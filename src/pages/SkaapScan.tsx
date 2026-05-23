@@ -22,6 +22,7 @@ import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
+import { isBeautyProduct, isOverBeautyLimit, recordBeautyScan, getBeautyScanCountToday, FREE_BEAUTY_LIMIT } from "@/lib/beautyDailyLimit";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShareType, type UserStats } from "@/lib/skaapUserStats";
 import { generateShareCard as generateCard, type ShareCardType, type ShareProductData } from "@/lib/shareCardGenerator";
