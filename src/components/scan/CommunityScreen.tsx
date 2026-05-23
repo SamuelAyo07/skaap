@@ -736,7 +736,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               You're seeing a sliver
             </p>
             <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Unlock the full live feed, every food and beauty product your area is scanning, the additives they're rejecting, and how your kitchen ranks. Real shoppers, real time.
+              See the full live feed. Real shoppers, real time.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
