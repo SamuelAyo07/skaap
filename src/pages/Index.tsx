@@ -2,13 +2,14 @@ import { useEffect, useRef, useState, forwardRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import { motion, useInView } from "framer-motion";
-import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Eye, CreditCard, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory, Sparkles, Droplet, Quote, Star, Utensils, Heart } from "lucide-react";
+import { ScanLine, Instagram, Linkedin, Store, ShoppingBag, Send, Eye, CreditCard, Clock, AlertTriangle, Check, ChevronDown, Beaker, FlaskConical, Wheat, Factory, Sparkles, Droplet, Quote, Star, Utensils, Heart, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import skaapIcon from "@/assets/skaap-icon.png";
 import productCrackers from "@/assets/product-crackers.png";
 import productMacaroni from "@/assets/product-macaroni.png";
 import productOj from "@/assets/product-oj.png";
+import productMoisturizer from "@/assets/product-moisturizer.png";
 
 
 const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
@@ -27,37 +28,89 @@ const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className
 );
 FadeIn.displayName = "FadeIn";
 
-/* ─── Sticky bottom CTA (mobile) — appears after hero scroll for conversion lift ─── */
-const StickyScanCTA = ({ onScan }: { onScan: () => void }) => {
+/* ─── Sticky bottom CTA (mobile) — install SKAAP to Home Screen ─── */
+const StickyScanCTA = ({ onScan: _onScan }: { onScan: () => void }) => {
   const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 480);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   return (
-    <motion.div
-      initial={false}
-      animate={{ y: show ? 0 : 96, opacity: show ? 1 : 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 pointer-events-none"
-      style={{
-        background: "linear-gradient(to top, rgba(10,15,30,0.96) 60%, rgba(10,15,30,0))",
-      }}
-    >
-      <button
-        onClick={() => { trackEvent("cta_clicked", { cta: "sticky_scan_cta" }); onScan(); }}
-        className="pointer-events-auto w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm shadow-2xl"
-        style={{
-          background: "linear-gradient(135deg, #C41E3A, #a11830)",
-          color: "#fff",
-          boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
-        }}
+    <>
+      <motion.div
+        initial={false}
+        animate={{ y: show ? 0 : 96, opacity: show ? 1 : 0 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(10,15,30,0.96) 60%, rgba(10,15,30,0))" }}
       >
-        <ScanLine size={16} /> Scan a barcode — free
-      </button>
-    </motion.div>
+        <button
+          onClick={() => { trackEvent("cta_clicked", { cta: "sticky_install_cta" }); setOpen(true); }}
+          className="pointer-events-auto w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm shadow-2xl"
+          style={{
+            background: "linear-gradient(135deg, #C41E3A, #a11830)",
+            color: "#fff",
+            boxShadow: "0 10px 30px -8px rgba(196,30,58,0.55)",
+          }}
+        >
+          <Download size={16} /> Add SKAAP to Home Screen
+        </button>
+      </motion.div>
+
+      {/* Install instructions sheet */}
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="md:hidden fixed inset-0 z-50 flex items-end justify-center"
+          style={{ background: "rgba(10,15,30,0.6)", backdropFilter: "blur(6px)" }}
+          onClick={() => setOpen(false)}
+        >
+          <motion.div
+            initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full rounded-t-3xl p-5 pb-[max(20px,env(safe-area-inset-bottom))] bg-white"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="mx-auto w-10 h-1 rounded-full mb-4" style={{ background: "#E5E7EB" }} />
+            <h3 className="text-lg font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
+              Install SKAAP — 5 seconds
+            </h3>
+            <p className="text-xs mb-4" style={{ color: "#6B7280" }}>
+              Works just like an app. No store. No download.
+            </p>
+
+            {isIOS ? (
+              <ol className="space-y-2 text-sm" style={{ color: "#0A1220" }}>
+                <li><span className="font-bold">1.</span> Tap the <span className="font-bold">Share</span> button at the bottom of Safari.</li>
+                <li><span className="font-bold">2.</span> Scroll and tap <span className="font-bold">Add to Home Screen</span>.</li>
+                <li><span className="font-bold">3.</span> Tap <span className="font-bold">Add</span>. Done.</li>
+              </ol>
+            ) : (
+              <ol className="space-y-2 text-sm" style={{ color: "#0A1220" }}>
+                <li><span className="font-bold">1.</span> Tap the <span className="font-bold">⋮ menu</span> in Chrome.</li>
+                <li><span className="font-bold">2.</span> Tap <span className="font-bold">Add to Home Screen</span> (or "Install app").</li>
+                <li><span className="font-bold">3.</span> Tap <span className="font-bold">Install</span>. Done.</li>
+              </ol>
+            )}
+
+            <button
+              onClick={() => setOpen(false)}
+              className="w-full mt-5 py-3 rounded-xl font-bold text-sm text-white"
+              style={{ background: "#0A1220" }}
+            >
+              Got it
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 };
 
@@ -331,16 +384,16 @@ const Index = () => {
             </FadeIn>
             <FadeIn delay={0.25}>
               <PhoneMockup
-                productImage={productOj}
-                productLabel="100% Orange Juice"
+                productImage={productMoisturizer}
+                productLabel="Daily Moisturizer"
                 signals={[
-                  { dot: "#22C55E", text: "No additives" },
-                  { dot: "#22C55E", text: "Vitamin C rich" },
-                  { dot: "#F59E0B", text: "Watch sugar" },
+                  { dot: "#F59E0B", text: "Fragrance" },
+                  { dot: "#C41E3A", text: "2 hormone disruptors" },
+                  { dot: "#22C55E", text: "Hydrating base" },
                 ]}
-                verdict="Good"
-                score="78"
-                scoreColor="#22C55E"
+                verdict="Caution"
+                score="54"
+                scoreColor="#F59E0B"
               />
             </FadeIn>
           </div>
@@ -511,27 +564,6 @@ const Index = () => {
             </FadeIn>
           </div>
 
-          {/* Ingredient spotlight strip */}
-          <FadeIn delay={0.2}>
-            <div className="mt-6 rounded-2xl p-4 md:p-5" style={{ background: "#0A1220", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <p className="text-[10.5px] font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>Ingredient spotlight</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { name: "Parabens", tag: "Beauty", why: "Linked to hormone disruption — banned in EU cosmetics.", color: "#C41E3A" },
-                  { name: "Red 40", tag: "Food", why: "Restricted in EU; tied to hyperactivity in kids.", color: "#F59E0B" },
-                  { name: "Retinol", tag: "Beauty", why: "Effective but avoid in pregnancy — we'll warn you.", color: "#22C55E" },
-                ].map(i => (
-                  <div key={i.name} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-bold text-[13px] text-white">{i.name}</span>
-                      <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: `${i.color}22`, color: i.color }}>{i.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] leading-snug" style={{ color: "rgba(255,255,255,0.65)" }}>{i.why}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
@@ -570,40 +602,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── 8. SCAN & PAY ─── */}
+      {/* ─── 8. RETAIL — frictionless self-checkout teaser ─── */}
       <section className="py-8" style={{ background: "#0A0F1E" }}>
-        <div className="max-w-3xl mx-auto px-5">
+        <div className="max-w-3xl mx-auto px-5 text-center">
           <FadeIn>
-            <div className="text-center">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
-                <CreditCard size={12} /> Scan & Pay
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-                Skip the line. Scan, bag, walk out.
-              </h2>
-              <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
-                Scan items in-store, pay from your phone, walk out. No cashier. No queue.
-              </p>
-            </div>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
+              <Clock size={12} /> Coming soon
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Frictionless retail self-checkout.
+            </h2>
+            <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
+              Scan as you shop, pay from your phone, walk out. In the works.
+            </p>
           </FadeIn>
-
-          <div className="grid grid-cols-3 gap-2 mt-5 max-w-md mx-auto">
-            {[
-              { icon: ShoppingBag, label: "Scan items" },
-              { icon: CreditCard, label: "Tap to pay" },
-              { icon: Clock, label: "Walk out" },
-            ].map((s, i) => {
-              const Icon = s.icon;
-              return (
-                <FadeIn key={i} delay={i * 0.05}>
-                  <div className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <Icon size={18} color="#fff" className="mx-auto mb-1.5" />
-                    <p className="text-[11px] font-bold text-white">{s.label}</p>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
         </div>
       </section>
 
