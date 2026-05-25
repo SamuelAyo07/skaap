@@ -735,13 +735,13 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
               Preview only
             </p>
-            <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Live scans near you. Unlock all.
+            <p className="text-[12px] mt-1" style={{ color: "#9F1239" }}>
+              See it all live.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock, Pay what you want
+              Unlock, pay what you want
             </motion.button>
           </div>
         )}
