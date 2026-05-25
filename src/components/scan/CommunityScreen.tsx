@@ -718,7 +718,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             return (
               <div key={cat} className="mt-4">
                 <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#9CA3AF" }}>
-                  {cat === "food" ? "🥫 Food" : "💄 Beauty"}
+                  {cat === "food" ? "Food" : "Beauty"}
                 </p>
                 <div className="space-y-2">
                   {items.map(p => (

@@ -351,10 +351,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
           <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
             {[
-              { name: "Apple Health", icon: "🍎", desc: "Sync nutrients and calories" },
-              { name: "Google Fit", icon: "💚", desc: "Track food intake" },
-              { name: "MyFitnessPal", icon: "🔥", desc: "Log scanned products" },
-              { name: "Samsung Health", icon: "💙", desc: "Nutrition tracking" },
+              { name: "Apple Health", desc: "Sync nutrients and calories" },
+              { name: "Google Fit", desc: "Track food intake" },
+              { name: "MyFitnessPal", desc: "Log scanned products" },
+              { name: "Samsung Health", desc: "Nutrition tracking" },
             ].map((app, i) => (
               <button key={app.name}
                 onClick={async () => {
@@ -372,7 +372,6 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 transition-colors"
                 style={{ borderBottom: i < 3 ? "1px solid #F3F4F6" : "none" }}>
-                <span className="text-[18px]">{app.icon}</span>
                 <div className="flex-1 min-w-0">
                   <span className="text-[13px] font-semibold block" style={{ color: "#0A1220" }}>{app.name}</span>
                   <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{app.desc}</span>

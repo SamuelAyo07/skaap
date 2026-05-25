@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, User as UserIcon } from "lucide-react";
+import { X, Mail, User as UserIcon, Phone } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import skaapIcon from "@/assets/skaap-icon.png";
 const STORAGE_KEY = "skaap_first_scan_signup_v1";
 const NAME_KEY = "skaap_user_name_v1";
 const EMAIL_KEY = "skaap_user_email_v1";
+const PHONE_KEY = "skaap_user_phone_v1";
 
 export function hasCompletedFirstScanSignup(): boolean {
   try { return localStorage.getItem(STORAGE_KEY) === "1"; } catch { return false; }
@@ -28,16 +29,18 @@ export function getUserFirstName(): string | null {
   return n.trim().split(/\s+/)[0] || null;
 }
 
-export function saveUserIdentity(name: string, email: string) {
+export function saveUserIdentity(name: string, email: string, phone?: string) {
   try {
     localStorage.setItem(NAME_KEY, name);
     localStorage.setItem(EMAIL_KEY, email);
+    if (phone) localStorage.setItem(PHONE_KEY, phone);
   } catch {}
 }
 
 const Schema = z.object({
   name: z.string().trim().min(1, "Name required").max(100),
   email: z.string().trim().email("Enter a valid email").max(255),
+  phone: z.string().trim().max(32).optional().or(z.literal("")),
 });
 
 interface Props {
@@ -48,11 +51,12 @@ interface Props {
 export function FirstScanSignupModal({ open, onClose }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = Schema.safeParse({ name, email });
+    const parsed = Schema.safeParse({ name, email, phone });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message || "Check your details");
       return;
@@ -62,16 +66,16 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
       const { error } = await supabase.from("scan_signups").insert({
         name: parsed.data.name,
         email: parsed.data.email,
+        phone: parsed.data.phone || null,
         source: "first_scan",
       });
       if (error) throw error;
-      saveUserIdentity(parsed.data.name, parsed.data.email);
+      saveUserIdentity(parsed.data.name, parsed.data.email, parsed.data.phone);
       markFirstScanSignupSeen();
-      toast.success(`You're in, ${parsed.data.name.split(/\s+/)[0]} 🎉`);
+      toast.success(`You're in, ${parsed.data.name.split(/\s+/)[0]}`);
       onClose();
     } catch {
-      // Save locally even if remote insert fails so the experience is personalized
-      saveUserIdentity(parsed.data.name, parsed.data.email);
+      saveUserIdentity(parsed.data.name, parsed.data.email, parsed.data.phone);
       markFirstScanSignupSeen();
       onClose();
     } finally {
@@ -114,7 +118,7 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
               You're in. One last thing.
             </h2>
             <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-              So we can save your scans and send you smarter food intelligence.
+              So we can save your scans and send smarter food intelligence.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-5 space-y-3">
@@ -132,6 +136,15 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com" maxLength={255} required inputMode="email" autoComplete="email"
+                  className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2 placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }}
+                />
+              </div>
+              <div className="relative">
+                <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2" color="#9CA3AF" />
+                <input
+                  type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone (optional)" maxLength={32} inputMode="tel" autoComplete="tel"
                   className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none focus:ring-2 placeholder:text-gray-400"
                   style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }}
                 />
