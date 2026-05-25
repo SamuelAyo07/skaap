@@ -96,10 +96,10 @@ export function UpgradeSheet() {
               </div>
 
               <h2 className="font-extrabold text-[22px] leading-tight mt-3" style={{ color: "#0A1220" }}>
-                Unlock your full SKAAP.
+                See what your area is scanning, live.
               </h2>
               <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
-                Same features at every tier. Pay what feels right.
+                All features. Pay what feels right.
               </p>
 
               {/* Tier picker */}

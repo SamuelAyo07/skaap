@@ -733,10 +733,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
             <Lock size={18} style={{ color: "#C41E3A" }} className="mx-auto" />
             <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
-              You're seeing a sliver
+              Preview only
             </p>
             <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              See the full live feed. Real shoppers, real time.
+              Live scans near you. Unlock all.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
