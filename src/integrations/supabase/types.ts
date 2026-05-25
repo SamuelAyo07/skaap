@@ -182,6 +182,54 @@ export type Database = {
           },
         ]
       }
+      product_contributions: {
+        Row: {
+          barcode: string | null
+          brand: string | null
+          category: string | null
+          contributor_email: string | null
+          contributor_name: string | null
+          contributor_phone: string | null
+          country: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          notes: string | null
+          product_name: string
+          status: string
+        }
+        Insert: {
+          barcode?: string | null
+          brand?: string | null
+          category?: string | null
+          contributor_email?: string | null
+          contributor_name?: string | null
+          contributor_phone?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          product_name: string
+          status?: string
+        }
+        Update: {
+          barcode?: string | null
+          brand?: string | null
+          category?: string | null
+          contributor_email?: string | null
+          contributor_name?: string | null
+          contributor_phone?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          product_name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           barcode: string | null
@@ -272,6 +320,7 @@ export type Database = {
           email: string
           id: string
           name: string
+          phone: string | null
           source: string | null
         }
         Insert: {
@@ -279,6 +328,7 @@ export type Database = {
           email: string
           id?: string
           name: string
+          phone?: string | null
           source?: string | null
         }
         Update: {
@@ -286,6 +336,7 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+          phone?: string | null
           source?: string | null
         }
         Relationships: []
