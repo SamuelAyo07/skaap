@@ -542,7 +542,7 @@ const Index = () => {
                 {[0,1,2,3,4].map(i => <Star key={i} size={14} fill="#F59E0B" stroke="#F59E0B" />)}
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
-                Real scans. Real changes.
+                Real changes.
               </h2>
 
             </div>
@@ -674,8 +674,7 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* ─── Sticky mobile CTA, drives visitors into the food intelligence flow ─── */}
-      <StickyScanCTA onScan={handleStartScan} />
+      {/* Sticky install CTA removed — InstallBanner handles install prompt */}
     </div>
   );
 };

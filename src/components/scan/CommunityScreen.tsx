@@ -33,6 +33,7 @@ interface CommunityProduct {
   image_url: string | null;
   avg_score: number;
   scan_count: number;
+  rejected_additives?: string[];
 }
 
 interface CommunityAdditive {
@@ -83,9 +84,9 @@ function getTimeAgo(timestamp: string): string {
 // Seeded fallback so the feed always feels alive when a city is quiet.
 // Mix of food + beauty so both shopper types see themselves represented.
 const SEED_WORST: CommunityProduct[] = [
-  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14 },
-  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22 },
-  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11 },
+  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14, rejected_additives: ["Palm oil", "Soy lecithin", "Vanillin"] },
+  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22, rejected_additives: ["Caramel color E150d", "Phosphoric acid", "Aspartame"] },
+  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11, rejected_additives: ["MSG", "Yellow 6", "Red 40"] },
 ];
 const SEED_BEST: CommunityProduct[] = [
   { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9 },
@@ -222,7 +223,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
       // Worst products this week
       const { data: weekScans } = await supabase
         .from("community_scans")
-        .select("barcode, product_name, brand, image_url, score")
+        .select("barcode, product_name, brand, image_url, score, additives_flagged")
         .eq("city", city)
         .gte("scan_timestamp", weekAgo)
         .not("score", "is", null)
@@ -231,21 +232,26 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
       if (weekScans && weekScans.length > 0) {
         // Aggregate by barcode
-        const productMap = new Map<string, { product_name: string; brand: string | null; image_url: string | null; scores: number[]; count: number }>();
+        const productMap = new Map<string, { product_name: string; brand: string | null; image_url: string | null; scores: number[]; count: number; additives: Map<string, number> }>();
         for (const s of weekScans) {
           const existing = productMap.get(s.barcode);
-          if (existing) {
-            if (s.score != null) existing.scores.push(s.score);
-            existing.count++;
-          } else {
-            productMap.set(s.barcode, {
-              product_name: s.product_name,
-              brand: s.brand,
-              image_url: s.image_url,
-              scores: s.score != null ? [s.score] : [],
-              count: 1,
-            });
+          const row = existing ?? {
+            product_name: s.product_name,
+            brand: s.brand,
+            image_url: s.image_url,
+            scores: [] as number[],
+            count: 0,
+            additives: new Map<string, number>(),
+          };
+          if (s.score != null) row.scores.push(s.score);
+          row.count++;
+          const addList = (s.additives_flagged as string[]) || [];
+          for (const a of addList) {
+            const name = (typeof a === "string" ? a.replace(/^en:/, "").replace(/[-_]/g, " ") : String(a))
+              .replace(/\b\w/g, c => c.toUpperCase());
+            row.additives.set(name, (row.additives.get(name) || 0) + 1);
           }
+          if (!existing) productMap.set(s.barcode, row);
         }
 
         const products = Array.from(productMap.entries()).map(([barcode, p]) => ({
@@ -255,6 +261,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           image_url: p.image_url,
           avg_score: p.scores.length ? Math.round(p.scores.reduce((a, b) => a + b, 0) / p.scores.length) : 50,
           scan_count: p.count,
+          rejected_additives: Array.from(p.additives.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([n]) => n),
         }));
 
         const seenBarcodes = new Set(products.map(p => p.barcode));
@@ -656,17 +666,34 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             ) : (
               worstProducts.slice(0, isPlus ? 5 : 2).map(p => (
                 <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                  className="w-full p-3 rounded-2xl text-left"
                   style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                      {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                      {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
+                    </div>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
+                      style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                    {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
-                  </div>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
-                    style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
+                  {p.rejected_additives && p.rejected_additives.length > 0 && (
+                    <div className="mt-2.5 pt-2.5" style={{ borderTop: "1px dashed #F1F2F4" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#9F1239" }}>
+                        Additives shoppers reject
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {p.rejected_additives.slice(0, 3).map(a => (
+                          <span key={a} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: "#FEF2F2", color: "#C41E3A", border: "1px solid #FECDD3" }}>
+                            {a}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </button>
               ))
             )}
@@ -735,13 +762,13 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
               Preview only
             </p>
-            <p className="text-[12px] mt-1 leading-relaxed" style={{ color: "#9F1239" }}>
-              Live scans near you. Unlock all.
+            <p className="text-[12px] mt-1" style={{ color: "#9F1239" }}>
+              See it all live.
             </p>
             <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
               className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock, Pay what you want
+              Unlock, pay what you want
             </motion.button>
           </div>
         )}
