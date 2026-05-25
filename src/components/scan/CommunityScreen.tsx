@@ -33,6 +33,7 @@ interface CommunityProduct {
   image_url: string | null;
   avg_score: number;
   scan_count: number;
+  rejected_additives?: string[];
 }
 
 interface CommunityAdditive {
@@ -83,9 +84,9 @@ function getTimeAgo(timestamp: string): string {
 // Seeded fallback so the feed always feels alive when a city is quiet.
 // Mix of food + beauty so both shopper types see themselves represented.
 const SEED_WORST: CommunityProduct[] = [
-  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14 },
-  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22 },
-  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11 },
+  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14, rejected_additives: ["Palm oil", "Soy lecithin", "Vanillin"] },
+  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22, rejected_additives: ["Caramel color E150d", "Phosphoric acid", "Aspartame"] },
+  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11, rejected_additives: ["MSG", "Yellow 6", "Red 40"] },
 ];
 const SEED_BEST: CommunityProduct[] = [
   { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9 },
@@ -222,7 +223,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
       // Worst products this week
       const { data: weekScans } = await supabase
         .from("community_scans")
-        .select("barcode, product_name, brand, image_url, score")
+        .select("barcode, product_name, brand, image_url, score, additives_flagged")
         .eq("city", city)
         .gte("scan_timestamp", weekAgo)
         .not("score", "is", null)
@@ -231,21 +232,26 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
       if (weekScans && weekScans.length > 0) {
         // Aggregate by barcode
-        const productMap = new Map<string, { product_name: string; brand: string | null; image_url: string | null; scores: number[]; count: number }>();
+        const productMap = new Map<string, { product_name: string; brand: string | null; image_url: string | null; scores: number[]; count: number; additives: Map<string, number> }>();
         for (const s of weekScans) {
           const existing = productMap.get(s.barcode);
-          if (existing) {
-            if (s.score != null) existing.scores.push(s.score);
-            existing.count++;
-          } else {
-            productMap.set(s.barcode, {
-              product_name: s.product_name,
-              brand: s.brand,
-              image_url: s.image_url,
-              scores: s.score != null ? [s.score] : [],
-              count: 1,
-            });
+          const row = existing ?? {
+            product_name: s.product_name,
+            brand: s.brand,
+            image_url: s.image_url,
+            scores: [] as number[],
+            count: 0,
+            additives: new Map<string, number>(),
+          };
+          if (s.score != null) row.scores.push(s.score);
+          row.count++;
+          const addList = (s.additives_flagged as string[]) || [];
+          for (const a of addList) {
+            const name = (typeof a === "string" ? a.replace(/^en:/, "").replace(/[-_]/g, " ") : String(a))
+              .replace(/\b\w/g, c => c.toUpperCase());
+            row.additives.set(name, (row.additives.get(name) || 0) + 1);
           }
+          if (!existing) productMap.set(s.barcode, row);
         }
 
         const products = Array.from(productMap.entries()).map(([barcode, p]) => ({
@@ -255,6 +261,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           image_url: p.image_url,
           avg_score: p.scores.length ? Math.round(p.scores.reduce((a, b) => a + b, 0) / p.scores.length) : 50,
           scan_count: p.count,
+          rejected_additives: Array.from(p.additives.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([n]) => n),
         }));
 
         const seenBarcodes = new Set(products.map(p => p.barcode));
