@@ -50,6 +50,7 @@ import { FirstScanCelebration } from "@/components/scan/FirstScanCelebration";
 import SplashScreen from "@/components/scan/SplashScreen";
 import { StandaloneHome } from "@/components/scan/StandaloneHome";
 import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
+import { ProductContributionSheet } from "@/components/scan/ProductContributionSheet";
 import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
 
 const isStandalone = typeof window !== "undefined" && (
@@ -478,6 +479,7 @@ const SkaapScan = () => {
   const [productInfo, setProductInfo] = useState<ProductFullInfo | null>(null);
   const [currentBarcode, setCurrentBarcode] = useState("");
   const [notFound, setNotFound] = useState(false);
+  const [contributeOpen, setContributeOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [scoreBreakdown, setScoreBreakdown] = useState<SkaapScoreBreakdown | null>(null);
   const [showScoreModal, setShowScoreModal] = useState(false);
@@ -1247,6 +1249,7 @@ const SkaapScan = () => {
         <FirstScanCelebration onDone={() => setShowCelebration(false)} />
       )}
       <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
+      <ProductContributionSheet open={contributeOpen} onClose={() => setContributeOpen(false)} barcode={currentBarcode || null} />
       {/* Standalone PWA home, richer, personalized entry point */}
       {isStandalone ? (
         <>
@@ -1706,17 +1709,24 @@ const SkaapScan = () => {
             </div>
           )}
 
-          {/* NOT FOUND */}
+          {/* NOT FOUND — frictionless contribution */}
           {notFound && !loading && (
-            <div className="py-16 text-center px-5">
+            <div className="py-12 text-center px-5">
               <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "#F3F4F6" }}>
                 <Barcode size={28} style={{ color: "#9CA3AF" }} />
               </div>
-              <h3 className="font-bold text-lg" style={{ color: "#111827" }}>Product not found</h3>
-              <p className="text-sm mt-2 max-w-[260px] mx-auto" style={{ color: "#6B7280" }}>This product may not be in our database yet.</p>
+              <h3 className="font-bold text-lg" style={{ color: "#111827" }}>Not in our catalog yet</h3>
+              <p className="text-sm mt-2 max-w-[280px] mx-auto" style={{ color: "#6B7280" }}>
+                Help us add it — snap a quick photo and we'll do the rest.
+              </p>
+              <button onClick={() => setContributeOpen(true)}
+                className="mt-5 px-6 py-3 rounded-2xl text-sm font-bold text-white"
+                style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", boxShadow: "0 4px 14px rgba(196,30,58,0.3)" }}>
+                Add this product
+              </button>
               <button onClick={() => { const code = prompt("Enter barcode manually:"); if (code?.trim()) handleBarcodeDetected(code.trim()); }}
-                className="mt-4 px-5 py-2.5 rounded-xl text-sm font-semibold border" style={{ borderColor: "#E8314A", color: "#E8314A" }}>
-                Try Manual Search
+                className="mt-3 block mx-auto px-4 py-2 text-[12px] font-semibold" style={{ color: "#6B7280" }}>
+                Try a different barcode
               </button>
             </div>
           )}
