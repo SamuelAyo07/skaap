@@ -666,17 +666,34 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             ) : (
               worstProducts.slice(0, isPlus ? 5 : 2).map(p => (
                 <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
-                  className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                  className="w-full p-3 rounded-2xl text-left"
                   style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                  <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                    {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
+                      {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
+                      {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
+                    </div>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
+                      style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                    {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
-                  </div>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
-                    style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
+                  {p.rejected_additives && p.rejected_additives.length > 0 && (
+                    <div className="mt-2.5 pt-2.5" style={{ borderTop: "1px dashed #F1F2F4" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#9F1239" }}>
+                        Additives shoppers reject
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {p.rejected_additives.slice(0, 3).map(a => (
+                          <span key={a} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: "#FEF2F2", color: "#C41E3A", border: "1px solid #FECDD3" }}>
+                            {a}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </button>
               ))
             )}
