@@ -7,6 +7,11 @@ import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { compressImage } from "@/lib/imageCompress";
+
+// Cap any single upload at ~8 MB after compression as a final safety net
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+
 
 interface ProfileScreenProps {
   onBack: () => void;
@@ -38,10 +43,13 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [avatarProgress, setAvatarProgress] = useState(0);
   const [gallery, setGallery] = useState<{ path: string; url: string }[]>([]);
   const [galleryBusy, setGalleryBusy] = useState(false);
+  const [galleryProgress, setGalleryProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+
 
   const localName = getUserName();
   const localFirst = getUserFirstName();
@@ -82,30 +90,53 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+    const files = Array.from(e.target.files || []).slice(0, 6);
     if (!files.length || !user) return;
     setGalleryBusy(true);
+    setGalleryProgress({ done: 0, total: files.length });
+    let uploaded = 0;
+    let skipped = 0;
     try {
-      for (const file of files.slice(0, 6)) {
-        if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} too large (max 5 MB)`); continue; }
-        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-        const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-        const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
-        if (error) { toast.error(error.message); continue; }
+      for (const file of files) {
+        try {
+          const compressed = await compressImage(file, { maxDim: 1600, quality: 0.85 });
+          if (compressed.size > MAX_UPLOAD_BYTES) {
+            toast.error(`${file.name} is too large after compression`);
+            skipped++;
+            setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
+            continue;
+          }
+          const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
+          const { error } = await supabase.storage.from("avatars").upload(path, compressed, { contentType: "image/jpeg" });
+          if (error) { toast.error(error.message); skipped++; }
+          else uploaded++;
+        } catch (err) {
+          skipped++;
+          toast.error(`Couldn't process ${file.name}`);
+        }
+        setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
       }
       await loadGallery();
-      toast.success("Photos added");
+      if (uploaded > 0) toast.success(`${uploaded} ${uploaded === 1 ? "photo" : "photos"} added`);
+      if (uploaded === 0 && skipped > 0) toast.error("No photos were added");
     } finally {
       setGalleryBusy(false);
+      setGalleryProgress({ done: 0, total: 0 });
       if (galleryInputRef.current) galleryInputRef.current.value = "";
     }
   };
 
   const handleGalleryDelete = async (path: string) => {
     if (!user) return;
+    const prev = gallery;
+    setGallery((g) => g.filter((p) => p.path !== path));
     const { error } = await supabase.storage.from("avatars").remove([path]);
-    if (error) { toast.error(error.message); return; }
-    setGallery(prev => prev.filter(p => p.path !== path));
+    if (error) {
+      setGallery(prev);
+      toast.error(`Couldn't remove photo: ${error.message}`);
+      return;
+    }
+    toast.success("Photo removed");
   };
 
 
@@ -117,25 +148,34 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5 MB"); return; }
     setUploading(true);
+    setAvatarProgress(10);
     try {
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true, contentType: file.type });
+      const compressed = await compressImage(file, { maxDim: 1024, quality: 0.85 });
+      setAvatarProgress(50);
+      if (compressed.size > MAX_UPLOAD_BYTES) {
+        toast.error("Image is too large even after compression");
+        return;
+      }
+      const path = `${user.id}/avatar-${Date.now()}.jpg`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
       if (upErr) throw upErr;
+      setAvatarProgress(85);
       const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
       const url = pub.publicUrl;
       await supabase.from("profiles").upsert({ id: user.id, avatar_url: url, email: user.email });
       setAvatarUrl(url);
+      setAvatarProgress(100);
       toast.success("Photo updated");
     } catch (err: any) {
       toast.error(err?.message || "Upload failed");
     } finally {
       setUploading(false);
+      setAvatarProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+
 
   const toggleAlert = useCallback(async (preset: typeof PRESET_ALERTS[0]) => {
     if (!user) return;
