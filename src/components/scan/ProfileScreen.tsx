@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles, Trash2, ImagePlus } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
@@ -38,7 +38,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [gallery, setGallery] = useState<{ path: string; url: string }[]>([]);
+  const [galleryBusy, setGalleryBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const localName = getUserName();
   const localFirst = getUserFirstName();
