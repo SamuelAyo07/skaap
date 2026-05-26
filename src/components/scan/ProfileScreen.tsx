@@ -50,14 +50,64 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "";
   const initial = (firstName[0] || "?").toUpperCase();
 
-  // Load profile + alerts
+  // Load profile + alerts + gallery
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
       .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
     supabase.from("user_alerts").select("*").eq("user_id", user.id)
       .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
+    loadGallery();
   }, [user]);
+
+  const loadGallery = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase.storage.from("avatars").list(`${user.id}/gallery`, {
+      limit: 30, sortBy: { column: "created_at", order: "desc" },
+    });
+    if (!data) return;
+    const items = data
+      .filter(f => f.name && !f.name.startsWith("."))
+      .map(f => {
+        const path = `${user.id}/gallery/${f.name}`;
+        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+        return { path, url: pub.publicUrl };
+      });
+    setGallery(items);
+  }, [user]);
+
+  const handleGalleryPick = () => {
+    if (!user) { toast.error("Sign in to add photos"); return; }
+    galleryInputRef.current?.click();
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length || !user) return;
+    setGalleryBusy(true);
+    try {
+      for (const file of files.slice(0, 6)) {
+        if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} too large (max 5 MB)`); continue; }
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+        const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
+        if (error) { toast.error(error.message); continue; }
+      }
+      await loadGallery();
+      toast.success("Photos added");
+    } finally {
+      setGalleryBusy(false);
+      if (galleryInputRef.current) galleryInputRef.current.value = "";
+    }
+  };
+
+  const handleGalleryDelete = async (path: string) => {
+    if (!user) return;
+    const { error } = await supabase.storage.from("avatars").remove([path]);
+    if (error) { toast.error(error.message); return; }
+    setGallery(prev => prev.filter(p => p.path !== path));
+  };
+
 
   const handleAvatarPick = () => {
     if (!user) { toast.error("Sign in to add a photo"); return; }
