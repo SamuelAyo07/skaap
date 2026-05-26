@@ -243,7 +243,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             </button>
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white flex items-center justify-center" style={{ border: "2px solid #fff", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }}>
               {uploading ? (
-                <div className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
+                <span className="text-[9px] font-bold tabular-nums" style={{ color: "#B0202F" }}>
+                  {avatarProgress}%
+                </span>
               ) : (
                 <Camera size={13} style={{ color: "#0A1220" }} />
               )}
@@ -251,6 +253,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarUpload} className="hidden" />
           </div>
           <h2 className="mt-3 text-[20px] font-bold tracking-tight" style={{ color: "#0A1220" }}>{displayName}</h2>
+
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
         </motion.div>
 
@@ -267,7 +270,14 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                 className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 disabled:opacity-50"
                 style={{ background: "#F9FAFB", border: "1px dashed #D1D5DB" }}>
                 {galleryBusy ? (
-                  <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
+                    {galleryProgress.total > 0 && (
+                      <span className="text-[10px] font-semibold tabular-nums" style={{ color: "#6B7280" }}>
+                        {galleryProgress.done}/{galleryProgress.total}
+                      </span>
+                    )}
+                  </>
                 ) : (
                   <>
                     <ImagePlus size={18} style={{ color: "#B0202F" }} />
@@ -275,6 +285,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                   </>
                 )}
               </button>
+
               {gallery.map(item => (
                 <div key={item.path} className="relative aspect-square rounded-xl overflow-hidden group" style={{ background: "#F3F4F6" }}>
                   <img src={item.url} alt="" className="w-full h-full object-cover" loading="lazy" />
