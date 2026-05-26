@@ -46,6 +46,8 @@ const InstallBanner = () => {
       window.removeEventListener("beforeinstallprompt", handler);
       clearTimeout(fallback);
     };
+  }, []);
+
 
   const handleInstall = async () => {
     if (deferredPrompt) {
