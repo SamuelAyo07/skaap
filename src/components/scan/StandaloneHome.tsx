@@ -154,9 +154,9 @@ export function StandaloneHome({
         </div>
 
         {/* Greeting */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-2">
-          <h1 className="font-extrabold text-[24px] leading-tight tracking-tight" style={{ color: "#0A1220" }}>{greeting}</h1>
-          <p className="text-[13px] mt-0.5 font-medium" style={{ color: "#4B5563" }}>{motivation}</p>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-3">
+          <h1 className="font-extrabold text-[26px] leading-tight tracking-tight" style={{ color: "#1A1A1A" }}>{greeting}</h1>
+          <p className="text-[13px] mt-1 font-medium" style={{ color: "#6B7280" }}>{motivation}</p>
         </motion.div>
       </div>
 
