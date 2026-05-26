@@ -83,10 +83,10 @@ const InstallBanner = () => {
             <img src={skaapIcon} alt="SKAAP" className="w-12 h-12 rounded-xl flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-white text-sm tracking-tight">Install SKAAP</h3>
-              <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+              <p className="text-[11px] mt-0.5 leading-snug" style={{ color: "rgba(255,255,255,0.6)" }}>
                 {isIOS
-                  ? "Tap Share (📤) then \"Add to Home Screen\""
-                  : "Add to your home screen for the full experience"}
+                  ? "Tap Share, then Add to Home Screen — works offline."
+                  : "Add to your home screen. Scans work offline."}
               </p>
             </div>
 
@@ -101,6 +101,7 @@ const InstallBanner = () => {
               </motion.button>
             )}
           </div>
+
         </motion.div>
       )}
     </AnimatePresence>

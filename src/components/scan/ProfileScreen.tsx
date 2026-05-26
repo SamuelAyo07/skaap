@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles, Trash2, ImagePlus } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
@@ -38,7 +38,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [gallery, setGallery] = useState<{ path: string; url: string }[]>([]);
+  const [galleryBusy, setGalleryBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const localName = getUserName();
   const localFirst = getUserFirstName();
@@ -47,14 +50,64 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "";
   const initial = (firstName[0] || "?").toUpperCase();
 
-  // Load profile + alerts
+  // Load profile + alerts + gallery
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
       .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
     supabase.from("user_alerts").select("*").eq("user_id", user.id)
       .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
+    loadGallery();
   }, [user]);
+
+  const loadGallery = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase.storage.from("avatars").list(`${user.id}/gallery`, {
+      limit: 30, sortBy: { column: "created_at", order: "desc" },
+    });
+    if (!data) return;
+    const items = data
+      .filter(f => f.name && !f.name.startsWith("."))
+      .map(f => {
+        const path = `${user.id}/gallery/${f.name}`;
+        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+        return { path, url: pub.publicUrl };
+      });
+    setGallery(items);
+  }, [user]);
+
+  const handleGalleryPick = () => {
+    if (!user) { toast.error("Sign in to add photos"); return; }
+    galleryInputRef.current?.click();
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length || !user) return;
+    setGalleryBusy(true);
+    try {
+      for (const file of files.slice(0, 6)) {
+        if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} too large (max 5 MB)`); continue; }
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+        const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
+        if (error) { toast.error(error.message); continue; }
+      }
+      await loadGallery();
+      toast.success("Photos added");
+    } finally {
+      setGalleryBusy(false);
+      if (galleryInputRef.current) galleryInputRef.current.value = "";
+    }
+  };
+
+  const handleGalleryDelete = async (path: string) => {
+    if (!user) return;
+    const { error } = await supabase.storage.from("avatars").remove([path]);
+    if (error) { toast.error(error.message); return; }
+    setGallery(prev => prev.filter(p => p.path !== path));
+  };
+
 
   const handleAvatarPick = () => {
     if (!user) { toast.error("Sign in to add a photo"); return; }
@@ -161,6 +214,44 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
         </motion.div>
 
+        {/* Photo gallery — free for everyone */}
+        {user && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
+            className="rounded-2xl bg-white p-4" style={{ border: "1px solid #E5E7EB" }}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Photos</h3>
+              <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{gallery.length}/30</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={handleGalleryPick} disabled={galleryBusy || gallery.length >= 30}
+                className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 disabled:opacity-50"
+                style={{ background: "#F9FAFB", border: "1px dashed #D1D5DB" }}>
+                {galleryBusy ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
+                ) : (
+                  <>
+                    <ImagePlus size={18} style={{ color: "#B0202F" }} />
+                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Add</span>
+                  </>
+                )}
+              </button>
+              {gallery.map(item => (
+                <div key={item.path} className="relative aspect-square rounded-xl overflow-hidden group" style={{ background: "#F3F4F6" }}>
+                  <img src={item.url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  <button onClick={() => handleGalleryDelete(item.path)}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center"
+                    aria-label="Delete photo">
+                    <Trash2 size={11} color="#fff" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <input ref={galleryInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp"
+              onChange={handleGalleryUpload} className="hidden" />
+          </motion.div>
+        )}
+
+
         {/* Try Skaap Plus — only if not plus */}
         {!isPlus && (
           <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
@@ -244,16 +335,22 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
           {!isPlus && (
             <button onClick={() => openUpgrade()}
-              className="absolute inset-0 flex flex-col items-center justify-center gap-2"
-              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.92) 55%)" }}
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6"
+              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.96) 50%)", backdropFilter: "blur(2px)" }}
             >
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-full" style={{ background: "#0A1220" }}>
-                <Crown size={14} color="#FFD700" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#0A1220" }}>
+                <Lock size={18} color="#FFD700" />
+              </div>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-full" style={{ background: "#0A1220" }}>
+                <Crown size={13} color="#FFD700" />
                 <span className="text-[13px] font-bold text-white">Unlock with Plus</span>
               </div>
-              <p className="text-[11px] font-medium" style={{ color: "#6B7280" }}>Personalized intelligence for you</p>
+              <p className="text-[11px] font-medium text-center max-w-[240px]" style={{ color: "#6B7280" }}>
+                Personalized alerts are part of Plus. Free preview shows the options.
+              </p>
             </button>
           )}
+
         </motion.div>
 
         {/* Social */}
