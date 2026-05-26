@@ -1795,6 +1795,96 @@ const SkaapScan = () => {
                     </p>
                   </motion.div>
 
+                  {/* STATUS CHIPS — quick at-a-glance pills (matches mockup) */}
+                  {(() => {
+                    type Chip = { label: string; tone: "good" | "warn" | "bad" };
+                    const chips: Chip[] = [];
+                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good" });
+                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good" });
+                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good" });
+                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good" });
+                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good" });
+                    if (addCount === 0) chips.push({ label: "No additives", tone: "bad" });
+                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn" });
+                    else chips.push({ label: `${addCount} additives`, tone: "bad" });
+                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good" });
+                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad" });
+                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad" });
+
+                    const styles = {
+                      good: { bg: "#F0FDF4", border: "#BBF7D0", color: "#15803D" },
+                      warn: { bg: "#FFFBEB", border: "#FDE68A", color: "#B45309" },
+                      bad: { bg: "#FFF1F2", border: "#FECDD3", color: "#BE123C" },
+                    } as const;
+
+                    if (chips.length === 0) return null;
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.3 }}
+                        className="flex gap-1.5 flex-wrap justify-center px-5" style={{ marginTop: 10 }}>
+                        {chips.slice(0, 4).map(c => {
+                          const s = styles[c.tone];
+                          return (
+                            <span key={c.label} className="inline-flex items-center font-semibold"
+                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
+                              {c.label}
+                            </span>
+                          );
+                        })}
+                      </motion.div>
+                    );
+                  })()}
+
+                  {/* SCORE BREAKDOWN — weighted bars (matches mockup) */}
+                  {(() => {
+                    const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                    const nutriPct = ns === "a" ? 100 : ns === "b" ? 80 : ns === "c" ? 60 : ns === "d" ? 35 : ns === "e" ? 15 : 50;
+                    const nova = productInfo.novaGroup;
+                    const novaPct = nova === 1 ? 100 : nova === 2 ? 75 : nova === 3 ? 45 : nova === 4 ? 20 : 50;
+                    const addPct = addCount === 0 ? 100 : Math.max(0, 100 - addCount * 18);
+                    const ecoPct = productInfo.ecoscoreScore != null ? Math.max(0, Math.min(100, productInfo.ecoscoreScore)) : (productInfo.ecoscoreGrade ? ({ a:100, b:80, c:60, d:35, e:15 } as Record<string,number>)[productInfo.ecoscoreGrade.toLowerCase()] ?? 50 : 50);
+                    const ingPct = productInfo.ingredientsText ? Math.max(20, 100 - Math.min(80, (productInfo.ingredientsText.split(",").length - 1) * 6)) : 50;
+
+                    const rows: { label: string; weight: string; pct: number }[] = [
+                      { label: "Nutri-Score", weight: "35%", pct: nutriPct },
+                      { label: "NOVA", weight: "25%", pct: novaPct },
+                      { label: "Additives", weight: "20%", pct: addPct },
+                      { label: "Eco", weight: "10%", pct: ecoPct },
+                      { label: "Ingredients", weight: "10%", pct: ingPct },
+                    ];
+                    const barColor = (p: number) => p >= 75 ? "#22C55E" : p >= 50 ? "#F59E0B" : "#E8314A";
+
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.3 }}
+                        className="mx-5 mt-4 px-4 py-4 rounded-2xl w-full"
+                        style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", maxWidth: 350, margin: "16px auto 0", boxShadow: "0 1px 2px rgba(17,24,39,0.04)" }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="font-bold" style={{ fontSize: 14, color: "#111827" }}>Score breakdown</p>
+                          <p style={{ fontSize: 11, color: "#9CA3AF" }}>Weight</p>
+                        </div>
+                        <div className="space-y-2.5">
+                          {rows.map((r, i) => (
+                            <div key={r.label}>
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-semibold" style={{ fontSize: 12, color: "#374151" }}>{r.label}</span>
+                                  <span style={{ fontSize: 10, color: "#9CA3AF", background: "#F3F4F6", padding: "1px 6px", borderRadius: 999 }}>{r.weight}</span>
+                                </div>
+                                <span className="font-bold tabular-nums" style={{ fontSize: 12, color: barColor(r.pct) }}>{Math.round(r.pct)}</span>
+                              </div>
+                              <div style={{ height: 6, borderRadius: 999, background: "#F3F4F6", overflow: "hidden" }}>
+                                <motion.div initial={{ width: 0 }} animate={{ width: `${r.pct}%` }}
+                                  transition={{ delay: 0.6 + i * 0.06, duration: 0.5, ease: "easeOut" }}
+                                  style={{ height: "100%", background: barColor(r.pct), borderRadius: 999 }} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    );
+                  })()}
+
+
+
                   {/* AI Assistant Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
