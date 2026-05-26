@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Activity, Smartphone, ExternalLink, Flame, Sparkles, TrendingUp } from "lucide-react";
+import { User, ArrowLeft, LogOut, Bell, Shield, ChevronRight, Plus, X, Crown, Heart, Smartphone, ExternalLink, Flame, Sparkles, TrendingUp } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { PersonalizationCard } from "@/components/scan/PersonalizationCard";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
