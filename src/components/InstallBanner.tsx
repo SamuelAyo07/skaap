@@ -40,8 +40,14 @@ const InstallBanner = () => {
       setTimeout(() => setShow(true), 2000);
     };
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    // Fallback: show generic instructions after 5s if no prompt fired
+    const fallback = setTimeout(() => setShow(true), 5000);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      clearTimeout(fallback);
+    };
   }, []);
+
 
   const handleInstall = async () => {
     if (deferredPrompt) {

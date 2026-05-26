@@ -136,7 +136,7 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
             </motion.button>
             <div className="flex items-center justify-center gap-1.5 mt-2.5 text-[10.5px]" style={{ color: "#6B7280" }}>
               <ShieldCheck size={11} style={{ color: "#10B981" }} />
-              <span>7-day free trial · or $15.99/yr (save 55%) · cancel anytime</span>
+              <span>or $20/yr one-time (save 44%) · cancel anytime</span>
             </div>
           </div>
         </div>
