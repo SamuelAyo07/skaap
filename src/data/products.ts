@@ -232,7 +232,33 @@ export const products: Product[] = [
   { id: "boc-2", name: "Lanolips 101 Ointment Multi-Balm", brand: "Lanolips", weight: "10 g", price: 16.99, barcode: "9343055000016", category: "beauty", continents: ["Oceania", "North America"], countries: ["Australia"] },
   { id: "boc-3", name: "Sukin Signature Hydrating Mist Toner", brand: "Sukin", weight: "125 ml", price: 9.95, barcode: "9327693000041", category: "beauty", continents: ["Oceania"], countries: ["Australia"] },
   { id: "boc-4", name: "Trilogy Rosehip Oil Antioxidant+", brand: "Trilogy", weight: "20 ml", price: 32.99, barcode: "9421900519651", category: "beauty", continents: ["Oceania"], countries: ["New Zealand"] },
+
+  // ═════════ EXTRA POPULAR SCANS (mixed regions) ═════════
+  { id: "x-1", name: "Perrier Sparkling Mineral Water", brand: "Perrier", weight: "750 ml", price: 2.29, barcode: "7640112310005", category: "food", continents: ["Europe", "North America"], countries: ["France"] },
+  { id: "x-2", name: "Häagen-Dazs Vanilla Ice Cream", brand: "Häagen-Dazs", weight: "460 ml", price: 6.49, barcode: "0074570003402", category: "food", continents: ["North America", "Europe", "Asia"], countries: ["United States"] },
+  { id: "x-3", name: "Ben & Jerry's Cookie Dough", brand: "Ben & Jerry's", weight: "473 ml", price: 6.99, barcode: "0076840100279", category: "food", continents: ["North America", "Europe"], countries: ["United States"] },
+  { id: "x-4", name: "Tropicana Pure Premium Orange Juice", brand: "Tropicana", weight: "1.75 L", price: 4.99, barcode: "0048500015797", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-5", name: "Activia Strawberry Yogurt", brand: "Danone", weight: "113 g", price: 1.19, barcode: "0036632001016", category: "food", continents: ["North America", "Europe"], countries: ["France"] },
+  { id: "x-6", name: "Kind Bar Dark Chocolate Almond Mint", brand: "KIND", weight: "40 g", price: 1.99, barcode: "0602652171338", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-7", name: "Clif Bar Chocolate Chip", brand: "Clif Bar", weight: "68 g", price: 1.79, barcode: "0722252100900", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-8", name: "Siggi's Vanilla Skyr", brand: "Siggi's", weight: "150 g", price: 2.29, barcode: "0898248001070", category: "food", continents: ["North America"], countries: ["Iceland"] },
+  { id: "x-9", name: "Annie's Mac & Cheese Shells White Cheddar", brand: "Annie's", weight: "170 g", price: 2.99, barcode: "0013562000180", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-10", name: "Tate's Bake Shop Chocolate Chip Cookies", brand: "Tate's", weight: "198 g", price: 4.99, barcode: "0810291002115", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-11", name: "Califia Farms Oat Barista Blend", brand: "Califia Farms", weight: "946 ml", price: 5.49, barcode: "0813636020546", category: "food", continents: ["North America", "Europe"], countries: ["United States"] },
+  { id: "x-12", name: "GT's Synergy Kombucha Gingerade", brand: "GT's Living Foods", weight: "473 ml", price: 3.99, barcode: "0722430240015", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-13", name: "Stonyfield Organic Whole Milk Yogurt", brand: "Stonyfield", weight: "907 g", price: 5.99, barcode: "0052159003111", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-14", name: "Talenti Sea Salt Caramel Gelato", brand: "Talenti", weight: "473 ml", price: 5.99, barcode: "0072500009363", category: "food", continents: ["North America"], countries: ["United States"] },
+  { id: "x-15", name: "Sabra Classic Hummus", brand: "Sabra", weight: "283 g", price: 4.49, barcode: "0040822015103", category: "food", continents: ["North America"], countries: ["United States"] },
+
+  // Extra beauty / cosmetics
+  { id: "bx-1", name: "Rare Beauty Soft Pinch Liquid Blush", brand: "Rare Beauty", weight: "7.5 ml", price: 23.00, barcode: "0840066700258", category: "beauty", continents: ["North America", "Europe"], countries: ["United States"] },
+  { id: "bx-2", name: "Fenty Beauty Pro Filt'r Soft Matte Foundation", brand: "Fenty Beauty", weight: "32 ml", price: 39.00, barcode: "3700033301029", category: "beauty", continents: ["North America", "Europe"], countries: ["United States"] },
+  { id: "bx-3", name: "Charlotte Tilbury Magic Cream", brand: "Charlotte Tilbury", weight: "50 ml", price: 100.00, barcode: "5060542721126", category: "beauty", continents: ["Europe", "North America"], countries: ["United Kingdom"] },
+  { id: "bx-4", name: "Glow Recipe Watermelon Glow Niacinamide Dew Drops", brand: "Glow Recipe", weight: "40 ml", price: 35.00, barcode: "0810059381056", category: "beauty", continents: ["North America", "Asia"], countries: ["United States"] },
+  { id: "bx-5", name: "Tatcha The Dewy Skin Cream", brand: "Tatcha", weight: "50 ml", price: 72.00, barcode: "0856509006008", category: "beauty", continents: ["North America", "Asia"], countries: ["Japan", "United States"] },
+  { id: "bx-6", name: "Paula's Choice 2% BHA Liquid Exfoliant", brand: "Paula's Choice", weight: "118 ml", price: 32.00, barcode: "0655439021014", category: "beauty", continents: ["North America", "Europe"], countries: ["United States"] },
 ];
+
 
 export interface Store {
   id: string;
