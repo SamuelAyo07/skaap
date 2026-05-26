@@ -335,16 +335,22 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
           {!isPlus && (
             <button onClick={() => openUpgrade()}
-              className="absolute inset-0 flex flex-col items-center justify-center gap-2"
-              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.92) 55%)" }}
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6"
+              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.96) 50%)", backdropFilter: "blur(2px)" }}
             >
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-full" style={{ background: "#0A1220" }}>
-                <Crown size={14} color="#FFD700" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#0A1220" }}>
+                <Lock size={18} color="#FFD700" />
+              </div>
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-full" style={{ background: "#0A1220" }}>
+                <Crown size={13} color="#FFD700" />
                 <span className="text-[13px] font-bold text-white">Unlock with Plus</span>
               </div>
-              <p className="text-[11px] font-medium" style={{ color: "#6B7280" }}>Personalized intelligence for you</p>
+              <p className="text-[11px] font-medium text-center max-w-[240px]" style={{ color: "#6B7280" }}>
+                Personalized alerts are part of Plus. Free preview shows the options.
+              </p>
             </button>
           )}
+
         </motion.div>
 
         {/* Social */}
