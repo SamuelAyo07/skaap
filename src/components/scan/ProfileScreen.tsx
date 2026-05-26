@@ -319,9 +319,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                 className="flex gap-2">
                 <input
                   value={customAlert}
-                  onChange={e => setCustomAlert(e.target.value)}
+                  onChange={e => setCustomAlert(e.target.value.slice(0, 200))}
                   onKeyDown={e => e.key === "Enter" && addCustomAlert()}
                   placeholder="e.g. E150d, Carrageenan"
+                  maxLength={200}
                   className="flex-1 text-[12px] px-3 py-2 rounded-xl outline-none"
                   style={{ background: "#fff", border: "1px solid #E5E7EB", color: "#0A1220" }}
                   autoFocus
