@@ -1795,6 +1795,96 @@ const SkaapScan = () => {
                     </p>
                   </motion.div>
 
+                  {/* STATUS CHIPS — quick at-a-glance pills (matches mockup) */}
+                  {(() => {
+                    type Chip = { label: string; tone: "good" | "warn" | "bad" };
+                    const chips: Chip[] = [];
+                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good" });
+                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good" });
+                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good" });
+                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good" });
+                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good" });
+                    if (addCount === 0) chips.push({ label: "No additives", tone: "bad" });
+                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn" });
+                    else chips.push({ label: `${addCount} additives`, tone: "bad" });
+                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good" });
+                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad" });
+                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad" });
+
+                    const styles = {
+                      good: { bg: "#F0FDF4", border: "#BBF7D0", color: "#15803D" },
+                      warn: { bg: "#FFFBEB", border: "#FDE68A", color: "#B45309" },
+                      bad: { bg: "#FFF1F2", border: "#FECDD3", color: "#BE123C" },
+                    } as const;
+
+                    if (chips.length === 0) return null;
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.3 }}
+                        className="flex gap-1.5 flex-wrap justify-center px-5" style={{ marginTop: 10 }}>
+                        {chips.slice(0, 4).map(c => {
+                          const s = styles[c.tone];
+                          return (
+                            <span key={c.label} className="inline-flex items-center font-semibold"
+                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
+                              {c.label}
+                            </span>
+                          );
+                        })}
+                      </motion.div>
+                    );
+                  })()}
+
+                  {/* SCORE BREAKDOWN — weighted bars (matches mockup) */}
+                  {(() => {
+                    const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                    const nutriPct = ns === "a" ? 100 : ns === "b" ? 80 : ns === "c" ? 60 : ns === "d" ? 35 : ns === "e" ? 15 : 50;
+                    const nova = productInfo.novaGroup;
+                    const novaPct = nova === 1 ? 100 : nova === 2 ? 75 : nova === 3 ? 45 : nova === 4 ? 20 : 50;
+                    const addPct = addCount === 0 ? 100 : Math.max(0, 100 - addCount * 18);
+                    const ecoPct = productInfo.ecoscoreScore != null ? Math.max(0, Math.min(100, productInfo.ecoscoreScore)) : (productInfo.ecoscoreGrade ? ({ a:100, b:80, c:60, d:35, e:15 } as Record<string,number>)[productInfo.ecoscoreGrade.toLowerCase()] ?? 50 : 50);
+                    const ingPct = productInfo.ingredientsText ? Math.max(20, 100 - Math.min(80, (productInfo.ingredientsText.split(",").length - 1) * 6)) : 50;
+
+                    const rows: { label: string; weight: string; pct: number }[] = [
+                      { label: "Nutri-Score", weight: "35%", pct: nutriPct },
+                      { label: "NOVA", weight: "25%", pct: novaPct },
+                      { label: "Additives", weight: "20%", pct: addPct },
+                      { label: "Eco", weight: "10%", pct: ecoPct },
+                      { label: "Ingredients", weight: "10%", pct: ingPct },
+                    ];
+                    const barColor = (p: number) => p >= 75 ? "#22C55E" : p >= 50 ? "#F59E0B" : "#E8314A";
+
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.3 }}
+                        className="mx-5 mt-4 px-4 py-4 rounded-2xl w-full"
+                        style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", maxWidth: 350, margin: "16px auto 0", boxShadow: "0 1px 2px rgba(17,24,39,0.04)" }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="font-bold" style={{ fontSize: 14, color: "#111827" }}>Score breakdown</p>
+                          <p style={{ fontSize: 11, color: "#9CA3AF" }}>Weight</p>
+                        </div>
+                        <div className="space-y-2.5">
+                          {rows.map((r, i) => (
+                            <div key={r.label}>
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-semibold" style={{ fontSize: 12, color: "#374151" }}>{r.label}</span>
+                                  <span style={{ fontSize: 10, color: "#9CA3AF", background: "#F3F4F6", padding: "1px 6px", borderRadius: 999 }}>{r.weight}</span>
+                                </div>
+                                <span className="font-bold tabular-nums" style={{ fontSize: 12, color: barColor(r.pct) }}>{Math.round(r.pct)}</span>
+                              </div>
+                              <div style={{ height: 6, borderRadius: 999, background: "#F3F4F6", overflow: "hidden" }}>
+                                <motion.div initial={{ width: 0 }} animate={{ width: `${r.pct}%` }}
+                                  transition={{ delay: 0.6 + i * 0.06, duration: 0.5, ease: "easeOut" }}
+                                  style={{ height: "100%", background: barColor(r.pct), borderRadius: 999 }} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    );
+                  })()}
+
+
+
                   {/* AI Assistant Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
@@ -2106,7 +2196,7 @@ const SkaapScan = () => {
                           transition={{ delay: i * 0.08, duration: 0.3 }}
                           onClick={() => handleBarcodeDetected(rec.barcode)}
                           className="flex-shrink-0 text-left relative"
-                          style={{ width: 160, height: 120, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12, background: "#FFFFFF" }}>
+                          style={{ width: 160, minHeight: 140, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12, background: "#FFFFFF" }}>
                           <div className="flex items-start justify-between">
                             {rec.imageSmallUrl ? (
                               <img src={rec.imageSmallUrl} alt={rec.productName} className="object-contain" style={{ width: 40, height: 40, borderRadius: 10 }} />
@@ -2123,6 +2213,16 @@ const SkaapScan = () => {
                             {rec.productName}
                           </p>
                           {rec.brand && <p style={{ fontSize: 11, color: "#6B7280" }} className="truncate">{rec.brand}</p>}
+                          {scoreBreakdown && rec.skaapScoreEstimate > scoreBreakdown.total && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <span style={{ width: 12, height: 12, borderRadius: 999, background: "#22C55E", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                                <Check size={8} style={{ color: "#fff" }} strokeWidth={3} />
+                              </span>
+                              <span className="font-bold" style={{ fontSize: 11, color: "#22C55E" }}>
+                                +{rec.skaapScoreEstimate - scoreBreakdown.total} better
+                              </span>
+                            </div>
+                          )}
                         </motion.button>
                       ))
                     )}
@@ -2212,21 +2312,32 @@ const SkaapScan = () => {
               </motion.span>
             )}
           </AnimatePresence>
+          {/* Save (icon button) */}
+          <motion.button whileTap={{ scale: 0.92 }} onClick={handleSave}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <Heart size={16} fill={isInBasket(currentBarcode) || savedState === "saved" ? "#E8314A" : "none"} style={{ color: isInBasket(currentBarcode) || savedState === "saved" ? "#E8314A" : "#374151" }} />
+            <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>
+              {savedState === "saved" ? "Saved" : isInBasket(currentBarcode) ? "Saved" : "Save"}
+            </span>
+          </motion.button>
+
+          {/* Share (icon button) */}
+          <motion.button whileTap={{ scale: 0.92 }} onClick={handleShareTap} disabled={shareGenerating}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <Share2 size={16} style={{ color: "#374151" }} />
+            <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>Share</span>
+          </motion.button>
+
+          {/* Scan another (primary CTA) */}
           <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-            className="flex-1 font-semibold flex items-center justify-center"
-            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 46, borderRadius: 12, fontSize: 14 }}>
-            Scan Again
+            className="flex-1 font-bold flex items-center justify-center gap-2 text-white"
+            style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", height: 50, borderRadius: 999, fontSize: 14, boxShadow: "0 4px 14px rgba(196,30,58,0.28)" }}>
+            <Barcode size={16} />
+            Scan another
           </motion.button>
-          <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-            className="flex-1 font-semibold flex items-center justify-center gap-1.5"
-            style={{
-              background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#FFFFFF" : "#E8314A",
-              color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-              height: 46, borderRadius: 12, fontSize: 14,
-              border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
-            }}>
-            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={14} fill="#E8314A" /> Saved</> : <><Heart size={14} /> Save ♥</>}
-          </motion.button>
+
         </div>
       </div>
     );
