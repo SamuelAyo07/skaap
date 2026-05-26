@@ -2196,7 +2196,7 @@ const SkaapScan = () => {
                           transition={{ delay: i * 0.08, duration: 0.3 }}
                           onClick={() => handleBarcodeDetected(rec.barcode)}
                           className="flex-shrink-0 text-left relative"
-                          style={{ width: 160, height: 120, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12, background: "#FFFFFF" }}>
+                          style={{ width: 160, minHeight: 140, borderRadius: 16, border: "1px solid #F3F4F6", padding: 12, background: "#FFFFFF" }}>
                           <div className="flex items-start justify-between">
                             {rec.imageSmallUrl ? (
                               <img src={rec.imageSmallUrl} alt={rec.productName} className="object-contain" style={{ width: 40, height: 40, borderRadius: 10 }} />
