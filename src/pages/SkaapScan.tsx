@@ -2312,21 +2312,32 @@ const SkaapScan = () => {
               </motion.span>
             )}
           </AnimatePresence>
+          {/* Save (icon button) */}
+          <motion.button whileTap={{ scale: 0.92 }} onClick={handleSave}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <Heart size={16} fill={isInBasket(currentBarcode) || savedState === "saved" ? "#E8314A" : "none"} style={{ color: isInBasket(currentBarcode) || savedState === "saved" ? "#E8314A" : "#374151" }} />
+            <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>
+              {savedState === "saved" ? "Saved" : isInBasket(currentBarcode) ? "Saved" : "Save"}
+            </span>
+          </motion.button>
+
+          {/* Share (icon button) */}
+          <motion.button whileTap={{ scale: 0.92 }} onClick={handleShareTap} disabled={shareGenerating}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <Share2 size={16} style={{ color: "#374151" }} />
+            <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>Share</span>
+          </motion.button>
+
+          {/* Scan another (primary CTA) */}
           <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
-            className="flex-1 font-semibold flex items-center justify-center"
-            style={{ color: "#374151", background: "#FFFFFF", border: "1px solid #E5E7EB", height: 46, borderRadius: 12, fontSize: 14 }}>
-            Scan Again
+            className="flex-1 font-bold flex items-center justify-center gap-2 text-white"
+            style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)", height: 50, borderRadius: 999, fontSize: 14, boxShadow: "0 4px 14px rgba(196,30,58,0.28)" }}>
+            <Barcode size={16} />
+            Scan another
           </motion.button>
-          <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-            className="flex-1 font-semibold flex items-center justify-center gap-1.5"
-            style={{
-              background: savedState === "saved" ? "#22C55E" : isInBasket(currentBarcode) ? "#FFFFFF" : "#E8314A",
-              color: savedState === "saved" ? "#fff" : isInBasket(currentBarcode) ? "#E8314A" : "#fff",
-              height: 46, borderRadius: 12, fontSize: 14,
-              border: isInBasket(currentBarcode) && savedState !== "saved" ? "1px solid #E5E7EB" : "none",
-            }}>
-            {savedState === "saved" ? <>Saved ✓</> : isInBasket(currentBarcode) ? <><Heart size={14} fill="#E8314A" /> Saved</> : <><Heart size={14} /> Save ♥</>}
-          </motion.button>
+
         </div>
       </div>
     );
