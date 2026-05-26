@@ -1,33 +1,31 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, Users, Search, Bell, Check } from "lucide-react";
+import { X, Navigation, Search, Bell, FileText, Check } from "lucide-react";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { useAuth } from "@/context/AuthContext";
 import { AuthSheet } from "./AuthSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
-import skaapLogo from "@/assets/skaap-logo.png";
 
 const FEATURES = [
-  { icon: Sparkles, title: "AI Personalization", desc: "Learns your goals" },
-  { icon: Users, title: "Community Intelligence", desc: "Trending near you" },
-  { icon: Search, title: "Search any product", desc: "No barcode needed" },
-  { icon: Bell, title: "Custom alerts", desc: "Gluten, palm oil & more" },
+  { icon: Navigation, title: "Live shelf intel from shoppers near you" },
+  { icon: Search, title: "Search 3M+ products by name" },
+  { icon: Bell, title: "Personalized swaps and additive alerts" },
+  { icon: FileText, title: "Full additive risk explanations" },
 ];
 
-type TierKey = "supporter" | "member" | "champion";
+type TierKey = "supporter" | "champion";
 
-const TIERS: { key: TierKey; price: string; label: string; sub: string; recurring: boolean; note?: string }[] = [
-  { key: "supporter", price: "$2.99",  label: "Supporter", sub: "/month", recurring: true },
-  { key: "member",    price: "$15.99", label: "Member",    sub: "/year",  recurring: false, note: "Save 55% vs monthly" },
-  { key: "champion",  price: "$20",    label: "Champion",  sub: "/year",  recurring: false },
-];
+const TIERS: Record<TierKey, { price: string; label: string; sub: string; foot: string }> = {
+  supporter: { price: "$2.99", label: "MONTHLY",  sub: "billed monthly",   foot: "Cancel anytime. No ads. No tracking." },
+  champion:  { price: "$20",   label: "YEARLY",   sub: "one-time · save 44%", foot: "One year all access. No renewal." },
+};
 
 export function UpgradeSheet() {
-  const { showUpgradeSheet, closeUpgrade, upgradeFeature } = useSubscription();
+  const { showUpgradeSheet, closeUpgrade } = useSubscription();
   const { user } = useAuth();
-  const [selected, setSelected] = useState<TierKey>("champion");
+  const [selected, setSelected] = useState<TierKey>("supporter");
   const [authOpen, setAuthOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +45,6 @@ export function UpgradeSheet() {
         return;
       }
       if (data?.url) {
-        // Open Stripe checkout in a new tab
         window.open(data.url, "_blank", "noopener,noreferrer");
         closeUpgrade();
       }
@@ -57,7 +54,10 @@ export function UpgradeSheet() {
     setLoading(false);
   };
 
-  const tier = TIERS.find(t => t.key === selected)!;
+  const tier = TIERS[selected];
+  const ctaLabel = selected === "supporter"
+    ? "Start $2.99/month"
+    : "Get yearly all-access · $20";
 
   return (
     <AnimatePresence>
@@ -67,105 +67,113 @@ export function UpgradeSheet() {
           className="fixed inset-0 z-[80] flex items-end justify-center"
           onClick={closeUpgrade}
         >
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/60" />
           <motion.div
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 26, stiffness: 200 }}
-            className="relative w-full z-10 overflow-y-auto bg-white"
-            style={{ maxHeight: "92vh", maxWidth: 430, borderRadius: "24px 24px 0 0", boxShadow: "0 -4px 32px rgba(0,0,0,0.12)" }}
+            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+            className="relative w-full z-10 overflow-y-auto"
+            style={{
+              maxHeight: "94vh",
+              maxWidth: 430,
+              borderRadius: "28px 28px 0 0",
+              background: "radial-gradient(120% 70% at 0% 0%, #2A0A14 0%, #0A0A12 55%, #06060B 100%)",
+              boxShadow: "0 -8px 40px rgba(0,0,0,0.5)",
+              color: "#fff",
+            }}
             onClick={e => e.stopPropagation()}
           >
+            <div className="flex justify-center pt-3">
+              <div style={{ width: 40, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.18)" }} />
+            </div>
             <button onClick={closeUpgrade}
-              className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full"
-              style={{ background: "#F3F4F6" }} aria-label="Close">
-              <X size={18} color="#374151" />
+              className="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full"
+              style={{ background: "rgba(255,255,255,0.08)" }} aria-label="Close">
+              <X size={18} color="#fff" />
             </button>
 
-            <div className="flex justify-center pt-3">
-              <div style={{ width: 36, height: 4, borderRadius: 99, background: "#E5E7EB" }} />
-            </div>
-
-            <div className="px-5 pt-6 pb-6">
-              <div className="flex items-center gap-2.5">
-                <img src={skaapLogo} alt="SKAAP" className="h-7 object-contain" />
-                {upgradeFeature && (
-                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
-                    ✦ {upgradeFeature}
-                  </span>
-                )}
+            <div className="px-6 pt-6 pb-7">
+              {/* Brand */}
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: "#C41E3A", fontSize: 14 }}>✦</span>
+                <span className="font-bold tracking-[0.18em] text-[12px]" style={{ color: "#C41E3A" }}>SKAAP PLUS</span>
               </div>
 
-              <h2 className="font-extrabold text-[22px] leading-tight mt-3" style={{ color: "#0A1220" }}>
-                See what your area is scanning, live.
+              <h2 className="font-extrabold leading-[1.05] mt-3" style={{ fontSize: 34, letterSpacing: -0.5 }}>
+                See what your area<br/>is scanning, live.
               </h2>
-              <p className="text-[13px] mt-1" style={{ color: "#6B7280" }}>
+              <p className="mt-2 text-[14px]" style={{ color: "rgba(255,255,255,0.55)" }}>
                 All features. Pay what feels right.
               </p>
 
-              {/* Tier picker */}
-              <div className="mt-5 grid grid-cols-2 gap-2">
-                {TIERS.map(t => {
-                  const active = t.key === selected;
+              {/* Feature card */}
+              <div className="mt-5 p-4 rounded-2xl" style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                backdropFilter: "blur(20px)",
+              }}>
+                {FEATURES.map((f, i) => {
+                  const Icon = f.icon;
+                  return (
+                    <div key={i} className="flex items-center gap-3" style={{ padding: "10px 0" }}>
+                      <div className="flex items-center justify-center flex-shrink-0" style={{
+                        width: 30, height: 30, borderRadius: 10,
+                        background: "rgba(196,30,58,0.14)",
+                      }}>
+                        <Icon size={15} color="#FF4D6A" strokeWidth={2} />
+                      </div>
+                      <p className="text-[14px] font-medium" style={{ color: "rgba(255,255,255,0.92)" }}>{f.title}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pricing tiles */}
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {(Object.keys(TIERS) as TierKey[]).map(key => {
+                  const t = TIERS[key];
+                  const active = key === selected;
                   return (
                     <button
-                      key={t.key}
-                      onClick={() => setSelected(t.key)}
-                      className="text-left p-3 rounded-2xl transition-all"
+                      key={key}
+                      onClick={() => setSelected(key)}
+                      className="text-left p-4 rounded-2xl transition-all relative"
                       style={{
-                        background: active ? "#FFFFFF" : "#F9FAFB",
-                        border: active ? "2px solid #C41E3A" : "1px solid #E5E7EB",
-                        boxShadow: active ? "0 4px 14px rgba(196,30,58,0.12)" : "none",
+                        background: active ? "rgba(196,30,58,0.12)" : "rgba(255,255,255,0.04)",
+                        border: active ? "1.5px solid #C41E3A" : "1px solid rgba(255,255,255,0.08)",
                       }}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-[16px]" style={{ color: "#0A1220" }}>
-                          {t.price}
-                          <span className="font-medium text-[11px] ml-0.5" style={{ color: "#6B7280" }}>{t.sub}</span>
+                        <span className="font-bold tracking-[0.16em] text-[11px]" style={{ color: active ? "#FF4D6A" : "rgba(255,255,255,0.55)" }}>
+                          {t.label}
                         </span>
-                        {active && <Check size={14} color="#C41E3A" strokeWidth={3} />}
+                        {active && <Check size={14} color="#FF4D6A" strokeWidth={3} />}
                       </div>
-                      <div className="text-[11px] font-semibold mt-0.5" style={{ color: active ? "#C41E3A" : "#6B7280" }}>
-                        {t.label}
+                      <div className="font-extrabold mt-1.5" style={{ fontSize: 30, letterSpacing: -1 }}>
+                        {t.price}
                       </div>
-                      <div className="text-[10px] mt-0.5" style={{ color: t.note ? "#16A34A" : "#9CA3AF" }}>
-                        {t.note ? t.note : t.recurring ? "Recurring · 7-day trial" : "One-time payment"}
+                      <div className="text-[11px] mt-0.5" style={{ color: key === "champion" ? "#22C55E" : "rgba(255,255,255,0.5)" }}>
+                        {t.sub}
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Features */}
-              <div className="mt-5 grid grid-cols-2 gap-2">
-                {FEATURES.map((f, i) => {
-                  const Icon = f.icon;
-                  return (
-                    <div key={i} className="flex items-center gap-2.5 p-2.5 rounded-xl" style={{ background: "#F9FAFB" }}>
-                      <Icon size={16} color="#C41E3A" strokeWidth={1.8} className="flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="font-semibold text-[12px] truncate" style={{ color: "#1A1A1A" }}>{f.title}</p>
-                        <p className="text-[10px] truncate" style={{ color: "#9CA3AF" }}>{f.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
+              {/* CTA */}
               <motion.button
                 whileTap={{ scale: 0.97 }} onClick={handleCTA} disabled={loading}
-                className="w-full mt-5 font-bold text-[16px] text-white flex items-center justify-center disabled:opacity-60"
+                className="w-full mt-4 font-bold text-[16px] text-white flex items-center justify-center disabled:opacity-60"
                 style={{
-                  height: 52, borderRadius: 14,
-                  background: "linear-gradient(135deg, #C41E3A, #9E1830)",
-                  boxShadow: "0 4px 16px rgba(196,30,58,0.35)",
+                  height: 56, borderRadius: 16,
+                  background: "linear-gradient(135deg, #E11D48, #C41E3A)",
+                  boxShadow: "0 8px 24px rgba(196,30,58,0.45)",
                 }}
               >
-                {loading ? "Opening checkout..." : `Support SKAAP, ${tier.price}${tier.sub}`}
+                {loading ? "Opening checkout..." : ctaLabel}
               </motion.button>
 
-              <p className="text-center mt-3 text-[10px] leading-relaxed" style={{ color: "#9CA3AF" }}>
-                Secure payment via Stripe.{" "}
-                {tier.recurring ? "Cancel anytime." : "One-time. No renewal."} Opens in a new tab.
+              <p className="text-center mt-3 text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>
+                {tier.foot}
               </p>
             </div>
           </motion.div>
