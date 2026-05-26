@@ -70,6 +70,25 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
         source: "first_scan",
       });
       if (error) throw error;
+
+      // If the visitor is already authenticated, mirror the capture into
+      // their profile so name/email surface consistently across the app.
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.id) {
+          await supabase.from("profiles").upsert(
+            {
+              id: user.id,
+              full_name: parsed.data.name,
+              email: parsed.data.email,
+            },
+            { onConflict: "id" }
+          );
+        }
+      } catch {
+        // non-fatal — local identity is still saved below
+      }
+
       saveUserIdentity(parsed.data.name, parsed.data.email, parsed.data.phone);
       markFirstScanSignupSeen();
       toast.success(`You're in, ${parsed.data.name.split(/\s+/)[0]}`);
