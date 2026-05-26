@@ -2213,6 +2213,16 @@ const SkaapScan = () => {
                             {rec.productName}
                           </p>
                           {rec.brand && <p style={{ fontSize: 11, color: "#6B7280" }} className="truncate">{rec.brand}</p>}
+                          {scoreBreakdown && rec.skaapScoreEstimate > scoreBreakdown.total && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <span style={{ width: 12, height: 12, borderRadius: 999, background: "#22C55E", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                                <Check size={8} style={{ color: "#fff" }} strokeWidth={3} />
+                              </span>
+                              <span className="font-bold" style={{ fontSize: 11, color: "#22C55E" }}>
+                                +{rec.skaapScoreEstimate - scoreBreakdown.total} better
+                              </span>
+                            </div>
+                          )}
                         </motion.button>
                       ))
                     )}
