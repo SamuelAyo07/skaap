@@ -360,6 +360,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
               <Crown size={12} color="#FFD700" /> Preview · Unlock with Plus
             </button>
           )}
+        </motion.div>
+
+
 
         {/* My Alerts — Plus only */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
