@@ -201,11 +201,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
     try {
-      // Deterministic hypothetical floor so the city always feels alive (no random jumps).
+      // Deterministic hypothetical floor so the city always feels alive.
+      // Numbers grow through the day and reset each morning — feels like a live shelf.
+      const now = new Date();
       const dayKey = Math.floor(Date.now() / 86_400_000);
+      const hourKey = now.getHours();
+      const minuteBucket = Math.floor(now.getMinutes() / 5); // shift every 5 min
       const cityHash = Array.from(city).reduce((a, c) => a + c.charCodeAt(0), 0);
-      const baseScans = 180 + ((cityHash * 7 + dayKey * 13) % 240);   // 180–419
-      const baseAvoid = 40 + ((cityHash * 11 + dayKey * 17) % 90);    // 40–129
+      // Activity curve: low overnight, peaks 11am-8pm
+      const hourCurve = hourKey < 6 ? 0.25 : hourKey < 10 ? 0.55 : hourKey < 20 ? 1 : 0.7;
+      const baseScansSeed = 180 + ((cityHash * 7 + dayKey * 13) % 240);
+      const liveJitter = ((cityHash * 3 + hourKey * 17 + minuteBucket * 11) % 35);
+      const baseScans = Math.round(baseScansSeed * hourCurve) + liveJitter;
+      const baseAvoid = Math.round((40 + ((cityHash * 11 + dayKey * 17) % 90)) * hourCurve) + (liveJitter % 12);
 
       // Scans today
       const { count: todayCount } = await supabase
