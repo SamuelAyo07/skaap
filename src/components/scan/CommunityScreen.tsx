@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles, Heart, Download } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getScoreColor } from "@/lib/skaapScore";
-import skaapIcon from "@/assets/skaap-icon.png";
 
 interface CommunityScreenProps {
   onNavChange: (nav: string) => void;
