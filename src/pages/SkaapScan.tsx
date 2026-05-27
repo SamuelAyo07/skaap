@@ -1935,7 +1935,7 @@ const SkaapScan = () => {
                   const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
                       <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
                     </div>
@@ -1947,7 +1947,7 @@ const SkaapScan = () => {
                   const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
                   const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
                       <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{addCount}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
                     </div>
@@ -1961,7 +1961,7 @@ const SkaapScan = () => {
                   const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
                       <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNova ? nova : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
                     </div>
@@ -1973,7 +1973,7 @@ const SkaapScan = () => {
                   const hasEco = eco && ecoColors[eco];
                   const c = hasEco ? ecoColors[eco] : { bg: "#F9FAFB", border: "#E5E7EB", color: "#9CA3AF" };
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: c.bg, border: `1px solid ${c.border}` }}>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
                       <div className="flex items-center gap-0.5">
                         <Leaf size={12} style={{ color: c.color }} />
                         <span className="font-bold" style={{ fontSize: 18, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
