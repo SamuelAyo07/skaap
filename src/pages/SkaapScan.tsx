@@ -41,6 +41,7 @@ import {
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
 
 import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
+import { NutritionAtAGlance } from "@/components/scan/NutritionAtAGlance";
 import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 import { useNearbyStore } from "@/hooks/useNearbyStore";
