@@ -1985,7 +1985,7 @@ const SkaapScan = () => {
               </div>
 
               {/* LEARN WHY, Educational explainer cards */}
-              <div className="mx-5" style={{ marginTop: 12 }}>
+              <div className="mx-5" style={{ marginTop: 8 }}>
                 <button onClick={() => toggleSection("learn-why")} className="w-full flex items-center gap-2 text-left">
                   <span style={{ fontSize: 14 }}>📖</span>
                   <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#6B7280" }}>What do these scores mean?</span>
