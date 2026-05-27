@@ -2056,7 +2056,7 @@ const SkaapScan = () => {
               {/* ─── POSITIVES SECTION ─── */}
 
               {positives.length > 0 && (
-                <div className="mx-5" style={{ marginTop: 20 }}>
+                <div className="mx-5" style={{ marginTop: 14 }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Positives</p>
                     {productInfo.servingSize && (
@@ -2068,7 +2068,7 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                       <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#F0FDF4" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
@@ -2089,7 +2089,7 @@ const SkaapScan = () => {
 
               {/* ─── NEGATIVES SECTION ─── */}
               {negatives.length > 0 && (
-                <div className="mx-5" style={{ marginTop: 16 }}>
+                <div className="mx-5" style={{ marginTop: 10 }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Negatives</p>
                     <p style={{ fontSize: 12, color: "#9CA3AF" }}>per 100g</p>
@@ -2099,7 +2099,7 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                       <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#FFF1F2" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
