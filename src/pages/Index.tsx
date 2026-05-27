@@ -674,8 +674,6 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Sticky install CTA with backdrop sheet (mobile) */}
-      <StickyScanCTA onScan={handleStartScan} />
     </div>
   );
 };
