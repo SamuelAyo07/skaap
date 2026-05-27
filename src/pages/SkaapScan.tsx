@@ -2130,49 +2130,60 @@ const SkaapScan = () => {
                       <span className="font-bold text-white" style={{ fontSize: 12, padding: "2px 10px", borderRadius: 10, background: "#E8314A" }}>{addCount}</span>
                     )}
                   </div>
-                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
-                    productInfo.additivesTags.map((a, i) => {
-                      const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                      const risk = getAdditiveRisk(a);
-                      const riskColor = getAdditiveRiskColor(risk);
-                      const desc = getAdditiveDescription(a);
-                      const isExp = expandedAdditive === a;
-                      const bannedMatch = matchBannedAdditive(a);
-                      const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
-                      return (
-                        <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                          <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2.5 text-left flex items-center gap-3">
-                            <span className="font-semibold" style={{ fontSize: 13, color: riskColor, minWidth: 40 }}>{code}</span>
-                            <span className="flex-1 text-[13px]" style={{ color: "#374151" }}>{formatTag(a)}</span>
-                            <div className="rounded-full flex-shrink-0" style={{ width: 8, height: 8, background: riskColor }} />
-                            <ChevronRight size={14} style={{ color: "#D1D5DB", transform: isExp ? "rotate(90deg)" : "none", transition: "transform 200ms" }} />
-                          </button>
-                          {badges.length > 0 && (
-                            <div className="flex flex-wrap gap-1 pb-1.5 pl-[52px]">
-                              {badges.map((badge, bi) => (
-                                <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg" style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>{badge.label}</span>
-                              ))}
-                            </div>
-                          )}
-                          <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 250ms ease-out" }}>
-                            <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                              <div className="pb-2 pl-[52px]">
-                                {additiveExplanationLoading && isExp ? (
-                                  <div className="space-y-1"><Skeleton className="h-3 w-full rounded" /><Skeleton className="h-3 w-4/5 rounded" /></div>
-                                ) : additiveExplanation && isExp ? (
-                                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                    <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
-                                    <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
-                                  </motion.div>
-                                ) : null}
+                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (() => {
+                    const showAll = expandedSections.has("additives-all");
+                    const list = showAll ? productInfo.additivesTags : productInfo.additivesTags.slice(0, 4);
+                    const hidden = productInfo.additivesTags.length - list.length;
+                    return (
+                      <>
+                        {list.map((a, i) => {
+                          const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                          const risk = getAdditiveRisk(a);
+                          const riskColor = getAdditiveRiskColor(risk);
+                          const isExp = expandedAdditive === a;
+                          const bannedMatch = matchBannedAdditive(a);
+                          const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
+                          return (
+                            <div key={a} style={{ borderBottom: i < list.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                              <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left flex items-center gap-3">
+                                <span className="font-semibold" style={{ fontSize: 13, color: riskColor, minWidth: 40 }}>{code}</span>
+                                <span className="flex-1 text-[13px]" style={{ color: "#374151" }}>{formatTag(a)}</span>
+                                <div className="rounded-full flex-shrink-0" style={{ width: 8, height: 8, background: riskColor }} />
+                                <ChevronRight size={14} style={{ color: "#D1D5DB", transform: isExp ? "rotate(90deg)" : "none", transition: "transform 200ms" }} />
+                              </button>
+                              {badges.length > 0 && (
+                                <div className="flex flex-wrap gap-1 pb-1.5 pl-[52px]">
+                                  {badges.map((badge, bi) => (
+                                    <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg" style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>{badge.label}</span>
+                                  ))}
+                                </div>
+                              )}
+                              <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 250ms ease-out" }}>
+                                <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                                  <div className="pb-2 pl-[52px]">
+                                    {additiveExplanationLoading && isExp ? (
+                                      <div className="space-y-1"><Skeleton className="h-3 w-full rounded" /><Skeleton className="h-3 w-4/5 rounded" /></div>
+                                    ) : additiveExplanation && isExp ? (
+                                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                        <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
+                                      </motion.div>
+                                    ) : null}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center py-2">
+                          );
+                        })}
+                        {(hidden > 0 || showAll) && (
+                          <button onClick={() => toggleSection("additives-all")} className="w-full mt-1.5 py-1.5 text-[12px] font-semibold" style={{ color: "#6B7280" }}>
+                            {showAll ? "Show less" : `Show ${hidden} more`}
+                          </button>
+                        )}
+                      </>
+                    );
+                  })() : (
+                    <div className="text-center py-1.5">
                       <p className="font-semibold text-[13px]" style={{ color: "#22C55E" }}>No additives detected ✓</p>
                     </div>
                   )}
