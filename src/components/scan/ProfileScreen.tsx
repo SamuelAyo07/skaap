@@ -58,14 +58,28 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "";
   const initial = (firstName[0] || "?").toUpperCase();
 
-  // Load profile + alerts + gallery
+  // Local guest storage keys for anonymous photo uploads
+  const GUEST_AVATAR_KEY = "skaap_guest_avatar_v1";
+  const GUEST_GALLERY_KEY = "skaap_guest_gallery_v1";
+
+  // Load profile + alerts + gallery (auth) OR local guest photos
   useEffect(() => {
-    if (!user) return;
-    supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
-      .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
-    supabase.from("user_alerts").select("*").eq("user_id", user.id)
-      .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
-    loadGallery();
+    if (user) {
+      supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
+        .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
+      supabase.from("user_alerts").select("*").eq("user_id", user.id)
+        .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
+      loadGallery();
+      return;
+    }
+    // Guest mode — pull from localStorage
+    try {
+      const a = localStorage.getItem(GUEST_AVATAR_KEY);
+      if (a) setAvatarUrl(a);
+      const raw = localStorage.getItem(GUEST_GALLERY_KEY);
+      const arr: string[] = raw ? JSON.parse(raw) : [];
+      setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
+    } catch { /* ignore */ }
   }, [user]);
 
   const loadGallery = useCallback(async () => {
@@ -84,14 +98,20 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
     setGallery(items);
   }, [user]);
 
+  const fileToDataUrl = (file: Blob): Promise<string> => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result));
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(file);
+  });
+
   const handleGalleryPick = () => {
-    if (!user) { toast.error("Sign in to add photos"); return; }
     galleryInputRef.current?.click();
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []).slice(0, 6);
-    if (!files.length || !user) return;
+    if (!files.length) return;
     setGalleryBusy(true);
     setGalleryProgress({ done: 0, total: files.length });
     let uploaded = 0;
@@ -106,17 +126,36 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
             continue;
           }
-          const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
-          const { error } = await supabase.storage.from("avatars").upload(path, compressed, { contentType: "image/jpeg" });
-          if (error) { toast.error(error.message); skipped++; }
-          else uploaded++;
+          if (user) {
+            const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
+            const { error } = await supabase.storage.from("avatars").upload(path, compressed, { contentType: "image/jpeg" });
+            if (error) { toast.error(error.message); skipped++; } else uploaded++;
+          } else {
+            // Anonymous — persist as dataURL in localStorage
+            const dataUrl = await fileToDataUrl(compressed);
+            try {
+              const raw = localStorage.getItem(GUEST_GALLERY_KEY);
+              const arr: string[] = raw ? JSON.parse(raw) : [];
+              arr.unshift(dataUrl);
+              localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr.slice(0, 12)));
+              uploaded++;
+            } catch {
+              skipped++;
+            }
+          }
         } catch (err) {
           skipped++;
           toast.error(`Couldn't process ${file.name}`);
         }
         setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
       }
-      await loadGallery();
+      if (user) {
+        await loadGallery();
+      } else {
+        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
+        const arr: string[] = raw ? JSON.parse(raw) : [];
+        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
+      }
       if (uploaded > 0) toast.success(`${uploaded} ${uploaded === 1 ? "photo" : "photos"} added`);
       if (uploaded === 0 && skipped > 0) toast.error("No photos were added");
     } finally {
@@ -127,7 +166,19 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   };
 
   const handleGalleryDelete = async (path: string) => {
-    if (!user) return;
+    if (!user) {
+      // Guest delete — remove from localStorage by index
+      const idx = parseInt(path.replace("guest-", ""), 10);
+      try {
+        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
+        const arr: string[] = raw ? JSON.parse(raw) : [];
+        if (!Number.isNaN(idx)) arr.splice(idx, 1);
+        localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr));
+        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
+        toast.success("Photo removed");
+      } catch { /* ignore */ }
+      return;
+    }
     const prev = gallery;
     setGallery((g) => g.filter((p) => p.path !== path));
     const { error } = await supabase.storage.from("avatars").remove([path]);
@@ -141,13 +192,12 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
 
   const handleAvatarPick = () => {
-    if (!user) { toast.error("Sign in to add a photo"); return; }
     fileInputRef.current?.click();
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
     setUploading(true);
     setAvatarProgress(10);
     try {
@@ -157,14 +207,21 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         toast.error("Image is too large even after compression");
         return;
       }
-      const path = `${user.id}/avatar-${Date.now()}.jpg`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
-      if (upErr) throw upErr;
-      setAvatarProgress(85);
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const url = pub.publicUrl;
-      await supabase.from("profiles").upsert({ id: user.id, avatar_url: url, email: user.email });
-      setAvatarUrl(url);
+      if (user) {
+        const path = `${user.id}/avatar-${Date.now()}.jpg`;
+        const { error: upErr } = await supabase.storage.from("avatars").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
+        if (upErr) throw upErr;
+        setAvatarProgress(85);
+        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+        const url = pub.publicUrl;
+        await supabase.from("profiles").upsert({ id: user.id, avatar_url: url, email: user.email });
+        setAvatarUrl(url);
+      } else {
+        // Anonymous — persist as dataURL in localStorage
+        const dataUrl = await fileToDataUrl(compressed);
+        localStorage.setItem(GUEST_AVATAR_KEY, dataUrl);
+        setAvatarUrl(dataUrl);
+      }
       setAvatarProgress(100);
       toast.success("Photo updated");
     } catch (err: any) {
@@ -175,6 +232,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+
 
 
   const toggleAlert = useCallback(async (preset: typeof PRESET_ALERTS[0]) => {
