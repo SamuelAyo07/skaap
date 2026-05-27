@@ -1936,7 +1936,7 @@ const SkaapScan = () => {
                   const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                   return (
                     <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
                     </div>
                   );
@@ -1948,7 +1948,7 @@ const SkaapScan = () => {
                   const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
                   return (
                     <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{addCount}</span>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{addCount}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
                     </div>
                   );
@@ -1962,7 +1962,7 @@ const SkaapScan = () => {
                   const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
                   return (
                     <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNova ? nova : "?"}</span>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNova ? nova : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
                     </div>
                   );
@@ -1976,7 +1976,7 @@ const SkaapScan = () => {
                     <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
                       <div className="flex items-center gap-0.5">
                         <Leaf size={12} style={{ color: c.color }} />
-                        <span className="font-bold" style={{ fontSize: 18, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
+                        <span className="font-bold" style={{ fontSize: 16, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
                       </div>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Eco</span>
                     </div>
