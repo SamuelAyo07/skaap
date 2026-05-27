@@ -2068,15 +2068,15 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#F0FDF4" }}>
+                      className="flex items-start gap-3 py-2.5" style={{ borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div className="flex-shrink-0 flex items-center justify-center mt-0.5" style={{ width: 32, height: 32, borderRadius: 16, background: "#F0FDF4" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-[14px]" style={{ color: "#111827" }}>{row.label}</p>
-                        <p className="text-[12px]" style={{ color: "#6B7280" }}>{row.descriptor}</p>
+                        <p className="font-semibold text-[14px] leading-tight" style={{ color: "#111827" }}>{row.label}</p>
+                        <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#6B7280" }}>{row.descriptor}</p>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
                         {row.val != null && (
                           <span className="font-semibold text-[14px]" style={{ color: "#111827" }}>{typeof row.val === "number" ? (row.val < 1 ? row.val.toFixed(1) : Math.round(row.val)) : row.val}{row.unit}</span>
                         )}
@@ -2099,15 +2099,15 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                      <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#FFF1F2" }}>
+                      className="flex items-start gap-3 py-2.5" style={{ borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div className="flex-shrink-0 flex items-center justify-center mt-0.5" style={{ width: 32, height: 32, borderRadius: 16, background: "#FFF1F2" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-[14px]" style={{ color: "#111827" }}>{row.label}</p>
-                        <p className="text-[12px]" style={{ color: "#6B7280" }}>{row.descriptor}</p>
+                        <p className="font-semibold text-[14px] leading-tight" style={{ color: "#111827" }}>{row.label}</p>
+                        <p className="text-[12px] leading-snug mt-0.5" style={{ color: "#6B7280" }}>{row.descriptor}</p>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
                         {row.val != null && (
                           <span className="font-semibold text-[14px]" style={{ color: "#111827" }}>{typeof row.val === "number" ? (row.val < 1 ? row.val.toFixed(1) : Math.round(row.val)) : row.val}{row.unit}</span>
                         )}
