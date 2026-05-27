@@ -18,15 +18,17 @@ const BagScreen = ({ onPayNow }: BagScreenProps) => {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="px-5 pt-10 pb-3">
+      <div className="px-5 pt-8 pb-2">
         <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[28px] font-black text-foreground tracking-tight"
+          className="text-[24px] font-black text-foreground tracking-tight"
         >
           My bag
         </motion.h1>
       </div>
+
+
 
       <div className="flex-1 overflow-y-auto px-5 pb-48">
         {items.length === 0 ? (

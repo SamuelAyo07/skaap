@@ -27,15 +27,16 @@ const PaymentScreen = ({ onComplete, onBack }: PaymentScreenProps) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col min-h-screen bg-background pt-10"
+      className="flex flex-col min-h-screen bg-background pt-6"
     >
-      <div className="px-4 pt-12 pb-4">
-        <button onClick={onBack} className="flex items-center gap-1 text-accent font-medium mb-4">
-          <ArrowLeft size={15} />
-          <span className="text-[13px]">Back</span>
+      <div className="px-4 pt-6 pb-3">
+        <button onClick={onBack} className="flex items-center gap-1 text-accent font-medium mb-2">
+          <ArrowLeft size={14} />
+          <span className="text-[12px]">Back</span>
         </button>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Checkout</h1>
+        <h1 className="text-[22px] font-bold text-foreground tracking-tight">Checkout</h1>
       </div>
+
 
       <div className="flex-1 overflow-y-auto px-4 pb-32">
         {/* Items summary */}

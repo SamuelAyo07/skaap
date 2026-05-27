@@ -320,15 +320,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="px-4 pt-10 pb-2">
+      <div className="px-4 pt-7 pb-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan a real<br/>product</h1>
+          <h1 className="text-[22px] font-bold text-foreground tracking-tight leading-tight">Scan a real product</h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onOpenBag}
-            className="relative w-11 h-11 bg-foreground/5 rounded-full flex items-center justify-center"
+            className="relative w-10 h-10 bg-foreground/5 rounded-full flex items-center justify-center"
           >
-            <ShoppingBag size={20} className="text-foreground" />
+            <ShoppingBag size={18} className="text-foreground" />
             {itemCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
@@ -342,7 +342,9 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </div>
       </div>
 
-      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-white/[0.08] aspect-[2/1] shadow-elevated">
+
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-white/[0.08] aspect-[12/7] shadow-elevated">
+
         <video
           ref={videoRef}
           autoPlay
