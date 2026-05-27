@@ -96,6 +96,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [torchOn, setTorchOn] = useState(false);
   const [detectedFormat, setDetectedFormat] = useState<string | null>(null);
   const [infoProduct, setInfoProduct] = useState<Product | null>(null);
+  const [retryHint, setRetryHint] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<any>(null);
@@ -104,9 +105,18 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const processedBarcodesRef = useRef<Set<string>>(new Set());
   const manualInputRef = useRef<HTMLInputElement | null>(null);
   const cameraTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const exposureBoostRef = useRef(0);
 
+
+  const clearRetryTimers = useCallback(() => {
+    retryTimersRef.current.forEach((t) => clearTimeout(t));
+    retryTimersRef.current = [];
+    setRetryHint(null);
+  }, []);
 
   const stopCamera = useCallback(async () => {
+    clearRetryTimers();
     if (cameraTimeoutRef.current) {
       clearTimeout(cameraTimeoutRef.current);
       cameraTimeoutRef.current = null;
@@ -134,7 +144,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     setTorchOn(false);
     setTorchSupported(false);
     setCameraActive(false);
-  }, []);
+  }, [clearRetryTimers]);
 
   const lookupAndShowProduct = useCallback(async (barcode: string) => {
     setIsLookingUp(true);
@@ -257,7 +267,58 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       readerRef.current = reader;
       setCameraActive(true);
 
-      // After 18 seconds without a hit, nudge user to manual entry (was 12s, too aggressive)
+      // Smart retry: progressively re-center focus, bump exposure, then enable torch
+      // Backoff: 3s → 6s → 12s, with manual-entry fallback at 18s
+      exposureBoostRef.current = 0;
+      const applyRecovery = async (stage: 1 | 2 | 3) => {
+        const t = streamRef.current?.getVideoTracks?.()[0];
+        if (!t) return;
+        const caps = t.getCapabilities?.() as any;
+        try {
+          // Always re-trigger focus first
+          if (caps?.focusMode?.includes("single-shot")) {
+            await t.applyConstraints({ advanced: [{ focusMode: "single-shot" } as any] });
+            await new Promise((r) => setTimeout(r, 120));
+          }
+          if (caps?.focusMode?.includes("continuous")) {
+            await t.applyConstraints({ advanced: [{ focusMode: "continuous" } as any] });
+          }
+          // Stage 2: bump exposure compensation
+          if (stage >= 2 && caps?.exposureCompensation) {
+            exposureBoostRef.current = Math.min(
+              (caps.exposureCompensation.max ?? 2),
+              (exposureBoostRef.current || 0) + (caps.exposureCompensation.step ?? 0.5),
+            );
+            await t.applyConstraints({ advanced: [{ exposureCompensation: exposureBoostRef.current } as any] });
+          }
+          // Stage 3: auto-enable torch if supported and still no hit
+          if (stage >= 3 && caps?.torch && !torchOn) {
+            await t.applyConstraints({ advanced: [{ torch: true } as any] });
+            setTorchOn(true);
+          }
+        } catch { /* ignore — recovery is best-effort */ }
+      };
+
+      retryTimersRef.current.push(setTimeout(() => {
+        if (!cameraActive && !streamRef.current) return;
+        setRetryHint("Re-centering focus…");
+        void applyRecovery(1);
+        setTimeout(() => setRetryHint(null), 1400);
+      }, 3000));
+      retryTimersRef.current.push(setTimeout(() => {
+        if (!streamRef.current) return;
+        setRetryHint("Boosting exposure…");
+        void applyRecovery(2);
+        setTimeout(() => setRetryHint(null), 1400);
+      }, 6000));
+      retryTimersRef.current.push(setTimeout(() => {
+        if (!streamRef.current) return;
+        setRetryHint("Turning on light…");
+        void applyRecovery(3);
+        setTimeout(() => setRetryHint(null), 1400);
+      }, 12000));
+
+      // After 18 seconds without a hit, nudge user to manual entry
       cameraTimeoutRef.current = setTimeout(() => {
         void stopCamera();
         setCameraError("Couldn't read the barcode. Try moving closer, steadier hands, or enter the number below.");
@@ -433,9 +494,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               </motion.button>
             )}
 
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium">
-              Center the barcode in the red line
-            </div>
+            <motion.div
+              key={retryHint || "default-hint"}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium whitespace-nowrap"
+            >
+              {retryHint || "Center the barcode in the red line"}
+            </motion.div>
           </>
         )}
 
