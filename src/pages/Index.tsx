@@ -17,9 +17,9 @@ const spring = { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, 
 const FadeIn = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; delay?: number }>(
   ({ children, className = "", delay = 0 }, _r) => {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-40px" });
+    const isInView = useInView(ref, { once: true, margin: "200px 0px 200px 0px" });
     return (
-      <motion.div ref={ref} initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+      <motion.div ref={ref} initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
         transition={{ ...spring, delay }} className={className}>
         {children}
       </motion.div>
