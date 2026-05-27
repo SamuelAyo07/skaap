@@ -151,11 +151,48 @@ const ProfileScreen = () => {
         ))}
       </motion.div>
 
+      {/* SKAAP Plus — Personalization preview (teaser) */}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16, type: "spring", stiffness: 200, damping: 24 }}
+        className="relative bg-gradient-to-br from-foreground to-foreground/90 rounded-2xl p-4 mb-4 overflow-hidden"
+      >
+        <div className="flex items-center justify-between mb-2.5">
+          <div>
+            <p className="text-[9px] font-bold text-background/50 uppercase tracking-widest">SKAAP Plus</p>
+            <p className="text-[14px] font-bold text-background tracking-tight leading-tight">Personalize your scans</p>
+          </div>
+          <span className="text-[10px] font-bold text-background bg-primary rounded-full px-2.5 py-1">Preview</span>
+        </div>
+        <div className="grid grid-cols-3 gap-1.5 mb-3">
+          {[
+            { emoji: "🥗", label: "Diet" },
+            { emoji: "🚫", label: "Allergies" },
+            { emoji: "🎯", label: "Goals" },
+            { emoji: "💄", label: "Beauty" },
+            { emoji: "✨", label: "Skin type" },
+            { emoji: "👶", label: "Life stage" },
+          ].map((t) => (
+            <div
+              key={t.label}
+              className="bg-background/10 rounded-lg p-2 text-center opacity-70"
+            >
+              <p className="text-base leading-none mb-0.5">{t.emoji}</p>
+              <p className="text-[9px] font-semibold text-background/80 truncate">{t.label}</p>
+            </div>
+          ))}
+        </div>
+        <button className="w-full bg-background text-foreground rounded-full py-2 text-[12px] font-bold tracking-tight">
+          Unlock for $1.99/mo
+        </button>
+      </motion.div>
+
       {/* Settings list */}
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18, type: "spring", stiffness: 200, damping: 24 }}
+        transition={{ delay: 0.22, type: "spring", stiffness: 200, damping: 24 }}
         className="bg-muted/50 rounded-xl overflow-hidden mb-2.5"
       >
         {settingsItems.map((item, i) => {
@@ -175,6 +212,7 @@ const ProfileScreen = () => {
           );
         })}
       </motion.div>
+
 
       {/* Sign out */}
       <motion.button

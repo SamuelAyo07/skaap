@@ -199,17 +199,17 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   }
 
   return (
-    <div className="px-4 pt-10 pb-20 bg-background min-h-screen">
+    <div className="px-4 pt-8 pb-20 bg-background min-h-screen">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-3"
+        className="mb-2.5"
       >
-        <p className="text-xs text-muted-foreground mb-0.5">
+        <p className="text-[11px] text-muted-foreground mb-0.5">
           {nearestName ? `${nearestName} is closest` : "Pick a store to start"}
         </p>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight leading-tight">
+        <h1 className="text-[22px] font-bold text-foreground tracking-tight leading-tight">
           {getGreeting()}
         </h1>
       </motion.div>
@@ -244,7 +244,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
         onClick={onSelectStore}
         className="w-full rounded-2xl overflow-hidden shadow-hero bg-card mb-3 text-left group"
       >
-        <div className="relative h-40">
+        <div className="relative h-32">
           <img
             src={visibleStores[0].image}
             alt={visibleStores[0].name}

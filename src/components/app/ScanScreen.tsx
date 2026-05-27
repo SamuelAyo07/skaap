@@ -5,13 +5,13 @@ import {
   Search,
   Loader2,
   Barcode,
-  Trash2,
   Sparkles,
   X,
   Flashlight,
   FlashlightOff,
   Plus,
   Minus,
+  Share2,
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { ProductImage } from "@/components/app/ProductImage";
@@ -21,68 +21,14 @@ import { lookupBarcode } from "@/lib/openfoodfacts";
 import { Input } from "@/components/ui/input";
 import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
 import { trackEvent } from "@/lib/analytics";
+import * as ZXing from "@zxing/library";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
 }
 
-declare global {
-  interface Window {
-    ZXing?: any;
-  }
-}
-
-const ZXING_SCRIPT_ID = "zxing-umd-script";
-const ZXING_SCRIPT_SRC = "https://unpkg.com/@zxing/library@latest/umd/index.min.js";
-
-const loadZxingLibrary = async (): Promise<any> => {
-  if (window.ZXing) return window.ZXing;
-
-  const existing = document.getElementById(ZXING_SCRIPT_ID) as HTMLScriptElement | null;
-  if (existing) {
-    await new Promise<void>((resolve, reject) => {
-      if (window.ZXing) {
-        resolve();
-        return;
-      }
-
-      const handleLoad = () => {
-        cleanup();
-        resolve();
-      };
-
-      const handleError = () => {
-        cleanup();
-        reject(new Error("Failed to load ZXing scanner"));
-      };
-
-      const cleanup = () => {
-        existing.removeEventListener("load", handleLoad);
-        existing.removeEventListener("error", handleError);
-      };
-
-      existing.addEventListener("load", handleLoad);
-      existing.addEventListener("error", handleError);
-    });
-    return window.ZXing;
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.id = ZXING_SCRIPT_ID;
-    script.src = ZXING_SCRIPT_SRC;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load ZXing scanner"));
-    document.body.appendChild(script);
-  });
-
-  if (!window.ZXing) {
-    throw new Error("ZXing scanner unavailable");
-  }
-
-  return window.ZXing;
-};
+// Bundled ZXing instead of CDN script for supply-chain safety
+const loadZxingLibrary = async (): Promise<typeof ZXing> => ZXing;
 
 const playScanBeep = () => {
   try {
@@ -374,15 +320,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <div className="px-4 pt-10 pb-2">
+      <div className="px-4 pt-7 pb-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Scan a real<br/>product</h1>
+          <h1 className="text-[22px] font-bold text-foreground tracking-tight leading-tight">Scan a real product</h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onOpenBag}
-            className="relative w-11 h-11 bg-foreground/5 rounded-full flex items-center justify-center"
+            className="relative w-10 h-10 bg-foreground/5 rounded-full flex items-center justify-center"
           >
-            <ShoppingBag size={20} className="text-foreground" />
+            <ShoppingBag size={18} className="text-foreground" />
             {itemCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
@@ -396,7 +342,9 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         </div>
       </div>
 
-      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-white/[0.08] aspect-[2/1] shadow-elevated">
+
+      <div className="mx-4 rounded-2xl overflow-hidden relative bg-scanner-ink border border-white/[0.08] aspect-[12/7] shadow-elevated">
+
         <video
           ref={videoRef}
           autoPlay
@@ -570,6 +518,49 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                   </div>
                   <motion.button whileTap={{ scale: 0.9 }} onClick={handleAddToCart} className="w-9 h-9 rounded-full bg-scanner-accent text-primary-foreground flex items-center justify-center flex-shrink-0">
                     <span className="text-lg font-bold leading-none">+</span>
+                  </motion.button>
+                </motion.div>
+              )}
+
+              {/* Share strip — appears right after a scan */}
+              {lastScanned && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex items-center justify-between gap-3 bg-foreground/[0.04] rounded-2xl px-3.5 py-2.5"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
+                      <Share2 size={13} className="text-background" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[12px] font-semibold text-foreground leading-tight truncate">Share this find</p>
+                      <p className="text-[10px] text-muted-foreground leading-tight truncate">Help a friend skip the line</p>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.94 }}
+                    onClick={async () => {
+                      const shareData = {
+                        title: lastScanned.name,
+                        text: `Just scanned ${lastScanned.name} on SKAAP — skip every line.`,
+                        url: typeof window !== "undefined" ? window.location.origin : "https://useskaap.com",
+                      };
+                      trackEvent("share_scan", { product: lastScanned.name });
+                      try {
+                        if (navigator.share) {
+                          await navigator.share(shareData);
+                        } else {
+                          await navigator.clipboard?.writeText(`${shareData.text} ${shareData.url}`);
+                          setShowAddedFeedback("link-copied");
+                          setTimeout(() => setShowAddedFeedback(null), 1200);
+                        }
+                      } catch { /* user cancelled */ }
+                    }}
+                    className="bg-foreground text-background rounded-full px-3.5 py-1.5 text-[11px] font-semibold tracking-tight"
+                  >
+                    Share
                   </motion.button>
                 </motion.div>
               )}

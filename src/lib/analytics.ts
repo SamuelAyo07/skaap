@@ -24,7 +24,8 @@ export type AnalyticsEvent =
   | "location_granted"
   | "location_denied"
   | "demo_mode_used"
-  | "cta_clicked";
+  | "cta_clicked"
+  | "share_scan";
 
 export async function trackEvent(
   eventType: AnalyticsEvent,
