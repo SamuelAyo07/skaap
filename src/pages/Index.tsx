@@ -343,7 +343,7 @@ const Index = () => {
       </section>
 
       {/* ─── 3. HOW IT WORKS, 3 mockups with REAL product images ─── */}
-      <section className="py-5" style={{ background: "#0A0F1E" }}>
+      <section className="py-4" style={{ background: "#0A0F1E" }}>
         <div className="max-w-5xl mx-auto px-4">
           <FadeIn>
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
@@ -405,7 +405,7 @@ const Index = () => {
       {/* (section merged into Food & Beauty translated below) */}
 
       {/* ─── 6. WHAT'S INSIDE, informational, no judgment ─── */}
-      <section className="py-6" style={{ background: "#FBF6E9" }}>
+      <section className="py-4" style={{ background: "#FBF6E9" }}>
         <div className="max-w-3xl mx-auto px-5">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.1)", color: "#C41E3A" }}>
@@ -455,7 +455,7 @@ const Index = () => {
 
 
       {/* ─── 6b. FOOD vs BEAUTY, two-rail explainer with example cards ─── */}
-      <section className="py-7" style={{ background: "#FFFFFF" }}>
+      <section className="py-4" style={{ background: "#FFFFFF" }}>
         <div className="max-w-5xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-5">
@@ -534,7 +534,7 @@ const Index = () => {
       </section>
 
       {/* ─── 6c. TESTIMONIALS, short, kind, human ─── */}
-      <section className="py-7" style={{ background: "#F9FAFB" }}>
+      <section className="py-4" style={{ background: "#F9FAFB" }}>
         <div className="max-w-4xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-6">
@@ -571,7 +571,7 @@ const Index = () => {
       </section>
 
       {/* ─── 8. RETAIL, frictionless self-checkout teaser ─── */}
-      <section className="py-6" style={{ background: "#0A0F1E" }}>
+      <section className="py-4" style={{ background: "#0A0F1E" }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ background: "rgba(196,30,58,0.18)", color: "#fff" }}>
@@ -588,7 +588,7 @@ const Index = () => {
       </section>
 
       {/* ─── 9. FAQs ─── */}
-      <section className="py-5" style={{ background: "#F9FAFB" }}>
+      <section className="py-4" style={{ background: "#F9FAFB" }}>
         <div className="max-w-2xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-4">
@@ -617,7 +617,7 @@ const Index = () => {
       </section>
 
       {/* ─── 10. CONTACT, single simple bar ─── */}
-      <section className="py-6" style={{ background: "#FBF6E9" }}>
+      <section className="py-4" style={{ background: "#FBF6E9" }}>
         <div className="max-w-xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-3">
