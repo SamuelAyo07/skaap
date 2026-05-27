@@ -1926,7 +1926,7 @@ const SkaapScan = () => {
               )}
 
               {/* SIGNAL CHIPS ROW */}
-              <div className="flex gap-2 px-5" style={{ marginTop: 16 }}>
+              <div className="flex gap-2 px-5" style={{ marginTop: 10 }}>
                 {/* Nutri-Score */}
                 {(() => {
                   const ns = productInfo.nutriScoreGrade?.toLowerCase();
@@ -1935,8 +1935,8 @@ const SkaapScan = () => {
                   const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
                     </div>
                   );
@@ -1947,8 +1947,8 @@ const SkaapScan = () => {
                   const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
                   const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{addCount}</span>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{addCount}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
                     </div>
                   );
@@ -1961,8 +1961,8 @@ const SkaapScan = () => {
                   const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <span className="font-bold" style={{ fontSize: 18, color: chipColor }}>{hasNova ? nova : "?"}</span>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNova ? nova : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
                     </div>
                   );
@@ -1973,10 +1973,10 @@ const SkaapScan = () => {
                   const hasEco = eco && ecoColors[eco];
                   const c = hasEco ? ecoColors[eco] : { bg: "#F9FAFB", border: "#E5E7EB", color: "#9CA3AF" };
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 56, borderRadius: 14, background: c.bg, border: `1px solid ${c.border}` }}>
+                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
                       <div className="flex items-center gap-0.5">
                         <Leaf size={12} style={{ color: c.color }} />
-                        <span className="font-bold" style={{ fontSize: 18, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
+                        <span className="font-bold" style={{ fontSize: 16, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
                       </div>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Eco</span>
                     </div>
@@ -1985,7 +1985,7 @@ const SkaapScan = () => {
               </div>
 
               {/* LEARN WHY, Educational explainer cards */}
-              <div className="mx-5" style={{ marginTop: 12 }}>
+              <div className="mx-5" style={{ marginTop: 8 }}>
                 <button onClick={() => toggleSection("learn-why")} className="w-full flex items-center gap-2 text-left">
                   <span style={{ fontSize: 14 }}>📖</span>
                   <span className="flex-1 font-semibold" style={{ fontSize: 13, color: "#6B7280" }}>What do these scores mean?</span>
@@ -2056,7 +2056,7 @@ const SkaapScan = () => {
               {/* ─── POSITIVES SECTION ─── */}
 
               {positives.length > 0 && (
-                <div className="mx-5" style={{ marginTop: 20 }}>
+                <div className="mx-5" style={{ marginTop: 14 }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Positives</p>
                     {productInfo.servingSize && (
@@ -2068,7 +2068,7 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < positives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                       <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#F0FDF4" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
@@ -2089,7 +2089,7 @@ const SkaapScan = () => {
 
               {/* ─── NEGATIVES SECTION ─── */}
               {negatives.length > 0 && (
-                <div className="mx-5" style={{ marginTop: 16 }}>
+                <div className="mx-5" style={{ marginTop: 10 }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Negatives</p>
                     <p style={{ fontSize: 12, color: "#9CA3AF" }}>per 100g</p>
@@ -2099,7 +2099,7 @@ const SkaapScan = () => {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3" style={{ height: 52, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      className="flex items-center gap-3" style={{ height: 44, borderBottom: i < negatives.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                       <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 16, background: "#FFF1F2" }}>
                         <span style={{ fontSize: 14 }}>{row.icon}</span>
                       </div>
@@ -2120,7 +2120,7 @@ const SkaapScan = () => {
 
               {/* ─── ADDITIVES CARD ─── */}
               {(addCount > 0 || true) && (
-                <div className="mx-5" style={{ marginTop: 16, borderRadius: 16, border: addCount > 0 ? "1px solid #FFF1F2" : "1px solid #F0FDF4", padding: 16 }}>
+                <div className="mx-5" style={{ marginTop: 10, borderRadius: 14, border: addCount > 0 ? "1px solid #FFF1F2" : "1px solid #F0FDF4", padding: 14 }}>
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 14, background: addCount > 0 ? "#FFF1F2" : "#F0FDF4" }}>
                       {addCount > 0 ? <AlertTriangle size={14} style={{ color: "#E8314A" }} /> : <Check size={14} style={{ color: "#22C55E" }} />}
@@ -2130,49 +2130,60 @@ const SkaapScan = () => {
                       <span className="font-bold text-white" style={{ fontSize: 12, padding: "2px 10px", borderRadius: 10, background: "#E8314A" }}>{addCount}</span>
                     )}
                   </div>
-                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (
-                    productInfo.additivesTags.map((a, i) => {
-                      const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
-                      const risk = getAdditiveRisk(a);
-                      const riskColor = getAdditiveRiskColor(risk);
-                      const desc = getAdditiveDescription(a);
-                      const isExp = expandedAdditive === a;
-                      const bannedMatch = matchBannedAdditive(a);
-                      const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
-                      return (
-                        <div key={a} style={{ borderBottom: i < productInfo.additivesTags!.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                          <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2.5 text-left flex items-center gap-3">
-                            <span className="font-semibold" style={{ fontSize: 13, color: riskColor, minWidth: 40 }}>{code}</span>
-                            <span className="flex-1 text-[13px]" style={{ color: "#374151" }}>{formatTag(a)}</span>
-                            <div className="rounded-full flex-shrink-0" style={{ width: 8, height: 8, background: riskColor }} />
-                            <ChevronRight size={14} style={{ color: "#D1D5DB", transform: isExp ? "rotate(90deg)" : "none", transition: "transform 200ms" }} />
-                          </button>
-                          {badges.length > 0 && (
-                            <div className="flex flex-wrap gap-1 pb-1.5 pl-[52px]">
-                              {badges.map((badge, bi) => (
-                                <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg" style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>{badge.label}</span>
-                              ))}
-                            </div>
-                          )}
-                          <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 250ms ease-out" }}>
-                            <div className="overflow-hidden" style={{ minHeight: 0 }}>
-                              <div className="pb-2 pl-[52px]">
-                                {additiveExplanationLoading && isExp ? (
-                                  <div className="space-y-1"><Skeleton className="h-3 w-full rounded" /><Skeleton className="h-3 w-4/5 rounded" /></div>
-                                ) : additiveExplanation && isExp ? (
-                                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                    <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
-                                    <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
-                                  </motion.div>
-                                ) : null}
+                  {productInfo.additivesTags && productInfo.additivesTags.length > 0 ? (() => {
+                    const showAll = expandedSections.has("additives-all");
+                    const list = showAll ? productInfo.additivesTags : productInfo.additivesTags.slice(0, 4);
+                    const hidden = productInfo.additivesTags.length - list.length;
+                    return (
+                      <>
+                        {list.map((a, i) => {
+                          const code = a.replace(/^en:/, "").replace(/-.*$/, "").toUpperCase();
+                          const risk = getAdditiveRisk(a);
+                          const riskColor = getAdditiveRiskColor(risk);
+                          const isExp = expandedAdditive === a;
+                          const bannedMatch = matchBannedAdditive(a);
+                          const badges = bannedMatch ? getBadgeInfo(bannedMatch) : [];
+                          return (
+                            <div key={a} style={{ borderBottom: i < list.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                              <button onClick={() => handleAdditiveExpand(a, productInfo.productName)} className="w-full py-2 text-left flex items-center gap-3">
+                                <span className="font-semibold" style={{ fontSize: 13, color: riskColor, minWidth: 40 }}>{code}</span>
+                                <span className="flex-1 text-[13px]" style={{ color: "#374151" }}>{formatTag(a)}</span>
+                                <div className="rounded-full flex-shrink-0" style={{ width: 8, height: 8, background: riskColor }} />
+                                <ChevronRight size={14} style={{ color: "#D1D5DB", transform: isExp ? "rotate(90deg)" : "none", transition: "transform 200ms" }} />
+                              </button>
+                              {badges.length > 0 && (
+                                <div className="flex flex-wrap gap-1 pb-1.5 pl-[52px]">
+                                  {badges.map((badge, bi) => (
+                                    <span key={bi} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-lg" style={{ background: badge.bg, border: `1px solid ${badge.border}`, color: badge.color }}>{badge.label}</span>
+                                  ))}
+                                </div>
+                              )}
+                              <div style={{ display: "grid", gridTemplateRows: isExp ? "1fr" : "0fr", transition: "grid-template-rows 250ms ease-out" }}>
+                                <div className="overflow-hidden" style={{ minHeight: 0 }}>
+                                  <div className="pb-2 pl-[52px]">
+                                    {additiveExplanationLoading && isExp ? (
+                                      <div className="space-y-1"><Skeleton className="h-3 w-full rounded" /><Skeleton className="h-3 w-4/5 rounded" /></div>
+                                    ) : additiveExplanation && isExp ? (
+                                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        <p className="text-[12px] leading-relaxed" style={{ color: "#4B5563" }}>{additiveExplanation}</p>
+                                        <p className="text-[9px] mt-1 flex items-center gap-1" style={{ color: "#9CA3AF" }}><Sparkles size={8} /> AI</p>
+                                      </motion.div>
+                                    ) : null}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center py-2">
+                          );
+                        })}
+                        {(hidden > 0 || showAll) && (
+                          <button onClick={() => toggleSection("additives-all")} className="w-full mt-1.5 py-1.5 text-[12px] font-semibold" style={{ color: "#6B7280" }}>
+                            {showAll ? "Show less" : `Show ${hidden} more`}
+                          </button>
+                        )}
+                      </>
+                    );
+                  })() : (
+                    <div className="text-center py-1.5">
                       <p className="font-semibold text-[13px]" style={{ color: "#22C55E" }}>No additives detected ✓</p>
                     </div>
                   )}
@@ -2181,7 +2192,7 @@ const SkaapScan = () => {
 
               {/* ─── HEALTHIER ALTERNATIVES (OFF real products) ─── */}
               {(offRecs.length > 0 || offRecsLoading) && (
-                <div className="mx-5" style={{ marginTop: 20 }}>
+                <div className="mx-5" style={{ marginTop: 14 }}>
                   <div className="flex items-center justify-between mb-3">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Healthier Alternatives</p>
                   </div>
@@ -2237,7 +2248,7 @@ const SkaapScan = () => {
               )}
 
               {/* ─── INGREDIENTS ACCORDION ─── */}
-              <div style={{ marginTop: 16, marginLeft: 20, marginRight: 20, marginBottom: 8, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+              <div style={{ marginTop: 10, marginLeft: 20, marginRight: 20, marginBottom: 8, borderRadius: 14, border: "1px solid #F3F4F6", padding: 14 }}>
                 <button onClick={() => toggleSection("ingredients")} className="w-full flex items-center gap-3 text-left">
                   <span style={{ fontSize: 16 }}>📋</span>
                   <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#111827" }}>Ingredients</span>
