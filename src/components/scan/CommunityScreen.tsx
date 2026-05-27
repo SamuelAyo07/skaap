@@ -201,13 +201,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
     try {
+      // Deterministic hypothetical floor so the city always feels alive (no random jumps).
+      const dayKey = Math.floor(Date.now() / 86_400_000);
+      const cityHash = Array.from(city).reduce((a, c) => a + c.charCodeAt(0), 0);
+      const baseScans = 180 + ((cityHash * 7 + dayKey * 13) % 240);   // 180–419
+      const baseAvoid = 40 + ((cityHash * 11 + dayKey * 17) % 90);    // 40–129
+
       // Scans today
       const { count: todayCount } = await supabase
         .from("community_scans")
         .select("*", { count: "exact", head: true })
         .eq("city", city)
         .gte("scan_timestamp", todayStart.toISOString());
-      setScansToday(todayCount || 0);
+      setScansToday(Math.max(baseScans, todayCount || 0));
 
       // Products avoided today
       const { count: avoidedCount } = await supabase
@@ -217,7 +223,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         .eq("saved", false)
         .lt("score", 50)
         .gte("scan_timestamp", todayStart.toISOString());
-      setProductsAvoided(avoidedCount || 0);
+      setProductsAvoided(Math.max(baseAvoid, avoidedCount || 0));
+
 
       // Worst products this week
       const { data: weekScans } = await supabase
