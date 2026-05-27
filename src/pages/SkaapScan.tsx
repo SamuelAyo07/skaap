@@ -1926,7 +1926,7 @@ const SkaapScan = () => {
               )}
 
               {/* SIGNAL CHIPS ROW */}
-              <div className="flex gap-2 px-5" style={{ marginTop: 16 }}>
+              <div className="flex gap-2 px-5" style={{ marginTop: 10 }}>
                 {/* Nutri-Score */}
                 {(() => {
                   const ns = productInfo.nutriScoreGrade?.toLowerCase();
