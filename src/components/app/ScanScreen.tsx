@@ -144,7 +144,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     setTorchOn(false);
     setTorchSupported(false);
     setCameraActive(false);
-  }, []);
+  }, [clearRetryTimers]);
 
   const lookupAndShowProduct = useCallback(async (barcode: string) => {
     setIsLookingUp(true);
