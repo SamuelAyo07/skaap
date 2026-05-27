@@ -522,6 +522,49 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
                 </motion.div>
               )}
 
+              {/* Share strip — appears right after a scan */}
+              {lastScanned && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex items-center justify-between gap-3 bg-foreground/[0.04] rounded-2xl px-3.5 py-2.5"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
+                      <Share2 size={13} className="text-background" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[12px] font-semibold text-foreground leading-tight truncate">Share this find</p>
+                      <p className="text-[10px] text-muted-foreground leading-tight truncate">Help a friend skip the line</p>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.94 }}
+                    onClick={async () => {
+                      const shareData = {
+                        title: lastScanned.name,
+                        text: `Just scanned ${lastScanned.name} on SKAAP — skip every line.`,
+                        url: typeof window !== "undefined" ? window.location.origin : "https://useskaap.com",
+                      };
+                      trackEvent("share_scan", { product: lastScanned.name });
+                      try {
+                        if (navigator.share) {
+                          await navigator.share(shareData);
+                        } else {
+                          await navigator.clipboard?.writeText(`${shareData.text} ${shareData.url}`);
+                          setShowAddedFeedback("link-copied");
+                          setTimeout(() => setShowAddedFeedback(null), 1200);
+                        }
+                      } catch { /* user cancelled */ }
+                    }}
+                    className="bg-foreground text-background rounded-full px-3.5 py-1.5 text-[11px] font-semibold tracking-tight"
+                  >
+                    Share
+                  </motion.button>
+                </motion.div>
+              )}
+
               {/* Cart items */}
               {items.map((item, i) => (
                 <motion.div
