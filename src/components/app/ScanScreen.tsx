@@ -5,13 +5,13 @@ import {
   Search,
   Loader2,
   Barcode,
-  Trash2,
   Sparkles,
   X,
   Flashlight,
   FlashlightOff,
   Plus,
   Minus,
+  Share2,
 } from "lucide-react";
 import { Product } from "@/data/products";
 import { ProductImage } from "@/components/app/ProductImage";
@@ -21,68 +21,14 @@ import { lookupBarcode } from "@/lib/openfoodfacts";
 import { Input } from "@/components/ui/input";
 import ProductInfoSheet, { ProductInfoButton } from "@/components/app/ProductInfoSheet";
 import { trackEvent } from "@/lib/analytics";
+import * as ZXing from "@zxing/library";
 
 interface ScanScreenProps {
   onOpenBag: () => void;
 }
 
-declare global {
-  interface Window {
-    ZXing?: any;
-  }
-}
-
-const ZXING_SCRIPT_ID = "zxing-umd-script";
-const ZXING_SCRIPT_SRC = "https://unpkg.com/@zxing/library@latest/umd/index.min.js";
-
-const loadZxingLibrary = async (): Promise<any> => {
-  if (window.ZXing) return window.ZXing;
-
-  const existing = document.getElementById(ZXING_SCRIPT_ID) as HTMLScriptElement | null;
-  if (existing) {
-    await new Promise<void>((resolve, reject) => {
-      if (window.ZXing) {
-        resolve();
-        return;
-      }
-
-      const handleLoad = () => {
-        cleanup();
-        resolve();
-      };
-
-      const handleError = () => {
-        cleanup();
-        reject(new Error("Failed to load ZXing scanner"));
-      };
-
-      const cleanup = () => {
-        existing.removeEventListener("load", handleLoad);
-        existing.removeEventListener("error", handleError);
-      };
-
-      existing.addEventListener("load", handleLoad);
-      existing.addEventListener("error", handleError);
-    });
-    return window.ZXing;
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.id = ZXING_SCRIPT_ID;
-    script.src = ZXING_SCRIPT_SRC;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load ZXing scanner"));
-    document.body.appendChild(script);
-  });
-
-  if (!window.ZXing) {
-    throw new Error("ZXing scanner unavailable");
-  }
-
-  return window.ZXing;
-};
+// Bundled ZXing instead of CDN script for supply-chain safety
+const loadZxingLibrary = async (): Promise<typeof ZXing> => ZXing;
 
 const playScanBeep = () => {
   try {
