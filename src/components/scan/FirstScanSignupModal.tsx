@@ -176,6 +176,14 @@ export function FirstScanSignupModal({ open, onClose }: Props) {
               >
                 {submitting ? "Saving..." : "Start Scanning"}
               </button>
+              <button
+                type="button"
+                onClick={dismiss}
+                className="w-full py-2 font-semibold text-[13px]"
+                style={{ color: "#9CA3AF" }}
+              >
+                Skip for now
+              </button>
             </form>
 
             <p className="text-center text-[11px] mt-3" style={{ color: "#9CA3AF" }}>

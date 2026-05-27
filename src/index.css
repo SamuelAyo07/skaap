@@ -74,6 +74,11 @@
     @apply border-border;
   }
 
+  html, body {
+    overscroll-behavior-x: none;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: var(--font-sans);

@@ -1382,19 +1382,20 @@ const SkaapScan = () => {
             </motion.button>
           )}
 
-          {/* Stat chips */}
+          {/* Streak chip only — scans live in History, kitchen score in Kitchen */}
           <div className="flex items-center justify-center gap-2 px-5 py-1.5">
-            {[
-              { emoji: "🔥", val: userStats.current_streak > 0 ? String(userStats.current_streak) : "--", label: "streak" },
-              { emoji: "📊", val: userStats.total_scans > 0 ? String(userStats.total_scans) : "--", label: "scanned" },
-              { emoji: "🏠", val: userStats.kitchen_score > 0 ? `${userStats.kitchen_score}` : "--", label: "/100" },
-            ].map(chip => (
-              <button key={chip.label} onClick={chip.label === "/100" ? () => setScreen("kitchen") : undefined}
-                className="flex flex-col items-center justify-center" style={{ width: 90, height: 36, borderRadius: 10, background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-                <span className="text-[11px] font-bold" style={{ color: "#0A1220" }}>{chip.emoji} {chip.val}</span>
-                <span className="text-[8px] font-medium" style={{ color: "#6B7280" }}>{chip.label}</span>
-              </button>
-            ))}
+            <div
+              className="flex items-center justify-center gap-1.5"
+              style={{ height: 36, padding: "0 14px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA" }}
+            >
+              <span className="text-[13px]">🔥</span>
+              <span className="text-[12px] font-extrabold" style={{ color: "#9A3412" }}>
+                {userStats.current_streak > 0 ? userStats.current_streak : "0"}
+              </span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9A3412" }}>
+                day streak
+              </span>
+            </div>
           </div>
 
           {/* Food Fact of the Day */}

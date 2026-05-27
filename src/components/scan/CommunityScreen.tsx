@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Share2, Sparkles, MapPin, Globe } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin, Globe, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getScoreColor } from "@/lib/skaapScore";
+import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 
 interface CommunityScreenProps {
   onNavChange: (nav: string) => void;
@@ -201,11 +202,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
     try {
-      // Deterministic hypothetical floor so the city always feels alive (no random jumps).
+      // Deterministic hypothetical floor so the city always feels alive.
+      // Numbers grow through the day and reset each morning — feels like a live shelf.
+      const now = new Date();
       const dayKey = Math.floor(Date.now() / 86_400_000);
+      const hourKey = now.getHours();
+      const minuteBucket = Math.floor(now.getMinutes() / 5); // shift every 5 min
       const cityHash = Array.from(city).reduce((a, c) => a + c.charCodeAt(0), 0);
-      const baseScans = 180 + ((cityHash * 7 + dayKey * 13) % 240);   // 180–419
-      const baseAvoid = 40 + ((cityHash * 11 + dayKey * 17) % 90);    // 40–129
+      // Activity curve: low overnight, peaks 11am-8pm
+      const hourCurve = hourKey < 6 ? 0.25 : hourKey < 10 ? 0.55 : hourKey < 20 ? 1 : 0.7;
+      const baseScansSeed = 180 + ((cityHash * 7 + dayKey * 13) % 240);
+      const liveJitter = ((cityHash * 3 + hourKey * 17 + minuteBucket * 11) % 35);
+      const baseScans = Math.round(baseScansSeed * hourCurve) + liveJitter;
+      const baseAvoid = Math.round((40 + ((cityHash * 11 + dayKey * 17) % 90)) * hourCurve) + (liveJitter % 12);
 
       // Scans today
       const { count: todayCount } = await supabase
@@ -379,7 +388,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
     const interval = setInterval(() => {
       fetchData();
-    }, 30_000);
+    }, 45_000);
 
     return () => clearInterval(interval);
   }, [geoLocation?.city, canAccess, fetchData]);
@@ -613,11 +622,31 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Additive bars (use topAdditives with proportional width vs max)
   const maxAdd = Math.max(1, ...topAdditives.map(a => a.rejection_count));
 
-  const initial = (user?.email?.[0] || "M").toUpperCase();
+  const firstName = getUserFirstName();
+  const initial = (firstName?.[0] || user?.email?.[0] || "+").toUpperCase();
+  const avatarRef = useRef<HTMLInputElement>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(() => {
+    try { return localStorage.getItem("skaap_local_avatar_v1"); } catch { return null; }
+  });
+
+  const handleAvatarPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setAvatarPreview(dataUrl);
+      try { localStorage.setItem("skaap_local_avatar_v1", dataUrl); } catch {}
+    };
+    reader.readAsDataURL(f);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
-      <div className="flex-1 overflow-y-auto pb-28">
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF", overflowX: "hidden", overscrollBehaviorX: "none" }}
+    >
+      <div className="flex-1 overflow-y-auto pb-28" style={{ overscrollBehaviorX: "none" }}>
         {/* ─── HEADER ─── */}
         <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-3">
           <div className="flex items-start justify-between">
@@ -625,7 +654,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               <div className="flex items-center gap-1.5">
                 <span style={{ color: "#C41E3A", fontSize: 12 }}>↗</span>
                 <p className="font-bold tracking-[0.14em] uppercase" style={{ fontSize: 10, color: "#0A1220" }}>
-                  Today in {cityName}
+                  {firstName ? `Hey ${firstName} · ${cityName}` : `Today in ${cityName}`}
                 </p>
               </div>
               <h1 className="font-extrabold tracking-tight leading-[1.05] mt-1" style={{ fontSize: 28, color: "#0A1220" }}>
@@ -633,10 +662,27 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               </h1>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[14px]"
-                style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}>{initial}</div>
+              <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarPick} />
+              <button
+                onClick={() => avatarRef.current?.click()}
+                className="relative w-9 h-9 rounded-full flex items-center justify-center overflow-hidden"
+                style={{
+                  background: avatarPreview ? "transparent" : "linear-gradient(135deg, #F3F4F6, #E5E7EB)",
+                  border: avatarPreview ? "none" : "1.5px dashed #D1D5DB",
+                  color: "#6B7280",
+                }}
+                aria-label="Add profile photo"
+              >
+                {avatarPreview ? (
+                  <img src={avatarPreview} alt="You" className="w-full h-full object-cover" />
+                ) : firstName ? (
+                  <span className="font-bold text-[13px]" style={{ color: "#0A1220" }}>{initial}</span>
+                ) : (
+                  <Camera size={14} />
+                )}
+              </button>
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#10B981" }} />
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#10B981" }} />
                 <span className="font-bold tracking-wider" style={{ fontSize: 10, color: "#065F46" }}>LIVE</span>
               </span>
             </div>
