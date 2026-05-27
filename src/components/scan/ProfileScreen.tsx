@@ -321,6 +321,49 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </motion.button>
         )}
 
+        {/* Personalization Preview — shows what Plus unlocks */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
+          className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
+          <div className="flex items-center justify-between px-4 pt-4 pb-1">
+            <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Personalization</h3>
+            {!isPlus && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "rgba(176,32,47,0.08)", color: "#B0202F" }}>
+                <Lock size={9} /> PLUS
+              </span>
+            )}
+          </div>
+          <p className="px-4 text-[12px] mb-3" style={{ color: "#9CA3AF" }}>
+            Tell SKAAP about you. We'll tune every scan to your skin, diet, and goals.
+          </p>
+          <div className={`grid grid-cols-2 gap-2 px-4 pb-4 ${isPlus ? "" : "pointer-events-none opacity-60"}`}>
+            {[
+              { emoji: "🧴", title: "Skin type", sub: "Dry · Oily · Sensitive" },
+              { emoji: "💄", title: "Cosmetic prefs", sub: "Fragrance-free · Vegan" },
+              { emoji: "🥗", title: "Diet", sub: "Vegan · Keto · Halal" },
+              { emoji: "💪", title: "Goals", sub: "More protein · Less sugar" },
+              { emoji: "🤱", title: "Life stage", sub: "Pregnant · Nursing · Kids" },
+              { emoji: "⚠️", title: "Allergies", sub: "Nuts · Gluten · Dairy" },
+            ].map(p => (
+              <div key={p.title} className="rounded-xl p-2.5" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ fontSize: 14 }}>{p.emoji}</span>
+                  <p className="font-bold text-[12px]" style={{ color: "#0A1220" }}>{p.title}</p>
+                </div>
+                <p className="text-[10px] mt-0.5 leading-tight" style={{ color: "#9CA3AF" }}>{p.sub}</p>
+              </div>
+            ))}
+          </div>
+          {!isPlus && (
+            <button onClick={() => openUpgrade("Personalization")}
+              className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 py-2.5 text-[12px] font-bold text-white"
+              style={{ background: "#0A1220" }}>
+              <Crown size={12} color="#FFD700" /> Preview · Unlock with Plus
+            </button>
+          )}
+        </motion.div>
+
+
+
         {/* My Alerts — Plus only */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
