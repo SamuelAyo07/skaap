@@ -182,29 +182,39 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
     try {
       const ZXing = await loadZxingLibrary();
 
-      const constraintsExact: MediaStreamConstraints = {
-        audio: false,
-        video: {
-          facingMode: { exact: "environment" },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-      };
+      // Prefer higher-res rear camera with continuous autofocus + auto exposure
+      const buildVideo = (rearMode: ConstrainDOMString): MediaTrackConstraints => ({
+        facingMode: rearMode,
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        frameRate: { ideal: 30, max: 60 },
+        advanced: [
+          { focusMode: "continuous" } as any,
+          { exposureMode: "continuous" } as any,
+          { whiteBalanceMode: "continuous" } as any,
+        ],
+      });
 
-      const constraintsFallback: MediaStreamConstraints = {
-        audio: false,
-        video: {
-          facingMode: { ideal: "environment" },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-      };
 
       let stream: MediaStream;
       try {
-        stream = await navigator.mediaDevices.getUserMedia(constraintsExact);
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: buildVideo({ exact: "environment" } as any),
+        });
       } catch {
-        stream = await navigator.mediaDevices.getUserMedia(constraintsFallback);
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: buildVideo({ ideal: "environment" } as any),
+          });
+        } catch {
+          // Last-resort fallback for desktops with no rear camera
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          });
+        }
       }
 
       if (!videoRef.current) {
@@ -216,8 +226,15 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       await videoRef.current.play();
 
       const track = stream.getVideoTracks()[0];
-      const capabilities = track?.getCapabilities?.() as MediaTrackCapabilities & { torch?: boolean };
+      const capabilities = track?.getCapabilities?.() as MediaTrackCapabilities & { torch?: boolean; focusMode?: string[] };
       setTorchSupported(Boolean(capabilities?.torch));
+
+      // Best-effort continuous autofocus once track is live
+      try {
+        if (capabilities?.focusMode?.includes("continuous")) {
+          await track.applyConstraints({ advanced: [{ focusMode: "continuous" } as any] });
+        }
+      } catch { /* ignore */ }
 
       const hints = new Map();
       hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
@@ -227,18 +244,25 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         ZXing.BarcodeFormat.UPC_E,
         ZXing.BarcodeFormat.CODE_128,
         ZXing.BarcodeFormat.CODE_39,
+        ZXing.BarcodeFormat.CODE_93,
+        ZXing.BarcodeFormat.ITF,
+        ZXing.BarcodeFormat.CODABAR,
+        ZXing.BarcodeFormat.QR_CODE,
+        ZXing.BarcodeFormat.DATA_MATRIX,
       ]);
+      hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
 
-      const reader = new ZXing.BrowserMultiFormatReader(hints, 100);
+      // 200ms scan interval = ~5fps decode, much smoother than 100ms and reduces false misses
+      const reader = new ZXing.BrowserMultiFormatReader(hints, 200);
       readerRef.current = reader;
       setCameraActive(true);
 
-      // After 12 seconds with no detection, stop camera and nudge user to manual entry
+      // After 18 seconds without a hit, nudge user to manual entry (was 12s, too aggressive)
       cameraTimeoutRef.current = setTimeout(() => {
         void stopCamera();
-        setCameraError("We couldn't read the barcode. Try better lighting or enter the full number below.");
+        setCameraError("Couldn't read the barcode. Try moving closer, steadier hands, or enter the number below.");
         setTimeout(() => manualInputRef.current?.focus(), 300);
-      }, 12000);
+      }, 18000);
 
       const onDecode = (result: any, error: any) => {
         if (result) {
@@ -246,12 +270,13 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
           const fmt = typeof result.getBarcodeFormat === "function"
             ? formatZXingName(result.getBarcodeFormat())
             : undefined;
+          // Soft haptic on success when supported
+          try { (navigator as any).vibrate?.(40); } catch { /* ignore */ }
           void handleDetectedBarcode(text, fmt);
           return;
         }
-
         if (!error) return;
-        // Silently ignore all scan errors, user has manual entry as fallback
+        // Silently ignore not-found / checksum noise — user has manual fallback
       };
 
       if (typeof reader.decodeFromStream === "function") {
@@ -271,6 +296,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
       isStartingRef.current = false;
     }
   }, [cameraActive, handleDetectedBarcode, isLookingUp, stopCamera]);
+
 
   const toggleTorch = useCallback(async () => {
     const track = streamRef.current?.getVideoTracks?.()[0];

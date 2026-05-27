@@ -1431,7 +1431,7 @@ const SkaapScan = () => {
           </button>
           <h1 className="font-extrabold text-lg" style={{ color: "#1B2A4A" }}>How SKAAP uses AI</h1>
         </div>
-        <div className="px-5 py-6 space-y-6">
+        <div className="px-5 py-4 space-y-4">
           {[
             { title: "Product Summaries", desc: "AI-generated summaries are created using Google Gemini based on Open Food Facts nutrition data. They provide a quick, plain-language overview of what the product is and what shoppers should know." },
             { title: "Additive Explanations", desc: "When you tap an additive, AI generates a calm, factual explanation of what it is and its role in the product. Risk levels come from EFSA and IARC research data." },

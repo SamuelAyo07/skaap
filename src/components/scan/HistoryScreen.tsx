@@ -160,7 +160,7 @@ export function HistoryScreen({
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 mt-3 pb-24">
         {visibleItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10">
+          <div className="flex flex-col items-center justify-center py-6">
             {tab === "favorites" ? (
               <>
                 <motion.div
@@ -263,7 +263,7 @@ export function HistoryScreen({
             <div className="absolute inset-0 rounded-2xl" style={{
               background: "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.95) 50%)",
             }} />
-            <div className="relative text-center py-8 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+            <div className="relative text-center py-5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
               <Lock size={24} style={{ color: "#C41E3A" }} className="mx-auto" />
               <h3 className="font-extrabold text-lg mt-3" style={{ color: "#1B2A4A" }}>Unlock Full History</h3>
               <p className="text-[13px] mt-1" style={{ color: "#9CA3AF" }}>
