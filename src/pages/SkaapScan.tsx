@@ -39,8 +39,9 @@ import {
   fetchRecommendations, DIETARY_LABELS, AIRecommendation,
 } from "@/lib/aiProductInsights";
 import { findBannedAdditives, matchBannedAdditive, getBadgeInfo } from "@/lib/bannedAdditives";
-import { FoodFactCard } from "@/components/scan/FoodFactCard";
+
 import { HealthSnapshot } from "@/components/scan/HealthSnapshot";
+import { NutritionAtAGlance } from "@/components/scan/NutritionAtAGlance";
 import { ImageRecognition } from "@/components/scan/ImageRecognition";
 import { fetchHealthierAlternatives, OFFRecommendation } from "@/lib/offRecommendations";
 import { useNearbyStore } from "@/hooks/useNearbyStore";
@@ -1397,7 +1398,7 @@ const SkaapScan = () => {
           </div>
 
           {/* Food Fact of the Day */}
-          <FoodFactCard />
+          
 
           {/* Health Snapshot */}
           <HealthSnapshot stats={userStats} />
@@ -2048,35 +2049,9 @@ const SkaapScan = () => {
                 />
               )}
 
-              {/* ─── NUTRITION AT A GLANCE (plain English, always visible) ─── */}
-              {n && [n.energyKcal100g, n.fat100g, n.sugars100g, n.protein100g, n.fiber100g, n.salt100g].some(v => v != null) && (
-                <div className="mx-5" style={{ marginTop: 20 }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Nutrition at a glance</p>
-                    <p style={{ fontSize: 12, color: "#9CA3AF" }}>per 100g</p>
-                  </div>
-                  <p style={{ fontSize: 12, color: "#6B7280", marginBottom: 10 }}>The basics, in simple words.</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { key: "cal", show: n.energyKcal100g != null, icon: "🔥", label: "Calories", val: n.energyKcal100g != null ? `${Math.round(n.energyKcal100g)} kcal` : "—", hint: n.energyKcal100g == null ? "Not listed" : n.energyKcal100g > 400 ? "Very energy-rich — small portions" : n.energyKcal100g > 200 ? "Moderate energy" : "Light on energy" },
-                      { key: "sug", show: n.sugars100g != null, icon: "🍬", label: "Sugar", val: n.sugars100g != null ? `${n.sugars100g.toFixed(1)} g` : "—", hint: n.sugars100g == null ? "Not listed" : n.sugars100g > 15 ? "A lot of sugar" : n.sugars100g > 5 ? "Some sugar" : "Low sugar — good" },
-                      { key: "fat", show: n.fat100g != null, icon: "💧", label: "Fat", val: n.fat100g != null ? `${n.fat100g.toFixed(1)} g` : "—", hint: n.fat100g == null ? "Not listed" : n.fat100g > 17.5 ? "High in fat" : n.fat100g > 3 ? "Medium fat" : "Low fat" },
-                      { key: "prot", show: n.protein100g != null, icon: "💪", label: "Protein", val: n.protein100g != null ? `${n.protein100g.toFixed(1)} g` : "—", hint: n.protein100g == null ? "Not listed" : n.protein100g >= 8 ? "Good protein boost" : n.protein100g >= 4 ? "Some protein" : "Little protein" },
-                      { key: "fib", show: n.fiber100g != null, icon: "🌾", label: "Fiber", val: n.fiber100g != null ? `${n.fiber100g.toFixed(1)} g` : "—", hint: n.fiber100g == null ? "Not listed" : n.fiber100g >= 6 ? "Very filling" : n.fiber100g >= 3 ? "Decent fiber" : "Low fiber" },
-                      { key: "salt", show: n.salt100g != null, icon: "🧂", label: "Salt", val: n.salt100g != null ? `${n.salt100g.toFixed(2)} g` : "—", hint: n.salt100g == null ? "Not listed" : n.salt100g > 1.5 ? "Salty — go easy" : n.salt100g > 0.3 ? "Some salt" : "Low salt" },
-                    ].filter(c => c.show).map(c => (
-                      <div key={c.key} className="flex items-start gap-2 px-3 py-2.5 rounded-2xl" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                        <span style={{ fontSize: 18, lineHeight: "20px" }}>{c.icon}</span>
-                        <div className="min-w-0 flex-1">
-                          <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.4, textTransform: "uppercase", color: "#9CA3AF" }}>{c.label}</p>
-                          <p className="font-bold" style={{ fontSize: 14, color: "#111827", lineHeight: "18px" }}>{c.val}</p>
-                          <p style={{ fontSize: 11, color: "#6B7280", marginTop: 2, lineHeight: "14px" }}>{c.hint}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* ─── NUTRITION AT A GLANCE (tap each for "why it matters") ─── */}
+              {n && <NutritionAtAGlance n={n} />}
+
 
               {/* ─── POSITIVES SECTION ─── */}
 

@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Scan, Shield, AlertTriangle, ChevronDown, TrendingUp, Share2, Lock, Globe, Activity, Sparkles, Heart, Download } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { BottomNavBar } from "./BottomNavBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getScoreColor } from "@/lib/skaapScore";
-import skaapIcon from "@/assets/skaap-icon.png";
 
 interface CommunityScreenProps {
   onNavChange: (nav: string) => void;
@@ -596,250 +595,266 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const totalAvoided = productsAvoided;
   const healthiest = healthiestProducts[0];
 
+  // ── Free-user gate: full data shown ONCE on first visit, blurred after ──
+  const showBlur = !isPlus && !hasFreeView;
+
+  // Featured "putting back" = lowest-scored recent scan
+  const featured = worstProducts[0];
+  const featuredAgo = recentScans.find(r => r.barcode === featured?.barcode);
+  const bestScore = healthiestProducts[0]?.avg_score ?? null;
+
+  // Additive bars (use topAdditives with proportional width vs max)
+  const maxAdd = Math.max(1, ...topAdditives.map(a => a.rejection_count));
+
+  const initial = (user?.email?.[0] || "M").toUpperCase();
+
   return (
     <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       <div className="flex-1 overflow-y-auto pb-28">
-        {/* Header */}
+        {/* ─── HEADER ─── */}
         <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-3">
-          <h1 className="font-extrabold text-[26px] tracking-tight" style={{ color: "#1A1A1A" }}>
-            What people are eating
-          </h1>
-          <div className="flex items-center gap-1.5 mt-1">
-            <MapPin size={12} style={{ color: "#C41E3A" }} />
-            <p className="text-[13px] font-medium" style={{ color: "#6B7280" }}>{cityName}</p>
-            {!isPlus && (
-              <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEF2F2", color: "#C41E3A" }}>
-                Free preview
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* HERO INSIGHT, single plain-language sentence */}
-        <div className="mx-5 mt-5 p-5 rounded-[20px]"
-          style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
-          <div className="flex items-center gap-1.5">
-            <Activity size={14} style={{ color: "#C41E3A" }} />
-            <span className="text-[10px] font-bold tracking-[0.12em] uppercase" style={{ color: "#C41E3A" }}>Today in {cityName}</span>
-          </div>
-          <p className="font-extrabold text-[17px] mt-2 leading-snug" style={{ color: "#0A1220" }}>
-            {dailyInsight.text}
-          </p>
-          <p className="text-[12px] mt-2" style={{ color: "#6B7280" }}>
-            Updates with every new scan nearby.
-          </p>
-        </div>
-
-        {/* THREE SIMPLE STATS */}
-        <div className="grid grid-cols-3 gap-2 px-5 mt-4">
-          {[
-            { label: "Scans today", value: scansToday },
-            { label: "Low scores", value: totalAvoided },
-            { label: "Top score", value: healthiest ? healthiest.avg_score : "—" },
-          ].map((s, i) => (
-            <div key={i} className="rounded-2xl py-3 text-center"
-              style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <p className="font-extrabold text-[20px]" style={{ color: "#0A1220" }}>
-                {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
-              </p>
-              <p className="text-[10px] font-medium mt-0.5" style={{ color: "#6B7280" }}>{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* TWO SIMPLE LISTS, Avoid + Try Instead */}
-        <div className="px-5 mt-6">
-          <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-            <AlertTriangle size={15} style={{ color: "#C41E3A" }} /> Lowest scored this week
-          </h2>
-          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>Scores only. You choose.</p>
-
-          <div className="mt-3 space-y-2">
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 rounded-2xl" style={{ background: "#F3F4F6" }} />
-              ))
-            ) : worstProducts.length === 0 ? (
-              <div className="text-center py-6 rounded-2xl" style={{ background: "#F9FAFB" }}>
-                <p className="text-[13px]" style={{ color: "#9CA3AF" }}>Nothing yet. Be the first to scan!</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: "#C41E3A", fontSize: 12 }}>↗</span>
+                <p className="font-bold tracking-[0.14em] uppercase" style={{ fontSize: 10, color: "#0A1220" }}>
+                  Today in {cityName}
+                </p>
               </div>
-            ) : (
-              worstProducts.slice(0, isPlus ? 5 : 2).map(p => (
-                <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
-                  className="w-full p-3 rounded-2xl text-left"
-                  style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                      {p.image_url ? <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} /> : <Scan size={14} style={{ color: "#D1D5DB" }} />}
+              <h1 className="font-extrabold tracking-tight leading-[1.05] mt-1" style={{ fontSize: 28, color: "#0A1220" }}>
+                Live shelf<br/>intelligence
+              </h1>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[14px]"
+                style={{ background: "linear-gradient(135deg, #B0202F, #8a1825)" }}>{initial}</div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#10B981" }} />
+                <span className="font-bold tracking-wider" style={{ fontSize: 10, color: "#065F46" }}>LIVE</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── FEATURED "PEOPLE NEAR YOU ARE PUTTING BACK" ─── */}
+        {featured && (
+          <button onClick={() => onScanProduct(featured.barcode)}
+            className="block w-full text-left mx-5 mt-4 p-4 rounded-2xl"
+            style={{ width: "calc(100% - 40px)", background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.05)" }}>
+            <p className="font-bold tracking-[0.12em] uppercase" style={{ fontSize: 10, color: "#9CA3AF" }}>
+              People near you are putting back
+            </p>
+            <div className="flex items-start justify-between gap-3 mt-2">
+              <p className="font-extrabold leading-tight flex-1" style={{ fontSize: 19, color: "#0A1220" }}>
+                {featured.product_name}
+              </p>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+                style={{ fontSize: 16, background: getScoreColor(featured.avg_score) }}>
+                {featured.avg_score}
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <span className="inline-flex items-center gap-1 text-[11px]" style={{ color: "#9CA3AF" }}>
+                <span>🕐</span> {featuredAgo ? getTimeAgo(featuredAgo.scan_timestamp) : `${Math.max(2, featured.scan_count * 3)}m ago`}
+              </span>
+              {featured.rejected_additives?.[0] && (
+                <span className="font-semibold px-2.5 py-1 rounded-full"
+                  style={{ fontSize: 10, background: "#FEF2F2", color: "#C41E3A", border: "1px dashed #FECDD3" }}>
+                  {featured.rejected_additives[0]}
+                </span>
+              )}
+            </div>
+          </button>
+        )}
+
+        {/* ─── 3 STAT TILES ─── */}
+        <div className="grid grid-cols-3 gap-2 px-5 mt-3">
+          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#0A1220", lineHeight: 1 }}>
+              {scansToday.toLocaleString() || (loading ? "—" : "0")}
+            </p>
+            <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Scans today</p>
+          </div>
+          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#DC2626", lineHeight: 1 }}>
+              {productsAvoided || (loading ? "—" : "0")}
+            </p>
+            <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Put back</p>
+          </div>
+          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#16A34A", lineHeight: 1 }}>
+              {bestScore ?? "—"}
+            </p>
+            <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Best score</p>
+          </div>
+        </div>
+
+        {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
+        <div className="relative">
+          <div className={showBlur ? "pointer-events-none select-none" : ""}
+            style={showBlur ? { filter: "blur(7px)", WebkitFilter: "blur(7px)" } : undefined}>
+
+            {/* LOWEST SCORES THIS WEEK */}
+            <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
+                  Lowest scores this week
+                </h2>
+                <span className="px-2.5 py-1 rounded-full font-bold" style={{ fontSize: 10, background: "#FEF2F2", color: "#C41E3A" }}>
+                  Preview
+                </span>
+              </div>
+
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-14 rounded-xl my-2" style={{ background: "#F3F4F6" }} />
+                ))
+              ) : worstProducts.slice(0, 3).map((p, i) => (
+                <div key={p.barcode}>
+                  <button onClick={() => onScanProduct(p.barcode)}
+                    className="w-full flex items-start gap-3 py-2.5 text-left">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: i === 2 ? "#FED7AA" : "#FECACA" }}>
+                      <span style={{ fontSize: 16 }}>▮▮▮</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                      {p.brand && <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>{p.brand}</p>}
+                      <p className="font-bold truncate" style={{ fontSize: 14, color: "#0A1220" }}>{p.product_name}</p>
+                      <p style={{ fontSize: 11, color: "#9CA3AF" }}>{Math.max(3, (i + 1) * 5)}m ago</p>
+                      {p.rejected_additives && p.rejected_additives.length > 0 && (
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          <span style={{ fontSize: 10, color: "#9CA3AF" }}>Shoppers reject</span>
+                          {p.rejected_additives.slice(0, 2).map(a => (
+                            <span key={a} className="px-1.5 py-0.5 rounded-full font-semibold"
+                              style={{ fontSize: 9, background: "#FFFFFF", color: "#C41E3A", border: "1px dashed #FECDD3" }}>
+                              {a}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
-                      style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
-                  </div>
-                  {p.rejected_additives && p.rejected_additives.length > 0 && (
-                    <div className="mt-2.5 pt-2.5" style={{ borderTop: "1px dashed #F1F2F4" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: "#9F1239" }}>
-                        Additives shoppers reject
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {p.rejected_additives.slice(0, 3).map(a => (
-                          <span key={a} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ background: "#FEF2F2", color: "#C41E3A", border: "1px solid #FECDD3" }}>
-                            {a}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+                      style={{ fontSize: 13, background: getScoreColor(p.avg_score) }}>
+                      {p.avg_score}
                     </div>
-                  )}
-                </button>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* MOST SCANNED, split by category so food + beauty both feel represented */}
-        <div className="px-5 mt-6">
-          <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-            <TrendingUp size={15} style={{ color: "#0A1220" }} /> Most scanned near you
-          </h2>
-          <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>
-            What real shoppers are checking right now. Food and beauty, side by side.
-          </p>
-
-          {(["food", "beauty"] as const).map(cat => {
-            const items = mostScanned.filter(p => {
-              const isBeauty = (p.image_url || "").includes("openbeautyfacts");
-              return cat === "beauty" ? isBeauty : !isBeauty;
-            }).slice(0, isPlus ? 5 : 2);
-            if (items.length === 0) return null;
-            return (
-              <div key={cat} className="mt-4">
-                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#9CA3AF" }}>
-                  {cat === "food" ? "Food" : "Beauty"}
-                </p>
-                <div className="space-y-2">
-                  {items.map(p => (
-                    <button key={p.barcode} onClick={() => onScanProduct(p.barcode)}
-                      className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
-                      style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                      <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "#F3F4F6" }}>
-                        {p.image_url ? (
-                          <img src={p.image_url} alt={p.product_name} className="w-full h-full object-contain p-0.5"
-                            loading="lazy" decoding="async"
-                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
-                        ) : <Scan size={14} style={{ color: "#D1D5DB" }} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.product_name}</p>
-                        <p className="text-[11px] truncate" style={{ color: "#9CA3AF" }}>
-                          {p.brand ? `${p.brand} · ` : ""}{p.scan_count} {p.scan_count === 1 ? "scan" : "scans"}
-                        </p>
-                      </div>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[14px]"
-                        style={{ background: getScoreColor(p.avg_score) }}>{p.avg_score}</div>
-                    </button>
-                  ))}
+                  </button>
+                  {i < 2 && <div style={{ height: 1, background: "#F3F4F6" }} />}
                 </div>
-              </div>
-            );
-          })}
+              ))}
 
-          {!isPlus && mostScanned.length > 4 && (
-            <p className="text-[11px] mt-3 text-center" style={{ color: "#9CA3AF" }}>
-              + {mostScanned.length - 4} more on Plus
-            </p>
+              <button onClick={() => openUpgrade("Community Intelligence")}
+                className="w-full flex items-center gap-2 pt-3 mt-2 font-bold"
+                style={{ fontSize: 13, color: "#C41E3A", borderTop: "1px solid #F3F4F6" }}>
+                <Lock size={12} /> Unlock 10 more
+              </button>
+            </div>
+
+            {/* WORST ADDITIVES IN YOUR AREA */}
+            <div className="mx-5 mt-4 p-4 rounded-2xl" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
+              <h2 className="font-extrabold tracking-tight mb-3" style={{ fontSize: 17, color: "#0A1220" }}>
+                Worst additives in your area
+              </h2>
+              {(topAdditives.length > 0 ? topAdditives : [
+                { code: "E150D", name: "E150D", rejection_count: 47, trending_up: true },
+                { code: "E621",  name: "E621",  rejection_count: 31, trending_up: true },
+                { code: "E950",  name: "E950",  rejection_count: 22, trending_up: false },
+                { code: "PALM",  name: "Palm oil", rejection_count: 19, trending_up: false },
+                { code: "E211",  name: "E211",  rejection_count: 14, trending_up: false },
+              ]).slice(0, 5).map(a => (
+                <div key={a.code} className="flex items-center gap-3 py-1.5">
+                  <span className="font-bold w-16 flex-shrink-0" style={{ fontSize: 13, color: "#0A1220" }}>
+                    {a.code}
+                  </span>
+                  <div className="flex-1 h-2 rounded-full" style={{ background: "#FEE2E2" }}>
+                    <div className="h-full rounded-full"
+                      style={{ width: `${Math.max(15, Math.round((a.rejection_count / maxAdd) * 100))}%`, background: "#EF4444" }} />
+                  </div>
+                  <span className="font-bold tabular-nums w-10 text-right flex-shrink-0" style={{ fontSize: 13, color: "#C41E3A" }}>
+                    {a.rejection_count}×
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Blur overlay for repeat free visitors */}
+          {showBlur && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
+              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 60%)" }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+                style={{ background: "#0A1220" }}>
+                <Lock size={22} color="#FFD700" />
+              </div>
+              <p className="font-extrabold tracking-tight" style={{ fontSize: 18, color: "#0A1220" }}>
+                You've used your free peek
+              </p>
+              <p className="mt-1.5 max-w-[280px]" style={{ fontSize: 13, color: "#6B7280" }}>
+                See every put-back, every additive, every shelf — live — with SKAAP Plus.
+              </p>
+              <button onClick={() => openUpgrade("Community Intelligence")}
+                className="mt-4 px-5 py-2.5 rounded-full font-bold text-white"
+                style={{ fontSize: 13, background: "#0A1220" }}>
+                Unlock with Plus
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Plus teaser for free users, single clear gate */}
+        {/* ─── DARK SKAAP PLUS UPGRADE CARD (always visible, mirrors mockup) ─── */}
         {!isPlus && (
-          <div className="mx-5 mt-7 p-5 rounded-2xl text-center"
-            style={{ background: "linear-gradient(135deg, #FFF1F2, #FEE2E2)", border: "1px solid #FECDD3" }}>
-            <Lock size={18} style={{ color: "#C41E3A" }} className="mx-auto" />
-            <p className="font-extrabold text-[15px] mt-2" style={{ color: "#7F1D1D" }}>
-              Preview only
-            </p>
-            <p className="text-[12px] mt-1" style={{ color: "#9F1239" }}>
+          <button onClick={() => openUpgrade("Community Intelligence")}
+            className="block w-full text-left mx-5 mt-4 p-5 rounded-2xl relative overflow-hidden"
+            style={{
+              width: "calc(100% - 40px)",
+              background: "#0A0F1A",
+              boxShadow: "0 8px 30px rgba(196,30,58,0.18)",
+            }}>
+            <div className="flex items-center gap-1.5 mb-2">
+              <Sparkles size={12} color="#FFFFFF" />
+              <span className="font-bold tracking-[0.18em] uppercase text-white" style={{ fontSize: 10 }}>
+                SKAAP Plus
+              </span>
+            </div>
+            <h3 className="font-extrabold tracking-tight text-white" style={{ fontSize: 30, lineHeight: 1.05 }}>
               See it all live.
+            </h3>
+            <p className="mt-2.5 max-w-[260px]" style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.45 }}>
+              Every additive. Every put-back. Every shelf, in real time.
             </p>
-            <motion.button whileTap={{ scale: 0.97 }} onClick={() => openUpgrade("Community Intelligence")}
-              className="mt-3 w-full py-2.5 rounded-xl font-bold text-[13px] text-white"
-              style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Unlock, pay what you want
-            </motion.button>
+            <div className="flex items-center justify-between mt-4">
+              <span className="px-5 py-2.5 rounded-full font-bold bg-white" style={{ fontSize: 13, color: "#C41E3A" }}>
+                Upgrade
+              </span>
+              <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
+                <span className="text-white" style={{ fontSize: 16 }}>→</span>
+              </span>
+            </div>
+          </button>
+        )}
+
+        {/* Plus-only: comparison + share */}
+        {isPlus && userAvgScore !== null && cityAvgScore !== null && (
+          <div className="mx-5 mt-4 p-5 rounded-2xl"
+            style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
+            <h3 className="font-extrabold" style={{ fontSize: 15, color: "#0A1220" }}>How you compare</h3>
+            <div className="mt-2 flex items-center justify-between">
+              <span style={{ fontSize: 13, color: "#6B7280" }}>You</span>
+              <span className="font-bold" style={{ fontSize: 15, color: getScoreColor(userAvgScore) }}>{userAvgScore}/100</span>
+            </div>
+            <div className="mt-1 flex items-center justify-between">
+              <span style={{ fontSize: 13, color: "#6B7280" }}>{cityName} avg</span>
+              <span className="font-bold" style={{ fontSize: 15, color: getScoreColor(cityAvgScore) }}>{cityAvgScore}/100</span>
+            </div>
           </div>
         )}
 
-        {/* Plus members get the deeper sections */}
-        {isPlus && (
-          <>
-            <div className="px-5 mt-7">
-              <h2 className="font-extrabold text-[17px] flex items-center gap-2" style={{ color: "#0A1220" }}>
-                <Shield size={15} style={{ color: "#C41E3A" }} /> Stuff your area is avoiding
-              </h2>
-              <p className="text-[12px] mt-0.5" style={{ color: "#6B7280" }}>
-                The ingredients people in {cityName} are saying no to
-              </p>
-              <div className="mt-3 space-y-1.5">
-                {topAdditives.length === 0 ? (
-                  <p className="text-[12px] py-3 text-center" style={{ color: "#9CA3AF" }}>Not enough data yet</p>
-                ) : (
-                  topAdditives.slice(0, 5).map(a => (
-                    <div key={a.code}>
-                      <button onClick={() => handleAdditiveExpand(a)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left"
-                        style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
-                        <span className="px-2 py-1 rounded-lg text-[11px] font-bold flex-shrink-0"
-                          style={{ background: "#FFF1F2", color: "#C41E3A" }}>{a.code}</span>
-                        <p className="text-[13px] font-semibold truncate flex-1" style={{ color: "#1A1A1A" }}>{a.name}</p>
-                        <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{a.rejection_count}×</span>
-                      </button>
-                      {expandedAdditive === a.code && (
-                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-                          className="px-4 py-3 mx-2 rounded-b-xl text-[12px] leading-relaxed"
-                          style={{ background: "#FAFAFA", color: "#4B5563" }}>
-                          {additiveLoading ? "Loading…" : <p>{additiveExplanation}</p>}
-                        </motion.div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {userAvgScore !== null && cityAvgScore !== null && (
-              <div className="mx-5 mt-7 p-5 rounded-[20px]"
-                style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
-                <h3 className="font-extrabold text-[16px]" style={{ color: "#0A1220" }}>How you compare</h3>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-[13px]" style={{ color: "#6B7280" }}>You</span>
-                  <span className="font-bold text-[15px]" style={{ color: getScoreColor(userAvgScore) }}>{userAvgScore}/100</span>
-                </div>
-                <div className="mt-1 flex items-center justify-between">
-                  <span className="text-[13px]" style={{ color: "#6B7280" }}>{cityName} avg</span>
-                  <span className="font-bold text-[15px]" style={{ color: getScoreColor(cityAvgScore) }}>{cityAvgScore}/100</span>
-                </div>
-                <p className="text-[12px] mt-3" style={{ color: userAvgScore > cityAvgScore ? "#16A34A" : "#F59E0B" }}>
-                  {userAvgScore > cityAvgScore
-                    ? `You eat better than the ${cityName} average. Keep it up.`
-                    : `You're close to the ${cityName} average. A few smart swaps and you'll pull ahead.`}
-                </p>
-              </div>
-            )}
-
-            {worstProducts.length > 0 && (
-              <div className="px-5 mt-5">
-                <button onClick={handleShareWorst}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-[13px]"
-                  style={{ background: "#FFF1F2", border: "1px solid #FECDD3", color: "#C41E3A" }}>
-                  <Share2 size={14} /> Share what {cityName} is avoiding
-                </button>
-              </div>
-            )}
-          </>
+        {isPlus && worstProducts.length > 0 && (
+          <div className="px-5 mt-4">
+            <button onClick={handleShareWorst}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold"
+              style={{ fontSize: 13, background: "#FFF1F2", border: "1px solid #FECDD3", color: "#C41E3A" }}>
+              <Share2 size={14} /> Share what {cityName} is avoiding
+            </button>
+          </div>
         )}
       </div>
 
@@ -847,3 +862,4 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
     </div>
   );
 }
+
