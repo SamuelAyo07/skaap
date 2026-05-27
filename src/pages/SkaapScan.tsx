@@ -2192,7 +2192,7 @@ const SkaapScan = () => {
 
               {/* ─── HEALTHIER ALTERNATIVES (OFF real products) ─── */}
               {(offRecs.length > 0 || offRecsLoading) && (
-                <div className="mx-5" style={{ marginTop: 20 }}>
+                <div className="mx-5" style={{ marginTop: 14 }}>
                   <div className="flex items-center justify-between mb-3">
                     <p className="font-bold" style={{ fontSize: 16, color: "#111827" }}>Healthier Alternatives</p>
                   </div>
