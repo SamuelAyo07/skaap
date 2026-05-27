@@ -188,13 +188,13 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         width: { ideal: 1920 },
         height: { ideal: 1080 },
         frameRate: { ideal: 30, max: 60 },
-        // @ts-expect-error - advanced hints are vendor-specific but widely honored
         advanced: [
-          { focusMode: "continuous" },
-          { exposureMode: "continuous" },
-          { whiteBalanceMode: "continuous" },
+          { focusMode: "continuous" } as any,
+          { exposureMode: "continuous" } as any,
+          { whiteBalanceMode: "continuous" } as any,
         ],
       });
+
 
       let stream: MediaStream;
       try {
@@ -251,7 +251,6 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
         ZXing.BarcodeFormat.DATA_MATRIX,
       ]);
       hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-      hints.set(ZXing.DecodeHintType.ALSO_INVERTED, true);
 
       // 200ms scan interval = ~5fps decode, much smoother than 100ms and reduces false misses
       const reader = new ZXing.BrowserMultiFormatReader(hints, 200);
