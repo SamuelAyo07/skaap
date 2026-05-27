@@ -96,6 +96,7 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const [torchOn, setTorchOn] = useState(false);
   const [detectedFormat, setDetectedFormat] = useState<string | null>(null);
   const [infoProduct, setInfoProduct] = useState<Product | null>(null);
+  const [retryHint, setRetryHint] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<any>(null);
@@ -104,6 +105,8 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const processedBarcodesRef = useRef<Set<string>>(new Set());
   const manualInputRef = useRef<HTMLInputElement | null>(null);
   const cameraTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const exposureBoostRef = useRef(0);
 
 
   const stopCamera = useCallback(async () => {
