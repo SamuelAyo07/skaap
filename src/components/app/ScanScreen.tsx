@@ -494,9 +494,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
               </motion.button>
             )}
 
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium">
-              Center the barcode in the red line
-            </div>
+            <motion.div
+              key={retryHint || "default-hint"}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-background/85 text-scanner-ink rounded-full px-3 py-1.5 text-[11px] font-medium whitespace-nowrap"
+            >
+              {retryHint || "Center the barcode in the red line"}
+            </motion.div>
           </>
         )}
 
