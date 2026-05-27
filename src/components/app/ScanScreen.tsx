@@ -109,7 +109,14 @@ const ScanScreen = ({ onOpenBag }: ScanScreenProps) => {
   const exposureBoostRef = useRef(0);
 
 
+  const clearRetryTimers = useCallback(() => {
+    retryTimersRef.current.forEach((t) => clearTimeout(t));
+    retryTimersRef.current = [];
+    setRetryHint(null);
+  }, []);
+
   const stopCamera = useCallback(async () => {
+    clearRetryTimers();
     if (cameraTimeoutRef.current) {
       clearTimeout(cameraTimeoutRef.current);
       cameraTimeoutRef.current = null;
