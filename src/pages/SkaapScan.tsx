@@ -2120,7 +2120,7 @@ const SkaapScan = () => {
 
               {/* ─── ADDITIVES CARD ─── */}
               {(addCount > 0 || true) && (
-                <div className="mx-5" style={{ marginTop: 16, borderRadius: 16, border: addCount > 0 ? "1px solid #FFF1F2" : "1px solid #F0FDF4", padding: 16 }}>
+                <div className="mx-5" style={{ marginTop: 10, borderRadius: 14, border: addCount > 0 ? "1px solid #FFF1F2" : "1px solid #F0FDF4", padding: 14 }}>
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 14, background: addCount > 0 ? "#FFF1F2" : "#F0FDF4" }}>
                       {addCount > 0 ? <AlertTriangle size={14} style={{ color: "#E8314A" }} /> : <Check size={14} style={{ color: "#22C55E" }} />}
