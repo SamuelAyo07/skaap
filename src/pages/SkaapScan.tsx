@@ -2248,7 +2248,7 @@ const SkaapScan = () => {
               )}
 
               {/* ─── INGREDIENTS ACCORDION ─── */}
-              <div style={{ marginTop: 16, marginLeft: 20, marginRight: 20, marginBottom: 8, borderRadius: 16, border: "1px solid #F3F4F6", padding: 16 }}>
+              <div style={{ marginTop: 10, marginLeft: 20, marginRight: 20, marginBottom: 8, borderRadius: 14, border: "1px solid #F3F4F6", padding: 14 }}>
                 <button onClick={() => toggleSection("ingredients")} className="w-full flex items-center gap-3 text-left">
                   <span style={{ fontSize: 16 }}>📋</span>
                   <span className="flex-1 font-semibold" style={{ fontSize: 15, color: "#111827" }}>Ingredients</span>
