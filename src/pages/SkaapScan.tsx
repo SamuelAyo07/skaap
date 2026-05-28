@@ -2340,21 +2340,13 @@ const SkaapScan = () => {
             </span>
           </motion.button>
 
-          {/* Share (icon button) */}
-          <motion.button whileTap={{ scale: 0.92 }} onClick={handleShareTap} disabled={shareGenerating}
-            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
-            style={{ width: 56, height: 50, borderRadius: 14, background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <Share2 size={16} style={{ color: "#374151" }} />
-            <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>Share</span>
-          </motion.button>
-
-          {/* Pay (Scan & Go teaser) */}
+          {/* Pay (Scan & Go teaser) — dark navy tease */}
           <motion.button whileTap={{ scale: 0.92 }}
             onClick={() => toast("Scan & Pay — coming soon", { description: "Skip the checkout line. Launching shortly." })}
             className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
-            style={{ width: 56, height: 50, borderRadius: 14, background: "#FFF5F7", border: "1px solid #FCE7EC" }}>
-            <CreditCard size={16} style={{ color: "#C41E3A" }} />
-            <span className="font-bold" style={{ fontSize: 9, color: "#C41E3A" }}>Pay</span>
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#0A1220", border: "1px solid #0A1220", boxShadow: "0 4px 12px rgba(10,18,32,0.25)" }}>
+            <CreditCard size={16} style={{ color: "#FFFFFF" }} />
+            <span className="font-bold" style={{ fontSize: 9, color: "#FFFFFF" }}>Pay</span>
           </motion.button>
 
           {/* Scan another (primary CTA) */}
