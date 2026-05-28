@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Share2, Sparkles, MapPin, Globe, Camera } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin, Globe, Camera, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
