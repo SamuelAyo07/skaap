@@ -744,7 +744,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         </div>
 
         {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
-        <div className="relative">
+        <div className="relative" style={showBlur ? { minHeight: 560 } : undefined}>
           <div className={showBlur ? "pointer-events-none select-none" : ""}
             style={showBlur ? { filter: "blur(7px)", WebkitFilter: "blur(7px)" } : undefined}>
 
@@ -830,29 +830,41 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             </div>
           </div>
 
-          {/* Blur overlay for repeat free visitors — pulled up to remove dead whitespace */}
+          {/* Blur overlay for repeat free visitors — pulled high, enlarged for all screens */}
           {showBlur && (
-            <div className="absolute inset-0 flex flex-col items-center px-8 text-center"
+            <div className="absolute inset-0 flex flex-col items-center px-6 text-center"
               style={{
-                background: "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.88) 28%, rgba(255,255,255,0.96) 100%)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.9) 22%, rgba(255,255,255,0.97) 100%)",
                 backdropFilter: "blur(2px)",
-                paddingTop: 56,
+                paddingTop: 28,
               }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2.5"
-                style={{ background: "#0A1220" }}>
-                <Lock size={18} color="#FFD700" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+                style={{ background: "#0A1220", boxShadow: "0 8px 22px rgba(10,18,32,0.32)" }}>
+                <Lock size={22} color="#FFD700" />
               </div>
-              <p className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
+              <p className="font-extrabold tracking-tight" style={{ fontSize: 20, color: "#0A1220", lineHeight: 1.15 }}>
                 You've used your free peek
               </p>
-              <p className="mt-1 max-w-[280px]" style={{ fontSize: 12.5, color: "#6B7280", lineHeight: 1.4 }}>
+              <p className="mt-2 max-w-[300px]" style={{ fontSize: 13.5, color: "#4B5563", lineHeight: 1.45 }}>
                 See every put-back, every additive, every shelf — live — with SKAAP Plus.
               </p>
               <button onClick={() => openUpgrade("Community Intelligence")}
-                className="mt-3 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full font-bold text-white"
-                style={{ fontSize: 13, background: "#0A1220", boxShadow: "0 6px 18px rgba(10,18,32,0.28)" }}>
-                <Crown size={13} color="#FFD700" /> Unlock with Plus
+                className="mt-5 inline-flex items-center justify-center gap-2 font-bold text-white"
+                style={{
+                  fontSize: 15,
+                  background: "#0A1220",
+                  height: 52,
+                  paddingLeft: 26,
+                  paddingRight: 26,
+                  borderRadius: 999,
+                  boxShadow: "0 10px 26px rgba(10,18,32,0.32)",
+                  minWidth: 220,
+                }}>
+                <Crown size={16} color="#FFD700" /> Unlock with Plus
               </button>
+              <p className="mt-3 text-[11px] font-medium" style={{ color: "#9CA3AF" }}>
+                Cancel anytime · No ads · No tracking
+              </p>
             </div>
           )}
         </div>
