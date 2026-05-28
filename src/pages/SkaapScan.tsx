@@ -2348,6 +2348,15 @@ const SkaapScan = () => {
             <span className="font-medium" style={{ fontSize: 9, color: "#6B7280" }}>Share</span>
           </motion.button>
 
+          {/* Pay (Scan & Go teaser) */}
+          <motion.button whileTap={{ scale: 0.92 }}
+            onClick={() => toast("Scan & Pay — coming soon", { description: "Skip the checkout line. Launching shortly." })}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-0.5"
+            style={{ width: 56, height: 50, borderRadius: 14, background: "#FFF5F7", border: "1px solid #FCE7EC" }}>
+            <CreditCard size={16} style={{ color: "#C41E3A" }} />
+            <span className="font-bold" style={{ fontSize: 9, color: "#C41E3A" }}>Pay</span>
+          </motion.button>
+
           {/* Scan another (primary CTA) */}
           <motion.button whileTap={{ scale: 0.97 }} onClick={scanAnother}
             className="flex-1 font-bold flex items-center justify-center gap-2 text-white"
