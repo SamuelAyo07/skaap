@@ -142,6 +142,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
   // Live feed
   const [recentScans, setRecentScans] = useState<LiveScanItem[]>([]);
+  const avatarRef = useRef<HTMLInputElement>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(() => {
+    try { return localStorage.getItem("skaap_local_avatar_v1"); } catch { return null; }
+  });
 
   
 
