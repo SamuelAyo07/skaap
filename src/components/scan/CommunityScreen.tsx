@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Share2, Sparkles, MapPin, Globe, Camera } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin, Globe, Camera, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
@@ -830,24 +830,28 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             </div>
           </div>
 
-          {/* Blur overlay for repeat free visitors */}
+          {/* Blur overlay for repeat free visitors — pulled up to remove dead whitespace */}
           {showBlur && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
-              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.92) 60%)" }}>
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
+            <div className="absolute inset-0 flex flex-col items-center px-8 text-center"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.88) 28%, rgba(255,255,255,0.96) 100%)",
+                backdropFilter: "blur(2px)",
+                paddingTop: 56,
+              }}>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2.5"
                 style={{ background: "#0A1220" }}>
-                <Lock size={22} color="#FFD700" />
+                <Lock size={18} color="#FFD700" />
               </div>
-              <p className="font-extrabold tracking-tight" style={{ fontSize: 18, color: "#0A1220" }}>
+              <p className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
                 You've used your free peek
               </p>
-              <p className="mt-1.5 max-w-[280px]" style={{ fontSize: 13, color: "#6B7280" }}>
+              <p className="mt-1 max-w-[280px]" style={{ fontSize: 12.5, color: "#6B7280", lineHeight: 1.4 }}>
                 See every put-back, every additive, every shelf — live — with SKAAP Plus.
               </p>
               <button onClick={() => openUpgrade("Community Intelligence")}
-                className="mt-4 px-5 py-2.5 rounded-full font-bold text-white"
-                style={{ fontSize: 13, background: "#0A1220" }}>
-                Unlock with Plus
+                className="mt-3 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full font-bold text-white"
+                style={{ fontSize: 13, background: "#0A1220", boxShadow: "0 6px 18px rgba(10,18,32,0.28)" }}>
+                <Crown size={13} color="#FFD700" /> Unlock with Plus
               </button>
             </div>
           )}
