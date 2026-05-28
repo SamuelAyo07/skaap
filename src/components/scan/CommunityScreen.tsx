@@ -624,10 +624,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
   const firstName = getUserFirstName();
   const initial = (firstName?.[0] || user?.email?.[0] || "+").toUpperCase();
-  const avatarRef = useRef<HTMLInputElement>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(() => {
-    try { return localStorage.getItem("skaap_local_avatar_v1"); } catch { return null; }
-  });
+
 
   const handleAvatarPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
