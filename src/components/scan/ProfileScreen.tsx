@@ -379,131 +379,116 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </motion.button>
         )}
 
-        {/* Personalization Preview — shows what Plus unlocks */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
-          className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
-          <div className="flex items-center justify-between px-4 pt-4 pb-1">
-            <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Personalization</h3>
-            {!isPlus && (
+        {/* Plus preview — Personalization + Alerts in one card */}
+        {!isPlus ? (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}
+            className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 pt-4 pb-1">
+              <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Personalization & Alerts</h3>
               <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "rgba(176,32,47,0.08)", color: "#B0202F" }}>
                 <Lock size={9} /> PLUS
               </span>
-            )}
-          </div>
-          <p className="px-4 text-[12px] mb-3" style={{ color: "#9CA3AF" }}>
-            Tell SKAAP about you. We'll tune every scan to your skin, diet, and goals.
-          </p>
-          <div className={`grid grid-cols-2 gap-2 px-4 pb-4 ${isPlus ? "" : "pointer-events-none opacity-60"}`}>
-            {[
-              { emoji: "🧴", title: "Skin type", sub: "Dry · Oily · Sensitive" },
-              { emoji: "💄", title: "Cosmetic prefs", sub: "Fragrance-free · Vegan" },
-              { emoji: "🥗", title: "Diet", sub: "Vegan · Keto · Halal" },
-              { emoji: "💪", title: "Goals", sub: "More protein · Less sugar" },
-              { emoji: "🤱", title: "Life stage", sub: "Pregnant · Nursing · Kids" },
-              { emoji: "⚠️", title: "Allergies", sub: "Nuts · Gluten · Dairy" },
-            ].map(p => (
-              <div key={p.title} className="rounded-xl p-2.5" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                <div className="flex items-center gap-1.5">
-                  <span style={{ fontSize: 14 }}>{p.emoji}</span>
-                  <p className="font-bold text-[12px]" style={{ color: "#0A1220" }}>{p.title}</p>
-                </div>
-                <p className="text-[10px] mt-0.5 leading-tight" style={{ color: "#9CA3AF" }}>{p.sub}</p>
-              </div>
-            ))}
-          </div>
-          {!isPlus && (
-            <button onClick={() => openUpgrade("Personalization")}
-              className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 py-2.5 text-[12px] font-bold text-white"
-              style={{ background: "#0A1220" }}>
-              <Crown size={12} color="#FFD700" /> Preview · Unlock with Plus
-            </button>
-          )}
-        </motion.div>
-
-
-
-        {/* My Alerts — Plus only */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
-          <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>My Alerts</h3>
-            {isPlus ? (
-              <span className="text-[11px] font-bold" style={{ color: "#B0202F" }}>{activeCount} on</span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "rgba(176,32,47,0.08)", color: "#B0202F" }}>
-                <Lock size={9} /> PLUS
-              </span>
-            )}
-          </div>
-          <div className={isPlus ? "" : "pointer-events-none opacity-50"}>
-            {PRESET_ALERTS.map((preset, i) => {
-              const active = activeAlertCodes.has(preset.code);
-              return (
-                <div key={preset.code}
-                  className="flex items-center justify-between px-4 py-3"
-                  style={{ borderTop: i === 0 ? "1px solid #F3F4F6" : "1px solid #F3F4F6" }}
-                >
-                  <span className="text-[14px]" style={{ color: "#0A1220" }}>{preset.name}</span>
-                  <button onClick={() => toggleAlert(preset)} aria-label={`Toggle ${preset.name}`}
-                    className="relative w-[44px] h-[26px] rounded-full transition-colors"
-                    style={{ background: active ? "#B0202F" : "#E5E7EB" }}
-                  >
-                    <span className="absolute top-[2px] left-[2px] w-[22px] h-[22px] rounded-full bg-white transition-transform shadow"
-                      style={{ transform: active ? "translateX(18px)" : "translateX(0)" }} />
-                  </button>
-                </div>
-              );
-            })}
-
-            {/* Custom alerts */}
-            {alerts.filter(a => !PRESET_ALERTS.some(p => p.code === a.ingredient_code)).map(alert => (
-              <div key={alert.id} className="flex items-center justify-between px-4 py-3" style={{ borderTop: "1px solid #F3F4F6" }}>
-                <span className="text-[14px]" style={{ color: "#0A1220" }}>{alert.ingredient_name}</span>
-                <button onClick={() => removeAlert(alert.id)}><X size={16} style={{ color: "#9CA3AF" }} /></button>
-              </div>
-            ))}
-
-            <div className="px-4 py-3" style={{ borderTop: "1px solid #F3F4F6" }}>
-              <AnimatePresence mode="wait">
-                {showCustomInput ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-2">
-                    <input value={customAlert} onChange={e => setCustomAlert(e.target.value.slice(0, 200))}
-                      onKeyDown={e => e.key === "Enter" && addCustomAlert()}
-                      placeholder="e.g. Carrageenan" maxLength={200} autoFocus
-                      className="flex-1 text-[14px] px-3 py-2 rounded-xl outline-none"
-                      style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220" }} />
-                    <button onClick={addCustomAlert} className="px-3 py-2 rounded-xl text-[13px] font-bold text-white" style={{ background: "#B0202F" }}>Add</button>
-                    <button onClick={() => { setShowCustomInput(false); setCustomAlert(""); }} className="px-2 text-[13px]" style={{ color: "#9CA3AF" }}>Cancel</button>
-                  </motion.div>
-                ) : (
-                  <button onClick={() => isPlus ? setShowCustomInput(true) : openUpgrade()}
-                    className="flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#B0202F" }}>
-                    <Plus size={14} /> Add custom
-                  </button>
-                )}
-              </AnimatePresence>
             </div>
-          </div>
+            <p className="px-4 text-[12px] mb-3" style={{ color: "#9CA3AF" }}>
+              Tune every scan to your skin, diet, allergies and the additives you avoid.
+            </p>
 
-          {!isPlus && (
-            <button onClick={() => openUpgrade()}
-              className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6"
-              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.96) 50%)", backdropFilter: "blur(2px)" }}
-            >
-              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: "#0A1220" }}>
-                <Lock size={18} color="#FFD700" />
+            {/* Blurred preview content */}
+            <div className="pointer-events-none select-none" style={{ filter: "blur(3px)", opacity: 0.85 }}>
+              <div className="grid grid-cols-2 gap-2 px-4 pb-3">
+                {[
+                  { emoji: "🧴", title: "Skin type", sub: "Dry · Oily · Sensitive" },
+                  { emoji: "💄", title: "Cosmetic prefs", sub: "Fragrance-free · Vegan" },
+                  { emoji: "🥗", title: "Diet", sub: "Vegan · Keto · Halal" },
+                  { emoji: "💪", title: "Goals", sub: "More protein · Less sugar" },
+                  { emoji: "🤱", title: "Life stage", sub: "Pregnant · Nursing · Kids" },
+                  { emoji: "⚠️", title: "Allergies", sub: "Nuts · Gluten · Dairy" },
+                ].map(p => (
+                  <div key={p.title} className="rounded-xl p-2.5" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                    <div className="flex items-center gap-1.5">
+                      <span style={{ fontSize: 14 }}>{p.emoji}</span>
+                      <p className="font-bold text-[12px]" style={{ color: "#0A1220" }}>{p.title}</p>
+                    </div>
+                    <p className="text-[10px] mt-0.5 leading-tight" style={{ color: "#9CA3AF" }}>{p.sub}</p>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center gap-1.5 px-4 py-2 rounded-full" style={{ background: "#0A1220" }}>
-                <Crown size={13} color="#FFD700" />
-                <span className="text-[13px] font-bold text-white">Unlock with Plus</span>
+              <div className="px-4 pb-3">
+                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#6B7280" }}>My alerts</p>
+                {PRESET_ALERTS.slice(0, 4).map((preset, i) => (
+                  <div key={preset.code} className="flex items-center justify-between py-2" style={{ borderTop: i === 0 ? "none" : "1px solid #F3F4F6" }}>
+                    <span className="text-[13px]" style={{ color: "#0A1220" }}>{preset.name}</span>
+                    <span className="w-[40px] h-[24px] rounded-full" style={{ background: "#E5E7EB" }} />
+                  </div>
+                ))}
               </div>
-              <p className="text-[11px] font-medium text-center max-w-[240px]" style={{ color: "#6B7280" }}>
-                Personalized alerts are part of Plus. Free preview shows the options.
-              </p>
+            </div>
+
+            {/* Single dark-navy unlock CTA (matches Community) */}
+            <button onClick={() => openUpgrade("Personalization")}
+              className="w-full flex items-center justify-center gap-2 py-3.5"
+              style={{ background: "#0A1220" }}>
+              <Crown size={14} color="#FFD700" />
+              <span className="text-[14px] font-bold text-white">Unlock with Plus</span>
             </button>
-          )}
-
-        </motion.div>
+          </motion.div>
+        ) : (
+          /* PLUS users get the real, interactive Alerts panel */
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="rounded-2xl bg-white overflow-hidden relative" style={{ border: "1px solid #E5E7EB" }}>
+            <div className="flex items-center justify-between px-4 pt-4 pb-2">
+              <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>My Alerts</h3>
+              <span className="text-[11px] font-bold" style={{ color: "#B0202F" }}>{activeCount} on</span>
+            </div>
+            <div>
+              {PRESET_ALERTS.map((preset, i) => {
+                const active = activeAlertCodes.has(preset.code);
+                return (
+                  <div key={preset.code}
+                    className="flex items-center justify-between px-4 py-3"
+                    style={{ borderTop: "1px solid #F3F4F6" }}
+                  >
+                    <span className="text-[14px]" style={{ color: "#0A1220" }}>{preset.name}</span>
+                    <button onClick={() => toggleAlert(preset)} aria-label={`Toggle ${preset.name}`}
+                      className="relative w-[44px] h-[26px] rounded-full transition-colors"
+                      style={{ background: active ? "#B0202F" : "#E5E7EB" }}
+                    >
+                      <span className="absolute top-[2px] left-[2px] w-[22px] h-[22px] rounded-full bg-white transition-transform shadow"
+                        style={{ transform: active ? "translateX(18px)" : "translateX(0)" }} />
+                    </button>
+                  </div>
+                );
+              })}
+              {alerts.filter(a => !PRESET_ALERTS.some(p => p.code === a.ingredient_code)).map(alert => (
+                <div key={alert.id} className="flex items-center justify-between px-4 py-3" style={{ borderTop: "1px solid #F3F4F6" }}>
+                  <span className="text-[14px]" style={{ color: "#0A1220" }}>{alert.ingredient_name}</span>
+                  <button onClick={() => removeAlert(alert.id)}><X size={16} style={{ color: "#9CA3AF" }} /></button>
+                </div>
+              ))}
+              <div className="px-4 py-3" style={{ borderTop: "1px solid #F3F4F6" }}>
+                <AnimatePresence mode="wait">
+                  {showCustomInput ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-2">
+                      <input value={customAlert} onChange={e => setCustomAlert(e.target.value.slice(0, 200))}
+                        onKeyDown={e => e.key === "Enter" && addCustomAlert()}
+                        placeholder="e.g. Carrageenan" maxLength={200} autoFocus
+                        className="flex-1 text-[14px] px-3 py-2 rounded-xl outline-none"
+                        style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220" }} />
+                      <button onClick={addCustomAlert} className="px-3 py-2 rounded-xl text-[13px] font-bold text-white" style={{ background: "#B0202F" }}>Add</button>
+                      <button onClick={() => { setShowCustomInput(false); setCustomAlert(""); }} className="px-2 text-[13px]" style={{ color: "#9CA3AF" }}>Cancel</button>
+                    </motion.div>
+                  ) : (
+                    <button onClick={() => setShowCustomInput(true)}
+                      className="flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#B0202F" }}>
+                      <Plus size={14} /> Add custom
+                    </button>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Social */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
