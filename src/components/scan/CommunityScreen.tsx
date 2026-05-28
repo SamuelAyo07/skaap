@@ -647,7 +647,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
       className="min-h-screen flex flex-col"
       style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF", overflowX: "hidden", overscrollBehaviorX: "none" }}
     >
-      <div className="flex-1 overflow-y-auto pb-28" style={{ overscrollBehaviorX: "none" }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-28" style={{ overscrollBehaviorX: "none", touchAction: "pan-y" }}>
         {/* ─── HEADER ─── */}
         <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-3">
           <div className="flex items-start justify-between">
