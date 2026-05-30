@@ -320,7 +320,7 @@ const Index = () => {
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-2.5 text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Scan any barcode — food, skincare, makeup, sunscreen, shampoo. See what's really inside, in 2 seconds.
+            Scan any barcode on food products and cosmetics. See what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -334,9 +334,10 @@ const Index = () => {
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="mt-2 text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-            Works on any product, anywhere · No signup · No app store
+            className="mt-2 text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>
+            🌍 Works anywhere · No signup · No app store
           </motion.p>
+
         </div>
       </section>
 
