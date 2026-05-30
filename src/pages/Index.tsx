@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-2"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Food · Skincare · Makeup
+            <AlertTriangle size={11} /> Food & Cosmetics
           </motion.div>
 
           <motion.h1
@@ -320,7 +320,7 @@ const Index = () => {
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-2.5 text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.95)" }}>
-            🥗 Food & 💄 cosmetics — scan any barcode and see what's really inside, in 2 seconds.
+            Beauty, cosmetics & food — scan any barcode and see what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
