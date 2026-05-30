@@ -2621,13 +2621,8 @@ function highlightAllergens(text: string, allergens: string[]): JSX.Element {
 function SkaapScanWithDesktopShell() {
   const isMobile = useIsMobile();
 
-  if (isMobile) return <SkaapScan />;
-
-  return (
-    <DesktopShell>
-      <SkaapScan />
-    </DesktopShell>
-  );
+  const inner = isMobile ? <SkaapScan /> : <DesktopShell><SkaapScan /></DesktopShell>;
+  return <TermExplainerProvider>{inner}</TermExplainerProvider>;
 }
 
 export default SkaapScanWithDesktopShell;
