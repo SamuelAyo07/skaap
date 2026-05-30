@@ -803,31 +803,59 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             </div>
 
             {/* WORST ADDITIVES IN YOUR AREA */}
-            <div className="mx-5 mt-4 p-4 rounded-2xl" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
-              <h2 className="font-extrabold tracking-tight mb-3" style={{ fontSize: 17, color: "#0A1220" }}>
-                Worst additives in your area
-              </h2>
-              {(topAdditives.length > 0 ? topAdditives : [
-                { code: "E150D", name: "E150D", rejection_count: 47, trending_up: true },
-                { code: "E621",  name: "E621",  rejection_count: 31, trending_up: true },
-                { code: "E950",  name: "E950",  rejection_count: 22, trending_up: false },
-                { code: "PALM",  name: "Palm oil", rejection_count: 19, trending_up: false },
-                { code: "E211",  name: "E211",  rejection_count: 14, trending_up: false },
-              ]).slice(0, 5).map(a => (
-                <div key={a.code} className="flex items-center gap-3 py-1.5">
-                  <span className="font-bold w-16 flex-shrink-0" style={{ fontSize: 13, color: "#0A1220" }}>
-                    {a.code}
-                  </span>
-                  <div className="flex-1 h-2 rounded-full" style={{ background: "#FEE2E2" }}>
-                    <div className="h-full rounded-full"
-                      style={{ width: `${Math.max(15, Math.round((a.rejection_count / maxAdd) * 100))}%`, background: "#EF4444" }} />
-                  </div>
-                  <span className="font-bold tabular-nums w-10 text-right flex-shrink-0" style={{ fontSize: 13, color: "#C41E3A" }}>
-                    {a.rejection_count}×
-                  </span>
-                </div>
-              ))}
+            <div className="mx-5 mt-4 p-4 rounded-2xl overflow-hidden"
+              style={{
+                background: "linear-gradient(180deg, #FFFFFF 0%, #FFF7F8 100%)",
+                border: "1px solid #FCE7EC",
+                boxShadow: "0 6px 18px rgba(196,30,58,0.08)",
+              }}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
+                  Worst additives in your area
+                </h2>
+                <span className="px-2 py-0.5 rounded-full font-bold tracking-wider"
+                  style={{ fontSize: 9, background: "#FEE2E2", color: "#9B1C2E" }}>
+                  30D
+                </span>
+              </div>
+              <div className="flex flex-col gap-2.5">
+                {(topAdditives.length > 0 ? topAdditives : [
+                  { code: "E150D", name: "E150D", rejection_count: 47, trending_up: true },
+                  { code: "E621",  name: "E621",  rejection_count: 31, trending_up: true },
+                  { code: "E950",  name: "E950",  rejection_count: 22, trending_up: false },
+                  { code: "PALM",  name: "Palm oil", rejection_count: 19, trending_up: false },
+                  { code: "E211",  name: "E211",  rejection_count: 14, trending_up: false },
+                ]).slice(0, 5).map(a => {
+                  const pct = Math.max(12, Math.round((a.rejection_count / maxAdd) * 100));
+                  return (
+                    <div key={a.code} className="flex items-center gap-2.5 min-w-0">
+                      <span className="font-extrabold flex-shrink-0 tracking-tight"
+                        style={{ fontSize: 12, color: "#0A1220", width: 52 }}>
+                        {a.code}
+                      </span>
+                      <div className="flex-1 min-w-0 h-2.5 rounded-full relative overflow-hidden"
+                        style={{ background: "#FEE2E2" }}>
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.9, ease: "easeOut" }}
+                          className="h-full rounded-full"
+                          style={{
+                            background: "linear-gradient(90deg, #DC2626 0%, #9B1C2E 100%)",
+                            boxShadow: "0 1px 4px rgba(155,28,46,0.35)",
+                          }}
+                        />
+                      </div>
+                      <span className="font-extrabold tabular-nums text-right flex-shrink-0"
+                        style={{ fontSize: 12, color: "#9B1C2E", width: 32 }}>
+                        {a.rejection_count}×
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+
           </div>
 
           {/* Blur overlay for repeat free visitors — pulled high, enlarged for all screens */}
