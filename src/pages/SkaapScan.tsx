@@ -1311,7 +1311,7 @@ const SkaapScan = () => {
         )}
 
         <p className="px-5 mt-0.5 text-[13px] font-medium relative z-10" style={{ color: "#6B7280" }}>
-          🥗 Food & 💄 beauty — know what's inside.
+          🥗 Food · 💄 Cosmetics · ✨ Skincare
         </p>
 
         {/* Scrollable content */}
