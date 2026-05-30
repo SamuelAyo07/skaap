@@ -25,7 +25,21 @@ export type TermKey =
   | "organic"
   | "verdict-green"
   | "verdict-amber"
-  | "verdict-red";
+  | "verdict-red"
+  // Community Intelligence
+  | "community-scans-today"
+  | "community-put-back"
+  | "community-best-score"
+  | "community-worst-additives"
+  | "community-lowest-scores"
+  | "community-trend-up"
+  | "community-live"
+  // Cosmetics / beauty
+  | "hormone-disruptor"
+  | "paraben"
+  | "fragrance"
+  | "sulfate"
+  | "comedogenic";
 
 type TermDef = { title: string; body: string; example?: string };
 
@@ -122,6 +136,60 @@ const TERMS: Record<TermKey, TermDef> = {
   "verdict-red": {
     title: "Think twice",
     body: "This product scores below 50 — high in things to limit, or full of additives. Worth checking the alternatives below.",
+  },
+  // ── Community Intelligence ──
+  "community-scans-today": {
+    title: "Scans today",
+    body: "How many products people near you have scanned with SKAAP since midnight. It updates live as your city shops.",
+    example: "Bigger numbers = more eyes on the shelf around you.",
+  },
+  "community-put-back": {
+    title: "Put back",
+    body: "Products people in your city scanned, saw a low score, and chose NOT to buy. Think of it as your neighbors' silent vote.",
+    example: "Red number = how many were rejected today.",
+  },
+  "community-best-score": {
+    title: "Best score nearby",
+    body: "The highest SKAAP Score from any product scanned in your city this week. Tap to see what's quietly winning.",
+  },
+  "community-worst-additives": {
+    title: "Worst additives nearby",
+    body: "The additives shoppers near you have rejected most in the last 30 days. The bar length shows how often. E-numbers are the European codes for food additives.",
+    example: "Longer bar = more shoppers are putting it back.",
+  },
+  "community-lowest-scores": {
+    title: "Lowest scores this week",
+    body: "The products in your city with the worst SKAAP Score over the last 7 days. Tap any product to see exactly what's wrong inside.",
+  },
+  "community-trend-up": {
+    title: "Trending up",
+    body: "More shoppers rejected this in the last 7 days than the 7 days before. It's getting more attention — for the wrong reasons.",
+  },
+  "community-live": {
+    title: "Live",
+    body: "This screen refreshes every 45 seconds with new scans from your city. No reload needed.",
+  },
+  // ── Cosmetics / beauty ──
+  "hormone-disruptor": {
+    title: "Hormone disruptor",
+    body: "An ingredient that can mimic or block your natural hormones (estrogen, testosterone, thyroid). Linked to fertility, skin and long-term health concerns — common in fragrance, sunscreen and plastic packaging.",
+    example: "Watch for: parabens, phthalates, oxybenzone, BHA.",
+  },
+  "paraben": {
+    title: "Parabens",
+    body: "A family of cheap preservatives (methylparaben, propylparaben…) used to stop bacteria growing in creams and shampoos. Some studies link them to hormone disruption — banned or restricted in the EU.",
+  },
+  "fragrance": {
+    title: "Fragrance / Parfum",
+    body: "A single word that can legally hide dozens of undisclosed chemicals. A top cause of skin allergies and contact dermatitis. 'Unscented' or 'fragrance-free' is the safer pick for sensitive skin.",
+  },
+  "sulfate": {
+    title: "Sulfates (SLS / SLES)",
+    body: "Strong detergents that make shampoo and cleansers foam. Effective but stripping — they can irritate sensitive skin and scalp, and dry out colored hair.",
+  },
+  "comedogenic": {
+    title: "Comedogenic",
+    body: "Likely to clog pores. A common cause of breakouts even from 'natural' oils like coconut. Look for 'non-comedogenic' on the label if you're acne-prone.",
   },
 };
 
