@@ -53,6 +53,7 @@ import { StandaloneHome } from "@/components/scan/StandaloneHome";
 import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
 import { ProductContributionSheet } from "@/components/scan/ProductContributionSheet";
 import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
+import { TermExplainerProvider, Explain, useExplain, type TermKey } from "@/components/scan/TermExplainer";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
