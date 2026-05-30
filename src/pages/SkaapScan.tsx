@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Zap, ZapOff, Barcode, Clock, ChevronDown, ChevronRight, Leaf, X, Check, Sparkles,
   ShoppingBag, Trash2, Heart, Share2, Search, Filter, MessageCircle, Lock, Flame, Home, ArrowLeftRight, Skull, User,
-  AlertTriangle, CreditCard,
+  AlertTriangle, CreditCard, Info,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +53,7 @@ import { StandaloneHome } from "@/components/scan/StandaloneHome";
 import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/scan/FirstScanSignupModal";
 import { ProductContributionSheet } from "@/components/scan/ProductContributionSheet";
 import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
+import { TermExplainerProvider, Explain, useExplain, type TermKey } from "@/components/scan/TermExplainer";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -451,6 +452,7 @@ function ScoreRing({ score, size = 120, showLabel = true }: { score: number; siz
 // ─── Main Component ───
 const SkaapScan = () => {
   const navigate = useNavigate();
+  const explainTerm = useExplain();
   const { user } = useAuth();
   const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("history");
@@ -1785,33 +1787,38 @@ const SkaapScan = () => {
                     {getScoreVerdict(scoreBreakdown.total)}
                   </motion.p>
 
-                  {/* Verdict banner, full width pill */}
-                  <motion.div
+                  {/* Verdict banner, full width pill — tappable */}
+                  <motion.button
                     initial={{ opacity: 0, scale: 1 }}
                     animate={{ opacity: 1, scale: [1, 1.04, 1] }}
                     transition={{ delay: 0.5, duration: 0.4 }}
-                    className="mx-5 mt-2 flex items-center justify-center"
-                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
+                    onClick={() => {
+                      const t: TermKey = scoreBreakdown.total >= 75 ? "verdict-green" : scoreBreakdown.total >= 50 ? "verdict-amber" : "verdict-red";
+                      explainTerm(t);
+                    }}
+                    className="mx-5 mt-2 flex items-center justify-center gap-1.5"
+                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)", border: "none", cursor: "pointer" }}>
                     <p className="font-semibold text-center text-white" style={{ fontSize: 12 }}>
                       {getVerdictBanner(scoreBreakdown.total)}
                     </p>
-                  </motion.div>
+                    <Info size={11} style={{ color: "rgba(255,255,255,0.85)" }} />
+                  </motion.button>
 
                   {/* STATUS CHIPS — quick at-a-glance pills (matches mockup) */}
                   {(() => {
-                    type Chip = { label: string; tone: "good" | "warn" | "bad" };
+                    type Chip = { label: string; tone: "good" | "warn" | "bad"; term: TermKey };
                     const chips: Chip[] = [];
-                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good" });
-                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good" });
-                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good" });
-                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good" });
-                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good" });
-                    if (addCount === 0) chips.push({ label: "No additives", tone: "bad" });
-                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn" });
-                    else chips.push({ label: `${addCount} additives`, tone: "bad" });
-                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good" });
-                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad" });
-                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad" });
+                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good", term: "high-protein" });
+                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good", term: "live-cultures" });
+                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good", term: "high-fiber" });
+                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good", term: "low-sugar" });
+                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good", term: "low-salt" });
+                    if (addCount === 0) chips.push({ label: "No additives", tone: "good", term: "no-additives" });
+                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn", term: "some-additives" });
+                    else chips.push({ label: `${addCount} additives`, tone: "bad", term: "many-additives" });
+                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good", term: "organic" });
+                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad", term: "high-sugar" });
+                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad", term: "high-sat-fat" });
 
                     const styles = {
                       good: { bg: "#F0FDF4", border: "#BBF7D0", color: "#15803D" },
@@ -1826,10 +1833,12 @@ const SkaapScan = () => {
                         {chips.slice(0, 4).map(c => {
                           const s = styles[c.tone];
                           return (
-                            <span key={c.label} className="inline-flex items-center font-semibold"
-                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
+                            <button key={c.label} type="button" onClick={() => explainTerm(c.term)}
+                              className="inline-flex items-center font-semibold gap-1 active:scale-95 transition-transform"
+                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color, cursor: "pointer" }}>
                               {c.label}
-                            </span>
+                              <Info size={10} style={{ opacity: 0.55 }} />
+                            </button>
                           );
                         })}
                       </motion.div>
@@ -1846,12 +1855,12 @@ const SkaapScan = () => {
                     const ecoPct = productInfo.ecoscoreScore != null ? Math.max(0, Math.min(100, productInfo.ecoscoreScore)) : (productInfo.ecoscoreGrade ? ({ a:100, b:80, c:60, d:35, e:15 } as Record<string,number>)[productInfo.ecoscoreGrade.toLowerCase()] ?? 50 : 50);
                     const ingPct = productInfo.ingredientsText ? Math.max(20, 100 - Math.min(80, (productInfo.ingredientsText.split(",").length - 1) * 6)) : 50;
 
-                    const rows: { label: string; weight: string; pct: number }[] = [
-                      { label: "Nutri-Score", weight: "35%", pct: nutriPct },
-                      { label: "NOVA", weight: "25%", pct: novaPct },
-                      { label: "Additives", weight: "20%", pct: addPct },
-                      { label: "Eco", weight: "10%", pct: ecoPct },
-                      { label: "Ingredients", weight: "10%", pct: ingPct },
+                    const rows: { label: string; weight: string; pct: number; term: TermKey }[] = [
+                      { label: "Nutri-Score", weight: "35%", pct: nutriPct, term: "nutri-score" },
+                      { label: "NOVA", weight: "25%", pct: novaPct, term: "nova" },
+                      { label: "Additives", weight: "20%", pct: addPct, term: "additives" },
+                      { label: "Eco", weight: "10%", pct: ecoPct, term: "eco" },
+                      { label: "Ingredients", weight: "10%", pct: ingPct, term: "ingredients" },
                     ];
                     const barColor = (p: number) => p >= 75 ? "#22C55E" : p >= 50 ? "#F59E0B" : "#E8314A";
 
@@ -1860,16 +1869,26 @@ const SkaapScan = () => {
                         className="mx-5 mt-4 px-4 py-4 rounded-2xl w-full"
                         style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", maxWidth: 350, margin: "16px auto 0", boxShadow: "0 1px 2px rgba(17,24,39,0.04)" }}>
                         <div className="flex items-center justify-between mb-3">
-                          <p className="font-bold" style={{ fontSize: 14, color: "#111827" }}>Score breakdown</p>
-                          <p style={{ fontSize: 11, color: "#9CA3AF" }}>Weight</p>
+                          <Explain term="score" className="font-bold inline-flex items-center gap-1 bg-transparent border-0 p-0" style={{ fontSize: 14, color: "#111827" }}>
+                            Score breakdown <Info size={11} style={{ color: "#9CA3AF" }} />
+                          </Explain>
+                          <Explain term="weight" className="inline-flex items-center gap-1 bg-transparent border-0 p-0" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                            Weight <Info size={10} />
+                          </Explain>
                         </div>
                         <div className="space-y-2.5">
                           {rows.map((r, i) => (
-                            <div key={r.label}>
+                            <button
+                              key={r.label}
+                              type="button"
+                              onClick={() => explainTerm(r.term)}
+                              className="w-full text-left bg-transparent border-0 p-0 -mx-1 px-1 py-0.5 rounded-lg active:bg-[#F9FAFB]"
+                            >
                               <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center gap-1.5">
                                   <span className="font-semibold" style={{ fontSize: 12, color: "#374151" }}>{r.label}</span>
                                   <span style={{ fontSize: 10, color: "#9CA3AF", background: "#F3F4F6", padding: "1px 6px", borderRadius: 999 }}>{r.weight}</span>
+                                  <Info size={10} style={{ color: "#D1D5DB" }} />
                                 </div>
                                 <span className="font-bold tabular-nums" style={{ fontSize: 12, color: barColor(r.pct) }}>{Math.round(r.pct)}</span>
                               </div>
@@ -1878,9 +1897,10 @@ const SkaapScan = () => {
                                   transition={{ delay: 0.6 + i * 0.06, duration: 0.5, ease: "easeOut" }}
                                   style={{ height: "100%", background: barColor(r.pct), borderRadius: 999 }} />
                               </div>
-                            </div>
+                            </button>
                           ))}
                         </div>
+                        <p className="text-[10px] text-center mt-3" style={{ color: "#9CA3AF" }}>Tap anything to learn what it means</p>
                       </motion.div>
                     );
                   })()}
@@ -2621,13 +2641,8 @@ function highlightAllergens(text: string, allergens: string[]): JSX.Element {
 function SkaapScanWithDesktopShell() {
   const isMobile = useIsMobile();
 
-  if (isMobile) return <SkaapScan />;
-
-  return (
-    <DesktopShell>
-      <SkaapScan />
-    </DesktopShell>
-  );
+  const inner = isMobile ? <SkaapScan /> : <DesktopShell><SkaapScan /></DesktopShell>;
+  return <TermExplainerProvider>{inner}</TermExplainerProvider>;
 }
 
 export default SkaapScanWithDesktopShell;
