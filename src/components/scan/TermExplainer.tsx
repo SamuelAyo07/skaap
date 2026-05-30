@@ -148,58 +148,54 @@ export function TermExplainerProvider({ children }: { children: ReactNode }) {
       {children}
       <AnimatePresence>
         {def && (
-          <>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setTerm(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center px-6"
+            style={{ background: "rgba(10,15,26,0.55)", backdropFilter: "blur(6px)" }}
+          >
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setTerm(null)}
-              className="fixed inset-0 z-[100]"
-              style={{ background: "rgba(17,24,39,0.45)", backdropFilter: "blur(4px)" }}
-            />
-            <motion.div
-              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="fixed left-1/2 -translate-x-1/2 bottom-0 z-[101] w-full"
-              style={{ maxWidth: 390 }}
+              initial={{ opacity: 0, scale: 0.92, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 6 }}
+              transition={{ type: "spring", damping: 26, stiffness: 320 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full"
+              style={{
+                maxWidth: 340,
+                background: "#FFFFFF",
+                borderRadius: 24,
+                padding: "20px 20px 18px",
+                boxShadow: "0 24px 60px rgba(10,15,26,0.35), 0 2px 0 rgba(255,255,255,0.6) inset",
+              }}
             >
-              <div
-                className="px-5 pt-3 pb-8"
-                style={{
-                  background: "#fff",
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  boxShadow: "0 -8px 30px rgba(17,24,39,0.15)",
-                }}
-              >
-                <div className="flex justify-center mb-2">
-                  <div style={{ width: 36, height: 4, borderRadius: 4, background: "#E5E7EB" }} />
-                </div>
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "#FEF2F4" }}>
-                      <Info size={14} style={{ color: "#C41E3A" }} />
-                    </div>
-                    <h3 className="font-bold" style={{ fontSize: 17, color: "#111827" }}>{def.title}</h3>
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: "linear-gradient(135deg,#FEF2F4,#FCE7EC)" }}>
+                    <Info size={15} style={{ color: "#C41E3A" }} />
                   </div>
-                  <button onClick={() => setTerm(null)} aria-label="Close"
-                    className="w-8 h-8 rounded-full flex items-center justify-center"
-                    style={{ background: "#F3F4F6" }}>
-                    <X size={14} style={{ color: "#374151" }} />
-                  </button>
+                  <h3 className="font-extrabold tracking-tight truncate" style={{ fontSize: 17, color: "#0A0F1A" }}>{def.title}</h3>
                 </div>
-                <p className="text-[14px] leading-relaxed" style={{ color: "#374151" }}>{def.body}</p>
-                {def.example && (
-                  <p className="text-[12px] mt-3 px-3 py-2 rounded-lg" style={{ color: "#6B7280", background: "#F9FAFB" }}>
-                    {def.example}
-                  </p>
-                )}
-                <button onClick={() => setTerm(null)}
-                  className="mt-4 w-full py-3 rounded-2xl font-bold text-white text-[14px]"
-                  style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-                  Got it
+                <button onClick={() => setTerm(null)} aria-label="Close"
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "#F3F4F6" }}>
+                  <X size={14} style={{ color: "#374151" }} />
                 </button>
               </div>
+              <p className="text-[14px] leading-relaxed" style={{ color: "#374151" }}>{def.body}</p>
+              {def.example && (
+                <p className="text-[12px] mt-3 px-3 py-2 rounded-xl" style={{ color: "#4B5563", background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                  {def.example}
+                </p>
+              )}
+              <button onClick={() => setTerm(null)}
+                className="mt-4 w-full py-3 rounded-2xl font-bold text-white text-[14px]"
+                style={{ background: "linear-gradient(135deg, #C41E3A, #8B0F26)", boxShadow: "0 8px 22px rgba(196,30,58,0.32)" }}>
+                Got it
+              </button>
             </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </TermCtx.Provider>
