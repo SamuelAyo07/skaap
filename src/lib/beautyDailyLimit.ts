@@ -1,25 +1,20 @@
-// Tracks beauty product scans per day for free users.
-// Free users get 3 unique beauty scans/day. We don't surface the limit
-// until they try the 4th scan, then we show a friendly Plus upsell.
+// Unified free-scan limit across food + cosmetics.
+// Free users get 4 unique scans total (lifetime). After that we show the
+// Plus upsell. Plus users are unlimited.
 
-const KEY = "skaap_beauty_daily_v1";
-export const FREE_BEAUTY_LIMIT = 3;
+const KEY = "skaap_free_scans_v1";
+export const FREE_SCAN_LIMIT = 4;
+// Back-compat export (some screens still import this name)
+export const FREE_BEAUTY_LIMIT = FREE_SCAN_LIMIT;
 
-interface State { date: string; barcodes: string[]; }
-
-function today(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+interface State { barcodes: string[]; }
 
 function read(): State {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const s = JSON.parse(raw) as State;
-      if (s.date === today()) return s;
-    }
+    if (raw) return JSON.parse(raw) as State;
   } catch {}
-  return { date: today(), barcodes: [] };
+  return { barcodes: [] };
 }
 
 function write(s: State) {
@@ -40,21 +35,26 @@ export function isBeautyProduct(info: {
   );
 }
 
-export function getBeautyScanCountToday(): number {
+export function getFreeScanCount(): number {
   return read().barcodes.length;
 }
 
 /** Returns true if this barcode would put the user over the free limit. */
-export function isOverBeautyLimit(barcode: string): boolean {
+export function isOverFreeLimit(barcode: string): boolean {
   const s = read();
   if (s.barcodes.includes(barcode)) return false; // already counted
-  return s.barcodes.length >= FREE_BEAUTY_LIMIT;
+  return s.barcodes.length >= FREE_SCAN_LIMIT;
 }
 
-export function recordBeautyScan(barcode: string) {
+export function recordFreeScan(barcode: string) {
   const s = read();
   if (!s.barcodes.includes(barcode)) {
     s.barcodes.push(barcode);
     write(s);
   }
 }
+
+// ─── Back-compat aliases ───
+export const getBeautyScanCountToday = getFreeScanCount;
+export const isOverBeautyLimit = isOverFreeLimit;
+export const recordBeautyScan = recordFreeScan;
