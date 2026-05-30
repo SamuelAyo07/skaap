@@ -319,8 +319,8 @@ const Index = () => {
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-2.5 text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Scan any barcode on food products and cosmetics. See what's really inside, in 2 seconds.
+            className="mt-2.5 text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.95)" }}>
+            🥗 Food & 💄 cosmetics — scan any barcode and see what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -334,7 +334,7 @@ const Index = () => {
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="mt-2 text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>
+            className="mt-2 text-[11px] font-semibold" style={{ color: "rgba(255,255,255,0.95)" }}>
             🌍 Works anywhere · No signup · No app store
           </motion.p>
 
@@ -348,7 +348,7 @@ const Index = () => {
             <h2 className="text-center text-xl md:text-2xl font-extrabold tracking-tight text-white mb-1">
               See it in action
             </h2>
-            <p className="text-center text-xs mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-center text-xs mb-4" style={{ color: "rgba(255,255,255,0.72)" }}>
               Scan → Score → Decide.
             </p>
           </FadeIn>
@@ -582,7 +582,7 @@ const Index = () => {
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
               Frictionless retail self-checkout.
             </h2>
-            <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
+            <p className="text-xs mt-2 max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.82)" }}>
               Scan as you shop, pay from your phone, walk out. In the works.
             </p>
           </FadeIn>
