@@ -306,7 +306,7 @@ const Index = () => {
             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-2"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
-            <AlertTriangle size={11} /> Your body deserves to know
+            <AlertTriangle size={11} /> Food · Skincare · Makeup
           </motion.div>
 
           <motion.h1
@@ -320,7 +320,7 @@ const Index = () => {
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
             className="mt-2.5 text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-            Scan any food or beauty barcode. See what's really inside, in 2 seconds.
+            Scan any barcode — food, skincare, makeup, sunscreen, shampoo. See what's really inside, in 2 seconds.
           </motion.p>
 
           <motion.button
@@ -460,6 +460,9 @@ const Index = () => {
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: "#0A1220" }}>
                 Food <em className="not-italic" style={{ color: "#C41E3A" }}>and</em> beauty, finally translated.
               </h2>
+              <p className="text-sm mt-2 max-w-md mx-auto" style={{ color: "#6B7280" }}>
+                Yes — makeup, skincare, sunscreen, deodorant, shampoo too. If it has a barcode, SKAAP reads it and tells you what's really inside in plain English.
+              </p>
             </div>
           </FadeIn>
 
