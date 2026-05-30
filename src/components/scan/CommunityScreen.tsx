@@ -683,10 +683,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                   <Camera size={14} />
                 )}
               </button>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
+              <Explain term="community-live" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
                 <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#10B981" }} />
                 <span className="font-bold tracking-wider" style={{ fontSize: 10, color: "#065F46" }}>LIVE</span>
-              </span>
+              </Explain>
             </div>
           </div>
         </div>
@@ -722,26 +722,36 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </button>
         )}
 
-        {/* ─── 3 STAT TILES ─── */}
+        {/* ─── 3 STAT TILES (tap to learn) ─── */}
         <div className="grid grid-cols-3 gap-2 px-5 mt-3">
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          <Explain term="community-scans-today" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#D1D5DB" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#0A1220", lineHeight: 1 }}>
               {scansToday.toLocaleString() || (loading ? "—" : "0")}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Scans today</p>
-          </div>
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          </Explain>
+          <Explain term="community-put-back" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#FCA5A5" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#DC2626", lineHeight: 1 }}>
               {productsAvoided || (loading ? "—" : "0")}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Put back</p>
-          </div>
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          </Explain>
+          <Explain term="community-best-score" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#86EFAC" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#16A34A", lineHeight: 1 }}>
               {bestScore ?? "—"}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Best score</p>
-          </div>
+          </Explain>
+        </div>
+
+        {/* Tap-anything hint */}
+        <div className="px-5 mt-2">
+          <p className="text-[10.5px] text-center" style={{ color: "#9CA3AF" }}>
+            Tap any number, bar or score to see what it means.
+          </p>
         </div>
 
         {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
