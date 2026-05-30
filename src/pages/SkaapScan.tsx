@@ -1853,12 +1853,12 @@ const SkaapScan = () => {
                     const ecoPct = productInfo.ecoscoreScore != null ? Math.max(0, Math.min(100, productInfo.ecoscoreScore)) : (productInfo.ecoscoreGrade ? ({ a:100, b:80, c:60, d:35, e:15 } as Record<string,number>)[productInfo.ecoscoreGrade.toLowerCase()] ?? 50 : 50);
                     const ingPct = productInfo.ingredientsText ? Math.max(20, 100 - Math.min(80, (productInfo.ingredientsText.split(",").length - 1) * 6)) : 50;
 
-                    const rows: { label: string; weight: string; pct: number }[] = [
-                      { label: "Nutri-Score", weight: "35%", pct: nutriPct },
-                      { label: "NOVA", weight: "25%", pct: novaPct },
-                      { label: "Additives", weight: "20%", pct: addPct },
-                      { label: "Eco", weight: "10%", pct: ecoPct },
-                      { label: "Ingredients", weight: "10%", pct: ingPct },
+                    const rows: { label: string; weight: string; pct: number; term: TermKey }[] = [
+                      { label: "Nutri-Score", weight: "35%", pct: nutriPct, term: "nutri-score" },
+                      { label: "NOVA", weight: "25%", pct: novaPct, term: "nova" },
+                      { label: "Additives", weight: "20%", pct: addPct, term: "additives" },
+                      { label: "Eco", weight: "10%", pct: ecoPct, term: "eco" },
+                      { label: "Ingredients", weight: "10%", pct: ingPct, term: "ingredients" },
                     ];
                     const barColor = (p: number) => p >= 75 ? "#22C55E" : p >= 50 ? "#F59E0B" : "#E8314A";
 
@@ -1867,16 +1867,26 @@ const SkaapScan = () => {
                         className="mx-5 mt-4 px-4 py-4 rounded-2xl w-full"
                         style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", maxWidth: 350, margin: "16px auto 0", boxShadow: "0 1px 2px rgba(17,24,39,0.04)" }}>
                         <div className="flex items-center justify-between mb-3">
-                          <p className="font-bold" style={{ fontSize: 14, color: "#111827" }}>Score breakdown</p>
-                          <p style={{ fontSize: 11, color: "#9CA3AF" }}>Weight</p>
+                          <Explain term="score" className="font-bold inline-flex items-center gap-1 bg-transparent border-0 p-0" style={{ fontSize: 14, color: "#111827" }}>
+                            Score breakdown <Info size={11} style={{ color: "#9CA3AF" }} />
+                          </Explain>
+                          <Explain term="weight" className="inline-flex items-center gap-1 bg-transparent border-0 p-0" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                            Weight <Info size={10} />
+                          </Explain>
                         </div>
                         <div className="space-y-2.5">
                           {rows.map((r, i) => (
-                            <div key={r.label}>
+                            <button
+                              key={r.label}
+                              type="button"
+                              onClick={() => explainTerm(r.term)}
+                              className="w-full text-left bg-transparent border-0 p-0 -mx-1 px-1 py-0.5 rounded-lg active:bg-[#F9FAFB]"
+                            >
                               <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center gap-1.5">
                                   <span className="font-semibold" style={{ fontSize: 12, color: "#374151" }}>{r.label}</span>
                                   <span style={{ fontSize: 10, color: "#9CA3AF", background: "#F3F4F6", padding: "1px 6px", borderRadius: 999 }}>{r.weight}</span>
+                                  <Info size={10} style={{ color: "#D1D5DB" }} />
                                 </div>
                                 <span className="font-bold tabular-nums" style={{ fontSize: 12, color: barColor(r.pct) }}>{Math.round(r.pct)}</span>
                               </div>
@@ -1885,9 +1895,10 @@ const SkaapScan = () => {
                                   transition={{ delay: 0.6 + i * 0.06, duration: 0.5, ease: "easeOut" }}
                                   style={{ height: "100%", background: barColor(r.pct), borderRadius: 999 }} />
                               </div>
-                            </div>
+                            </button>
                           ))}
                         </div>
+                        <p className="text-[10px] text-center mt-3" style={{ color: "#9CA3AF" }}>Tap anything to learn what it means</p>
                       </motion.div>
                     );
                   })()}
