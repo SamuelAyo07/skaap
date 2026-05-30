@@ -1946,7 +1946,7 @@ const SkaapScan = () => {
                 </div>
               )}
 
-              {/* SIGNAL CHIPS ROW */}
+              {/* SIGNAL CHIPS ROW — each tile tappable for plain-English meaning */}
               <div className="flex gap-2 px-5" style={{ marginTop: 10 }}>
                 {/* Nutri-Score */}
                 {(() => {
@@ -1956,10 +1956,11 @@ const SkaapScan = () => {
                   const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <Explain term="nutri-score" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
                       <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
-                    </div>
+                    </Explain>
                   );
                 })()}
                 {/* Additives */}
@@ -1967,11 +1968,13 @@ const SkaapScan = () => {
                   const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
                   const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
                   const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
+                  const t = addCount === 0 ? "no-additives" : addCount <= 2 ? "some-additives" : "many-additives";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <Explain term={t as any} className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
                       <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{addCount}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
-                    </div>
+                    </Explain>
                   );
                 })()}
                 {/* NOVA */}
@@ -1982,10 +1985,11 @@ const SkaapScan = () => {
                   const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
                   const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                    <Explain term="nova" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
+                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
                       <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNova ? nova : "?"}</span>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
-                    </div>
+                    </Explain>
                   );
                 })()}
                 {/* Eco-Score */}
@@ -1994,16 +1998,18 @@ const SkaapScan = () => {
                   const hasEco = eco && ecoColors[eco];
                   const c = hasEco ? ecoColors[eco] : { bg: "#F9FAFB", border: "#E5E7EB", color: "#9CA3AF" };
                   return (
-                    <div className="flex-1 flex flex-col items-center justify-center" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
+                    <Explain term="eco" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
+                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
                       <div className="flex items-center gap-0.5">
                         <Leaf size={12} style={{ color: c.color }} />
                         <span className="font-bold" style={{ fontSize: 16, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
                       </div>
                       <span style={{ fontSize: 10, color: "#6B7280" }}>Eco</span>
-                    </div>
+                    </Explain>
                   );
                 })()}
               </div>
+
 
               {/* LEARN WHY, Educational explainer cards */}
               <div className="mx-5" style={{ marginTop: 8 }}>
