@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06)">
           <tr><td style="padding:24px 32px;border-bottom:1px solid #F3F4F6">
             <div style="font-size:18px;font-weight:800;color:#C41E3A">SKAAP</div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Know what's in your food</div>
+            <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Know what's in your food & beauty</div>
           </td></tr>
           <tr><td style="padding:32px">${html}</td></tr>
           <tr><td style="padding:20px 32px;background:#FAFAFA;font-size:11px;color:#9CA3AF;text-align:center">

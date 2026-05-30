@@ -79,7 +79,7 @@ function drawBranding(ctx: CanvasRenderingContext2D, icon: HTMLImageElement | nu
   ctx.letterSpacing = "0";
   ctx.fillStyle = "rgba(255,255,255,0.5)";
   ctx.font = "400 16px Inter400, Inter, system-ui, sans-serif";
-  ctx.fillText(subtitle || "See what's in your food", W / 2, 192);
+  ctx.fillText(subtitle || "See what's in your food & beauty", W / 2, 192);
 }
 
 function drawScoreRing(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, score: number, scoreNumSize = 96) {
