@@ -1806,19 +1806,19 @@ const SkaapScan = () => {
 
                   {/* STATUS CHIPS — quick at-a-glance pills (matches mockup) */}
                   {(() => {
-                    type Chip = { label: string; tone: "good" | "warn" | "bad" };
+                    type Chip = { label: string; tone: "good" | "warn" | "bad"; term: TermKey };
                     const chips: Chip[] = [];
-                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good" });
-                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good" });
-                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good" });
-                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good" });
-                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good" });
-                    if (addCount === 0) chips.push({ label: "No additives", tone: "bad" });
-                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn" });
-                    else chips.push({ label: `${addCount} additives`, tone: "bad" });
-                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good" });
-                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad" });
-                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad" });
+                    if (n?.protein100g != null && n.protein100g >= 8) chips.push({ label: "High protein", tone: "good", term: "high-protein" });
+                    if (productInfo.labelsTags?.some(l => /live-cultures|probiotic/i.test(l))) chips.push({ label: "Live cultures", tone: "good", term: "live-cultures" });
+                    if (n?.fiber100g != null && n.fiber100g >= 6) chips.push({ label: "High fiber", tone: "good", term: "high-fiber" });
+                    if (n?.sugars100g != null && n.sugars100g < 5) chips.push({ label: "Low sugar", tone: "good", term: "low-sugar" });
+                    if (n?.salt100g != null && n.salt100g < 0.3) chips.push({ label: "Low salt", tone: "good", term: "low-salt" });
+                    if (addCount === 0) chips.push({ label: "No additives", tone: "good", term: "no-additives" });
+                    else if (addCount <= 2) chips.push({ label: `${addCount} additive${addCount > 1 ? "s" : ""}`, tone: "warn", term: "some-additives" });
+                    else chips.push({ label: `${addCount} additives`, tone: "bad", term: "many-additives" });
+                    if (productInfo.labelsTags?.some(l => l.toLowerCase().includes("organic"))) chips.push({ label: "Organic", tone: "good", term: "organic" });
+                    if (n?.sugars100g != null && n.sugars100g > 15) chips.push({ label: "High sugar", tone: "bad", term: "high-sugar" });
+                    if (n?.saturatedFat100g != null && n.saturatedFat100g > 5) chips.push({ label: "High sat. fat", tone: "bad", term: "high-sat-fat" });
 
                     const styles = {
                       good: { bg: "#F0FDF4", border: "#BBF7D0", color: "#15803D" },
@@ -1833,10 +1833,12 @@ const SkaapScan = () => {
                         {chips.slice(0, 4).map(c => {
                           const s = styles[c.tone];
                           return (
-                            <span key={c.label} className="inline-flex items-center font-semibold"
-                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
+                            <button key={c.label} type="button" onClick={() => explainTerm(c.term)}
+                              className="inline-flex items-center font-semibold gap-1 active:scale-95 transition-transform"
+                              style={{ height: 28, padding: "0 12px", borderRadius: 999, fontSize: 12, background: s.bg, border: `1px solid ${s.border}`, color: s.color, cursor: "pointer" }}>
                               {c.label}
-                            </span>
+                              <Info size={10} style={{ opacity: 0.55 }} />
+                            </button>
                           );
                         })}
                       </motion.div>
