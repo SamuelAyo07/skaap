@@ -749,7 +749,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             style={showBlur ? { filter: "blur(7px)", WebkitFilter: "blur(7px)" } : undefined}>
 
             {/* LOWEST SCORES THIS WEEK */}
-            <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
+            <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
                   Lowest scores this week
