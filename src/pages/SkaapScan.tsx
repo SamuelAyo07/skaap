@@ -1786,17 +1786,22 @@ const SkaapScan = () => {
                     {getScoreVerdict(scoreBreakdown.total)}
                   </motion.p>
 
-                  {/* Verdict banner, full width pill */}
-                  <motion.div
+                  {/* Verdict banner, full width pill — tappable */}
+                  <motion.button
                     initial={{ opacity: 0, scale: 1 }}
                     animate={{ opacity: 1, scale: [1, 1.04, 1] }}
                     transition={{ delay: 0.5, duration: 0.4 }}
-                    className="mx-5 mt-2 flex items-center justify-center"
-                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)" }}>
+                    onClick={() => {
+                      const t: TermKey = scoreBreakdown.total >= 75 ? "verdict-green" : scoreBreakdown.total >= 50 ? "verdict-amber" : "verdict-red";
+                      explainTerm(t);
+                    }}
+                    className="mx-5 mt-2 flex items-center justify-center gap-1.5"
+                    style={{ height: 32, borderRadius: 16, background: getScoreColor(scoreBreakdown.total), width: "calc(100% - 40px)", border: "none", cursor: "pointer" }}>
                     <p className="font-semibold text-center text-white" style={{ fontSize: 12 }}>
                       {getVerdictBanner(scoreBreakdown.total)}
                     </p>
-                  </motion.div>
+                    <Info size={11} style={{ color: "rgba(255,255,255,0.85)" }} />
+                  </motion.button>
 
                   {/* STATUS CHIPS — quick at-a-glance pills (matches mockup) */}
                   {(() => {
