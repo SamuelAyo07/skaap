@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Share2, Sparkles, MapPin, Globe, Camera, Crown } from "lucide-react";
+import { Lock, Share2, Sparkles, MapPin, Globe, Camera, Crown, TrendingUp, Info } from "lucide-react";
+import { Explain } from "./TermExplainer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
@@ -682,10 +683,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                   <Camera size={14} />
                 )}
               </button>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
+              <Explain term="community-live" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: "#D1FAE5" }}>
                 <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#10B981" }} />
                 <span className="font-bold tracking-wider" style={{ fontSize: 10, color: "#065F46" }}>LIVE</span>
-              </span>
+              </Explain>
             </div>
           </div>
         </div>
@@ -721,26 +722,36 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </button>
         )}
 
-        {/* ─── 3 STAT TILES ─── */}
+        {/* ─── 3 STAT TILES (tap to learn) ─── */}
         <div className="grid grid-cols-3 gap-2 px-5 mt-3">
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          <Explain term="community-scans-today" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#D1D5DB" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#0A1220", lineHeight: 1 }}>
               {scansToday.toLocaleString() || (loading ? "—" : "0")}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Scans today</p>
-          </div>
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          </Explain>
+          <Explain term="community-put-back" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#FCA5A5" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#DC2626", lineHeight: 1 }}>
               {productsAvoided || (loading ? "—" : "0")}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Put back</p>
-          </div>
-          <div className="rounded-2xl px-3 py-3" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+          </Explain>
+          <Explain term="community-best-score" className="rounded-2xl px-3 py-3 text-left relative" style={{ background: "#FFFFFF", border: "1px solid #F3F4F6" }}>
+            <Info size={10} className="absolute top-2 right-2" style={{ color: "#86EFAC" }} />
             <p className="font-extrabold tabular-nums" style={{ fontSize: 26, color: "#16A34A", lineHeight: 1 }}>
               {bestScore ?? "—"}
             </p>
             <p className="font-bold tracking-[0.1em] uppercase mt-1.5" style={{ fontSize: 9, color: "#9CA3AF" }}>Best score</p>
-          </div>
+          </Explain>
+        </div>
+
+        {/* Tap-anything hint */}
+        <div className="px-5 mt-2">
+          <p className="text-[10.5px] text-center" style={{ color: "#9CA3AF" }}>
+            Tap any number, bar or score to see what it means.
+          </p>
         </div>
 
         {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
@@ -750,33 +761,55 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
             {/* LOWEST SCORES THIS WEEK */}
             <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
-                  Lowest scores this week
-                </h2>
+              <div className="flex items-center justify-between mb-1">
+                <Explain term="community-lowest-scores" className="flex items-center gap-1.5">
+                  <h2 className="font-extrabold tracking-tight text-left" style={{ fontSize: 17, color: "#0A1220" }}>
+                    Lowest scores this week
+                  </h2>
+                  <Info size={12} style={{ color: "#9CA3AF" }} />
+                </Explain>
                 <span className="px-2.5 py-1 rounded-full font-bold" style={{ fontSize: 10, background: "#FEF2F2", color: "#C41E3A" }}>
                   Preview
                 </span>
               </div>
+              <p className="mb-2.5" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                Worst-rated products scanned in {cityName} in the last 7 days.
+              </p>
 
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="h-14 rounded-xl my-2" style={{ background: "#F3F4F6" }} />
                 ))
-              ) : worstProducts.slice(0, 3).map((p, i) => (
+              ) : worstProducts.slice(0, 3).map((p, i) => {
+                const rankBg = i === 0 ? "#7F1D1D" : i === 1 ? "#B91C1C" : "#DC2626";
+                return (
                 <div key={p.barcode}>
                   <button onClick={() => onScanProduct(p.barcode)}
                     className="w-full flex items-start gap-3 py-2.5 text-left">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: i === 2 ? "#FED7AA" : "#FECACA" }}>
-                      <span style={{ fontSize: 16 }}>▮▮▮</span>
+                    <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0"
+                      style={{ background: "#F9FAFB", border: "1px solid #F1F2F4" }}>
+                      {p.image_url ? (
+                        <img src={p.image_url} alt="" loading="lazy"
+                          className="w-full h-full object-contain p-1"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold" style={{ color: "#9CA3AF" }}>
+                          {(p.brand || p.product_name).slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full flex items-center justify-center text-white font-extrabold"
+                        style={{ fontSize: 9, background: rankBg, boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}>
+                        {i + 1}
+                      </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold truncate" style={{ fontSize: 14, color: "#0A1220" }}>{p.product_name}</p>
-                      <p style={{ fontSize: 11, color: "#9CA3AF" }}>{Math.max(3, (i + 1) * 5)}m ago</p>
+                      <p style={{ fontSize: 11, color: "#9CA3AF" }}>
+                        {p.brand ? `${p.brand} · ` : ""}{p.scan_count}× scanned
+                      </p>
                       {p.rejected_additives && p.rejected_additives.length > 0 && (
-                        <div className="flex items-center gap-1.5 mt-1.5">
-                          <span style={{ fontSize: 10, color: "#9CA3AF" }}>Shoppers reject</span>
+                        <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+                          <span style={{ fontSize: 10, color: "#9CA3AF" }}>Flagged:</span>
                           {p.rejected_additives.slice(0, 2).map(a => (
                             <span key={a} className="px-1.5 py-0.5 rounded-full font-semibold"
                               style={{ fontSize: 9, background: "#FFFFFF", color: "#C41E3A", border: "1px dashed #FECDD3" }}>
@@ -793,7 +826,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                   </button>
                   {i < 2 && <div style={{ height: 1, background: "#F3F4F6" }} />}
                 </div>
-              ))}
+              );})}
 
               <button onClick={() => openUpgrade("Community Intelligence")}
                 className="w-full flex items-center gap-2 pt-3 mt-2 font-bold"
@@ -809,31 +842,51 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 border: "1px solid #FCE7EC",
                 boxShadow: "0 6px 18px rgba(196,30,58,0.08)",
               }}>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-extrabold tracking-tight" style={{ fontSize: 17, color: "#0A1220" }}>
-                  Worst additives in your area
-                </h2>
+              <div className="flex items-center justify-between mb-1">
+                <Explain term="community-worst-additives" className="flex items-center gap-1.5">
+                  <h2 className="font-extrabold tracking-tight text-left" style={{ fontSize: 17, color: "#0A1220" }}>
+                    Worst additives near you
+                  </h2>
+                  <Info size={12} style={{ color: "#9CA3AF" }} />
+                </Explain>
                 <span className="px-2 py-0.5 rounded-full font-bold tracking-wider"
                   style={{ fontSize: 9, background: "#FEE2E2", color: "#9B1C2E" }}>
                   30D
                 </span>
               </div>
+              <p className="mb-3" style={{ fontSize: 11, color: "#9CA3AF" }}>
+                Times shoppers rejected each additive in the last 30 days.
+              </p>
               <div className="flex flex-col gap-2.5">
                 {(topAdditives.length > 0 ? topAdditives : [
-                  { code: "E150D", name: "E150D", rejection_count: 47, trending_up: true },
-                  { code: "E621",  name: "E621",  rejection_count: 31, trending_up: true },
-                  { code: "E950",  name: "E950",  rejection_count: 22, trending_up: false },
-                  { code: "PALM",  name: "Palm oil", rejection_count: 19, trending_up: false },
-                  { code: "E211",  name: "E211",  rejection_count: 14, trending_up: false },
+                  { code: "E150D", name: "Caramel color", rejection_count: 47, trending_up: true },
+                  { code: "E621",  name: "MSG",            rejection_count: 31, trending_up: true },
+                  { code: "E950",  name: "Acesulfame K",   rejection_count: 22, trending_up: false },
+                  { code: "PALM",  name: "Palm oil",       rejection_count: 19, trending_up: false },
+                  { code: "E211",  name: "Sodium benzoate",rejection_count: 14, trending_up: false },
                 ]).slice(0, 5).map(a => {
                   const pct = Math.max(12, Math.round((a.rejection_count / maxAdd) * 100));
                   return (
-                    <div key={a.code} className="flex items-center gap-2.5 min-w-0">
-                      <span className="font-extrabold flex-shrink-0 tracking-tight"
-                        style={{ fontSize: 12, color: "#0A1220", width: 52 }}>
-                        {a.code}
-                      </span>
-                      <div className="flex-1 min-w-0 h-2.5 rounded-full relative overflow-hidden"
+                    <Explain key={a.code} term="additives" className="flex flex-col gap-1 min-w-0 py-0.5 text-left">
+                      <div className="flex items-center justify-between gap-2 min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-extrabold flex-shrink-0 px-1.5 py-0.5 rounded tracking-tight"
+                            style={{ fontSize: 10, color: "#9B1C2E", background: "#FEE2E2" }}>
+                            {a.code}
+                          </span>
+                          <span className="font-semibold truncate" style={{ fontSize: 12, color: "#0A1220" }}>
+                            {a.name}
+                          </span>
+                          {a.trending_up && (
+                            <TrendingUp size={11} style={{ color: "#DC2626", flexShrink: 0 }} />
+                          )}
+                        </div>
+                        <span className="font-extrabold tabular-nums flex-shrink-0"
+                          style={{ fontSize: 12, color: "#9B1C2E" }}>
+                          {a.rejection_count}×
+                        </span>
+                      </div>
+                      <div className="h-2.5 rounded-full relative overflow-hidden"
                         style={{ background: "#FEE2E2" }}>
                         <motion.div
                           initial={{ width: 0 }}
@@ -846,13 +899,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                           }}
                         />
                       </div>
-                      <span className="font-extrabold tabular-nums text-right flex-shrink-0"
-                        style={{ fontSize: 12, color: "#9B1C2E", width: 32 }}>
-                        {a.rejection_count}×
-                      </span>
-                    </div>
+                    </Explain>
                   );
                 })}
+              </div>
+              {/* Legend */}
+              <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: "1px dashed #FCE7EC" }}>
+                <div className="flex items-center gap-1.5" style={{ fontSize: 10, color: "#6B7280" }}>
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: "linear-gradient(90deg,#DC2626,#9B1C2E)" }} />
+                  Rejections (30d)
+                </div>
+                <div className="flex items-center gap-1" style={{ fontSize: 10, color: "#6B7280" }}>
+                  <TrendingUp size={10} style={{ color: "#DC2626" }} /> Trending up
+                </div>
               </div>
             </div>
 

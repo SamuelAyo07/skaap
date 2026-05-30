@@ -42,7 +42,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.45, duration: 0.4 }}
       >
-        Know what's in your food
+        Know what's in your food & beauty
       </motion.p>
 
       {/* Subtle loading indicator */}
