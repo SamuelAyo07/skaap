@@ -22,7 +22,7 @@ import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
-import { isBeautyProduct, isOverBeautyLimit, recordBeautyScan, getBeautyScanCountToday, FREE_BEAUTY_LIMIT } from "@/lib/beautyDailyLimit";
+import { isBeautyProduct, isOverFreeLimit, recordFreeScan, getFreeScanCount, FREE_SCAN_LIMIT } from "@/lib/beautyDailyLimit";
 import { BeautyPersonalizationBanner } from "@/components/scan/BeautyPersonalizationBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShareType, type UserStats } from "@/lib/skaapUserStats";
