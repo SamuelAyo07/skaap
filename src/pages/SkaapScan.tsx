@@ -22,7 +22,7 @@ import { AuthSheet } from "@/components/scan/AuthSheet";
 import { ProfileScreen } from "@/components/scan/ProfileScreen";
 import { toast } from "sonner";
 import { fetchProductInfo, ProductFullInfo } from "@/lib/productInfoApi";
-import { isBeautyProduct, isOverBeautyLimit, recordBeautyScan, getBeautyScanCountToday, FREE_BEAUTY_LIMIT } from "@/lib/beautyDailyLimit";
+import { isBeautyProduct, isOverFreeLimit, recordFreeScan, getFreeScanCount, FREE_SCAN_LIMIT } from "@/lib/beautyDailyLimit";
 import { BeautyPersonalizationBanner } from "@/components/scan/BeautyPersonalizationBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserStats, recordScan, refreshStreak, getLastShareType, setLastShareType, type UserStats } from "@/lib/skaapUserStats";
@@ -844,14 +844,14 @@ const SkaapScan = () => {
     const cached = getCachedProduct(barcode);
     if (cached) {
       clearTimeout(slowTimer);
-      // Beauty soft paywall: 3 free unique beauty scans/day, then locked.
-      if (!isPlus && isBeautyProduct(cached) && isOverBeautyLimit(barcode)) {
+      // Free paywall: 4 free unique scans across food + beauty, then locked.
+      if (!isPlus && isOverFreeLimit(barcode)) {
         setLoading(false);
-        toast(`You have used your ${FREE_BEAUTY_LIMIT} free beauty scans today. Unlock unlimited with Plus, or come back tomorrow.`, { duration: 4500 });
-        openUpgrade("Unlimited beauty scans");
+        toast(`You've used your ${FREE_SCAN_LIMIT} free scans. Unlock unlimited scans with SKAAP Plus.`, { duration: 4500 });
+        openUpgrade("Unlimited scans");
         return;
       }
-      if (isBeautyProduct(cached)) recordBeautyScan(barcode);
+      recordFreeScan(barcode);
       setProductInfo(cached);
       const cachedScore = getCachedScore(barcode) || calculateSkaapScore(cached.nutriScoreGrade, cached.additivesTags, cached.labelsTags);
       if (!getCachedScore(barcode)) setCachedScore(barcode, cachedScore);
@@ -896,15 +896,15 @@ const SkaapScan = () => {
     clearTimeout(slowTimer);
 
     if (info) {
-      // Beauty soft paywall: 3 free unique beauty scans/day, then locked.
-      if (!isPlus && isBeautyProduct(info) && isOverBeautyLimit(barcode)) {
+      // Free paywall: 4 free unique scans across food + beauty, then locked.
+      if (!isPlus && isOverFreeLimit(barcode)) {
         setCachedProduct(barcode, info); // still cache for later (after upgrade)
         setLoading(false);
-        toast(`You have used your ${FREE_BEAUTY_LIMIT} free beauty scans today. Unlock unlimited with Plus, or come back tomorrow.`, { duration: 4500 });
-        openUpgrade("Unlimited beauty scans");
+        toast(`You've used your ${FREE_SCAN_LIMIT} free scans. Unlock unlimited scans with SKAAP Plus.`, { duration: 4500 });
+        openUpgrade("Unlimited scans");
         return;
       }
-      if (isBeautyProduct(info)) recordBeautyScan(barcode);
+      recordFreeScan(barcode);
       setCachedProduct(barcode, info);
       const score = calculateSkaapScore(info.nutriScoreGrade, info.additivesTags, info.labelsTags);
       setCachedScore(barcode, score);
