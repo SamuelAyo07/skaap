@@ -452,6 +452,7 @@ function ScoreRing({ score, size = 120, showLabel = true }: { score: number; siz
 // ─── Main Component ───
 const SkaapScan = () => {
   const navigate = useNavigate();
+  const explainTerm = useExplain();
   const { user } = useAuth();
   const { openUpgrade, isPlus } = useSubscription();
   const [screen, setScreen] = useState<Screen>("history");
