@@ -1936,6 +1936,25 @@ const SkaapScan = () => {
                       </div>
                     </div>
                   </motion.div>
+                  {/* AI Decision Card — Plus-gated personalized verdict */}
+                  {productInfo && (
+                    <AIDecisionCard
+                      barcode={lastBarcode || productInfo.barcode || ""}
+                      productName={productInfo.productName || "Product"}
+                      brandName={productInfo.brand}
+                      nutriScore={productInfo.nutriScoreGrade}
+                      novaGroup={productInfo.novaGroup}
+                      additiveCount={productInfo.additives?.length || 0}
+                      worstRisk={scoreBreakdown?.worstAdditiveRisk}
+                      isOrganic={productInfo.isOrganic}
+                      nutrientLevels={Object.entries(productInfo.nutrientLevels || {}).filter(([,v]) => v === "high").map(([k]) => k).join(", ")}
+                      sugar100g={productInfo.nutriments?.sugars_100g}
+                      protein100g={productInfo.nutriments?.proteins_100g}
+                      fiber100g={productInfo.nutriments?.fiber_100g}
+                      satFat100g={productInfo.nutriments?.["saturated-fat_100g"]}
+                      onOpenProfile={() => setHealthProfileOpen(true)}
+                    />
+                  )}
 
                   {/* Data quality + tap hint */}
                   <div className="mt-1.5 flex items-center gap-2" style={{ fontSize: 10 }}>
