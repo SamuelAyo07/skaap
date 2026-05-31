@@ -275,7 +275,7 @@ Examples:
         });
     }
 
-    const model = type === "personalized-recs" || type === "image_recognition" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+    const model = type === "personalized-recs" || type === "image_recognition" || type === "decision" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
 
     // Build messages - for image recognition, include the image
     const messages: any[] = [{ role: "system", content: systemPrompt }];
