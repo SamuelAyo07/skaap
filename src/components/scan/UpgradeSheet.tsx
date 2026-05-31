@@ -18,8 +18,8 @@ const FEATURES = [
 type TierKey = "supporter" | "champion";
 
 const TIERS: Record<TierKey, { price: string; label: string; sub: string; foot: string }> = {
-  supporter: { price: "$2.99", label: "MONTHLY",  sub: "billed monthly",   foot: "Cancel anytime. No ads. No tracking." },
-  champion:  { price: "$20",   label: "YEARLY",   sub: "one-time · save 44%", foot: "One year all access. No renewal." },
+  supporter: { price: "$4.99",  label: "MONTHLY", sub: "billed monthly",        foot: "Cancel anytime. No ads. No tracking." },
+  champion:  { price: "$39.99", label: "YEARLY",  sub: "one-time · save 33%",   foot: "One year all access. No renewal." },
 };
 
 export function UpgradeSheet() {
@@ -56,8 +56,8 @@ export function UpgradeSheet() {
 
   const tier = TIERS[selected];
   const ctaLabel = selected === "supporter"
-    ? "Start $2.99/month"
-    : "Get yearly all-access · $20";
+    ? "Start $4.99/month"
+    : "Get yearly all-access · $39.99";
 
   return (
     <AnimatePresence>
