@@ -144,6 +144,11 @@ export async function fetchAIDecision(params: {
   } catch {}
 
   try {
+    let extraGoals: string[] = [];
+    try {
+      const raw = localStorage.getItem("skaap_extra_goals_v1");
+      if (raw) extraGoals = JSON.parse(raw);
+    } catch {}
     const { data, error } = await supabase.functions.invoke("ai-product-insights", {
       body: {
         type: "decision",
@@ -160,6 +165,7 @@ export async function fetchAIDecision(params: {
         fiber100g: params.fiber100g,
         satFat100g: params.satFat100g,
         goal: params.profile.goal,
+        extraGoals,
         dietary: params.profile.dietary,
         avoidIngredients: params.profile.avoid_ingredients,
         budgetSensitivity: params.profile.budget_sensitivity,
