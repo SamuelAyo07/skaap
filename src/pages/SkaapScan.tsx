@@ -1256,6 +1256,7 @@ const SkaapScan = () => {
       )}
       <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
       <ProductContributionSheet open={contributeOpen} onClose={() => setContributeOpen(false)} barcode={currentBarcode || null} />
+      <HealthProfileSheet open={healthProfileOpen} onClose={() => setHealthProfileOpen(false)} />
       {/* Standalone PWA home, richer, personalized entry point */}
       {isStandalone ? (
         <>
