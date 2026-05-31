@@ -89,9 +89,16 @@ export function useHealthProfile() {
     return () => { cancelled = true; };
   }, [user]);
 
+  useEffect(() => {
+    const handler = () => setProfile(readLocal());
+    window.addEventListener("skaap-profile-updated", handler);
+    return () => window.removeEventListener("skaap-profile-updated", handler);
+  }, []);
+
   const save = useCallback(async (next: HealthProfile) => {
     setProfile(next);
     writeLocal(next);
+    window.dispatchEvent(new CustomEvent("skaap-profile-updated"));
     if (user) {
       await supabase.from("user_health_profile").upsert({
         user_id: user.id,
