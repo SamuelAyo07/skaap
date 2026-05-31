@@ -18,7 +18,7 @@ function checkRate(ip: string, limit = 20, windowMs = 60_000): boolean {
   return true;
 }
 
-const AUTH_REQUIRED_TYPES = new Set(["product_image", "image_recognition", "personalized-recs", "decision"]);
+const AUTH_REQUIRED_TYPES = new Set(["product_image", "image_recognition", "personalized-recs"]);
 const PLUS_REQUIRED_TYPES = new Set(["personalized-recs"]);
 
 serve(async (req) => {
