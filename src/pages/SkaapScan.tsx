@@ -54,6 +54,8 @@ import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/
 import { ProductContributionSheet } from "@/components/scan/ProductContributionSheet";
 import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
 import { TermExplainerProvider, Explain, useExplain, type TermKey } from "@/components/scan/TermExplainer";
+import AIDecisionCard from "@/components/scan/AIDecisionCard";
+import HealthProfileSheet from "@/components/scan/HealthProfileSheet";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
