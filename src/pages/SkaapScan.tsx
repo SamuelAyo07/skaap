@@ -54,6 +54,8 @@ import { FirstScanSignupModal, hasCompletedFirstScanSignup } from "@/components/
 import { ProductContributionSheet } from "@/components/scan/ProductContributionSheet";
 import { ScannerOverlay } from "@/components/scan/ScannerOverlay";
 import { TermExplainerProvider, Explain, useExplain, type TermKey } from "@/components/scan/TermExplainer";
+import AIDecisionCard from "@/components/scan/AIDecisionCard";
+import HealthProfileSheet from "@/components/scan/HealthProfileSheet";
 
 const isStandalone = typeof window !== "undefined" && (
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -513,6 +515,7 @@ const SkaapScan = () => {
   // OFF-based healthier alternatives
   const [offRecs, setOffRecs] = useState<OFFRecommendation[]>([]);
   const [offRecsLoading, setOffRecsLoading] = useState(false);
+  const [healthProfileOpen, setHealthProfileOpen] = useState(false);
 
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState(false);
@@ -1253,6 +1256,7 @@ const SkaapScan = () => {
       )}
       <FirstScanSignupModal open={showSignupModal} onClose={() => setShowSignupModal(false)} />
       <ProductContributionSheet open={contributeOpen} onClose={() => setContributeOpen(false)} barcode={currentBarcode || null} />
+      <HealthProfileSheet open={healthProfileOpen} onClose={() => setHealthProfileOpen(false)} />
       {/* Standalone PWA home, richer, personalized entry point */}
       {isStandalone ? (
         <>
@@ -1933,6 +1937,25 @@ const SkaapScan = () => {
                       </div>
                     </div>
                   </motion.div>
+                  {/* AI Decision Card — Plus-gated personalized verdict */}
+                  {productInfo && currentBarcode && (
+                    <AIDecisionCard
+                      barcode={currentBarcode}
+                      productName={productInfo.productName || "Product"}
+                      brandName={productInfo.brand}
+                      nutriScore={productInfo.nutriScoreGrade}
+                      novaGroup={productInfo.novaGroup}
+                      additiveCount={productInfo.additivesTags?.length || 0}
+                      worstRisk={scoreBreakdown?.worstAdditiveRisk}
+                      nutrientLevels={Object.entries(productInfo.nutrientLevels || {}).filter(([,v]) => v === "high").map(([k]) => k).join(", ")}
+                      sugar100g={productInfo.nutriments?.sugars100g}
+                      protein100g={productInfo.nutriments?.protein100g}
+                      fiber100g={productInfo.nutriments?.fiber100g}
+                      satFat100g={productInfo.nutriments?.saturatedFat100g}
+                      onOpenProfile={() => setHealthProfileOpen(true)}
+                    />
+                  )}
+
 
                   {/* Data quality + tap hint */}
                   <div className="mt-1.5 flex items-center gap-2" style={{ fontSize: 10 }}>

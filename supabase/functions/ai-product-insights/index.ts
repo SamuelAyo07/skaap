@@ -18,7 +18,7 @@ function checkRate(ip: string, limit = 20, windowMs = 60_000): boolean {
   return true;
 }
 
-const AUTH_REQUIRED_TYPES = new Set(["product_image", "image_recognition", "personalized-recs"]);
+const AUTH_REQUIRED_TYPES = new Set(["product_image", "image_recognition", "personalized-recs", "decision"]);
 const PLUS_REQUIRED_TYPES = new Set(["personalized-recs"]);
 
 serve(async (req) => {
@@ -223,14 +223,59 @@ Return a JSON object with this exact structure:
 Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their worst-scoring products. Set impact to "high" for ultra-processed/high-additive products, "medium" for moderate issues, "low" for minor tweaks.`;
         break;
       }
-      default:
+      case "decision": {
+        const {
+          productName, brandName, nutriScore, novaGroup, additiveCount,
+          worstRisk, isOrganic, nutrientLevels, sugar100g, protein100g, fiber100g, satFat100g,
+          goal, dietary, avoidIngredients, budgetSensitivity,
+        } = params;
+        const goalLabel: Record<string, string> = {
+          weight_loss: "Weight loss",
+          muscle_gain: "Muscle gain / gym",
+          diabetes: "Blood-sugar / diabetes management",
+          heart: "Heart health",
+          gut: "Gut health",
+          pregnancy: "Pregnancy",
+          parent: "Shopping for kids",
+          general_wellness: "General wellness",
+        };
+        const goalText = goalLabel[goal as string] || "General wellness";
+        systemPrompt = `You are SKAAP's personal food coach. You give DECISIONS, not lectures.
+You read a product's facts and the user's goal, then tell them in plain English whether to buy it.
+Tone: warm, direct, like a smart friend at the store. Never use "dangerous", "toxic", "harmful", "bad".
+Return ONLY valid JSON. No markdown, no preamble.`;
+        userPrompt = `User goal: ${goalText}
+Dietary: ${(dietary || []).join(", ") || "none"}
+Avoiding: ${(avoidIngredients || []).join(", ") || "none"}
+Budget sensitivity: ${budgetSensitivity || "medium"}
+
+Product: ${productName}${brandName ? ` — ${brandName}` : ""}
+Nutri-Score: ${nutriScore || "?"} · NOVA: ${novaGroup || "?"} · Additives: ${additiveCount ?? 0} · Organic: ${isOrganic ? "yes" : "no"}
+Per 100g: sugar ${sugar100g ?? "?"}g · protein ${protein100g ?? "?"}g · fiber ${fiber100g ?? "?"}g · sat fat ${satFat100g ?? "?"}g
+High in: ${nutrientLevels || "—"} · Worst flag: ${worstRisk || "—"}
+
+Return EXACTLY this JSON:
+{
+  "verdict": "great_pick" | "ok_sometimes" | "skip_it",
+  "headline": "One sentence verdict for THIS user's goal (max 14 words).",
+  "why": ["Reason 1 — concrete, tied to their goal (max 12 words)", "Reason 2 (max 12 words)", "Reason 3 (max 12 words, optional)"],
+  "swap_hint": "One short suggestion for what to look for instead (max 14 words). Empty string if verdict is great_pick.",
+  "fit_score": 0-100
+}
+
+Examples:
+- Goal = Weight loss, product has 18g sugar/100g → verdict "skip_it", reasons cite sugar + low fiber, swap toward lower-sugar option.
+- Goal = Muscle gain, product is high-protein yogurt → "great_pick", reasons cite protein density.
+- Goal = Parent, product has Red 40 → "ok_sometimes" or "skip_it", reasons mention the additive in kid-friendly language.`;
+        break;
+      }
         return new Response(JSON.stringify({ error: "Unknown type" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
 
-    const model = type === "personalized-recs" || type === "image_recognition" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
+    const model = type === "personalized-recs" || type === "image_recognition" || type === "decision" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
 
     // Build messages - for image recognition, include the image
     const messages: any[] = [{ role: "system", content: systemPrompt }];

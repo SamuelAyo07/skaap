@@ -512,6 +512,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_health_profile: {
+        Row: {
+          avoid_ingredients: string[]
+          budget_sensitivity: string
+          created_at: string
+          dietary: string[]
+          goal: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avoid_ingredients?: string[]
+          budget_sensitivity?: string
+          created_at?: string
+          dietary?: string[]
+          goal?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avoid_ingredients?: string[]
+          budget_sensitivity?: string
+          created_at?: string
+          dietary?: string[]
+          goal?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_scans: {
         Row: {
           barcode: string
