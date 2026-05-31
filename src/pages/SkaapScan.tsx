@@ -515,6 +515,7 @@ const SkaapScan = () => {
   // OFF-based healthier alternatives
   const [offRecs, setOffRecs] = useState<OFFRecommendation[]>([]);
   const [offRecsLoading, setOffRecsLoading] = useState(false);
+  const [healthProfileOpen, setHealthProfileOpen] = useState(false);
 
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState(false);
