@@ -227,7 +227,7 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
         const {
           productName, brandName, nutriScore, novaGroup, additiveCount,
           worstRisk, isOrganic, nutrientLevels, sugar100g, protein100g, fiber100g, satFat100g,
-          goal, dietary, avoidIngredients, budgetSensitivity,
+          goal, extraGoals, dietary, avoidIngredients, budgetSensitivity,
         } = params;
         const goalLabel: Record<string, string> = {
           weight_loss: "Weight loss",
@@ -239,12 +239,16 @@ Provide 2-3 strengths, 2-3 improvements, and 3-5 swaps. Focus on swaps for their
           parent: "Shopping for kids",
           general_wellness: "General wellness",
         };
-        const goalText = goalLabel[goal as string] || "General wellness";
+        const allGoals = [goal, ...((extraGoals as string[]) || [])]
+          .filter(Boolean)
+          .map(g => goalLabel[g as string] || g)
+          .join(" + ");
         systemPrompt = `You are SKAAP's personal food coach. You give DECISIONS, not lectures.
-You read a product's facts and the user's goal, then tell them in plain English whether to buy it.
+You read a product's facts and the user's goals, then tell them in plain English whether to buy it.
 Tone: warm, direct, like a smart friend at the store. Never use "dangerous", "toxic", "harmful", "bad".
+If the user has multiple goals, weigh ALL of them — the verdict must work for every goal listed.
 Return ONLY valid JSON. No markdown, no preamble.`;
-        userPrompt = `User goal: ${goalText}
+        userPrompt = `User goals: ${allGoals || "General wellness"}
 Dietary: ${(dietary || []).join(", ") || "none"}
 Avoiding: ${(avoidIngredients || []).join(", ") || "none"}
 Budget sensitivity: ${budgetSensitivity || "medium"}
@@ -257,18 +261,19 @@ High in: ${nutrientLevels || "—"} · Worst flag: ${worstRisk || "—"}
 Return EXACTLY this JSON:
 {
   "verdict": "great_pick" | "ok_sometimes" | "skip_it",
-  "headline": "One sentence verdict for THIS user's goal (max 14 words).",
+  "headline": "One sentence verdict tying back to their goal(s) (max 14 words).",
   "why": ["Reason 1 — concrete, tied to their goal (max 12 words)", "Reason 2 (max 12 words)", "Reason 3 (max 12 words, optional)"],
   "swap_hint": "One short suggestion for what to look for instead (max 14 words). Empty string if verdict is great_pick.",
   "fit_score": 0-100
 }
 
-Examples:
-- Goal = Weight loss, product has 18g sugar/100g → verdict "skip_it", reasons cite sugar + low fiber, swap toward lower-sugar option.
-- Goal = Muscle gain, product is high-protein yogurt → "great_pick", reasons cite protein density.
-- Goal = Parent, product has Red 40 → "ok_sometimes" or "skip_it", reasons mention the additive in kid-friendly language.`;
+Rules:
+- If goals conflict (e.g. muscle gain + weight loss), pick the stricter standard.
+- Tie at least one "why" to their specific goal(s).
+- Examples: weight loss + 18g sugar/100g → skip_it. Muscle gain + high-protein yogurt → great_pick. Parent + Red 40 → ok_sometimes or skip_it.`;
         break;
       }
+      default:
         return new Response(JSON.stringify({ error: "Unknown type" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
