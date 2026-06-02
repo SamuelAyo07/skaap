@@ -340,9 +340,10 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             .map(([n]) => n),
         }));
 
+        const seedDaily = getRegionalSeeds(city);
         const seenBarcodes = new Set(products.map(p => p.barcode));
-        const padWorst = SEED_WORST.filter(s => !seenBarcodes.has(s.barcode));
-        const padBest = SEED_BEST.filter(s => !seenBarcodes.has(s.barcode));
+        const padWorst = seedDaily.worst.filter(s => !seenBarcodes.has(s.barcode));
+        const padBest = seedDaily.best.filter(s => !seenBarcodes.has(s.barcode));
 
         const realWorst = [...products].sort((a, b) => a.avg_score - b.avg_score);
         const realBest = [...products].filter(p => p.avg_score >= 60 && p.scan_count >= 2).sort((a, b) => b.avg_score - a.avg_score);
@@ -415,21 +416,28 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         .order("scan_timestamp", { ascending: false })
         .limit(20);
 
-      const liveSeed = SEED_RECENT.map(s => ({ ...s, city }));
-      if (recentData && recentData.length >= 5) {
-        setRecentScans(recentData);
+      const daily = getRegionalSeeds(city);
+      const liveSeed = daily.recent.map(s => ({ ...s, city }));
+      // If real rows are missing images, fall back to the pool image for the same barcode.
+      const poolByBarcode = new Map(PRODUCT_POOL.map(p => [p.barcode, p.image_url]));
+      const normalized = (recentData || []).map(r => ({
+        ...r,
+        image_url: r.image_url || poolByBarcode.get(r.barcode) || null,
+      }));
+      if (normalized.length >= 5) {
+        setRecentScans(normalized);
       } else {
-        const real = recentData || [];
-        const seen = new Set(real.map(r => r.barcode));
+        const seen = new Set(normalized.map(r => r.barcode));
         const pad = liveSeed.filter(s => !seen.has(s.barcode));
-        setRecentScans([...real, ...pad].slice(0, 20));
+        setRecentScans([...normalized, ...pad].slice(0, 20));
       }
 
-      // If no real week scans at all, seed worst/best so the city does not feel empty.
+      // If no real week scans at all, seed worst/best from the daily regional pool.
       if (!weekScans || weekScans.length === 0) {
-        setWorstProducts(SEED_WORST.slice(0, 3));
-        setHealthiestProducts(SEED_BEST.slice(0, 3));
+        setWorstProducts(daily.worst.slice(0, 5));
+        setHealthiestProducts(daily.best.slice(0, 5));
       }
+
     } catch (err) {
       console.error("Community fetch error:", err);
     }
