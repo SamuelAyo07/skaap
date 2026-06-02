@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles, Trash2, ImagePlus } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
@@ -8,6 +8,8 @@ import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { compressImage } from "@/lib/imageCompress";
+import HealthProfileSheet from "@/components/scan/HealthProfileSheet";
+
 
 // Cap any single upload at ~8 MB after compression as a final safety net
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
