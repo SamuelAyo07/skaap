@@ -179,7 +179,7 @@ export function UpgradeSheet() {
           </motion.div>
         </motion.div>
       )}
-      <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => { setAuthOpen(false); handleCTA(); }} />
+      <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} />
     </AnimatePresence>
   );
 }
