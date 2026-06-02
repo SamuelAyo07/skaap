@@ -11,14 +11,14 @@ const corsHeaders = {
 type TierKey = "supporter" | "member" | "champion" | "builder" | "monthly" | "annual";
 
 const TIERS: Record<TierKey, { price: string; mode: "subscription" | "payment" }> = {
-  // New 4-tier structure
-  supporter: { price: "price_1TQD12BJzpMoZjm4heo7GrL8", mode: "subscription" }, // $2.99/mo
-  member:    { price: "price_1Ta3CDBJzpMoZjm4FvDJxgmp", mode: "payment" },      // $15.99/yr one-time
-  champion:  { price: "price_1TQD1tBJzpMoZjm43jRsOxee", mode: "payment" },      // $20/yr one-time
-  builder:   { price: "price_1TQD2JBJzpMoZjm4hkQIGFhW", mode: "payment" },      // $49/yr one-time
-  // Legacy aliases (kept so old clients still work)
-  monthly:   { price: "price_1TAWbrBJzpMoZjm46lHSgk3R", mode: "subscription" },
-  annual:    { price: "price_1TAWcHBJzpMoZjm4wSgXzi0n", mode: "subscription" },
+  // Current SKAAP Plus pricing
+  supporter: { price: "price_1TdtdGBJzpMoZjm49JkDL91g", mode: "subscription" }, // $4.99/mo
+  champion:  { price: "price_1TdtdoBJzpMoZjm4tO8D2Rp3", mode: "subscription" }, // $39.99/yr
+  // Legacy aliases — map to current pricing so old clients keep working
+  member:    { price: "price_1TdtdoBJzpMoZjm4tO8D2Rp3", mode: "subscription" },
+  builder:   { price: "price_1TdtdoBJzpMoZjm4tO8D2Rp3", mode: "subscription" },
+  monthly:   { price: "price_1TdtdGBJzpMoZjm49JkDL91g", mode: "subscription" },
+  annual:    { price: "price_1TdtdoBJzpMoZjm4tO8D2Rp3", mode: "subscription" },
 };
 
 const ALLOWED_ORIGINS = [
