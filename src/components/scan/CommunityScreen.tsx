@@ -82,25 +82,78 @@ function getTimeAgo(timestamp: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-// Seeded fallback so the feed always feels alive when a city is quiet.
-// Mix of food + beauty so both shopper types see themselves represented.
-const SEED_WORST: CommunityProduct[] = [
-  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14, rejected_additives: ["Palm oil", "Soy lecithin", "Vanillin"] },
-  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22, rejected_additives: ["Caramel color E150d", "Phosphoric acid", "Aspartame"] },
-  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11, rejected_additives: ["MSG", "Yellow 6", "Red 40"] },
+// Curated, location-aware product pool. We rotate a subset each day so the
+// feed always feels fresh and reflects what people in that region actually buy.
+// All images are stable CDN URLs from Open Food / Open Beauty Facts.
+type PoolItem = CommunityProduct & { regions?: string[] };
+
+const PRODUCT_POOL: PoolItem[] = [
+  // ── North America staples ──
+  { barcode: "3017620422003", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.400.jpg", avg_score: 22, scan_count: 14, rejected_additives: ["Palm oil", "Soy lecithin", "Vanillin"], regions: ["US","CA","UK","global"] },
+  { barcode: "5449000000996", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: "https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.400.jpg", avg_score: 18, scan_count: 22, rejected_additives: ["Caramel color E150d", "Phosphoric acid"], regions: ["global"] },
+  { barcode: "0028400064057", product_name: "Doritos Nacho Cheese", brand: "Doritos", image_url: "https://images.openfoodfacts.org/images/products/002/840/006/4057/front_en.400.jpg", avg_score: 28, scan_count: 11, rejected_additives: ["MSG", "Yellow 6", "Red 40"], regions: ["US","CA"] },
+  { barcode: "0030000010402", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: "https://images.openfoodfacts.org/images/products/003/000/001/0402/front_en.400.jpg", avg_score: 88, scan_count: 7, regions: ["US","CA","UK"] },
+  { barcode: "0038000138416", product_name: "Frosted Flakes", brand: "Kellogg's", image_url: "https://images.openfoodfacts.org/images/products/003/800/013/8416/front_en.400.jpg", avg_score: 31, scan_count: 9, rejected_additives: ["Added sugar", "BHT"], regions: ["US","CA"] },
+  { barcode: "0044000032029", product_name: "Oreo Original Cookies", brand: "Nabisco", image_url: "https://images.openfoodfacts.org/images/products/004/400/003/2029/front_en.400.jpg", avg_score: 24, scan_count: 18, rejected_additives: ["Palm oil", "High fructose corn syrup"], regions: ["US","CA","UK","global"] },
+  { barcode: "0028400090728", product_name: "Cheetos Crunchy", brand: "Cheetos", image_url: "https://images.openfoodfacts.org/images/products/002/840/009/0728/front_en.400.jpg", avg_score: 26, scan_count: 13, rejected_additives: ["Yellow 6", "MSG"], regions: ["US","CA"] },
+  { barcode: "0012000161551", product_name: "Gatorade Thirst Quencher", brand: "Gatorade", image_url: "https://images.openfoodfacts.org/images/products/001/200/016/1551/front_en.400.jpg", avg_score: 34, scan_count: 8, rejected_additives: ["Yellow 5", "Brominated veg oil"], regions: ["US","CA"] },
+
+  // ── Beauty / skincare (global) ──
+  { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9, regions: ["global"] },
+  { barcode: "3018712393155", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: "https://images.openbeautyfacts.org/images/products/301/871/239/3155/front_en.400.jpg", avg_score: 78, scan_count: 12, regions: ["global"] },
+  { barcode: "3600523711178", product_name: "L'Oréal Revitalift Serum", brand: "L'Oréal", image_url: "https://images.openbeautyfacts.org/images/products/360/052/371/1178/front_en.400.jpg", avg_score: 64, scan_count: 6, regions: ["global"] },
+  { barcode: "3574661648125", product_name: "Neutrogena Hydro Boost", brand: "Neutrogena", image_url: "https://images.openbeautyfacts.org/images/products/357/466/164/8125/front_en.400.jpg", avg_score: 71, scan_count: 7, regions: ["US","CA","UK"] },
+
+  // ── UK / EU staples ──
+  { barcode: "5000159484695", product_name: "Cadbury Dairy Milk", brand: "Cadbury", image_url: "https://images.openfoodfacts.org/images/products/500/015/948/4695/front_en.400.jpg", avg_score: 30, scan_count: 11, rejected_additives: ["Palm oil", "Emulsifier E442"], regions: ["UK","global"] },
+  { barcode: "8001505005707", product_name: "Nutella Biscuits", brand: "Ferrero", image_url: "https://images.openfoodfacts.org/images/products/800/150/500/5707/front_en.400.jpg", avg_score: 28, scan_count: 9, rejected_additives: ["Palm oil"], regions: ["UK","EU"] },
 ];
-const SEED_BEST: CommunityProduct[] = [
-  { barcode: "0769915190205", product_name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", image_url: "https://images.openbeautyfacts.org/images/products/076/991/519/0205/front_en.400.jpg", avg_score: 82, scan_count: 9 },
-  { barcode: "3018712393155", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: "https://images.openbeautyfacts.org/images/products/301/871/239/3155/front_en.400.jpg", avg_score: 78, scan_count: 12 },
-  { barcode: "0030000010402", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: "https://images.openfoodfacts.org/images/products/003/000/001/0402/front_en.400.jpg", avg_score: 88, scan_count: 7 },
-];
-const SEED_RECENT: LiveScanItem[] = [
-  { id: "seed-1", product_name: "CeraVe Moisturizing Cream", brand: "CeraVe", image_url: SEED_BEST[1].image_url, score: 78, city: null, scan_timestamp: new Date(Date.now() - 2 * 60_000).toISOString(), barcode: SEED_BEST[1].barcode },
-  { id: "seed-2", product_name: "Coca-Cola Classic", brand: "Coca-Cola", image_url: SEED_WORST[1].image_url, score: 18, city: null, scan_timestamp: new Date(Date.now() - 7 * 60_000).toISOString(), barcode: SEED_WORST[1].barcode },
-  { id: "seed-3", product_name: "The Ordinary Niacinamide 10%", brand: "The Ordinary", image_url: SEED_BEST[0].image_url, score: 82, city: null, scan_timestamp: new Date(Date.now() - 14 * 60_000).toISOString(), barcode: SEED_BEST[0].barcode },
-  { id: "seed-4", product_name: "Nutella Hazelnut Spread", brand: "Ferrero", image_url: SEED_WORST[0].image_url, score: 22, city: null, scan_timestamp: new Date(Date.now() - 28 * 60_000).toISOString(), barcode: SEED_WORST[0].barcode },
-  { id: "seed-5", product_name: "Quaker Old Fashioned Oats", brand: "Quaker", image_url: SEED_BEST[2].image_url, score: 88, city: null, scan_timestamp: new Date(Date.now() - 41 * 60_000).toISOString(), barcode: SEED_BEST[2].barcode },
-];
+
+function pickDailyPool(filter: (p: PoolItem) => boolean, count: number, seed: number): PoolItem[] {
+  const pool = PRODUCT_POOL.filter(filter);
+  if (pool.length <= count) return pool;
+  // Deterministic shuffle by daily seed
+  const idxs = pool.map((_, i) => i);
+  for (let i = idxs.length - 1; i > 0; i--) {
+    const j = (seed * 9301 + i * 49297) % (i + 1);
+    [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
+  }
+  return idxs.slice(0, count).map(i => pool[i]);
+}
+
+function getRegionalSeeds(city: string) {
+  // Map well-known cities to a region tag. Fallback to global staples.
+  const c = city.toLowerCase();
+  let region = "global";
+  if (/london|manchester|edinburgh|birmingham|bristol|leeds|glasgow|liverpool/.test(c)) region = "UK";
+  else if (/paris|berlin|madrid|rome|amsterdam|milan|munich|barcelona/.test(c)) region = "EU";
+  else if (/toronto|montreal|vancouver|calgary|ottawa/.test(c)) region = "CA";
+  else region = "US";
+
+  const dayKey = Math.floor(Date.now() / 86_400_000);
+  const cityHash = Array.from(city).reduce((a, c) => a + c.charCodeAt(0), 0);
+  const seed = dayKey + cityHash;
+
+  const worst = pickDailyPool(p => p.avg_score < 50 && (p.regions?.includes(region) || p.regions?.includes("global")), 5, seed);
+  const best = pickDailyPool(p => p.avg_score >= 60 && (p.regions?.includes(region) || p.regions?.includes("global")), 5, seed + 1);
+  const recent: LiveScanItem[] = [...worst, ...best].slice(0, 6).map((p, i) => ({
+    id: `seed-${p.barcode}`,
+    product_name: p.product_name,
+    brand: p.brand,
+    image_url: p.image_url,
+    score: p.avg_score,
+    city: null,
+    scan_timestamp: new Date(Date.now() - (i + 1) * (3 + (seed % 11)) * 60_000).toISOString(),
+    barcode: p.barcode,
+  }));
+
+  return { worst, best, recent };
+}
+
+// Legacy compatibility for any place still importing SEED_*
+const SEED_WORST: CommunityProduct[] = PRODUCT_POOL.filter(p => p.avg_score < 50).slice(0, 3);
+const SEED_BEST: CommunityProduct[] = PRODUCT_POOL.filter(p => p.avg_score >= 60).slice(0, 3);
+
 
 export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenProps) {
   const { user } = useAuth();
