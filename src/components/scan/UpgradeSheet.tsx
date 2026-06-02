@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Navigation, Search, Bell, FileText, Check } from "lucide-react";
+import { X, Sparkles, Search, Bell, Heart, Check } from "lucide-react";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { useAuth } from "@/context/AuthContext";
 import { AuthSheet } from "./AuthSheet";
@@ -9,10 +9,10 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
 const FEATURES = [
-  { icon: Navigation, title: "Live shelf intel from shoppers near you" },
-  { icon: Search, title: "Search 3M+ products by name" },
-  { icon: Bell, title: "Personalized swaps and additive alerts" },
-  { icon: FileText, title: "Full additive risk explanations" },
+  { icon: Heart, title: "Personalized verdicts for your goals & diet" },
+  { icon: Search, title: "Search 3M+ foods, cosmetics & skincare" },
+  { icon: Bell, title: "Custom alerts for ingredients you avoid" },
+  { icon: Sparkles, title: "Smart swaps & full additive details" },
 ];
 
 type TierKey = "supporter" | "champion";
