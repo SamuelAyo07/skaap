@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles, Trash2, ImagePlus } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
@@ -8,6 +8,8 @@ import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { compressImage } from "@/lib/imageCompress";
+import HealthProfileSheet from "@/components/scan/HealthProfileSheet";
+
 
 // Cap any single upload at ~8 MB after compression as a final safety net
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -44,11 +46,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [avatarProgress, setAvatarProgress] = useState(0);
-  const [gallery, setGallery] = useState<{ path: string; url: string }[]>([]);
-  const [galleryBusy, setGalleryBusy] = useState(false);
-  const [galleryProgress, setGalleryProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+  const [goalsOpen, setGoalsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
+
 
 
   const localName = getUserName();
@@ -60,42 +60,21 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
   // Local guest storage keys for anonymous photo uploads
   const GUEST_AVATAR_KEY = "skaap_guest_avatar_v1";
-  const GUEST_GALLERY_KEY = "skaap_guest_gallery_v1";
 
-  // Load profile + alerts + gallery (auth) OR local guest photos
+  // Load profile + alerts (auth) OR local guest avatar
   useEffect(() => {
     if (user) {
       supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
         .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
       supabase.from("user_alerts").select("*").eq("user_id", user.id)
         .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
-      loadGallery();
       return;
     }
-    // Guest mode — pull from localStorage
+    // Guest mode — pull avatar from localStorage
     try {
       const a = localStorage.getItem(GUEST_AVATAR_KEY);
       if (a) setAvatarUrl(a);
-      const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-      const arr: string[] = raw ? JSON.parse(raw) : [];
-      setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
     } catch { /* ignore */ }
-  }, [user]);
-
-  const loadGallery = useCallback(async () => {
-    if (!user) return;
-    const { data } = await supabase.storage.from("avatars").list(`${user.id}/gallery`, {
-      limit: 30, sortBy: { column: "created_at", order: "desc" },
-    });
-    if (!data) return;
-    const items = data
-      .filter(f => f.name && !f.name.startsWith("."))
-      .map(f => {
-        const path = `${user.id}/gallery/${f.name}`;
-        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-        return { path, url: pub.publicUrl };
-      });
-    setGallery(items);
   }, [user]);
 
   const fileToDataUrl = (file: Blob): Promise<string> => new Promise((res, rej) => {
@@ -105,90 +84,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
     r.readAsDataURL(file);
   });
 
-  const handleGalleryPick = () => {
-    galleryInputRef.current?.click();
-  };
 
-  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 6);
-    if (!files.length) return;
-    setGalleryBusy(true);
-    setGalleryProgress({ done: 0, total: files.length });
-    let uploaded = 0;
-    let skipped = 0;
-    try {
-      for (const file of files) {
-        try {
-          const compressed = await compressImage(file, { maxDim: 1600, quality: 0.85 });
-          if (compressed.size > MAX_UPLOAD_BYTES) {
-            toast.error(`${file.name} is too large after compression`);
-            skipped++;
-            setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
-            continue;
-          }
-          if (user) {
-            const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
-            const { error } = await supabase.storage.from("avatars").upload(path, compressed, { contentType: "image/jpeg" });
-            if (error) { toast.error(error.message); skipped++; } else uploaded++;
-          } else {
-            // Anonymous — persist as dataURL in localStorage
-            const dataUrl = await fileToDataUrl(compressed);
-            try {
-              const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-              const arr: string[] = raw ? JSON.parse(raw) : [];
-              arr.unshift(dataUrl);
-              localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr.slice(0, 12)));
-              uploaded++;
-            } catch {
-              skipped++;
-            }
-          }
-        } catch (err) {
-          skipped++;
-          toast.error(`Couldn't process ${file.name}`);
-        }
-        setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
-      }
-      if (user) {
-        await loadGallery();
-      } else {
-        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-        const arr: string[] = raw ? JSON.parse(raw) : [];
-        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
-      }
-      if (uploaded > 0) toast.success(`${uploaded} ${uploaded === 1 ? "photo" : "photos"} added`);
-      if (uploaded === 0 && skipped > 0) toast.error("No photos were added");
-    } finally {
-      setGalleryBusy(false);
-      setGalleryProgress({ done: 0, total: 0 });
-      if (galleryInputRef.current) galleryInputRef.current.value = "";
-    }
-  };
-
-  const handleGalleryDelete = async (path: string) => {
-    if (!user) {
-      // Guest delete — remove from localStorage by index
-      const idx = parseInt(path.replace("guest-", ""), 10);
-      try {
-        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-        const arr: string[] = raw ? JSON.parse(raw) : [];
-        if (!Number.isNaN(idx)) arr.splice(idx, 1);
-        localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr));
-        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
-        toast.success("Photo removed");
-      } catch { /* ignore */ }
-      return;
-    }
-    const prev = gallery;
-    setGallery((g) => g.filter((p) => p.path !== path));
-    const { error } = await supabase.storage.from("avatars").remove([path]);
-    if (error) {
-      setGallery(prev);
-      toast.error(`Couldn't remove photo: ${error.message}`);
-      return;
-    }
-    toast.success("Photo removed");
-  };
 
 
   const handleAvatarPick = () => {
@@ -315,50 +211,22 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
         </motion.div>
 
-        {/* Photo gallery — free for everyone */}
-        {user && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-            className="rounded-2xl bg-white p-4" style={{ border: "1px solid #E5E7EB" }}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Photos</h3>
-              <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{gallery.length}/30</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button onClick={handleGalleryPick} disabled={galleryBusy || gallery.length >= 30}
-                className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 disabled:opacity-50"
-                style={{ background: "#F9FAFB", border: "1px dashed #D1D5DB" }}>
-                {galleryBusy ? (
-                  <>
-                    <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
-                    {galleryProgress.total > 0 && (
-                      <span className="text-[10px] font-semibold tabular-nums" style={{ color: "#6B7280" }}>
-                        {galleryProgress.done}/{galleryProgress.total}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <ImagePlus size={18} style={{ color: "#B0202F" }} />
-                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Add</span>
-                  </>
-                )}
-              </button>
+        {/* My Goals — opens HealthProfileSheet */}
+        <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }}
+          onClick={() => setGoalsOpen(true)}
+          className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3 text-left bg-white"
+          style={{ border: "1px solid #E5E7EB" }}
+        >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#B0202F" }}>
+            <Sparkles size={16} color="#fff" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-bold" style={{ color: "#0A1220" }}>My Goals</p>
+            <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Tune scans to your goals, diet & what you avoid</p>
+          </div>
+          <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
+        </motion.button>
 
-              {gallery.map(item => (
-                <div key={item.path} className="relative aspect-square rounded-xl overflow-hidden group" style={{ background: "#F3F4F6" }}>
-                  <img src={item.url} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  <button onClick={() => handleGalleryDelete(item.path)}
-                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center"
-                    aria-label="Delete photo">
-                    <Trash2 size={11} color="#fff" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <input ref={galleryInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp"
-              onChange={handleGalleryUpload} className="hidden" />
-          </motion.div>
-        )}
 
 
         {/* Try Skaap Plus — only if not plus */}
@@ -507,6 +375,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </motion.button>
         )}
       </div>
+
+      <HealthProfileSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} />
     </div>
   );
 }
+
