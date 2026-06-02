@@ -99,10 +99,10 @@ export function UpgradeSheet() {
               </div>
 
               <h2 className="font-extrabold leading-[1.05] mt-3" style={{ fontSize: 34, letterSpacing: -0.5 }}>
-                See what your area<br/>is scanning, live.
+                Every feature,<br/>made for you.
               </h2>
               <p className="mt-2 text-[14px]" style={{ color: "rgba(255,255,255,0.55)" }}>
-                All features. Pay what feels right.
+                Personalized scans across food, skincare and cosmetics.
               </p>
 
               {/* Feature card */}
