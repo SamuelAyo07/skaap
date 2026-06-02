@@ -375,6 +375,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </motion.button>
         )}
       </div>
+
+      <HealthProfileSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} />
     </div>
   );
 }
+
