@@ -315,50 +315,22 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
         </motion.div>
 
-        {/* Photo gallery — free for everyone */}
-        {user && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-            className="rounded-2xl bg-white p-4" style={{ border: "1px solid #E5E7EB" }}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-[15px]" style={{ color: "#0A1220" }}>Photos</h3>
-              <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{gallery.length}/30</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button onClick={handleGalleryPick} disabled={galleryBusy || gallery.length >= 30}
-                className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 disabled:opacity-50"
-                style={{ background: "#F9FAFB", border: "1px dashed #D1D5DB" }}>
-                {galleryBusy ? (
-                  <>
-                    <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-[#B0202F] animate-spin" />
-                    {galleryProgress.total > 0 && (
-                      <span className="text-[10px] font-semibold tabular-nums" style={{ color: "#6B7280" }}>
-                        {galleryProgress.done}/{galleryProgress.total}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <ImagePlus size={18} style={{ color: "#B0202F" }} />
-                    <span className="text-[10px] font-semibold" style={{ color: "#6B7280" }}>Add</span>
-                  </>
-                )}
-              </button>
+        {/* My Goals — opens HealthProfileSheet */}
+        <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }}
+          onClick={() => setGoalsOpen(true)}
+          className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3 text-left bg-white"
+          style={{ border: "1px solid #E5E7EB" }}
+        >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#B0202F" }}>
+            <Sparkles size={16} color="#fff" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-bold" style={{ color: "#0A1220" }}>My Goals</p>
+            <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Tune scans to your goals, diet & what you avoid</p>
+          </div>
+          <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
+        </motion.button>
 
-              {gallery.map(item => (
-                <div key={item.path} className="relative aspect-square rounded-xl overflow-hidden group" style={{ background: "#F3F4F6" }}>
-                  <img src={item.url} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  <button onClick={() => handleGalleryDelete(item.path)}
-                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center"
-                    aria-label="Delete photo">
-                    <Trash2 size={11} color="#fff" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <input ref={galleryInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp"
-              onChange={handleGalleryUpload} className="hidden" />
-          </motion.div>
-        )}
 
 
         {/* Try Skaap Plus — only if not plus */}
