@@ -60,42 +60,21 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
 
   // Local guest storage keys for anonymous photo uploads
   const GUEST_AVATAR_KEY = "skaap_guest_avatar_v1";
-  const GUEST_GALLERY_KEY = "skaap_guest_gallery_v1";
 
-  // Load profile + alerts + gallery (auth) OR local guest photos
+  // Load profile + alerts (auth) OR local guest avatar
   useEffect(() => {
     if (user) {
       supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle()
         .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); });
       supabase.from("user_alerts").select("*").eq("user_id", user.id)
         .then(({ data }) => { if (data) setAlerts(data as AlertItem[]); });
-      loadGallery();
       return;
     }
-    // Guest mode — pull from localStorage
+    // Guest mode — pull avatar from localStorage
     try {
       const a = localStorage.getItem(GUEST_AVATAR_KEY);
       if (a) setAvatarUrl(a);
-      const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-      const arr: string[] = raw ? JSON.parse(raw) : [];
-      setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
     } catch { /* ignore */ }
-  }, [user]);
-
-  const loadGallery = useCallback(async () => {
-    if (!user) return;
-    const { data } = await supabase.storage.from("avatars").list(`${user.id}/gallery`, {
-      limit: 30, sortBy: { column: "created_at", order: "desc" },
-    });
-    if (!data) return;
-    const items = data
-      .filter(f => f.name && !f.name.startsWith("."))
-      .map(f => {
-        const path = `${user.id}/gallery/${f.name}`;
-        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-        return { path, url: pub.publicUrl };
-      });
-    setGallery(items);
   }, [user]);
 
   const fileToDataUrl = (file: Blob): Promise<string> => new Promise((res, rej) => {
@@ -105,90 +84,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
     r.readAsDataURL(file);
   });
 
-  const handleGalleryPick = () => {
-    galleryInputRef.current?.click();
-  };
 
-  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 6);
-    if (!files.length) return;
-    setGalleryBusy(true);
-    setGalleryProgress({ done: 0, total: files.length });
-    let uploaded = 0;
-    let skipped = 0;
-    try {
-      for (const file of files) {
-        try {
-          const compressed = await compressImage(file, { maxDim: 1600, quality: 0.85 });
-          if (compressed.size > MAX_UPLOAD_BYTES) {
-            toast.error(`${file.name} is too large after compression`);
-            skipped++;
-            setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
-            continue;
-          }
-          if (user) {
-            const path = `${user.id}/gallery/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
-            const { error } = await supabase.storage.from("avatars").upload(path, compressed, { contentType: "image/jpeg" });
-            if (error) { toast.error(error.message); skipped++; } else uploaded++;
-          } else {
-            // Anonymous — persist as dataURL in localStorage
-            const dataUrl = await fileToDataUrl(compressed);
-            try {
-              const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-              const arr: string[] = raw ? JSON.parse(raw) : [];
-              arr.unshift(dataUrl);
-              localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr.slice(0, 12)));
-              uploaded++;
-            } catch {
-              skipped++;
-            }
-          }
-        } catch (err) {
-          skipped++;
-          toast.error(`Couldn't process ${file.name}`);
-        }
-        setGalleryProgress((p) => ({ ...p, done: p.done + 1 }));
-      }
-      if (user) {
-        await loadGallery();
-      } else {
-        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-        const arr: string[] = raw ? JSON.parse(raw) : [];
-        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
-      }
-      if (uploaded > 0) toast.success(`${uploaded} ${uploaded === 1 ? "photo" : "photos"} added`);
-      if (uploaded === 0 && skipped > 0) toast.error("No photos were added");
-    } finally {
-      setGalleryBusy(false);
-      setGalleryProgress({ done: 0, total: 0 });
-      if (galleryInputRef.current) galleryInputRef.current.value = "";
-    }
-  };
-
-  const handleGalleryDelete = async (path: string) => {
-    if (!user) {
-      // Guest delete — remove from localStorage by index
-      const idx = parseInt(path.replace("guest-", ""), 10);
-      try {
-        const raw = localStorage.getItem(GUEST_GALLERY_KEY);
-        const arr: string[] = raw ? JSON.parse(raw) : [];
-        if (!Number.isNaN(idx)) arr.splice(idx, 1);
-        localStorage.setItem(GUEST_GALLERY_KEY, JSON.stringify(arr));
-        setGallery(arr.map((url, i) => ({ path: `guest-${i}`, url })));
-        toast.success("Photo removed");
-      } catch { /* ignore */ }
-      return;
-    }
-    const prev = gallery;
-    setGallery((g) => g.filter((p) => p.path !== path));
-    const { error } = await supabase.storage.from("avatars").remove([path]);
-    if (error) {
-      setGallery(prev);
-      toast.error(`Couldn't remove photo: ${error.message}`);
-      return;
-    }
-    toast.success("Photo removed");
-  };
 
 
   const handleAvatarPick = () => {
