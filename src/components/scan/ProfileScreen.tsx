@@ -46,11 +46,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [avatarProgress, setAvatarProgress] = useState(0);
-  const [gallery, setGallery] = useState<{ path: string; url: string }[]>([]);
-  const [galleryBusy, setGalleryBusy] = useState(false);
-  const [galleryProgress, setGalleryProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+  const [goalsOpen, setGoalsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
+
 
 
   const localName = getUserName();
