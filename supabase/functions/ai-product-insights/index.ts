@@ -70,8 +70,10 @@ serve(async (req) => {
     }
 
 
-    // Auth + subscription gating for expensive types
-    if (AUTH_REQUIRED_TYPES.has(type)) {
+    // Require JWT for ALL AI types to prevent unauthenticated credit drain.
+    // Anonymous Supabase sessions are accepted; only a valid JWT is required.
+    let userId: string | undefined;
+    {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -84,12 +86,18 @@ serve(async (req) => {
       );
       const token = authHeader.replace("Bearer ", "");
       const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
-      const userId = claims?.claims?.sub;
+      userId = claims?.claims?.sub;
       if (authErr || !userId) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+    }
+
+    // Plus-only types get an extra subscription check
+    if (PLUS_REQUIRED_TYPES.has(type)) {
+      {
+
       if (PLUS_REQUIRED_TYPES.has(type)) {
         const service = createClient(
           Deno.env.get("SUPABASE_URL")!,
