@@ -86,13 +86,20 @@ serve(async (req) => {
       );
       const token = authHeader.replace("Bearer ", "");
       const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
-      userId = claims?.claims?.sub;
-      if (authErr || !userId) {
+      if (authErr || !claims?.claims) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      userId = claims.claims.sub;
+      // Auth-required types (image recognition, personalized recs) need a real signed-in user
+      if (AUTH_REQUIRED_TYPES.has(type) && !userId) {
+        return new Response(JSON.stringify({ error: "Sign in required" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
+
 
     // Plus-only types get an extra subscription check
     if (PLUS_REQUIRED_TYPES.has(type)) {
