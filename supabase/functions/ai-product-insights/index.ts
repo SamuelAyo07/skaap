@@ -70,8 +70,10 @@ serve(async (req) => {
     }
 
 
-    // Auth + subscription gating for expensive types
-    if (AUTH_REQUIRED_TYPES.has(type)) {
+    // Require JWT for ALL AI types to prevent unauthenticated credit drain.
+    // Anonymous Supabase sessions are accepted; only a valid JWT is required.
+    let userId: string | undefined;
+    {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -84,31 +86,34 @@ serve(async (req) => {
       );
       const token = authHeader.replace("Bearer ", "");
       const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
-      const userId = claims?.claims?.sub;
+      userId = claims?.claims?.sub;
       if (authErr || !userId) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (PLUS_REQUIRED_TYPES.has(type)) {
-        const service = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-          { auth: { persistSession: false } },
-        );
-        const { data: sub } = await service
-          .from("user_subscriptions")
-          .select("plan,status,current_period_end")
-          .eq("user_id", userId)
-          .maybeSingle();
-        const isPlus = sub && sub.plan === "plus" && (sub.status === "active" || sub.status === "trialing");
-        if (!isPlus) {
-          return new Response(JSON.stringify({ error: "SKAAP Plus required" }), {
-            status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
+    }
+
+    // Plus-only types get an extra subscription check
+    if (PLUS_REQUIRED_TYPES.has(type)) {
+      const service = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false } },
+      );
+      const { data: sub } = await service
+        .from("user_subscriptions")
+        .select("plan,status,current_period_end")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const isPlus = sub && sub.plan === "plus" && (sub.status === "active" || sub.status === "trialing");
+      if (!isPlus) {
+        return new Response(JSON.stringify({ error: "SKAAP Plus required" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
     }
+
 
     let systemPrompt = "";
     let userPrompt = "";
