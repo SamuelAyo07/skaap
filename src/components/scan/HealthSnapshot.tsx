@@ -59,7 +59,7 @@ export function HealthSnapshot({ stats }: HealthSnapshotProps) {
     >
       <div className="flex items-center gap-2 mb-3">
         <Target size={16} style={{ color: "#C41E3A" }} />
-        <h3 className="text-[14px] font-bold" style={{ color: "#1B2A4A" }}>Your Health Snapshot</h3>
+        <h3 className="text-[14px] font-bold" style={{ color: "#1B2A4A" }}>Your Health</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
