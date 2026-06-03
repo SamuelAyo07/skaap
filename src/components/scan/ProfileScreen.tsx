@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
