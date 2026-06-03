@@ -81,7 +81,7 @@ export default function AIDecisionCard(props: Props) {
 
   const goalMeta = GOAL_OPTIONS.find(g => g.id === profile.goal) || GOAL_OPTIONS[7];
 
-  // Locked teaser for free users who've used their peek
+  // Locked teaser for free users who've used their peek — compact, sits after first scan
   if (!canSeeFull) {
     return (
       <motion.button
@@ -91,27 +91,25 @@ export default function AIDecisionCard(props: Props) {
         className="mx-auto block w-full text-left relative overflow-hidden"
         style={{
           maxWidth: 350, marginTop: 14,
-          borderRadius: 20, padding: "16px 18px",
+          borderRadius: 18, padding: "12px 14px",
           background: "linear-gradient(135deg, #0A1220, #1F2937)",
-          boxShadow: "0 12px 32px rgba(10,18,32,0.32)",
+          boxShadow: "0 8px 22px rgba(10,18,32,0.28)",
         }}>
-        <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full" style={{ background: "radial-gradient(circle, rgba(196,30,58,0.4), transparent 70%)" }} />
-        <div className="flex items-center gap-2 relative">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
+        <div className="absolute -right-3 -top-3 w-16 h-16 rounded-full" style={{ background: "radial-gradient(circle, rgba(196,30,58,0.4), transparent 70%)" }} />
+        <div className="flex items-center gap-2.5 relative">
+          <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
             <Sparkles size={13} className="text-white" />
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">For your goal</p>
-          <Lock size={11} className="text-white/50 ml-auto" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[9.5px] font-bold uppercase tracking-wider text-white/60 leading-tight">For your goal</p>
+            <p className="text-white font-bold text-[13px] leading-tight mt-0.5">
+              Should YOU buy this?
+            </p>
+          </div>
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-bold text-white flex-shrink-0" style={{ background: "#C41E3A" }}>
+            <Lock size={10} /> Plus
+          </span>
         </div>
-        <p className="text-white font-bold text-[15px] mt-2 leading-snug">
-          Should YOU buy this? Get a personal verdict.
-        </p>
-        <p className="text-white/60 text-[12px] mt-1">
-          SKAAP reads your goal (weight loss, gym, kids…) and tells you yes, sometimes, or skip — with a swap.
-        </p>
-        <span className="inline-block mt-3 px-3 py-1.5 rounded-full text-[11px] font-bold text-white" style={{ background: "#C41E3A" }}>
-          Unlock with Plus →
-        </span>
       </motion.button>
     );
   }
