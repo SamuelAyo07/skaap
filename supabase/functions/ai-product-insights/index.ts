@@ -96,27 +96,24 @@ serve(async (req) => {
 
     // Plus-only types get an extra subscription check
     if (PLUS_REQUIRED_TYPES.has(type)) {
-      {
-
-      if (PLUS_REQUIRED_TYPES.has(type)) {
-        const service = createClient(
-          Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-          { auth: { persistSession: false } },
-        );
-        const { data: sub } = await service
-          .from("user_subscriptions")
-          .select("plan,status,current_period_end")
-          .eq("user_id", userId)
-          .maybeSingle();
-        const isPlus = sub && sub.plan === "plus" && (sub.status === "active" || sub.status === "trialing");
-        if (!isPlus) {
-          return new Response(JSON.stringify({ error: "SKAAP Plus required" }), {
-            status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
+      const service = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false } },
+      );
+      const { data: sub } = await service
+        .from("user_subscriptions")
+        .select("plan,status,current_period_end")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const isPlus = sub && sub.plan === "plus" && (sub.status === "active" || sub.status === "trialing");
+      if (!isPlus) {
+        return new Response(JSON.stringify({ error: "SKAAP Plus required" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
     }
+
 
     let systemPrompt = "";
     let userPrompt = "";
