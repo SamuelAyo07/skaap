@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
 import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
@@ -212,13 +212,13 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         </motion.div>
 
         {/* My Goals — opens HealthProfileSheet */}
-        <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }}
+        <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
           onClick={() => setGoalsOpen(true)}
           className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3 text-left bg-white"
           style={{ border: "1px solid #E5E7EB" }}
         >
           <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#B0202F" }}>
-            <Sparkles size={16} color="#fff" />
+            <Crown size={16} color="#FFD700" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[14px] font-bold" style={{ color: "#0A1220" }}>My Goals</p>
@@ -227,25 +227,6 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
         </motion.button>
 
-
-
-        {/* Try Skaap Plus — only if not plus */}
-        {!isPlus && (
-          <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            onClick={() => openUpgrade()}
-            className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3 text-left bg-white"
-            style={{ border: "1px solid #E5E7EB" }}
-          >
-            <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "#B0202F" }}>
-              <Sparkles size={16} color="#fff" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-bold" style={{ color: "#0A1220" }}>Try Skaap Plus</p>
-              <p className="text-[11px]" style={{ color: "#9CA3AF" }}>Live shelf intel + search</p>
-            </div>
-            <ChevronRight size={16} style={{ color: "#D1D5DB" }} />
-          </motion.button>
-        )}
 
         {/* Plus preview — Personalization + Alerts in one card */}
         {!isPlus ? (
@@ -293,10 +274,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
               </div>
             </div>
 
-            {/* Single dark-navy unlock CTA (matches Community) */}
+            {/* Brand-red unlock CTA */}
             <button onClick={() => openUpgrade("Personalization")}
               className="w-full flex items-center justify-center gap-2 py-3.5"
-              style={{ background: "#0A1220" }}>
+              style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
               <Crown size={14} color="#FFD700" />
               <span className="text-[14px] font-bold text-white">Unlock with Plus</span>
             </button>

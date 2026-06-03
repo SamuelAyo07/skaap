@@ -128,15 +128,15 @@ function LockedPreview({ onUpgrade }: { onUpgrade: () => void }) {
               onClick={onUpgrade}
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[14px] text-white"
               style={{
-                background: "linear-gradient(135deg, #0A1220, #1A2540)",
-                boxShadow: "0 8px 24px -8px rgba(10,18,32,0.55)",
+                background: "linear-gradient(135deg, #C41E3A, #9E1830)",
+                boxShadow: "0 8px 24px -8px rgba(196,30,58,0.55)",
               }}
             >
-              <Sparkles size={14} /> Unlock SKAAP AI, $2.99/mo
+              <Sparkles size={14} /> Unlock SKAAP AI, $4.99/mo
             </motion.button>
             <div className="flex items-center justify-center gap-1.5 mt-2.5 text-[10.5px]" style={{ color: "#6B7280" }}>
               <ShieldCheck size={11} style={{ color: "#10B981" }} />
-              <span>or $20/yr one-time (save 44%) · cancel anytime</span>
+              <span>or $39.99/yr (save 33%) · cancel anytime</span>
             </div>
           </div>
         </div>
