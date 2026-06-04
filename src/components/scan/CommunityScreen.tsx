@@ -815,10 +815,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </p>
         </div>
 
-        {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
-        <div className="relative" style={showBlur ? { minHeight: 560 } : undefined}>
-          <div className={showBlur ? "pointer-events-none select-none" : ""}
-            style={showBlur ? { filter: "blur(7px)", WebkitFilter: "blur(7px)" } : undefined}>
+        {/* ─── DEEP SECTIONS (always visible — real data, no blur) ─── */}
+        <div className="relative">
+          <div>
 
             {/* LOWEST SCORES THIS WEEK */}
             <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
@@ -978,46 +977,19 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
           </div>
 
-          {/* Blur overlay for repeat free visitors — pulled high, enlarged for all screens */}
-          {showBlur && (
-            <div className="absolute inset-0 flex flex-col items-center px-6 text-center"
-              style={{
-                background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.9) 22%, rgba(255,255,255,0.97) 100%)",
-                backdropFilter: "blur(2px)",
-                paddingTop: 8,
-              }}>
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
-                style={{ background: "#0A1220", boxShadow: "0 8px 22px rgba(10,18,32,0.32)" }}>
-                <Lock size={22} color="#FFD700" />
-              </div>
-              <p className="font-extrabold tracking-tight" style={{ fontSize: 20, color: "#0A1220", lineHeight: 1.15 }}>
-                You've used your free peek
-              </p>
-              <p className="mt-2 max-w-[300px]" style={{ fontSize: 13.5, color: "#4B5563", lineHeight: 1.45 }}>
-                See every put-back, every additive, every shelf — live — with SKAAP Plus.
-              </p>
-              <button onClick={() => openUpgrade("Community Intelligence")}
-                className="mt-5 inline-flex items-center justify-center gap-2 font-bold text-white"
-                style={{
-                  fontSize: 15,
-                  background: "#0A1220",
-                  height: 52,
-                  paddingLeft: 26,
-                  paddingRight: 26,
-                  borderRadius: 999,
-                  boxShadow: "0 10px 26px rgba(10,18,32,0.32)",
-                  minWidth: 220,
-                }}>
-                <Crown size={16} color="#FFD700" /> Unlock with Plus
-              </button>
-            </div>
-          )}
+          {/* Blur overlay removed per request — upgrade card below handles upsell */}
+
         </div>
 
         {/* ─── DARK SKAAP PLUS UPGRADE CARD (always visible, mirrors mockup) ─── */}
         {!isPlus && (
-          <button onClick={() => openUpgrade("Community Intelligence")}
-            className="block w-full text-left mx-5 mt-4 p-5 rounded-2xl relative overflow-hidden"
+          <motion.button
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => openUpgrade("Community Intelligence")}
+            className="block w-full text-left mx-5 -mt-2 p-5 rounded-2xl relative overflow-hidden"
             style={{
               width: "calc(100% - 40px)",
               background: "#0A0F1A",
@@ -1043,7 +1015,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 <span className="text-white" style={{ fontSize: 16 }}>→</span>
               </span>
             </div>
-          </button>
+          </motion.button>
         )}
 
         {/* Plus-only: comparison + share */}
