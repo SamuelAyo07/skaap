@@ -984,8 +984,13 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
         {/* ─── DARK SKAAP PLUS UPGRADE CARD (always visible, mirrors mockup) ─── */}
         {!isPlus && (
-          <button onClick={() => openUpgrade("Community Intelligence")}
-            className="block w-full text-left mx-5 mt-4 p-5 rounded-2xl relative overflow-hidden"
+          <motion.button
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => openUpgrade("Community Intelligence")}
+            className="block w-full text-left mx-5 -mt-2 p-5 rounded-2xl relative overflow-hidden"
             style={{
               width: "calc(100% - 40px)",
               background: "#0A0F1A",
@@ -1011,7 +1016,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 <span className="text-white" style={{ fontSize: 16 }}>→</span>
               </span>
             </div>
-          </button>
+          </motion.button>
         )}
 
         {/* Plus-only: comparison + share */}
