@@ -111,6 +111,7 @@ interface StandaloneHomeProps {
 export function StandaloneHome({
   onScan, onSearch, onHistory, onSaved, onRecs, onCommunity, onScanProduct, onImageScan,
 }: StandaloneHomeProps) {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<UserStats>(refreshStreak());
   const [lastScan] = useState<LastScan | null>(getLastScan);
   const [recentHistory] = useState<HistoryItem[]>(() => getHistory().slice(0, 4));
