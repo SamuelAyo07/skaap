@@ -815,9 +815,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </p>
         </div>
 
-        {/* ─── DEEP SECTIONS (always visible — real data, no blur) ─── */}
+        {/* ─── DEEP SECTIONS (gated after first peek) ─── */}
         <div className="relative">
-          <div>
+          <div style={showBlur ? { filter: "blur(10px)", pointerEvents: "none", userSelect: "none" } : undefined}>
 
             {/* LOWEST SCORES THIS WEEK */}
             <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
