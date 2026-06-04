@@ -70,13 +70,14 @@ serve(async (req) => {
     }
 
 
-    // Require JWT for ALL AI types to prevent unauthenticated credit drain.
-    // Anonymous Supabase sessions are accepted; only a valid JWT is required.
+    // Only AUTH_REQUIRED_TYPES need a real signed-in user.
+    // All other types (decision/summary/recommendations/dietary) are open to
+    // guests — IP rate-limiting above defends AI credits.
     let userId: string | undefined;
-    {
+    if (AUTH_REQUIRED_TYPES.has(type)) {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        return new Response(JSON.stringify({ error: "Sign in required" }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -86,19 +87,14 @@ serve(async (req) => {
       );
       const token = authHeader.replace("Bearer ", "");
       const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
-      if (authErr || !claims?.claims) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      userId = claims.claims.sub;
-      // Auth-required types (image recognition, personalized recs) need a real signed-in user
-      if (AUTH_REQUIRED_TYPES.has(type) && !userId) {
+      if (authErr || !claims?.claims?.sub) {
         return new Response(JSON.stringify({ error: "Sign in required" }), {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      userId = claims.claims.sub;
     }
+
 
 
     // Plus-only types get an extra subscription check
