@@ -815,10 +815,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </p>
         </div>
 
-        {/* ─── DEEP SECTIONS (blurred for repeat free visitors) ─── */}
-        <div className="relative" style={showBlur ? { minHeight: 560 } : undefined}>
-          <div className={showBlur ? "pointer-events-none select-none" : ""}
-            style={showBlur ? { filter: "blur(7px)", WebkitFilter: "blur(7px)" } : undefined}>
+        {/* ─── DEEP SECTIONS (always visible — real data, no blur) ─── */}
+        <div className="relative">
+          <div>
 
             {/* LOWEST SCORES THIS WEEK */}
             <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
