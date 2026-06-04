@@ -984,7 +984,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
               style={{
                 background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.9) 22%, rgba(255,255,255,0.97) 100%)",
                 backdropFilter: "blur(2px)",
-                paddingTop: 28,
+                paddingTop: 8,
               }}>
               <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
                 style={{ background: "#0A1220", boxShadow: "0 8px 22px rgba(10,18,32,0.32)" }}>
