@@ -1010,9 +1010,6 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
                 }}>
                 <Crown size={16} color="#FFD700" /> Unlock with Plus
               </button>
-              <p className="mt-3 text-[11px] font-medium" style={{ color: "#9CA3AF" }}>
-                Cancel anytime · No ads · No tracking
-              </p>
             </div>
           )}
         </div>
