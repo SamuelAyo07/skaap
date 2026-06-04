@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ScanLine, TrendingUp,
+  ScanLine, TrendingUp, ArrowLeft,
   ChevronRight, Barcode, Heart, Sparkles, Lightbulb,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
@@ -110,6 +111,7 @@ interface StandaloneHomeProps {
 export function StandaloneHome({
   onScan, onSearch, onHistory, onSaved, onRecs, onCommunity, onScanProduct, onImageScan,
 }: StandaloneHomeProps) {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<UserStats>(refreshStreak());
   const [lastScan] = useState<LastScan | null>(getLastScan);
   const [recentHistory] = useState<HistoryItem[]>(() => getHistory().slice(0, 4));
@@ -138,7 +140,12 @@ export function StandaloneHome({
       {/* Header */}
       <div className="relative z-10 px-5 pt-[env(safe-area-inset-top,12px)]">
         <div className="flex items-center justify-between h-14">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
+            <button onClick={() => navigate("/")} aria-label="Back to website"
+              className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-transform"
+              style={{ background: "#F3F4F6" }}>
+              <ArrowLeft size={18} style={{ color: "#0A1220" }} />
+            </button>
             <img src={skaapIcon} alt="SKAAP" className="w-8 h-8 rounded-xl" width="32" height="32" />
             <span className="font-extrabold text-[22px] tracking-tight" style={{ color: "#0A1220", letterSpacing: "-0.5px" }}>SKAAP</span>
           </div>

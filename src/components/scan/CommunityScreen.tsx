@@ -815,9 +815,9 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
           </p>
         </div>
 
-        {/* ─── DEEP SECTIONS (always visible — real data, no blur) ─── */}
+        {/* ─── DEEP SECTIONS (gated after first peek) ─── */}
         <div className="relative">
-          <div>
+          <div style={showBlur ? { filter: "blur(10px)", pointerEvents: "none", userSelect: "none" } : undefined}>
 
             {/* LOWEST SCORES THIS WEEK */}
             <div className="mx-5 mt-5 p-4 rounded-2xl" style={{ background: "linear-gradient(180deg,#FFFFFF 0%,#FAFBFC 100%)", border: "1px solid #ECEEF2", boxShadow: "0 8px 22px rgba(10,18,32,0.06)" }}>
@@ -977,7 +977,34 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
           </div>
 
-          {/* Blur overlay removed per request — upgrade card below handles upsell */}
+          {/* Paywall overlay after first peek */}
+          {showBlur && (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="absolute inset-0 flex items-center justify-center px-5"
+              style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.92) 60%)" }}
+            >
+              <div className="w-full max-w-[320px] text-center p-5 rounded-2xl"
+                style={{ background: "#FFFFFF", border: "1px solid #F3F4F6", boxShadow: "0 12px 32px rgba(10,15,30,0.12)" }}>
+                <div className="w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-3"
+                  style={{ background: "#FEF2F2" }}>
+                  <Lock size={18} style={{ color: "#C41E3A" }} />
+                </div>
+                <p className="font-extrabold" style={{ fontSize: 17, color: "#0A1220" }}>
+                  You've used your free peek
+                </p>
+                <p className="mt-1.5" style={{ fontSize: 12.5, color: "#6B7280" }}>
+                  Unlock live shelf intelligence in {cityName} — real scores, real additives, updated every minute.
+                </p>
+                <button onClick={() => openUpgrade("Community Intelligence")}
+                  className="mt-4 w-full py-3 rounded-xl font-extrabold text-white"
+                  style={{ fontSize: 14, background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
+                  Unlock for $4.99/mo
+                </button>
+              </div>
+            </motion.div>
+          )}
+
 
         </div>
 

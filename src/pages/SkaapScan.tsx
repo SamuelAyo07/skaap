@@ -1284,6 +1284,11 @@ const SkaapScan = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14 relative z-10">
           <div className="flex items-center gap-2">
+            <button onClick={() => navigate("/")} aria-label="Back to website"
+              className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-transform"
+              style={{ background: "#F3F4F6" }}>
+              <ArrowLeft size={18} style={{ color: "#1B2A4A" }} />
+            </button>
             <img src={skaapIcon} alt="Skaap" className="w-7 h-7 rounded-lg" width="28" height="28" />
             <span className="font-extrabold text-xl tracking-tight" style={{ letterSpacing: "-0.5px", color: "#1B2A4A" }}>SKAAP</span>
           </div>
