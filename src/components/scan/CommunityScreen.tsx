@@ -978,40 +978,8 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
           </div>
 
-          {/* Blur overlay for repeat free visitors — pulled high, enlarged for all screens */}
-          {showBlur && (
-            <div className="absolute inset-0 flex flex-col items-center px-6 text-center"
-              style={{
-                background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.9) 22%, rgba(255,255,255,0.97) 100%)",
-                backdropFilter: "blur(2px)",
-                paddingTop: 8,
-              }}>
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3"
-                style={{ background: "#0A1220", boxShadow: "0 8px 22px rgba(10,18,32,0.32)" }}>
-                <Lock size={22} color="#FFD700" />
-              </div>
-              <p className="font-extrabold tracking-tight" style={{ fontSize: 20, color: "#0A1220", lineHeight: 1.15 }}>
-                You've used your free peek
-              </p>
-              <p className="mt-2 max-w-[300px]" style={{ fontSize: 13.5, color: "#4B5563", lineHeight: 1.45 }}>
-                See every put-back, every additive, every shelf — live — with SKAAP Plus.
-              </p>
-              <button onClick={() => openUpgrade("Community Intelligence")}
-                className="mt-5 inline-flex items-center justify-center gap-2 font-bold text-white"
-                style={{
-                  fontSize: 15,
-                  background: "#0A1220",
-                  height: 52,
-                  paddingLeft: 26,
-                  paddingRight: 26,
-                  borderRadius: 999,
-                  boxShadow: "0 10px 26px rgba(10,18,32,0.32)",
-                  minWidth: 220,
-                }}>
-                <Crown size={16} color="#FFD700" /> Unlock with Plus
-              </button>
-            </div>
-          )}
+          {/* Blur overlay removed per request — upgrade card below handles upsell */}
+
         </div>
 
         {/* ─── DARK SKAAP PLUS UPGRADE CARD (always visible, mirrors mockup) ─── */}
