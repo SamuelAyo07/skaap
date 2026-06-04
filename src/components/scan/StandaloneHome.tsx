@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ScanLine, TrendingUp,
+  ScanLine, TrendingUp, ArrowLeft,
   ChevronRight, Barcode, Heart, Sparkles, Lightbulb,
 } from "lucide-react";
 import skaapIcon from "@/assets/skaap-icon.png";
