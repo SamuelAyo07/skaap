@@ -85,6 +85,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
           ...s, plan: "plus", isPlus: true, status: subData.status!,
           trialActive, trialDaysRemaining: trialDays, loading: false,
         }));
+        celebratePlus(user.id);
       } else {
         setState(s => ({ ...s, plan: "free", isPlus: false, loading: false }));
       }
