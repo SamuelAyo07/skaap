@@ -134,6 +134,75 @@ export type Database = {
         }
         Relationships: []
       }
+      cosmetics_catalog: {
+        Row: {
+          allergen_highlights: string[] | null
+          allergens: string[] | null
+          barcode: string
+          brand: string | null
+          categories: string[] | null
+          cosmetic_form: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          inci_list: string[] | null
+          ingredients_text: string | null
+          last_synced_at: string
+          packaging: string | null
+          periods_after_opening: string | null
+          product_name: string
+          size: string | null
+          skin_type: string[] | null
+          source: string
+          spf: number | null
+          updated_at: string
+        }
+        Insert: {
+          allergen_highlights?: string[] | null
+          allergens?: string[] | null
+          barcode: string
+          brand?: string | null
+          categories?: string[] | null
+          cosmetic_form?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          inci_list?: string[] | null
+          ingredients_text?: string | null
+          last_synced_at?: string
+          packaging?: string | null
+          periods_after_opening?: string | null
+          product_name: string
+          size?: string | null
+          skin_type?: string[] | null
+          source?: string
+          spf?: number | null
+          updated_at?: string
+        }
+        Update: {
+          allergen_highlights?: string[] | null
+          allergens?: string[] | null
+          barcode?: string
+          brand?: string | null
+          categories?: string[] | null
+          cosmetic_form?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          inci_list?: string[] | null
+          ingredients_text?: string | null
+          last_synced_at?: string
+          packaging?: string | null
+          periods_after_opening?: string | null
+          product_name?: string
+          size?: string | null
+          skin_type?: string[] | null
+          source?: string
+          spf?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -719,6 +788,8 @@ export type Database = {
           read_ct: number
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never

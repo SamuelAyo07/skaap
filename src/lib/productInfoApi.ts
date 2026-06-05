@@ -37,11 +37,23 @@ export interface ProductFullInfo {
   categoriesTags?: string[];
   servingSize?: string;
   aiGeneratedImage?: boolean;
+  // ===== Cosmetics-specific enrichment (Open Beauty Facts) =====
+  isCosmetic?: boolean;
+  inciList?: string[];          // parsed INCI ingredients
+  cosmeticForm?: string;        // cream / lotion / balm / serum / oil / spray / gel / stick
+  skinType?: string[];          // dry / oily / sensitive / combination / all
+  spf?: number;                 // SPF value if sun protection
+  allergenHighlights?: string[];// EU 26 allergens detected (fragrance allergens etc.)
+  periodsAfterOpening?: string; // e.g. "12 M"
+  packaging?: string;
 }
+
+
+
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
 
-async function tryFetch(url: string): Promise<ProductFullInfo | null> {
+async function tryFetch(url: string, isBeauty = false): Promise<ProductFullInfo | null> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
@@ -56,7 +68,10 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
     const n = p.nutriments || {};
     const nl = p.nutrient_levels || {};
 
-    return {
+    const ingredientsText: string | undefined = p.ingredients_text_en || p.ingredients_text || undefined;
+    const categoriesTags: string[] | undefined = p.categories_tags?.length ? p.categories_tags : undefined;
+
+    const base: ProductFullInfo = {
       productName: p.product_name || p.product_name_en || "Unknown Product",
       brand: p.brands || undefined,
       imageUrl: p.image_front_url || p.image_url || undefined,
@@ -80,19 +95,76 @@ async function tryFetch(url: string): Promise<ProductFullInfo | null> {
         sugars: nl.sugars,
         salt: nl.salt,
       },
-      ingredientsText: p.ingredients_text_en || p.ingredients_text || undefined,
+      ingredientsText,
       allergensTags: p.allergens_tags?.length ? p.allergens_tags : undefined,
       additivesTags: p.additives_tags?.length ? p.additives_tags : undefined,
       labelsTags: p.labels_tags?.length ? p.labels_tags : undefined,
       ecoscoreGrade: p.ecoscore_grade || undefined,
       ecoscoreScore: p.ecoscore_score != null ? Number(p.ecoscore_score) : undefined,
-      categoriesTags: p.categories_tags?.length ? p.categories_tags : undefined,
+      categoriesTags,
       servingSize: p.serving_size || undefined,
     };
+
+    // ===== Cosmetics enrichment =====
+    if (isBeauty) {
+      base.isCosmetic = true;
+      base.periodsAfterOpening = p.periods_after_opening || undefined;
+      base.packaging = p.packaging || undefined;
+
+      // Parse INCI list from ingredients_text (comma-separated, ALL CAPS-ish)
+      if (ingredientsText) {
+        base.inciList = ingredientsText
+          .split(/[,•·]/)
+          .map((s: string) => s.replace(/[\[\]().*]/g, "").trim())
+          .filter((s: string) => s.length > 1 && s.length < 80)
+          .slice(0, 60);
+      }
+
+      // Cosmetic form from categories or product name
+      const haystack = [...(categoriesTags || []), base.productName || "", p.generic_name || ""]
+        .join(" ").toLowerCase();
+      const forms = [
+        ["cream", "cream"], ["lotion", "lotion"], ["balm", "balm"], ["serum", "serum"],
+        ["oil", "oil"], ["spray", "spray"], ["gel", "gel"], ["stick", "stick"],
+        ["mask", "mask"], ["foam", "foam"], ["mist", "mist"], ["powder", "powder"],
+        ["shampoo", "shampoo"], ["conditioner", "conditioner"], ["soap", "soap"],
+      ];
+      for (const [needle, label] of forms) {
+        if (haystack.includes(needle)) { base.cosmeticForm = label; break; }
+      }
+
+      // SPF detection
+      const spfMatch = haystack.match(/spf\s*(\d{1,3})/i);
+      if (spfMatch) base.spf = Math.min(100, parseInt(spfMatch[1], 10));
+
+      // Skin type
+      const skinTypes: string[] = [];
+      for (const t of ["sensitive", "dry", "oily", "combination", "normal", "mature", "acne"]) {
+        if (haystack.includes(t)) skinTypes.push(t);
+      }
+      if (haystack.includes("all skin") || haystack.includes("tous types")) skinTypes.push("all");
+      if (skinTypes.length) base.skinType = Array.from(new Set(skinTypes));
+
+      // EU 26 fragrance allergens highlight (subset of common ones)
+      const eu26 = [
+        "limonene", "linalool", "citronellol", "geraniol", "citral", "eugenol",
+        "coumarin", "farnesol", "benzyl alcohol", "benzyl benzoate", "benzyl salicylate",
+        "cinnamal", "cinnamyl alcohol", "hexyl cinnamal", "isoeugenol", "alpha-isomethyl ionone",
+        "amyl cinnamal", "amylcinnamyl alcohol", "anise alcohol", "benzyl cinnamate",
+        "butylphenyl methylpropional", "evernia furfuracea", "evernia prunastri",
+        "hydroxycitronellal", "hydroxyisohexyl 3-cyclohexene carboxaldehyde", "methyl 2-octynoate",
+      ];
+      const lowerIng = (ingredientsText || "").toLowerCase();
+      const hits = eu26.filter((a) => lowerIng.includes(a));
+      if (hits.length) base.allergenHighlights = hits;
+    }
+
+    return base;
   } catch {
     return null;
   }
 }
+
 
 function countEmptyNutrients(info: ProductFullInfo): number {
   const n = info.nutriments;
@@ -173,11 +245,13 @@ export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo
 
   // Parallel lookup: Open Food Facts + Open Beauty Facts simultaneously
   const [offResult, obbResult] = await Promise.all([
-    tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`),
-    tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`),
+    tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`, false),
+    tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`, true),
   ]);
 
-  let info = offResult || obbResult;
+  // Prefer beauty result if it has cosmetic enrichment, else food
+  let info = obbResult?.isCosmetic ? obbResult : (offResult || obbResult);
+
 
   // If product found but has >3 empty nutrient fields, try USDA fallback
   if (info && countEmptyNutrients(info) > 3) {

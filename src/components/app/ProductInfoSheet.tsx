@@ -554,18 +554,60 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                     )}
                   </AccordionSection>
 
-                  {/* Ingredients */}
+                  {/* Cosmetics enrichment (only for beauty products) */}
+                  {info.isCosmetic && (
+                    <AccordionSection
+                      icon={<List size={18} />}
+                      label="Cosmetic profile"
+                      hint={
+                        info.spf ? (
+                          <span style={{ fontSize: 11, color: "#C41E3A", fontWeight: 700 }}>SPF {info.spf}</span>
+                        ) : null
+                      }
+                    >
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, fontSize: 12 }}>
+                        {info.cosmeticForm && (
+                          <div><span style={{ color: "#9CA3AF" }}>Form </span><span style={{ color: "#111", fontWeight: 600, textTransform: "capitalize" }}>{info.cosmeticForm}</span></div>
+                        )}
+                        {info.quantity && (
+                          <div><span style={{ color: "#9CA3AF" }}>Size </span><span style={{ color: "#111", fontWeight: 600 }}>{info.quantity}</span></div>
+                        )}
+                        {info.spf != null && (
+                          <div><span style={{ color: "#9CA3AF" }}>SPF </span><span style={{ color: "#111", fontWeight: 600 }}>{info.spf}</span></div>
+                        )}
+                        {info.periodsAfterOpening && (
+                          <div><span style={{ color: "#9CA3AF" }}>Use within </span><span style={{ color: "#111", fontWeight: 600 }}>{info.periodsAfterOpening}</span></div>
+                        )}
+                        {info.skinType && info.skinType.length > 0 && (
+                          <div style={{ gridColumn: "1 / -1" }}>
+                            <span style={{ color: "#9CA3AF" }}>Skin type </span>
+                            <span style={{ color: "#111", fontWeight: 600, textTransform: "capitalize" }}>{info.skinType.join(", ")}</span>
+                          </div>
+                        )}
+                      </div>
+                      {info.allergenHighlights && info.allergenHighlights.length > 0 && (
+                        <div style={{ marginTop: 12, padding: 10, borderRadius: 10, background: "#FFF4F0", border: "1px solid #FFD8C8" }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: "#C2410C", marginBottom: 6, letterSpacing: 0.3 }}>EU FRAGRANCE ALLERGENS</div>
+                          <div style={{ fontSize: 12, color: "#7C2D12", textTransform: "capitalize" }}>{info.allergenHighlights.join(" · ")}</div>
+                        </div>
+                      )}
+                    </AccordionSection>
+                  )}
+
+                  {/* Ingredients / INCI */}
                   <AccordionSection
                     icon={<List size={18} />}
-                    label="Ingredients"
+                    label={info.isCosmetic ? "INCI ingredients" : "Ingredients"}
                     hint={
                       <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 400 }}>
-                        {ingredientCount > 0 ? `${ingredientCount} ingredients` : ""}
+                        {info.isCosmetic && info.inciList?.length
+                          ? `${info.inciList.length} INCI`
+                          : ingredientCount > 0 ? `${ingredientCount} ingredients` : ""}
                       </span>
                     }
                   >
                     {info.ingredientsText ? (
-                      <div style={{ maxHeight: 160, overflowY: "auto" }}>
+                      <div style={{ maxHeight: 180, overflowY: "auto" }}>
                         <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.7 }}>
                           {info.allergensTags && info.allergensTags.length > 0
                             ? highlightAllergens(info.ingredientsText, info.allergensTags)
@@ -576,6 +618,7 @@ const ProductInfoSheet = ({ product, open, onClose }: ProductInfoSheetProps) => 
                       <p style={{ fontSize: 13, color: "#9CA3AF" }}>No ingredients data available.</p>
                     )}
                   </AccordionSection>
+
 
                   {/* Bottom spacer for fixed action row */}
                   <div style={{ height: 80 }} />
