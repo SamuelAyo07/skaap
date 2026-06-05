@@ -95,10 +95,6 @@
     font-size: 17px;
     line-height: 1.41;
     letter-spacing: -0.01em;
-    /* Prevent rubber-band whitespace on iOS standalone */
-    position: fixed;
-    inset: 0;
-    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
