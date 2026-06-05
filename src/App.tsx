@@ -44,6 +44,7 @@ const AppRoutes = () => (
       <Route path="/app" element={<AppPage />} />
       <Route path="/scan" element={<SkaapScan />} />
       <Route path="/unsubscribe" element={<Unsubscribe />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>
