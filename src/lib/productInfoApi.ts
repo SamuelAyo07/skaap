@@ -37,7 +37,16 @@ export interface ProductFullInfo {
   categoriesTags?: string[];
   servingSize?: string;
   aiGeneratedImage?: boolean;
-}
+  // ===== Cosmetics-specific enrichment (Open Beauty Facts) =====
+  isCosmetic?: boolean;
+  inciList?: string[];          // parsed INCI ingredients
+  cosmeticForm?: string;        // cream / lotion / balm / serum / oil / spray / gel / stick
+  skinType?: string[];          // dry / oily / sensitive / combination / all
+  spf?: number;                 // SPF value if sun protection
+  allergenHighlights?: string[];// EU 26 allergens detected (fragrance allergens etc.)
+  periodsAfterOpening?: string; // e.g. "12 M"
+  packaging?: string;
+
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
 
