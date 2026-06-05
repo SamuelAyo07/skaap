@@ -14,6 +14,7 @@ import AppPage from "./pages/AppPage";
 import SkaapScan from "./pages/SkaapScan";
 import NotFound from "./pages/NotFound";
 import Unsubscribe from "./pages/Unsubscribe";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const AppRoutes = () => (
       <Route path="/app" element={<AppPage />} />
       <Route path="/scan" element={<SkaapScan />} />
       <Route path="/unsubscribe" element={<Unsubscribe />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>
