@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { initNativeShell } from "./lib/nativeShell";
 
 declare const __SKAAP_BUILD_ID__: string;
 
@@ -35,5 +36,7 @@ if ("serviceWorker" in navigator) {
     });
   }
 }
+
+initNativeShell();
 
 createRoot(document.getElementById("root")!).render(<App />);
