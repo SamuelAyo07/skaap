@@ -281,12 +281,31 @@ Rules:
 - Examples: weight loss + 18g sugar/100g → skip_it. Muscle gain + high-protein yogurt → great_pick. Parent + Red 40 → ok_sometimes or skip_it.`;
         break;
       }
+      case "product_identify": {
+        const { imageBase64 } = params;
+        if (!imageBase64) {
+          return new Response(JSON.stringify({ error: "imageBase64 required" }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        systemPrompt = "You are a product identification AI. Read the packaging in the photo and return ONLY valid JSON, no other text, no markdown.";
+        userPrompt = `Look at this product photo and extract what you can read from the packaging. Return EXACTLY this JSON:
+{"productName": "Full product name as printed", "brand": "Brand name or empty string", "category": "food" | "beauty" | "other", "barcode": "13-digit EAN/UPC if clearly visible or empty string", "weight": "Net weight/volume like '200 ml' if visible or empty string"}
+
+Rules:
+- productName: use the exact wording on the front of the pack.
+- category: "beauty" = cosmetics/skincare/haircare/personal care; "food" = anything edible/drinkable; "other" = supplements, household, etc.
+- barcode: only fill if you can clearly read the digits under the barcode bars. Otherwise empty string.
+- Return empty strings for anything you cannot confidently read. Never invent.`;
+        break;
+      }
       default:
         return new Response(JSON.stringify({ error: "Unknown type" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
     }
+
 
     const model = type === "personalized-recs" || type === "image_recognition" || type === "decision" ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite";
 
