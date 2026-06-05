@@ -10,7 +10,9 @@ export interface TemplateEntry {
 }
 
 import { template as feedbackRequest } from './feedback-request.tsx'
+import { template as ugcWelcome } from './ugc-welcome.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'feedback-request': feedbackRequest,
+  'ugc-welcome': ugcWelcome,
 }

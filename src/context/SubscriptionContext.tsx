@@ -1,6 +1,19 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
+import { toast } from "sonner";
+
+const celebratePlus = (userId: string) => {
+  const key = `skaap_plus_welcomed_${userId}`;
+  if (typeof window === "undefined" || localStorage.getItem(key)) return;
+  localStorage.setItem(key, "1");
+  setTimeout(() => {
+    toast.success("✦ Welcome to SKAAP Plus", {
+      description: "Every feature unlocked — on us. Thank you for being part of Skaap.",
+      duration: 8000,
+    });
+  }, 800);
+};
 
 interface SubscriptionState {
   plan: "free" | "plus";
@@ -52,6 +65,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
           ...s, plan: "plus", isPlus: true, status: data.status || "active",
           trialActive, trialDaysRemaining: trialDays, loading: false,
         }));
+        celebratePlus(user.id);
         return;
       }
 
@@ -71,6 +85,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
           ...s, plan: "plus", isPlus: true, status: subData.status!,
           trialActive, trialDaysRemaining: trialDays, loading: false,
         }));
+        celebratePlus(user.id);
       } else {
         setState(s => ({ ...s, plan: "free", isPlus: false, loading: false }));
       }
