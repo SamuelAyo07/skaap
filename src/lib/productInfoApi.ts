@@ -46,6 +46,9 @@ export interface ProductFullInfo {
   allergenHighlights?: string[];// EU 26 allergens detected (fragrance allergens etc.)
   periodsAfterOpening?: string; // e.g. "12 M"
   packaging?: string;
+}
+
+
 
 
 const sessionCache = new Map<string, ProductFullInfo | null>();
