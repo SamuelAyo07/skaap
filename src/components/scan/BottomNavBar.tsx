@@ -1,4 +1,5 @@
-import { Clock, Scan, Globe } from "lucide-react";
+import { Clock, ScanLine, Globe, User } from "lucide-react";
+import { hapticSelection } from "@/lib/haptics";
 
 interface BottomNavBarProps {
   active: string;
@@ -6,6 +7,10 @@ interface BottomNavBarProps {
 }
 
 export function BottomNavBar({ active, onNavigate }: BottomNavBarProps) {
+  const handle = (key: string) => {
+    hapticSelection();
+    onNavigate(key);
+  };
   const items = [
     { icon: <Clock size={22} />, label: "History", key: "history" },
     { icon: <Globe size={22} />, label: "Community", key: "community" },
