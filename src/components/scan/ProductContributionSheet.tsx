@@ -1,16 +1,18 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Camera, Check, Loader2 } from "lucide-react";
+import { X, Camera, Check, Loader2, Sparkles, Barcode } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getUserName } from "@/components/scan/FirstScanSignupModal";
+import { compressImage } from "@/lib/imageCompress";
 
 const Schema = z.object({
   product_name: z.string().trim().min(1, "Product name required").max(300),
   brand: z.string().trim().max(300).optional(),
   category: z.enum(["food", "beauty", "other"]),
   country: z.string().trim().max(100).optional(),
+  barcode: z.string().trim().max(32).optional(),
   contributor_email: z.string().trim().email().max(255).optional().or(z.literal("")),
 });
 
@@ -20,11 +22,40 @@ interface Props {
   barcode?: string | null;
 }
 
+// Try to read a barcode straight from the photo using the native BarcodeDetector
+async function detectBarcodeFromFile(file: File): Promise<string | null> {
+  try {
+    const BD = (globalThis as any).BarcodeDetector;
+    if (!BD) return null;
+    const detector = new BD({
+      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"],
+    });
+    const bitmap = await createImageBitmap(file);
+    const codes = await detector.detect(bitmap);
+    bitmap.close?.();
+    return codes?.[0]?.rawValue || null;
+  } catch {
+    return null;
+  }
+}
+
+// Compress + base64 a file (for the AI vision call)
+async function fileToDataUrl(file: File): Promise<string> {
+  const small = await compressImage(file, { maxDim: 1024, quality: 0.78 });
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(small);
+  });
+}
+
 export function ProductContributionSheet({ open, onClose, barcode }: Props) {
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState<"food" | "beauty" | "other">("food");
+  const [category, setCategory] = useState<"food" | "beauty" | "other">("beauty");
   const [country, setCountry] = useState("");
+  const [barcodeInput, setBarcodeInput] = useState(barcode || "");
   const [email, setEmail] = useState(() => {
     try { return localStorage.getItem("skaap_user_email_v1") || ""; } catch { return ""; }
   });
@@ -32,11 +63,15 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [autoBusy, setAutoBusy] = useState(false);
+  const [autoFilled, setAutoFilled] = useState<{ barcode?: boolean; name?: boolean; brand?: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const resetAll = () => {
-    setProductName(""); setBrand(""); setCategory("food"); setCountry("");
+    setProductName(""); setBrand(""); setCategory("beauty"); setCountry("");
+    setBarcodeInput(barcode || "");
     setPhotoFile(null); setPhotoPreview(null); setDone(false);
+    setAutoFilled(null); setAutoBusy(false);
   };
 
   const handleClose = () => {
@@ -44,7 +79,7 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
     setTimeout(resetAll, 300);
   };
 
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
     if (f.size > 8 * 1024 * 1024) {
@@ -53,6 +88,57 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
     }
     setPhotoFile(f);
     setPhotoPreview(URL.createObjectURL(f));
+    setAutoBusy(true);
+    setAutoFilled(null);
+
+    try {
+      // Parallel: native barcode scan + AI identify
+      const [detectedBarcode, dataUrl] = await Promise.all([
+        detectBarcodeFromFile(f),
+        fileToDataUrl(f),
+      ]);
+
+      const aiPromise = supabase.functions.invoke("ai-product-insights", {
+        body: { type: "product_identify", imageBase64: dataUrl },
+      });
+
+      const filled: { barcode?: boolean; name?: boolean; brand?: boolean } = {};
+
+      if (detectedBarcode && !barcodeInput) {
+        setBarcodeInput(detectedBarcode);
+        filled.barcode = true;
+      }
+
+      const { data: aiData, error: aiErr } = await aiPromise;
+      if (!aiErr && aiData?.result) {
+        try {
+          const cleaned = String(aiData.result).replace(/```json|```/g, "").trim();
+          const parsed = JSON.parse(cleaned);
+          if (parsed.productName && !productName) {
+            setProductName(parsed.productName);
+            filled.name = true;
+          }
+          if (parsed.brand && !brand) {
+            setBrand(parsed.brand);
+            filled.brand = true;
+          }
+          if (parsed.category && ["food", "beauty", "other"].includes(parsed.category)) {
+            setCategory(parsed.category);
+          }
+          if (parsed.barcode && !barcodeInput && !detectedBarcode) {
+            setBarcodeInput(parsed.barcode);
+            filled.barcode = true;
+          }
+        } catch {
+          /* JSON parse failed — keep manual entry */
+        }
+      }
+      setAutoFilled(filled);
+    } catch (err) {
+      console.error("auto-detect failed", err);
+    } finally {
+      setAutoBusy(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -61,6 +147,7 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
       brand: brand || undefined,
       category,
       country: country || undefined,
+      barcode: barcodeInput || undefined,
       contributor_email: email || undefined,
     });
     if (!parsed.success) {
@@ -73,11 +160,12 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
 
     try {
       if (photoFile) {
-        const ext = photoFile.name.split(".").pop() || "jpg";
+        const compressed = await compressImage(photoFile, { maxDim: 1600, quality: 0.85 });
+        const ext = "jpg";
         const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("product-contributions")
-          .upload(path, photoFile, { contentType: photoFile.type, upsert: false });
+          .upload(path, compressed, { contentType: "image/jpeg", upsert: false });
         if (!upErr) {
           const { data } = supabase.storage.from("product-contributions").getPublicUrl(path);
           imageUrl = data.publicUrl;
@@ -85,7 +173,7 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
       }
 
       const { error } = await supabase.from("product_contributions").insert({
-        barcode: barcode || null,
+        barcode: parsed.data.barcode || barcode || null,
         product_name: parsed.data.product_name,
         brand: parsed.data.brand || null,
         category: parsed.data.category,
@@ -105,6 +193,8 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
       setSubmitting(false);
     }
   };
+
+  const anyAutoFilled = autoFilled && (autoFilled.barcode || autoFilled.name || autoFilled.brand);
 
   return (
     <AnimatePresence>
@@ -141,45 +231,70 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
             ) : (
               <>
                 <h2 className="font-extrabold text-[20px] leading-tight tracking-tight pr-8" style={{ color: "#0A1220" }}>
-                  Help us add this product
+                  Add this product
                 </h2>
                 <p className="text-[12px] mt-1" style={{ color: "#6B7280" }}>
-                  Snap a photo and the basics. Takes 10 seconds.
+                  Just snap the front of the pack — we'll read the barcode and name for you.
                 </p>
 
-                {barcode && (
-                  <p className="text-[11px] mt-2 font-mono px-2 py-1 rounded inline-block"
-                    style={{ background: "#F3F4F6", color: "#4B5563" }}>
-                    Barcode {barcode}
-                  </p>
-                )}
-
-                {/* Photo */}
+                {/* Photo with smart capture */}
                 <div className="mt-4">
                   <input ref={fileRef} type="file" accept="image/*" capture="environment"
                     className="hidden" onChange={handlePhoto} />
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    className="w-full rounded-2xl flex flex-col items-center justify-center gap-1.5 py-6 text-[13px] font-semibold transition-colors"
+                    className="relative w-full rounded-2xl flex flex-col items-center justify-center gap-1.5 py-6 text-[13px] font-semibold transition-colors overflow-hidden"
                     style={{
                       background: photoPreview ? "transparent" : "#F9FAFB",
                       border: "1.5px dashed #D1D5DB",
                       color: "#6B7280",
                       backgroundImage: photoPreview ? `url(${photoPreview})` : undefined,
                       backgroundSize: "cover", backgroundPosition: "center",
-                      minHeight: 120,
+                      minHeight: 140,
                     }}
                   >
-                    {!photoPreview && (<><Camera size={20} /> Take photo of product</>)}
+                    {!photoPreview && (
+                      <>
+                        <Camera size={22} />
+                        <span>Take photo of product</span>
+                        <span className="text-[11px] font-normal" style={{ color: "#9CA3AF" }}>
+                          Front of pack — include the barcode
+                        </span>
+                      </>
+                    )}
+                    {photoPreview && autoBusy && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                        style={{ background: "rgba(10,18,32,0.55)", color: "#fff" }}>
+                        <Loader2 size={22} className="animate-spin" />
+                        <span className="text-[12px] font-semibold">Reading the pack…</span>
+                      </div>
+                    )}
                   </button>
+                  {anyAutoFilled && !autoBusy && (
+                    <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold"
+                      style={{ color: "#059669" }}>
+                      <Sparkles size={12} /> Auto-filled from photo — tap to edit
+                    </div>
+                  )}
+                </div>
+
+                {/* Barcode */}
+                <div className="mt-3 relative">
+                  <Barcode size={14} className="absolute left-3 top-1/2 -translate-y-1/2" color="#9CA3AF" />
+                  <input
+                    value={barcodeInput} onChange={(e) => setBarcodeInput(e.target.value.replace(/[^0-9]/g, ""))}
+                    placeholder="Barcode (auto-detected from photo)" maxLength={20} inputMode="numeric"
+                    className="w-full pl-9 pr-3 py-3 rounded-xl text-[14px] outline-none font-mono"
+                    style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220" }}
+                  />
                 </div>
 
                 {/* Product name */}
                 <input
                   value={productName} onChange={(e) => setProductName(e.target.value)}
                   placeholder="Product name" maxLength={300}
-                  className="w-full mt-3 px-3 py-3 rounded-xl text-[14px] outline-none"
+                  className="w-full mt-2 px-3 py-3 rounded-xl text-[14px] outline-none"
                   style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220" }}
                 />
 
@@ -229,7 +344,7 @@ export function ProductContributionSheet({ open, onClose, barcode }: Props) {
                   {submitting ? (<><Loader2 size={16} className="animate-spin" /> Sending</>) : "Send to SKAAP"}
                 </button>
                 <p className="text-center text-[11px] mt-2" style={{ color: "#9CA3AF" }}>
-                  Optional. Skip anything you don't know.
+                  Skip anything you don't know — we'll verify on our side.
                 </p>
               </>
             )}
