@@ -245,11 +245,13 @@ export async function fetchProductInfo(barcode: string): Promise<ProductFullInfo
 
   // Parallel lookup: Open Food Facts + Open Beauty Facts simultaneously
   const [offResult, obbResult] = await Promise.all([
-    tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`),
-    tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`),
+    tryFetch(`https://world.openfoodfacts.org/api/v0/product/${encoded}.json`, false),
+    tryFetch(`https://world.openbeautyfacts.org/api/v0/product/${encoded}.json`, true),
   ]);
 
-  let info = offResult || obbResult;
+  // Prefer beauty result if it has cosmetic enrichment, else food
+  let info = obbResult?.isCosmetic ? obbResult : (offResult || obbResult);
+
 
   // If product found but has >3 empty nutrient fields, try USDA fallback
   if (info && countEmptyNutrients(info) > 3) {
