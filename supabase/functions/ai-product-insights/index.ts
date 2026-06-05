@@ -311,7 +311,7 @@ Rules:
 
     // Build messages - for image recognition, include the image
     const messages: any[] = [{ role: "system", content: systemPrompt }];
-    if (type === "image_recognition" && params.imageBase64) {
+    if ((type === "image_recognition" || type === "product_identify") && params.imageBase64) {
       messages.push({
         role: "user",
         content: [
@@ -322,6 +322,7 @@ Rules:
     } else {
       messages.push({ role: "user", content: userPrompt });
     }
+
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
