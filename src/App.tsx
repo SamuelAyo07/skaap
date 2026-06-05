@@ -14,6 +14,7 @@ import AppPage from "./pages/AppPage";
 import SkaapScan from "./pages/SkaapScan";
 import NotFound from "./pages/NotFound";
 import Unsubscribe from "./pages/Unsubscribe";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
