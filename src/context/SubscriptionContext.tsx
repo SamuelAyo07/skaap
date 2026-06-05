@@ -65,6 +65,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
           ...s, plan: "plus", isPlus: true, status: data.status || "active",
           trialActive, trialDaysRemaining: trialDays, loading: false,
         }));
+        celebratePlus(user.id);
         return;
       }
 
