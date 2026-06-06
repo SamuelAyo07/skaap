@@ -96,7 +96,8 @@ serve(async (req) => {
             message:
               "This email already has an active SKAAP subscription. Manage it from your account instead of creating a new one.",
           }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 },
+          // 200 so the client receives `data` (supabase-js treats non-2xx as a thrown error and discards the body).
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
         );
       }
     }
@@ -116,17 +117,20 @@ serve(async (req) => {
       sessionParams.subscription_data = { trial_period_days: 7, metadata: { tier: requested, user_id: user.id } };
     }
 
+    console.log("[create-checkout] creating session", { tier: requested, email: user.email, customerId });
     const session = await stripe.checkout.sessions.create(sessionParams);
+    console.log("[create-checkout] session created", { id: session.id });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("create-checkout error:", error);
-    return new Response(JSON.stringify({ error: "Unable to start checkout. Please try again." }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[create-checkout] error:", message, error);
+    return new Response(
+      JSON.stringify({ error: "checkout_failed", message }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 },
+    );
   }
 });
