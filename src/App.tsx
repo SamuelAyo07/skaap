@@ -27,10 +27,21 @@ function isStandaloneApp() {
   );
 }
 
+function isMobileDevice() {
+  if (typeof window === "undefined") return false;
+  const ua = window.navigator.userAgent || "";
+  // Native (Capacitor) or mobile UA
+  const isNative = /(Capacitor|Median)/i.test(ua);
+  const isMobileUA = /Android|iPhone|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isIPad = /iPad/i.test(ua) || (ua.includes("Macintosh") && "ontouchend" in document);
+  return isNative || isMobileUA || isIPad;
+}
+
 const StandaloneLaunchRedirect = () => {
   const location = useLocation();
+  const isRoot = ["/", "/index", "/app"].includes(location.pathname);
   const shouldOpenFoodIntelligence =
-    isStandaloneApp() && ["/", "/index", "/app"].includes(location.pathname);
+    isRoot && (isStandaloneApp() || isMobileDevice());
 
   return shouldOpenFoodIntelligence ? <Navigate to="/scan" replace /> : null;
 };

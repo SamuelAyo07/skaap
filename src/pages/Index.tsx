@@ -295,15 +295,15 @@ const Index = () => {
 
       {/* ─── 2. HERO, urgency framing ─── */}
       <section
-        className="relative flex items-center justify-center min-h-[100svh] md:min-h-0"
-        style={{ paddingTop: 64, paddingBottom: 16, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
+        className="relative"
+        style={{ paddingTop: 96, paddingBottom: 40, background: "radial-gradient(ellipse at 50% 30%, #1a1f3a 0%, #0A0F1E 70%)" }}
       >
         <div className="absolute top-16 right-8 w-48 h-48 rounded-full pointer-events-none" style={{ background: "rgba(196,30,58,0.10)", filter: "blur(70px)" }} />
 
         <div className="w-full max-w-[680px] mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-2"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3"
             style={{ background: "rgba(196,30,58,0.15)", color: "#FCA5A5", border: "1px solid rgba(196,30,58,0.25)" }}
           >
             <AlertTriangle size={11} /> Food & Cosmetics
@@ -312,29 +312,29 @@ const Index = () => {
           <motion.h1
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
             className="font-extrabold tracking-tighter leading-[1.02] text-white"
-            style={{ fontSize: "clamp(28px, 7.2vw, 60px)" }}
+            style={{ fontSize: "clamp(36px, 8vw, 60px)" }}
           >
             Know what goes<br />
             <span className="text-gradient">in and on your body.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
-            className="mt-2 text-[12px] md:text-[13px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.95)" }}>
-            Beauty, cosmetics & food — scan any barcode and see what's really inside, in 2 seconds.
+            className="mt-3 text-[13px] md:text-[15px] max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.95)" }}>
+            Scan any food or cosmetic barcode. Get a health score in 2 seconds.
           </motion.p>
 
           <motion.button
             initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleStartScan}
-            className="mt-3 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm cta-pulse"
+            className="mt-4 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm cta-pulse"
             style={{ background: "linear-gradient(135deg, #C41E3A, #a11830)", color: "#fff" }}
           >
             <ScanLine size={16} /> Scan a barcode for free
           </motion.button>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="mt-1.5 text-[11px] font-semibold" style={{ color: "rgba(255,255,255,0.95)" }}>
+            className="mt-2.5 text-[11px] font-semibold" style={{ color: "rgba(255,255,255,0.95)" }}>
             🌍 Works anywhere · No signup
           </motion.p>
 
