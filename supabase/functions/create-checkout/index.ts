@@ -46,23 +46,31 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "not_authenticated", message: "Please sign in to upgrade." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+      );
+    }
 
     const token = authHeader.replace("Bearer ", "");
     const { data, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(userError.message);
+    if (userError || !data.user?.email) {
+      return new Response(
+        JSON.stringify({ error: "not_authenticated", message: "Your session expired. Please sign in again." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+      );
+    }
     const user = data.user;
-    if (!user?.email) throw new Error("User not authenticated");
 
-    const body = await req.json();
-    // Accept either { tier } (new) or { billing } (legacy)
+    const body = await req.json().catch(() => ({}));
     const requested = (typeof body?.tier === "string" ? body.tier : body?.billing) as TierKey | undefined;
 
     if (!requested || !TIERS[requested]) {
-      return new Response(JSON.stringify({ error: "Invalid tier. Use one of: supporter, member, champion, builder." }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({ error: "invalid_tier", message: "Invalid plan selected. Please try again." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+      );
     }
 
     const tier = TIERS[requested];
