@@ -1435,7 +1435,7 @@ const SkaapScan = () => {
   // ─── SCREEN: AI INFO ───
   if (screen === "ai-info") {
     return (
-      <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="min-h-[100dvh]" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
           <button onClick={() => setScreen("result")} aria-label="Back">
             <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />
@@ -2492,7 +2492,7 @@ const SkaapScan = () => {
   // ─── SCREEN: BASKET (Saved Products Comparison) ───
   if (screen === "basket") {
     return (
-      <div className="min-h-screen bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
+      <div className="min-h-[100dvh] bg-background" style={{ maxWidth: 430, margin: "0 auto" }}>
         <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
           <button onClick={() => setScreen("home")} className="flex items-center">
             <ArrowLeft size={20} style={{ color: "#1B2A4A" }} />

@@ -172,7 +172,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const activeCount = alerts.filter(a => a.active).length;
 
   return (
-    <div className="min-h-screen" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh]" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Apple-style sheet header */}
       <div className="flex items-center justify-between px-5 pt-[env(safe-area-inset-top,12px)] h-14">
         <button onClick={onBack} className="p-1 -ml-1"><ArrowLeft size={20} style={{ color: "#0A1220" }} /></button>

@@ -57,7 +57,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
   // Member gate for free users
   if (!isPlus) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           {/* Lock icon in soft red circle */}
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2", border: "1px solid #FECDD3" }}>
@@ -99,7 +99,7 @@ export function SearchScreen({ onScanProduct, onNavChange, onOpenScanner }: Sear
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Search bar */}
       <div className="px-5 mt-[env(safe-area-inset-top,12px)] pt-4">
         <div className="flex items-center gap-3 px-4 h-[52px] rounded-2xl" style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }}>

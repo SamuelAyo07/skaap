@@ -118,7 +118,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
   // Not enough history
   if (!hasHistory) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF3C7", border: "1px solid #FDE68A" }}>
             <Sparkles size={32} style={{ color: "#F59E0B" }} />
@@ -148,7 +148,7 @@ export function RecsScreen({ onScanProduct, onNavChange, onOpenScanner, onOpenKi
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Header */}
       <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-2">
         <div className="flex items-center justify-between">

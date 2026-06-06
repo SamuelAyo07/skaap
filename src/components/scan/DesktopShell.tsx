@@ -9,7 +9,7 @@ interface DesktopShellProps {
 
 export function DesktopShell({ children }: DesktopShellProps) {
   return (
-    <div className="hidden md:flex min-h-screen w-full" style={{ background: "#060a14" }}>
+    <div className="hidden md:flex min-h-[100dvh] w-full" style={{ background: "#060a14" }}>
       {/* Left panel, branding */}
       <div className="flex-1 flex flex-col items-end justify-center pr-12 relative overflow-hidden">
         {/* Ambient glow */}

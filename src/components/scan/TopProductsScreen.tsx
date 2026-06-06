@@ -101,7 +101,7 @@ export function TopProductsScreen({ onScanProduct, onNavChange }: TopProductsScr
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Header */}
       <div className="px-5 pt-[env(safe-area-inset-top,12px)] mt-2">
         <div className="flex items-center gap-2">

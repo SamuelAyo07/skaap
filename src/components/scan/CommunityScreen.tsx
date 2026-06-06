@@ -583,7 +583,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Premium gate screen
   if (!canAccess) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#FEF2F2", border: "1px solid #FECDD3" }}>
             <Globe size={32} style={{ color: "#C41E3A" }} />
@@ -618,7 +618,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   // Geo permission prompt
   if (geoPermission === "prompt" && !geoLocation) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+      <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "#EFF6FF", border: "1px solid #BFDBFE" }}>
             <MapPin size={32} style={{ color: "#3B82F6" }} />
@@ -706,7 +706,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="min-h-[100dvh] flex flex-col"
       style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF", overflowX: "hidden", overscrollBehaviorX: "none" }}
     >
       <div className="flex-1 overflow-y-auto overflow-x-hidden pb-28" style={{ overscrollBehaviorX: "none", touchAction: "pan-y" }}>

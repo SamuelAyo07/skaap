@@ -51,7 +51,7 @@ const ProfileScreen = () => {
 
   if (activeSection === "orders") {
     return (
-      <div className="px-4 pt-12 pb-20 bg-background min-h-screen">
+      <div className="px-4 pt-12 pb-20 bg-background min-h-[100dvh]">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <button
             onClick={() => setActiveSection("main")}
@@ -102,7 +102,7 @@ const ProfileScreen = () => {
   ];
 
   return (
-    <div className="px-4 pt-12 pb-20 bg-background min-h-screen">
+    <div className="px-4 pt-12 pb-20 bg-background min-h-[100dvh]">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
