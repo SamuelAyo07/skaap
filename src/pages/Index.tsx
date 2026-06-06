@@ -338,27 +338,6 @@ const Index = () => {
             🌍 Works anywhere · No signup
           </motion.p>
 
-          {/* Google Play badge */}
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}
-            className="mt-3 flex items-center justify-center">
-            <a
-              href="https://play.google.com/store/apps/details?id=com.skaap.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent("cta_clicked", { cta: "google_play_badge" })}
-              aria-label="Get SKAAP on Google Play"
-              className="inline-block transition-transform hover:scale-[1.03] active:scale-[0.98]"
-            >
-              <img
-                src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-                alt="Get it on Google Play"
-                width="180"
-                height="56"
-                style={{ height: 56, width: "auto" }}
-                loading="lazy"
-              />
-            </a>
-          </motion.div>
 
         </div>
       </section>
