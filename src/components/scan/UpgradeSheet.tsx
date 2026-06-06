@@ -37,19 +37,36 @@ export function UpgradeSheet() {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: { tier: selected },
       });
-      if (error) throw error;
-      if (data?.error === "already_subscribed") {
-        toast.info(data.message || "You're already a SKAAP supporter, thank you!");
+
+      // supabase-js throws on non-2xx; pull the real body from error.context if present.
+      let payload: any = data;
+      if (error) {
+        try {
+          const ctx: any = (error as any).context;
+          if (ctx && typeof ctx.json === "function") payload = await ctx.json();
+          else if (ctx && typeof ctx.text === "function") payload = JSON.parse(await ctx.text());
+        } catch { /* ignore parse */ }
+      }
+
+      if (payload?.error === "already_subscribed") {
+        toast.info(payload.message || "You're already a SKAAP supporter, thank you!");
         closeUpgrade();
         setLoading(false);
         return;
       }
-      if (data?.url) {
-        window.open(data.url, "_blank", "noopener,noreferrer");
+      if (payload?.url) {
+        window.open(payload.url, "_blank", "noopener,noreferrer");
         closeUpgrade();
+        setLoading(false);
+        return;
       }
-    } catch {
-      toast.error("Could not start checkout. Please try again.");
+
+      const msg = payload?.message || (error as any)?.message || "Could not start checkout. Please try again.";
+      console.error("[checkout] failed", { payload, error });
+      toast.error(msg);
+    } catch (e: any) {
+      console.error("[checkout] exception", e);
+      toast.error(e?.message || "Could not start checkout. Please try again.");
     }
     setLoading(false);
   };
