@@ -113,7 +113,7 @@ export function KitchenReportScreen({ userStats, onBack, onNavChange }: KitchenR
   const offset = circumference - (userStats.kitchen_score / 100) * circumference;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-[env(safe-area-inset-top,12px)] h-14">
         <button onClick={onBack}><ArrowLeft size={20} style={{ color: "#1A1A1A" }} /></button>

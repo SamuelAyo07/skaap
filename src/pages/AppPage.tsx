@@ -42,8 +42,8 @@ const AppPage = () => {
 
   return (
     <CartProvider>
-      <div className="min-h-screen flex justify-center bg-background md:bg-foreground">
-        <div className="w-full md:max-w-[390px] min-h-screen relative bg-background md:shadow-elevated overflow-hidden">
+      <div className="min-h-[100dvh] flex justify-center bg-background md:bg-foreground">
+        <div className="w-full md:max-w-[390px] min-h-[100dvh] relative bg-background md:shadow-elevated overflow-hidden">
           {splashDone && screen === "home" && (
             <button
               onClick={() => navigate("/")}
@@ -100,7 +100,7 @@ const AppPage = () => {
                 animate="animate"
                 exit="exit"
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="min-h-screen"
+                className="min-h-[100dvh]"
               >
                 {screen === "home" && (
                   <HomeScreen onSelectStore={() => { setScreen("scan"); setActiveTab("scan"); }} />

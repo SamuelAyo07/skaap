@@ -21,7 +21,7 @@ const OrderCompleteScreen = ({ onDone }: OrderCompleteScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-5 pb-20 pt-8 bg-background">
+    <div className="flex flex-col items-center justify-center min-h-[100dvh] px-5 pb-20 pt-8 bg-background">
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}

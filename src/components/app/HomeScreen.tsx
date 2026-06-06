@@ -165,7 +165,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   // No stores found or location denied
   if (visibleStores.length === 0) {
     return (
-      <div className="px-4 pt-10 pb-20 bg-background min-h-screen">
+      <div className="px-4 pt-10 pb-20 bg-background min-h-[100dvh]">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-3">
           <h1 className="text-2xl font-bold text-foreground tracking-tight leading-tight">{getGreeting()}</h1>
         </motion.div>
@@ -199,7 +199,7 @@ const HomeScreen = ({ onSelectStore }: HomeScreenProps) => {
   }
 
   return (
-    <div className="px-4 pt-8 pb-20 bg-background min-h-screen">
+    <div className="px-4 pt-8 pb-20 bg-background min-h-[100dvh]">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

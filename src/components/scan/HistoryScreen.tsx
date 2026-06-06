@@ -78,7 +78,7 @@ export function HistoryScreen({
   const hasGate = !isPlus && filtered.length > FREE_SCAN_LIMIT;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
+    <div className="min-h-[100dvh] flex flex-col" style={{ maxWidth: 430, margin: "0 auto", background: "#FFFFFF" }}>
       {/* Tabs: Favorites / History */}
       <div className="flex items-center px-5 pt-[env(safe-area-inset-top,12px)] mt-2 gap-0 relative">
         <button
