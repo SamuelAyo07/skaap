@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { UpgradeSheet } from "@/components/scan/UpgradeSheet";
-
+import InstallBanner from "@/components/InstallBanner";
 import AutoUpdater from "@/components/AutoUpdater";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import Index from "./pages/Index";
@@ -39,7 +39,7 @@ const App = () => (
           <Sonner />
           <OfflineBanner />
           <UpgradeSheet />
-          
+          <InstallBanner />
           <AutoUpdater />
           <BrowserRouter>
             <AppRoutes />
