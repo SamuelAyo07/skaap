@@ -55,8 +55,39 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const localFirst = getUserFirstName();
   const displayName = user?.user_metadata?.full_name || localName || "Guest";
   const firstName = displayName.split(" ")[0] || localFirst || "friend";
-  const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "";
+  const displayEmail = user?.email || getUserEmail() || "";
   const initial = (firstName[0] || "?").toUpperCase();
+
+  // Editable details
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(displayName === "Guest" ? "" : displayName);
+  const [editEmail, setEditEmail] = useState(displayEmail);
+  const [editPhone, setEditPhone] = useState(user?.user_metadata?.phone || getUserPhone() || "");
+  const [savingDetails, setSavingDetails] = useState(false);
+
+  const saveDetails = async () => {
+    const n = editName.trim();
+    const em = editEmail.trim();
+    const ph = editPhone.trim();
+    if (!n) { toast.error("Name required"); return; }
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { toast.error("Enter a valid email"); return; }
+    setSavingDetails(true);
+    try {
+      saveUserIdentity(n, em, ph);
+      if (user) {
+        await supabase.from("profiles").upsert({
+          id: user.id, full_name: n, email: em || user.email, phone: ph || null,
+        });
+        await supabase.auth.updateUser({ data: { full_name: n, phone: ph || null } });
+      }
+      toast.success("Saved");
+      setEditing(false);
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't save");
+    } finally {
+      setSavingDetails(false);
+    }
+  };
 
   // Local guest storage keys for anonymous photo uploads
   const GUEST_AVATAR_KEY = "skaap_guest_avatar_v1";
