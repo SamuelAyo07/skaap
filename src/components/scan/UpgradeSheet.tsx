@@ -55,9 +55,10 @@ export function UpgradeSheet() {
         return;
       }
       if (payload?.url) {
-        window.open(payload.url, "_blank", "noopener,noreferrer");
+        // Same-tab redirect — popup blockers (esp. mobile Safari/Chrome) silently
+        // kill window.open here, which is why checkout "didn't load" for the user.
         closeUpgrade();
-        setLoading(false);
+        window.location.href = payload.url;
         return;
       }
 
