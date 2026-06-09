@@ -242,6 +242,50 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
         </motion.div>
 
+        {/* Editable details card */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }}
+          className="rounded-2xl bg-white overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
+          <div className="flex items-center justify-between px-4 pt-3.5 pb-1">
+            <h3 className="font-bold text-[14px]" style={{ color: "#0A1220" }}>Your details</h3>
+            {!editing ? (
+              <button onClick={() => setEditing(true)} className="flex items-center gap-1 text-[12px] font-bold" style={{ color: "#B0202F" }}>
+                <Pencil size={12} /> Edit
+              </button>
+            ) : (
+              <button onClick={saveDetails} disabled={savingDetails} className="flex items-center gap-1 text-[12px] font-bold disabled:opacity-50" style={{ color: "#B0202F" }}>
+                <Check size={13} /> {savingDetails ? "Saving…" : "Save"}
+              </button>
+            )}
+          </div>
+          <div className="px-4 pb-4 pt-2 space-y-2">
+            {editing ? (
+              <>
+                <input type="text" value={editName} onChange={e => setEditName(e.target.value.slice(0, 100))}
+                  placeholder="Your name" maxLength={100}
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value.slice(0, 255))}
+                  placeholder="you@email.com" maxLength={255} inputMode="email" autoComplete="email"
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <input type="tel" value={editPhone} onChange={e => setEditPhone(e.target.value.slice(0, 32))}
+                  placeholder="Phone (optional)" maxLength={32} inputMode="tel" autoComplete="tel"
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <button onClick={() => setEditing(false)} className="text-[11px] font-semibold pt-1" style={{ color: "#9CA3AF" }}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Name</span><span style={{ color: "#0A1220" }} className="font-semibold">{displayName === "Guest" ? "—" : displayName}</span></div>
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Email</span><span style={{ color: "#0A1220" }} className="font-semibold truncate ml-3">{displayEmail || "—"}</span></div>
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Phone</span><span style={{ color: "#0A1220" }} className="font-semibold">{editPhone || "—"}</span></div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* My Goals — opens HealthProfileSheet */}
         <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
           onClick={() => setGoalsOpen(true)}
