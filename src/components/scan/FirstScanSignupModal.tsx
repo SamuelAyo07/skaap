@@ -32,11 +32,22 @@ export function getUserFirstName(): string | null {
   return n.trim().split(/\s+/)[0] || null;
 }
 
+export function getUserEmail(): string | null {
+  try { return localStorage.getItem(EMAIL_KEY); } catch { return null; }
+}
+
+export function getUserPhone(): string | null {
+  try { return localStorage.getItem(PHONE_KEY); } catch { return null; }
+}
+
 export function saveUserIdentity(name: string, email: string, phone?: string) {
   try {
     localStorage.setItem(NAME_KEY, name);
     localStorage.setItem(EMAIL_KEY, email);
-    if (phone) localStorage.setItem(PHONE_KEY, phone);
+    if (phone !== undefined) {
+      if (phone) localStorage.setItem(PHONE_KEY, phone);
+      else localStorage.removeItem(PHONE_KEY);
+    }
   } catch {}
 }
 

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock } from "lucide-react";
+import { ArrowLeft, LogOut, ChevronRight, Plus, X, Crown, Camera, Lock, Check, Pencil } from "lucide-react";
 import { SocialLinks } from "@/components/scan/SocialLinks";
-import { getUserFirstName, getUserName } from "@/components/scan/FirstScanSignupModal";
+import { getUserFirstName, getUserName, getUserEmail, getUserPhone, saveUserIdentity } from "@/components/scan/FirstScanSignupModal";
 import { useAuth } from "@/context/AuthContext";
 import { useSubscription } from "@/context/SubscriptionContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,8 +55,39 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const localFirst = getUserFirstName();
   const displayName = user?.user_metadata?.full_name || localName || "Guest";
   const firstName = displayName.split(" ")[0] || localFirst || "friend";
-  const displayEmail = user?.email || (typeof window !== "undefined" ? localStorage.getItem("skaap_user_email_v1") : null) || "";
+  const displayEmail = user?.email || getUserEmail() || "";
   const initial = (firstName[0] || "?").toUpperCase();
+
+  // Editable details
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(displayName === "Guest" ? "" : displayName);
+  const [editEmail, setEditEmail] = useState(displayEmail);
+  const [editPhone, setEditPhone] = useState(user?.user_metadata?.phone || getUserPhone() || "");
+  const [savingDetails, setSavingDetails] = useState(false);
+
+  const saveDetails = async () => {
+    const n = editName.trim();
+    const em = editEmail.trim();
+    const ph = editPhone.trim();
+    if (!n) { toast.error("Name required"); return; }
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { toast.error("Enter a valid email"); return; }
+    setSavingDetails(true);
+    try {
+      saveUserIdentity(n, em, ph);
+      if (user) {
+        await supabase.from("profiles").upsert({
+          id: user.id, full_name: n, email: em || user.email, phone: ph || null,
+        });
+        await supabase.auth.updateUser({ data: { full_name: n, phone: ph || null } });
+      }
+      toast.success("Saved");
+      setEditing(false);
+    } catch (e: any) {
+      toast.error(e?.message || "Couldn't save");
+    } finally {
+      setSavingDetails(false);
+    }
+  };
 
   // Local guest storage keys for anonymous photo uploads
   const GUEST_AVATAR_KEY = "skaap_guest_avatar_v1";
@@ -209,6 +240,50 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           <h2 className="mt-3 text-[20px] font-bold tracking-tight" style={{ color: "#0A1220" }}>{displayName}</h2>
 
           {displayEmail && <p className="text-[13px] mt-0.5" style={{ color: "#B0202F" }}>{displayEmail}</p>}
+        </motion.div>
+
+        {/* Editable details card */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }}
+          className="rounded-2xl bg-white overflow-hidden" style={{ border: "1px solid #E5E7EB" }}>
+          <div className="flex items-center justify-between px-4 pt-3.5 pb-1">
+            <h3 className="font-bold text-[14px]" style={{ color: "#0A1220" }}>Your details</h3>
+            {!editing ? (
+              <button onClick={() => setEditing(true)} className="flex items-center gap-1 text-[12px] font-bold" style={{ color: "#B0202F" }}>
+                <Pencil size={12} /> Edit
+              </button>
+            ) : (
+              <button onClick={saveDetails} disabled={savingDetails} className="flex items-center gap-1 text-[12px] font-bold disabled:opacity-50" style={{ color: "#B0202F" }}>
+                <Check size={13} /> {savingDetails ? "Saving…" : "Save"}
+              </button>
+            )}
+          </div>
+          <div className="px-4 pb-4 pt-2 space-y-2">
+            {editing ? (
+              <>
+                <input type="text" value={editName} onChange={e => setEditName(e.target.value.slice(0, 100))}
+                  placeholder="Your name" maxLength={100}
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value.slice(0, 255))}
+                  placeholder="you@email.com" maxLength={255} inputMode="email" autoComplete="email"
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <input type="tel" value={editPhone} onChange={e => setEditPhone(e.target.value.slice(0, 32))}
+                  placeholder="Phone (optional)" maxLength={32} inputMode="tel" autoComplete="tel"
+                  className="w-full px-3 py-2.5 rounded-xl text-[14px] outline-none placeholder:text-gray-400"
+                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#0A1220", caretColor: "#C41E3A" }} />
+                <button onClick={() => setEditing(false)} className="text-[11px] font-semibold pt-1" style={{ color: "#9CA3AF" }}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Name</span><span style={{ color: "#0A1220" }} className="font-semibold">{displayName === "Guest" ? "—" : displayName}</span></div>
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Email</span><span style={{ color: "#0A1220" }} className="font-semibold truncate ml-3">{displayEmail || "—"}</span></div>
+                <div className="flex justify-between text-[13px]"><span style={{ color: "#9CA3AF" }}>Phone</span><span style={{ color: "#0A1220" }} className="font-semibold">{editPhone || "—"}</span></div>
+              </div>
+            )}
+          </div>
         </motion.div>
 
         {/* My Goals — opens HealthProfileSheet */}
