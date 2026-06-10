@@ -1389,21 +1389,20 @@ const SkaapScan = () => {
             </motion.button>
           )}
 
-          {/* Streak chip only — scans live in History, kitchen score in Kitchen */}
-          <div className="flex items-center justify-center gap-2 px-5 py-1.5">
-            <div
-              className="flex items-center justify-center gap-1.5"
-              style={{ height: 36, padding: "0 14px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA" }}
-            >
-              <span className="text-[13px]">🔥</span>
-              <span className="text-[12px] font-extrabold" style={{ color: "#9A3412" }}>
-                {userStats.current_streak > 0 ? userStats.current_streak : "0"}
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9A3412" }}>
-                day streak
-              </span>
+          {/* Streak chip — only show when user has an active streak */}
+          {userStats.current_streak > 0 && (
+            <div className="flex items-center justify-center gap-2 px-5 py-1.5">
+              <div
+                className="flex items-center justify-center gap-1.5"
+                style={{ height: 32, padding: "0 12px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA" }}
+              >
+                <span className="text-[12px]">🔥</span>
+                <span className="text-[12px] font-extrabold" style={{ color: "#9A3412" }}>{userStats.current_streak}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9A3412" }}>day streak</span>
+              </div>
             </div>
-          </div>
+          )}
+
 
           {/* Food Fact of the Day */}
           
