@@ -4,13 +4,9 @@ const config: CapacitorConfig = {
   appId: 'com.skaap.app',
   appName: 'SKAAP',
   webDir: 'dist',
-  // Live-reload from the Lovable sandbox during dev.
-  // For App Store / Play Store release builds, COMMENT OUT or remove `server`
-  // so the app loads from the bundled `webDir` instead of the network.
-  server: {
-    url: 'https://0fef0f41-45b6-428f-9e1b-f7495cf38b76.lovableproject.com?forceHideBadge=true',
-    cleartext: true,
-  },
+  // Release build: load from bundled `webDir` (no remote server).
+  // To re-enable live reload during dev, restore a `server` block with your
+  // sandbox URL — but it MUST be removed for App Store / TestFlight builds.
   ios: {
     contentInset: 'always',
     backgroundColor: '#0A0F1E',
