@@ -206,15 +206,17 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const cityName = geoLocation?.city || "Your City";
 
   // Request geolocation
+  const [geoBusy, setGeoBusy] = useState(false);
   const requestGeo = useCallback(() => {
+    if (geoBusy) return;
     if (!navigator.geolocation) {
       setGeoPermission("denied");
       setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
       return;
     }
+    setGeoBusy(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        setGeoPermission("granted");
         const geo = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
         if (geo) {
           setGeoLocation({ ...geo, lat: pos.coords.latitude, lng: pos.coords.longitude });
@@ -222,19 +224,23 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         } else {
           setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
         }
+        setGeoPermission("granted");
+        setGeoBusy(false);
       },
       () => {
         setGeoPermission("denied");
-        // Fallback
         const saved = localStorage.getItem(LOCATION_KEY);
         if (saved) {
           try { setGeoLocation(JSON.parse(saved)); } catch {}
         } else {
           setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
         }
-      }
+        setGeoBusy(false);
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
     );
-  }, []);
+  }, [geoBusy]);
+
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCATION_KEY);
@@ -630,12 +636,12 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             Allow location access to see community food intelligence for your area.
           </p>
           <div className="flex gap-3 mt-8 w-full max-w-[280px]">
-            <motion.button whileTap={{ scale: 0.97 }} onClick={requestGeo}
-              className="flex-1 h-12 rounded-2xl font-bold text-white text-[15px]"
+            <motion.button whileTap={{ scale: 0.97 }} onClick={requestGeo} disabled={geoBusy}
+              className="flex-1 h-12 rounded-2xl font-bold text-white text-[15px] disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Allow
+              {geoBusy ? "Locating…" : "Allow"}
             </motion.button>
-            <motion.button whileTap={{ scale: 0.97 }}
+            <motion.button whileTap={{ scale: 0.97 }} disabled={geoBusy}
               onClick={() => { setGeoPermission("denied"); setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 }); }}
               className="flex-1 h-12 rounded-2xl font-bold text-[15px]"
               style={{ background: "#F3F4F6", color: "#6B7280" }}>
@@ -647,6 +653,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
       </div>
     );
   }
+
 
   const scopeLabels: Record<LocationScope, string> = {
     neighborhood: "My Neighborhood",
