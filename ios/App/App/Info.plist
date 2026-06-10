@@ -47,5 +47,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SKAAP uses your location to show what people in your city are scanning.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>SKAAP uses the camera to scan product barcodes and photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>SKAAP needs access to your photos so you can recognize products from images.</string>
 </dict>
 </plist>
