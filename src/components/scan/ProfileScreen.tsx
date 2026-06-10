@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { compressImage } from "@/lib/imageCompress";
 import HealthProfileSheet from "@/components/scan/HealthProfileSheet";
+import { BottomNavBar } from "@/components/scan/BottomNavBar";
 
 
 // Cap any single upload at ~8 MB after compression as a final safety net
@@ -17,6 +18,7 @@ const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 
 interface ProfileScreenProps {
   onBack: () => void;
+  onNavChange?: (nav: string) => void;
 }
 
 const PRESET_ALERTS = [
@@ -37,7 +39,7 @@ interface AlertItem {
   active: boolean;
 }
 
-export function ProfileScreen({ onBack }: ProfileScreenProps) {
+export function ProfileScreen({ onBack, onNavChange }: ProfileScreenProps) {
   const { user, signOut } = useAuth();
   const { isPlus, openUpgrade } = useSubscription();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
@@ -433,6 +435,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       </div>
 
       <HealthProfileSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} />
+      {onNavChange && <BottomNavBar active="profile" onNavigate={onNavChange} />}
     </div>
   );
 }
