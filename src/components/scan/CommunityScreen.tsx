@@ -636,12 +636,12 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
             Allow location access to see community food intelligence for your area.
           </p>
           <div className="flex gap-3 mt-8 w-full max-w-[280px]">
-            <motion.button whileTap={{ scale: 0.97 }} onClick={requestGeo}
-              className="flex-1 h-12 rounded-2xl font-bold text-white text-[15px]"
+            <motion.button whileTap={{ scale: 0.97 }} onClick={requestGeo} disabled={geoBusy}
+              className="flex-1 h-12 rounded-2xl font-bold text-white text-[15px] disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #C41E3A, #9E1830)" }}>
-              Allow
+              {geoBusy ? "Locating…" : "Allow"}
             </motion.button>
-            <motion.button whileTap={{ scale: 0.97 }}
+            <motion.button whileTap={{ scale: 0.97 }} disabled={geoBusy}
               onClick={() => { setGeoPermission("denied"); setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 }); }}
               className="flex-1 h-12 rounded-2xl font-bold text-[15px]"
               style={{ background: "#F3F4F6", color: "#6B7280" }}>
@@ -653,6 +653,7 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
       </div>
     );
   }
+
 
   const scopeLabels: Record<LocationScope, string> = {
     neighborhood: "My Neighborhood",
