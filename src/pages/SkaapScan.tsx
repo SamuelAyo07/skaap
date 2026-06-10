@@ -1974,69 +1974,78 @@ const SkaapScan = () => {
                 </div>
               )}
 
-              {/* SIGNAL CHIPS ROW — each tile tappable for plain-English meaning */}
-              <div className="flex gap-2 px-5" style={{ marginTop: 10 }}>
-                {/* Nutri-Score */}
-                {(() => {
-                  const ns = productInfo.nutriScoreGrade?.toLowerCase();
-                  const hasNS = ns && nutriColors[ns];
-                  const chipBg = hasNS ? (ns === "a" || ns === "b" ? "#F0FDF4" : ns === "c" ? "#FFFBEB" : "#FFF1F2") : "#F9FAFB";
-                  const chipBorder = hasNS ? (ns === "a" || ns === "b" ? "#BBF7D0" : ns === "c" ? "#FDE68A" : "#FECDD3") : "#E5E7EB";
-                  const chipColor = hasNS ? nutriColors[ns]!.bg : "#9CA3AF";
-                  return (
-                    <Explain term="nutri-score" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
-                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNS ? ns!.toUpperCase() : "?"}</span>
-                      <span style={{ fontSize: 10, color: "#6B7280" }}>Nutri-Score</span>
-                    </Explain>
-                  );
-                })()}
-                {/* Additives */}
-                {(() => {
-                  const chipBg = addCount === 0 ? "#F0FDF4" : "#FFF1F2";
-                  const chipBorder = addCount === 0 ? "#BBF7D0" : "#FECDD3";
-                  const chipColor = addCount === 0 ? "#22C55E" : "#E8314A";
-                  const t = addCount === 0 ? "no-additives" : addCount <= 2 ? "some-additives" : "many-additives";
-                  return (
-                    <Explain term={t as any} className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
-                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{addCount}</span>
-                      <span style={{ fontSize: 10, color: "#6B7280" }}>additives</span>
-                    </Explain>
-                  );
-                })()}
-                {/* NOVA */}
-                {(() => {
-                  const nova = productInfo.novaGroup;
-                  const hasNova = nova && novaColors[nova];
-                  const chipBg = hasNova ? (nova <= 2 ? "#F0FDF4" : "#FFF1F2") : "#F9FAFB";
-                  const chipBorder = hasNova ? (nova <= 2 ? "#BBF7D0" : "#FECDD3") : "#E5E7EB";
-                  const chipColor = hasNova ? novaColors[nova].bg : "#9CA3AF";
-                  return (
-                    <Explain term="nova" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: chipBg, border: `1px solid ${chipBorder}` }}>
-                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
-                      <span className="font-bold" style={{ fontSize: 16, color: chipColor }}>{hasNova ? nova : "?"}</span>
-                      <span style={{ fontSize: 10, color: "#6B7280" }}>NOVA</span>
-                    </Explain>
-                  );
-                })()}
-                {/* Eco-Score */}
-                {(() => {
-                  const eco = productInfo.ecoscoreGrade?.toLowerCase();
-                  const hasEco = eco && ecoColors[eco];
-                  const c = hasEco ? ecoColors[eco] : { bg: "#F9FAFB", border: "#E5E7EB", color: "#9CA3AF" };
-                  return (
-                    <Explain term="eco" className="flex-1 flex flex-col items-center justify-center relative" style={{ height: 48, borderRadius: 12, background: c.bg, border: `1px solid ${c.border}` }}>
-                      <Info size={9} className="absolute top-1 right-1.5" style={{ color: "#9CA3AF", opacity: 0.6 }} />
-                      <div className="flex items-center gap-0.5">
-                        <Leaf size={12} style={{ color: c.color }} />
-                        <span className="font-bold" style={{ fontSize: 16, color: c.color }}>{hasEco ? eco!.toUpperCase() : "?"}</span>
-                      </div>
-                      <span style={{ fontSize: 10, color: "#6B7280" }}>Eco</span>
-                    </Explain>
-                  );
-                })()}
-              </div>
+              {/* APPLE HEALTH STYLE SIGNAL MATRIX — 2x2 colored cards (v3) */}
+              {(() => {
+                const ns = productInfo.nutriScoreGrade?.toLowerCase();
+                const nova = productInfo.novaGroup;
+                const eco = productInfo.ecoscoreGrade?.toLowerCase();
+
+                type Tone = "good" | "warn" | "bad" | "neutral";
+                const toneStyle: Record<Tone, { bg: string; border: string; label: string; value: string; tag: string; dot: string }> = {
+                  good:    { bg: "rgba(34,197,94,0.06)",  border: "rgba(34,197,94,0.18)",  label: "rgba(20,83,45,0.6)",   value: "#14532D", tag: "#16A34A", dot: "#22C55E" },
+                  warn:    { bg: "rgba(245,158,11,0.06)", border: "rgba(245,158,11,0.18)", label: "rgba(120,53,15,0.6)",  value: "#78350F", tag: "#D97706", dot: "#F59E0B" },
+                  bad:     { bg: "rgba(232,49,74,0.06)",  border: "rgba(232,49,74,0.18)",  label: "rgba(127,29,29,0.6)",  value: "#7F1D1D", tag: "#DC2626", dot: "#E8314A" },
+                  neutral: { bg: "#FAFAFA",               border: "#F3F4F6",               label: "#6B7280",              value: "#9CA3AF", tag: "#9CA3AF", dot: "#D1D5DB" },
+                };
+
+                const nutriTone: Tone = !ns ? "neutral" : ns === "a" || ns === "b" ? "good" : ns === "c" ? "warn" : "bad";
+                const addTone: Tone = addCount === 0 ? "good" : addCount <= 2 ? "warn" : "bad";
+                const novaTone: Tone = !nova ? "neutral" : nova <= 2 ? "good" : nova === 3 ? "warn" : "bad";
+                const ecoTone: Tone = !eco ? "neutral" : eco === "a" || eco === "b" ? "good" : eco === "c" ? "warn" : "bad";
+
+                type Tile = { term: TermKey; label: string; value: string; tag: string; tone: Tone; icon?: React.ReactNode };
+                const tiles: Tile[] = [
+                  { term: "nutri-score", label: "Nutri-Score", value: ns ? ns.toUpperCase() : "?",
+                    tag: nutriTone === "good" ? "Excellent" : nutriTone === "warn" ? "Moderate" : nutriTone === "bad" ? "Poor" : "Unknown", tone: nutriTone },
+                  { term: addCount === 0 ? "no-additives" : addCount <= 2 ? "some-additives" : "many-additives",
+                    label: "Additives", value: String(addCount),
+                    tag: addCount === 0 ? "None" : addCount <= 2 ? "Few" : "Many", tone: addTone },
+                  { term: "nova", label: "Processing", value: nova ? `NOVA ${nova}` : "?",
+                    tag: novaTone === "good" ? "Minimal" : novaTone === "warn" ? "Processed" : novaTone === "bad" ? "Ultra-proc." : "Unknown", tone: novaTone },
+                  { term: "eco", label: "Eco-Score", value: eco ? eco.toUpperCase() : "?",
+                    tag: ecoTone === "good" ? "Low impact" : ecoTone === "warn" ? "Moderate" : ecoTone === "bad" ? "High impact" : "Unknown", tone: ecoTone,
+                    icon: eco ? <Leaf size={14} style={{ color: toneStyle[ecoTone].tag }} /> : undefined },
+                ];
+
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="grid grid-cols-2 gap-3 px-5"
+                    style={{ marginTop: 14 }}
+                  >
+                    {tiles.map((t, i) => {
+                      const s = toneStyle[t.tone];
+                      return (
+                        <motion.button
+                          key={t.label}
+                          type="button"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.55 + i * 0.06, duration: 0.25 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => explainTerm(t.term)}
+                          className="text-left p-4 relative"
+                          style={{ borderRadius: 24, background: s.bg, border: `1px solid ${s.border}`, minHeight: 96 }}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="rounded-full" style={{ width: 10, height: 10, background: s.dot, boxShadow: `0 0 8px ${s.dot}66` }} />
+                            <span className="font-semibold uppercase tracking-wide" style={{ fontSize: 11, color: s.label }}>{t.label}</span>
+                          </div>
+                          <div className="flex items-baseline gap-1.5">
+                            {t.icon}
+                            <p className="font-bold tracking-tight" style={{ fontSize: 20, color: s.value, lineHeight: 1.1 }}>{t.value}</p>
+                          </div>
+                          <p className="font-bold uppercase mt-1" style={{ fontSize: 10, color: s.tag, letterSpacing: 0.5 }}>{t.tag}</p>
+                          <Info size={11} className="absolute top-3 right-3" style={{ color: s.label, opacity: 0.4 }} />
+                        </motion.button>
+                      );
+                    })}
+                  </motion.div>
+                );
+              })()}
+
 
 
               {/* LEARN WHY, Educational explainer cards */}
