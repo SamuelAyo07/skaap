@@ -39,7 +39,7 @@ interface AlertItem {
   active: boolean;
 }
 
-export function ProfileScreen({ onBack }: ProfileScreenProps) {
+export function ProfileScreen({ onBack, onNavChange }: ProfileScreenProps) {
   const { user, signOut } = useAuth();
   const { isPlus, openUpgrade } = useSubscription();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
