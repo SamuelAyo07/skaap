@@ -1311,17 +1311,13 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        {/* City location pill */}
+        {/* City location, subtle inline */}
         {currentCity && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg relative z-10" style={{ background: "#F0FDF4" }}>
-            <span style={{ fontSize: 12 }}>📍</span>
-            <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>{currentCity}</span>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-5 mt-0.5 flex items-center gap-1 relative z-10">
+            <span className="text-[11px]" style={{ color: "#9CA3AF" }}>📍 {currentCity}</span>
           </motion.div>
         )}
 
-        <p className="px-5 mt-0.5 text-[13px] font-medium relative z-10" style={{ color: "#6B7280" }}>
-          🥗 Food · 💄 Cosmetics · ✨ Skincare
-        </p>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
