@@ -2490,7 +2490,7 @@ const SkaapScan = () => {
 
   // ─── SCREEN: PROFILE ───
   if (screen === "profile") {
-    return <ProfileScreen onBack={() => setScreen("home")} />;
+    return <ProfileScreen onBack={() => setScreen("home")} onNavChange={handleNavChange} />;
   }
 
   // ─── SCREEN: BASKET (Saved Products Comparison) ───
