@@ -435,6 +435,7 @@ export function ProfileScreen({ onBack, onNavChange }: ProfileScreenProps) {
       </div>
 
       <HealthProfileSheet open={goalsOpen} onClose={() => setGoalsOpen(false)} />
+      {onNavChange && <BottomNavBar active="profile" onNavigate={onNavChange} />}
     </div>
   );
 }
