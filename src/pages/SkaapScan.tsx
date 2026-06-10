@@ -1311,17 +1311,13 @@ const SkaapScan = () => {
           </div>
         </div>
 
-        {/* City location pill */}
+        {/* City location, subtle inline */}
         {currentCity && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mx-5 mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg relative z-10" style={{ background: "#F0FDF4" }}>
-            <span style={{ fontSize: 12 }}>📍</span>
-            <span className="text-[11px] font-medium" style={{ color: "#065F46" }}>{currentCity}</span>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-5 mt-0.5 flex items-center gap-1 relative z-10">
+            <span className="text-[11px]" style={{ color: "#9CA3AF" }}>📍 {currentCity}</span>
           </motion.div>
         )}
 
-        <p className="px-5 mt-0.5 text-[13px] font-medium relative z-10" style={{ color: "#6B7280" }}>
-          🥗 Food · 💄 Cosmetics · ✨ Skincare
-        </p>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto relative z-10 pb-4">
@@ -1393,21 +1389,20 @@ const SkaapScan = () => {
             </motion.button>
           )}
 
-          {/* Streak chip only — scans live in History, kitchen score in Kitchen */}
-          <div className="flex items-center justify-center gap-2 px-5 py-1.5">
-            <div
-              className="flex items-center justify-center gap-1.5"
-              style={{ height: 36, padding: "0 14px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA" }}
-            >
-              <span className="text-[13px]">🔥</span>
-              <span className="text-[12px] font-extrabold" style={{ color: "#9A3412" }}>
-                {userStats.current_streak > 0 ? userStats.current_streak : "0"}
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9A3412" }}>
-                day streak
-              </span>
+          {/* Streak chip — only show when user has an active streak */}
+          {userStats.current_streak > 0 && (
+            <div className="flex items-center justify-center gap-2 px-5 py-1.5">
+              <div
+                className="flex items-center justify-center gap-1.5"
+                style={{ height: 32, padding: "0 12px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA" }}
+              >
+                <span className="text-[12px]">🔥</span>
+                <span className="text-[12px] font-extrabold" style={{ color: "#9A3412" }}>{userStats.current_streak}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9A3412" }}>day streak</span>
+              </div>
             </div>
-          </div>
+          )}
+
 
           {/* Food Fact of the Day */}
           
