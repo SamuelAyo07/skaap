@@ -206,15 +206,17 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
   const cityName = geoLocation?.city || "Your City";
 
   // Request geolocation
+  const [geoBusy, setGeoBusy] = useState(false);
   const requestGeo = useCallback(() => {
+    if (geoBusy) return;
     if (!navigator.geolocation) {
       setGeoPermission("denied");
       setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
       return;
     }
+    setGeoBusy(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        setGeoPermission("granted");
         const geo = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
         if (geo) {
           setGeoLocation({ ...geo, lat: pos.coords.latitude, lng: pos.coords.longitude });
@@ -222,19 +224,23 @@ export function CommunityScreen({ onNavChange, onScanProduct }: CommunityScreenP
         } else {
           setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
         }
+        setGeoPermission("granted");
+        setGeoBusy(false);
       },
       () => {
         setGeoPermission("denied");
-        // Fallback
         const saved = localStorage.getItem(LOCATION_KEY);
         if (saved) {
           try { setGeoLocation(JSON.parse(saved)); } catch {}
         } else {
           setGeoLocation({ city: "Boston", state: "Massachusetts", lat: 42.36, lng: -71.06 });
         }
-      }
+        setGeoBusy(false);
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
     );
-  }, []);
+  }, [geoBusy]);
+
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCATION_KEY);
